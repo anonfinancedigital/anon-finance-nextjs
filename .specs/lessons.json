@@ -1,0 +1,63 @@
+{
+  "schema": 1,
+  "promote_threshold": 2,
+  "window_days": 45,
+  "quarantine_threshold": 2,
+  "next_id": 4,
+  "lessons": [
+    {
+      "id": "L-001",
+      "key": "spec_precision_gap::for rate limits and lockouts specify whether the lock duration counts from the triggering failure or is a sliding window and test failures spread across the window",
+      "text": "For rate limits and lockouts, specify whether the lock duration counts from the triggering failure or is a sliding window, and test failures spread across the window",
+      "signal": "spec_precision_gap",
+      "scope": "auth",
+      "status": "candidate",
+      "features": [
+        "orcamento-domestico"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "AUTH-03 AC4; src/actions/auth.ts:15-24 (auth)"
+      ],
+      "created": "2026-10-04T18:35:00Z",
+      "last_seen": "2026-10-04T18:35:00Z"
+    },
+    {
+      "id": "L-002",
+      "key": "spec_precision_gap::when an acceptance criterion requires a validation message state the exact message text in the spec",
+      "text": "When an acceptance criterion requires a validation message, state the exact message text in the spec",
+      "signal": "spec_precision_gap",
+      "scope": "validation",
+      "status": "candidate",
+      "features": [
+        "orcamento-domestico"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "CAT AC4/AC5, TRX AC3-AC5; src/actions/transactions.int.test.ts:103 (validation)"
+      ],
+      "created": "2026-10-04T18:35:00Z",
+      "last_seen": "2026-10-04T18:35:00Z"
+    },
+    {
+      "id": "L-003",
+      "key": "spec_deviation::when design names a ui component library widget confirm it before tasks or record native controls as the default to avoid a late deviation",
+      "text": "When design names a UI component library widget, confirm it before tasks or record native controls as the default to avoid a late deviation",
+      "signal": "spec_deviation",
+      "scope": "ui",
+      "status": "candidate",
+      "features": [
+        "orcamento-domestico"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "SPEC_DEVIATION src/components/transaction-form.tsx:42 (ui)"
+      ],
+      "created": "2026-10-04T18:35:00Z",
+      "last_seen": "2026-10-04T18:35:00Z"
+    }
+  ]
+}

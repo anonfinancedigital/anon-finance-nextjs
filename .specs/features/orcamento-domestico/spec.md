@@ -186,21 +186,21 @@ Every ambiguity is resolved or recorded here - nothing is left silently unclear.
 
 | Requirement ID | Story | Phase | Status |
 | -------------- | ----- | ----- | ------ |
-| CAT-01 | P1: Categorias com meta percentual (AC 1, 4, 5) | Execute | Implementing |
-| CAT-02 | P1: Categorias com meta percentual (AC 2, 3, 7) | Execute | Implementing |
-| CAT-03 | P1: Categorias com meta percentual (AC 6) | Execute | Implementing |
-| TRX-01 | P1: Registrar ganhos e gastos (AC 1, 2, 9) | Execute | Implementing |
-| TRX-02 | P1: Registrar ganhos e gastos (AC 3, 4, 5) | Execute | Implementing |
-| TRX-03 | P1: Registrar ganhos e gastos (AC 6, 7) | Execute | Implementing |
-| TRX-04 | P1: Registrar ganhos e gastos (AC 8) | Execute | Implementing |
-| SUM-01 | P1: Resumo por categoria (AC 1, 2, 7) | Execute | Implementing |
-| SUM-02 | P1: Resumo por categoria (AC 3, 4, 5) | Execute | Implementing |
-| SUM-03 | P1: Resumo por categoria (AC 6) | Execute | Implementing |
-| MON-01 | P2: Navegar entre meses | Execute | Implementing |
-| CHT-01 | P2: Gráficos no resumo | Execute | Implementing |
-| AUTH-01 | P1: Acesso com login (AC 1, 2, 5) | Execute | Implementing |
-| AUTH-02 | P1: Acesso com login (AC 3) | Execute | Implementing |
-| AUTH-03 | P1: Acesso com login (AC 4, 6) | Execute | Implementing |
+| CAT-01 | P1: Categorias com meta percentual (AC 1, 4, 5) | Execute | Verified |
+| CAT-02 | P1: Categorias com meta percentual (AC 2, 3, 7) | Execute | Verified |
+| CAT-03 | P1: Categorias com meta percentual (AC 6) | Execute | Verified |
+| TRX-01 | P1: Registrar ganhos e gastos (AC 1, 2, 9) | Execute | Verified |
+| TRX-02 | P1: Registrar ganhos e gastos (AC 3, 4, 5) | Execute | Verified |
+| TRX-03 | P1: Registrar ganhos e gastos (AC 6, 7) | Execute | Verified |
+| TRX-04 | P1: Registrar ganhos e gastos (AC 8) | Execute | Verified |
+| SUM-01 | P1: Resumo por categoria (AC 1, 2, 7) | Execute | Verified |
+| SUM-02 | P1: Resumo por categoria (AC 3, 4, 5) | Execute | Verified |
+| SUM-03 | P1: Resumo por categoria (AC 6) | Execute | Verified |
+| MON-01 | P2: Navegar entre meses | Execute | Verified |
+| CHT-01 | P2: Gráficos no resumo | Execute | Verified |
+| AUTH-01 | P1: Acesso com login (AC 1, 2, 5) | Execute | Verified |
+| AUTH-02 | P1: Acesso com login (AC 3) | Execute | Verified |
+| AUTH-03 | P1: Acesso com login (AC 4, 6) | Execute | Verified |
 
 **Coverage:** 15 total, 15 mapped to tasks, 0 unmapped
 
