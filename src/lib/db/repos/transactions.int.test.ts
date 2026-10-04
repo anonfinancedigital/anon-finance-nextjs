@@ -283,6 +283,202 @@ describe("transactionsRepo.update", () => {
   });
 });
 
+describe("transactionsRepo.updateFrom", () => {
+  const month = (key: string) =>
+    monthRange({ year: Number(key.slice(0, 4)), month: Number(key.slice(5, 7)) });
+  const listIn = (key: string) => transactionsRepo.listByMonth(userId, month(key));
+  /** Id of the only occurrence listed in the month. */
+  const idIn = async (key: string) => {
+    const listed = await listIn(key);
+    expect(listed).toHaveLength(1);
+    return listed[0].id;
+  };
+  const amountsIn = async (...keys: string[]) =>
+    Promise.all(keys.map(async (k) => (await listIn(k)).map((t) => t.amountCents)));
+  const rent = (date = "2026-10-15", amountCents = 10000) => ({
+    ...expense(date, amountCents),
+    description: "Aluguel",
+    recurrence: "forever" as "forever" | "until" | "none",
+    recurrenceEndMonth: null as string | null,
+  });
+  /** Edit data for the occurrence of `key`, keeping the day of `base`. */
+  const edit = (base: ReturnType<typeof rent>, key: string, amountCents: number) => ({
+    ...base,
+    date: `${key}-${base.date.slice(8)}`,
+    amountCents,
+  });
+  const snapshot = async () =>
+    (await db.select().from(transaction)).sort((a, b) => a.id.localeCompare(b.id));
+
+  it("edits Dec from R$ 100,00 to R$ 120,00: Oct and Nov keep 100, Dec onward lists 120", async () => {
+    const tx = rent();
+    await transactionsRepo.create(userId, tx);
+
+    expect(await transactionsRepo.updateFrom(userId, tx.id, "2026-12", edit(tx, "2026-12", 12000)))
+      .toBe(true);
+
+    expect(await amountsIn("2026-10", "2026-11", "2026-12", "2027-01", "2027-06")).toEqual([
+      [10000],
+      [10000],
+      [12000],
+      [12000],
+      [12000],
+    ]);
+  });
+
+  it("edits Dec then Feb, then Dec again: the latest edit wins from its month on", async () => {
+    const tx = rent();
+    await transactionsRepo.create(userId, tx);
+    await transactionsRepo.updateFrom(userId, tx.id, "2026-12", edit(tx, "2026-12", 12000));
+    const febId = await idIn("2027-02");
+    await transactionsRepo.updateFrom(userId, febId, "2027-02", edit(tx, "2027-02", 15000));
+
+    expect(await amountsIn("2026-11", "2026-12", "2027-01", "2027-02", "2027-03")).toEqual([
+      [10000],
+      [12000],
+      [12000],
+      [15000],
+      [15000],
+    ]);
+
+    const id = await idIn("2026-12");
+    await transactionsRepo.updateFrom(userId, id, "2026-12", edit(tx, "2026-12", 13000));
+    expect(await amountsIn("2026-11", "2026-12", "2027-01", "2027-02", "2027-03")).toEqual([
+      [10000],
+      [13000],
+      [13000],
+      [13000],
+      [13000],
+    ]);
+  });
+
+  it("changes the whole series when editing the month it starts", async () => {
+    const tx = rent();
+    await transactionsRepo.create(userId, tx);
+
+    const changed = { ...tx, amountCents: 9000, categoryId: lazer, description: "Aluguel novo" };
+    expect(await transactionsRepo.updateFrom(userId, tx.id, "2026-10", changed)).toBe(true);
+
+    expect(await db.$count(transaction)).toBe(1);
+    for (const key of ["2026-10", "2026-11", "2027-05"]) {
+      expect(await listIn(key)).toEqual([
+        expect.objectContaining({
+          id: tx.id,
+          amountCents: 9000,
+          categoryId: lazer,
+          description: "Aluguel novo",
+        }),
+      ]);
+    }
+  });
+
+  it("makes the edited month a single row and removes the following months ('Não recorrente')", async () => {
+    const tx = rent();
+    await transactionsRepo.create(userId, tx);
+
+    const single = { ...edit(tx, "2026-12", 11000), recurrence: "none" as const };
+    expect(await transactionsRepo.updateFrom(userId, tx.id, "2026-12", single)).toBe(true);
+
+    expect((await listIn("2026-11")).map((t) => [t.amountCents, t.recurring])).toEqual([
+      [10000, true],
+    ]);
+    expect((await listIn("2026-12")).map((t) => [t.amountCents, t.recurring])).toEqual([
+      [11000, false],
+    ]);
+    expect(await listIn("2027-01")).toEqual([]);
+  });
+
+  it("keeps day 31 in March after editing the 28/02 occurrence without changing the date", async () => {
+    const tx = rent("2026-01-31");
+    await transactionsRepo.create(userId, tx);
+
+    const feb = { ...tx, date: "2026-02-28", amountCents: 20000 };
+    expect(await transactionsRepo.updateFrom(userId, tx.id, "2026-02", feb)).toBe(true);
+
+    expect((await listIn("2026-03")).map((t) => [t.date, t.amountCents])).toEqual([
+      ["2026-03-31", 20000],
+    ]);
+  });
+
+  it("changes a recurring income's monthly income from the edited month on", async () => {
+    const salary = {
+      id: randomUUID(),
+      kind: "income" as const,
+      amountCents: 500000,
+      date: "2026-10-05",
+      description: "Salário",
+      recurrence: "forever" as const,
+    };
+    await transactionsRepo.create(userId, salary);
+
+    const raise = { ...salary, date: "2026-12-05", amountCents: 600000 };
+    expect(await transactionsRepo.updateFrom(userId, salary.id, "2026-12", raise)).toBe(true);
+
+    const income = async (key: string) =>
+      (await transactionsRepo.monthTotals(userId, month(key))).incomeCents;
+    expect([await income("2026-11"), await income("2026-12"), await income("2027-01")]).toEqual([
+      500000, 600000, 600000,
+    ]);
+  });
+
+  it("returns false for another user's id and changes no row", async () => {
+    const tx = rent();
+    await transactionsRepo.create(userId, tx);
+    const before = await snapshot();
+
+    const otherId = await insertTestUser();
+    expect(await transactionsRepo.updateFrom(otherId, tx.id, "2026-12", edit(tx, "2026-12", 1)))
+      .toBe(false);
+    expect(await snapshot()).toEqual(before);
+  });
+
+  it("returns false for a month outside the segment and changes no row", async () => {
+    const tx = { ...rent(), recurrence: "until" as const, recurrenceEndMonth: "2026-12" };
+    await transactionsRepo.create(userId, tx);
+    const before = await snapshot();
+
+    expect(await transactionsRepo.updateFrom(userId, tx.id, "2026-09", edit(tx, "2026-09", 1)))
+      .toBe(false);
+    expect(await transactionsRepo.updateFrom(userId, tx.id, "2027-01", edit(tx, "2027-01", 1)))
+      .toBe(false);
+    expect(await snapshot()).toEqual(before);
+  });
+
+  it("never lists two occurrences of the series in a month after several edits", async () => {
+    const tx = rent();
+    await transactionsRepo.create(userId, tx);
+    const steps = ["2027-01", "2026-12", "2027-04", "2027-02", "2026-11", "2027-04"];
+    for (const [i, key] of steps.entries()) {
+      const id = await idIn(key);
+      expect(await transactionsRepo.updateFrom(userId, id, key, edit(tx, key, 20000 + i)))
+        .toBe(true);
+    }
+
+    const keys = ["2026-10", "2026-11", "2026-12", "2027-01", "2027-02", "2027-03", "2027-04"];
+    expect(await amountsIn(...keys)).toEqual([
+      [10000],
+      [20004],
+      [20004],
+      [20004],
+      [20004],
+      [20004],
+      [20005],
+    ]);
+  });
+
+  it("still moves a single row to any date (current contract)", async () => {
+    const tx = expense("2026-10-04", 1000);
+    await transactionsRepo.create(userId, tx);
+
+    const moved = { ...tx, date: "2026-12-20", amountCents: 3000 };
+    expect(await transactionsRepo.updateFrom(userId, tx.id, "2026-10", moved)).toBe(true);
+
+    expect(await listIn("2026-10")).toEqual([]);
+    expect((await listIn("2026-12")).map((t) => [t.id, t.date, t.amountCents, t.recurring]))
+      .toEqual([[tx.id, "2026-12-20", 3000, false]]);
+  });
+});
+
 describe("transactionsRepo.delete", () => {
   it("removes the transaction", async () => {
     const tx = expense("2026-10-04");

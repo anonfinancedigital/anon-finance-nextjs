@@ -341,16 +341,16 @@ T13 → T15
 
 **Done when**:
 
-- [ ] `transactions.int.test.ts`: gasto "Sempre" de R$ 100,00 em out, editado em dez para R$ 120,00: out e nov listam R$ 100,00; dez, jan e seguintes listam R$ 120,00 (teste de aceitação da spec)
-- [ ] `transactions.int.test.ts`: editar dez e depois fev: dez e jan com a alteração de dez, fev em diante com a de fev; editar dez de novo depois substitui fev em diante (RECUR-08 AC 4 e 5)
-- [ ] `transactions.int.test.ts`: editar no mês de início altera a série inteira (AC 8)
-- [ ] `transactions.int.test.ts`: editar uma ocorrência para "Não recorrente" deixa o mês editado como avulso e remove os meses seguintes (AC 6)
-- [ ] `transactions.int.test.ts`: dia 31 editado em fevereiro sem mudar a data mantém 31/03 em março
-- [ ] `transactions.int.test.ts`: ganho recorrente editado em um mês muda o `incomeCents` desse mês em diante
-- [ ] `transactions.int.test.ts`: `false` para id de outro usuário e para mês fora do intervalo do segmento; nenhuma linha muda
-- [ ] `transactions.int.test.ts` (invariante): depois de várias edições, nenhum mês lista duas ocorrências da mesma série
-- [ ] `transactions.int.test.ts`: editar uma linha avulsa continua trocando a data livremente (contrato atual)
-- [ ] Gate full passa; ≥ 9 testes novos
+- [x] `transactions.int.test.ts`: gasto "Sempre" de R$ 100,00 em out, editado em dez para R$ 120,00: out e nov listam R$ 100,00; dez, jan e seguintes listam R$ 120,00 (teste de aceitação da spec)
+- [x] `transactions.int.test.ts`: editar dez e depois fev: dez e jan com a alteração de dez, fev em diante com a de fev; editar dez de novo depois substitui fev em diante (RECUR-08 AC 4 e 5)
+- [x] `transactions.int.test.ts`: editar no mês de início altera a série inteira (AC 8)
+- [x] `transactions.int.test.ts`: editar uma ocorrência para "Não recorrente" deixa o mês editado como avulso e remove os meses seguintes (AC 6)
+- [x] `transactions.int.test.ts`: dia 31 editado em fevereiro sem mudar a data mantém 31/03 em março
+- [x] `transactions.int.test.ts`: ganho recorrente editado em um mês muda o `incomeCents` desse mês em diante
+- [x] `transactions.int.test.ts`: `false` para id de outro usuário e para mês fora do intervalo do segmento; nenhuma linha muda
+- [x] `transactions.int.test.ts` (invariante): depois de várias edições, nenhum mês lista duas ocorrências da mesma série
+- [x] `transactions.int.test.ts`: editar uma linha avulsa continua trocando a data livremente (contrato atual)
+- [x] Gate full passa; ≥ 9 testes novos
 
 **Tests**: integration
 **Gate**: full

@@ -1,5 +1,12 @@
-import { and, desc, eq, gte, isNull, lt, not, or, sql } from "drizzle-orm";
-import { monthKey, occurrenceDate } from "@/lib/domain/recurrence";
+import { randomUUID } from "node:crypto";
+import { and, desc, eq, gte, inArray, isNull, lt, not, or, sql } from "drizzle-orm";
+import {
+  type Segment,
+  appliesInMonth,
+  monthKey,
+  occurrenceDate,
+  planEdit,
+} from "@/lib/domain/recurrence";
 import { db } from "../client";
 import { transaction } from "../schema";
 
@@ -108,6 +115,105 @@ async function update(userId: string, id: string, tx: TransactionData): Promise<
   return rows.length > 0;
 }
 
+/** Recurrence columns of a planned segment. */
+const segmentFields = (seg: Omit<Segment, "id">) => ({
+  date: seg.date,
+  recurring: seg.recurringDay !== null,
+  recurrenceDay: seg.recurringDay,
+  recurrenceEnd: seg.endMonth === null ? null : `${seg.endMonth}-01`,
+  seriesId: seg.seriesId,
+});
+
+type Tx = Parameters<Parameters<typeof db.transaction>[0]>[0];
+
+/**
+ * Locks and loads the segment `id` of the user and every segment of its series. Returns null when
+ * the user has no such row or it has no occurrence in `month`.
+ */
+async function lockSeries(tx: Tx, userId: string, id: string, month: string) {
+  const toSegment = (row: {
+    id: string;
+    seriesId: string | null;
+    date: string;
+    recurrenceDay: number | null;
+    recurrenceEnd: string | null;
+  }): Segment => ({
+    id: row.id,
+    seriesId: row.seriesId,
+    date: row.date,
+    recurringDay: row.recurrenceDay,
+    endMonth: row.recurrenceEnd === null ? null : monthKey(row.recurrenceEnd),
+  });
+  const select = {
+    id: transaction.id,
+    seriesId: transaction.seriesId,
+    date: transaction.date,
+    recurrenceDay: transaction.recurrenceDay,
+    recurrenceEnd: transaction.recurrenceEnd,
+  };
+  const [row] = await tx.select(select).from(transaction).where(ownedBy(userId, id)).for("update");
+  if (!row || !appliesInMonth(toSegment(row), month)) return null;
+  if (row.seriesId === null) return [toSegment(row)];
+  const rows = await tx
+    .select(select)
+    .from(transaction)
+    .where(and(eq(transaction.userId, userId), eq(transaction.seriesId, row.seriesId)))
+    .for("update");
+  return rows.map(toSegment);
+}
+
+/**
+ * Edits the occurrence of `month` (AAAA-MM) of row `id`: the data applies to that month and every
+ * later one; earlier months keep their values (splits the series, see `planEdit`). Returns false
+ * when the user has no such row or it has no occurrence in `month`.
+ */
+async function updateFrom(
+  userId: string,
+  id: string,
+  month: string,
+  data: TransactionData,
+): Promise<boolean> {
+  return db.transaction(async (tx) => {
+    const segments = await lockSeries(tx, userId, id, month);
+    if (!segments) return false;
+    const recurring = (data.recurrence ?? "none") !== "none";
+    const plan = planEdit({
+      segments,
+      id,
+      month,
+      next: {
+        date: data.date,
+        recurring,
+        endMonth: data.recurrence === "until" ? (data.recurrenceEndMonth ?? null) : null,
+      },
+    });
+    const now = sql`clock_timestamp()`;
+    if (plan.deleteIds.length > 0) {
+      await tx
+        .delete(transaction)
+        .where(and(eq(transaction.userId, userId), inArray(transaction.id, plan.deleteIds)));
+    }
+    if (plan.truncate) {
+      await tx
+        .update(transaction)
+        .set({ recurrenceEnd: `${plan.truncate.endMonth}-01`, updatedAt: now })
+        .where(ownedBy(userId, plan.truncate.id));
+    }
+    if (plan.updateInPlace) {
+      await tx
+        .update(transaction)
+        .set({ ...fields(data), ...segmentFields(plan.updateInPlace), updatedAt: now })
+        .where(ownedBy(userId, plan.updateInPlace.id));
+    }
+    if (plan.insert) {
+      await tx
+        .insert(transaction)
+        .values({ id: randomUUID(), userId, ...fields(data), ...segmentFields(plan.insert) });
+    }
+    return true;
+  });
+}
+
 /** Returns false when the user has no transaction with this id. */
 async function remove(userId: string, id: string): Promise<boolean> {
   const rows = await db
@@ -184,4 +290,11 @@ async function monthTotals(userId: string, range: MonthRange): Promise<MonthTota
   return totals;
 }
 
-export const transactionsRepo = { create, update, delete: remove, listByMonth, monthTotals };
+export const transactionsRepo = {
+  create,
+  update,
+  updateFrom,
+  delete: remove,
+  listByMonth,
+  monthTotals,
+};
