@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState, useTransition } from "react";
+import { Fragment, useState, useTransition } from "react";
 import { saveCategories } from "@/actions/categories";
 import { Button } from "@/components/ui/button";
 import {
@@ -12,6 +12,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { SubcategoryEditor, type SubcategoryRow } from "@/components/subcategory-editor";
 import { Label } from "@/components/ui/label";
 import {
   Table,
@@ -28,7 +29,14 @@ import { CATEGORY_COLORS, colorVar, nextFreeColor } from "@/lib/domain/color";
 import { formatBRL, parseBRL } from "@/lib/domain/money";
 import { formatPercent, parsePercent } from "@/lib/domain/percent";
 
-type Row = { key: string; id?: string; name: string; percent: string; color: number };
+type Row = {
+  key: string;
+  id?: string;
+  name: string;
+  percent: string;
+  color: number;
+  subcategories: SubcategoryRow[];
+};
 
 const toRow = (c: Category): Row => ({
   key: c.id,
@@ -36,6 +44,7 @@ const toRow = (c: Category): Row => ({
   name: c.name,
   percent: formatPercent(c.percentBp).replace("%", ""),
   color: c.color,
+  subcategories: c.subcategories.map((s) => ({ key: s.id, id: s.id, name: s.name })),
 });
 
 /** Shows only the chosen color; clicking it opens a dialog with the whole palette. */
@@ -150,6 +159,7 @@ export function CategoryEditor({ categories }: { categories: Category[] }) {
         name: "",
         percent: "",
         color: nextFreeColor(current.map((r) => r.color)),
+        subcategories: [],
       },
     ]);
     setResult(null);
@@ -158,7 +168,13 @@ export function CategoryEditor({ categories }: { categories: Category[] }) {
   function save() {
     startTransition(async () => {
       const res = await saveCategories(
-        rows.map(({ id, name, percent, color }) => ({ id, name, percent, color })),
+        rows.map(({ id, name, percent, color, subcategories }) => ({
+          id,
+          name,
+          percent,
+          color,
+          subcategories: subcategories.map((s) => ({ id: s.id, name: s.name })),
+        })),
       );
       setResult(res);
       if (res.ok) router.refresh();
@@ -207,7 +223,8 @@ export function CategoryEditor({ categories }: { categories: Category[] }) {
             const live = parsed[i];
             const percentError = fieldErrors[`${i}.percent`] ?? (live && !live.ok ? live.error : undefined);
             return (
-              <TableRow key={row.key}>
+              <Fragment key={row.key}>
+              <TableRow>
                 <TableCell className="align-top">
                   <Input
                     aria-label={`Nome da categoria ${i + 1}`}
@@ -257,6 +274,17 @@ export function CategoryEditor({ categories }: { categories: Category[] }) {
                   </Button>
                 </TableCell>
               </TableRow>
+              <TableRow>
+                <TableCell colSpan={5} className="pt-0">
+                  <SubcategoryEditor
+                    index={i}
+                    items={row.subcategories}
+                    errors={fieldErrors}
+                    onChange={(subcategories) => update(i, { subcategories })}
+                  />
+                </TableCell>
+              </TableRow>
+              </Fragment>
             );
           })}
         </TableBody>
