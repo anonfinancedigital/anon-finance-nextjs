@@ -5,7 +5,7 @@ import { describe, expect, it } from "vitest";
 import { setupTestDb } from "@/test/db";
 import { db, pool } from "./client";
 import { user } from "./auth-schema";
-import { category, transaction } from "./schema";
+import { category, subcategory, transaction } from "./schema";
 
 setupTestDb();
 
@@ -192,5 +192,89 @@ describe("transaction constraints", () => {
       FK_VIOLATION,
     );
     expect(await db.$count(category, eq(category.id, cat.id))).toBe(1);
+  });
+});
+
+async function createSubcategory(userId: string, categoryId: string, name = "Restaurante") {
+  const [row] = await db.insert(subcategory).values({ userId, categoryId, name }).returning();
+  return row;
+}
+
+describe("subcategory constraints", () => {
+  it("rejects a duplicate name with different case in the same category", async () => {
+    const userId = await createUser();
+    const cat = await createCategory(userId);
+    await createSubcategory(userId, cat.id, "Restaurante");
+    expect(await pgErrorCode(createSubcategory(userId, cat.id, "restaurante"))).toBe(
+      UNIQUE_VIOLATION,
+    );
+  });
+
+  it("accepts the same name in different categories", async () => {
+    const userId = await createUser();
+    const conforto = await createCategory(userId, "Conforto");
+    const lazer = await createCategory(userId, "Lazer");
+    await createSubcategory(userId, conforto.id, "Restaurante");
+    await createSubcategory(userId, lazer.id, "Restaurante");
+    expect(await db.$count(subcategory)).toBe(2);
+  });
+
+  it("accepts an expense whose subcategory belongs to its category", async () => {
+    const userId = await createUser();
+    const cat = await createCategory(userId);
+    const sub = await createSubcategory(userId, cat.id);
+    await db.insert(transaction).values({ ...expense(userId, cat.id), subcategoryId: sub.id });
+    expect(await db.$count(transaction, eq(transaction.subcategoryId, sub.id))).toBe(1);
+  });
+
+  it("rejects an expense whose subcategory belongs to another category", async () => {
+    const userId = await createUser();
+    const conforto = await createCategory(userId, "Conforto");
+    const lazer = await createCategory(userId, "Lazer");
+    const sub = await createSubcategory(userId, lazer.id);
+    const query = db
+      .insert(transaction)
+      .values({ ...expense(userId, conforto.id), subcategoryId: sub.id });
+    expect(await pgErrorCode(query)).toBe(FK_VIOLATION);
+  });
+
+  it("rejects an income with a subcategory", async () => {
+    const userId = await createUser();
+    const cat = await createCategory(userId);
+    const sub = await createSubcategory(userId, cat.id);
+    const query = db.insert(transaction).values({
+      ...expense(userId, null),
+      kind: "income" as const,
+      subcategoryId: sub.id,
+    });
+    expect(await pgErrorCode(query)).toBe(CHECK_VIOLATION);
+  });
+
+  it("blocks deleting a subcategory that has expenses", async () => {
+    const userId = await createUser();
+    const cat = await createCategory(userId);
+    const sub = await createSubcategory(userId, cat.id);
+    await db.insert(transaction).values({ ...expense(userId, cat.id), subcategoryId: sub.id });
+    expect(await pgErrorCode(db.delete(subcategory).where(eq(subcategory.id, sub.id)))).toBe(
+      FK_VIOLATION,
+    );
+    expect(await db.$count(subcategory, eq(subcategory.id, sub.id))).toBe(1);
+  });
+
+  it("deletes the subcategories of a category without expenses", async () => {
+    const userId = await createUser();
+    const cat = await createCategory(userId);
+    await createSubcategory(userId, cat.id, "Restaurante");
+    await createSubcategory(userId, cat.id, "Streaming");
+    await db.delete(category).where(eq(category.id, cat.id));
+    expect(await db.$count(subcategory)).toBe(0);
+  });
+
+  it("keeps existing expenses valid with a null subcategory", async () => {
+    const userId = await createUser();
+    const cat = await createCategory(userId);
+    await db.insert(transaction).values(expense(userId, cat.id));
+    const [row] = await db.select().from(transaction);
+    expect(row.subcategoryId).toBeNull();
   });
 });

@@ -21,6 +21,7 @@ const columns = {
   amountCents: transaction.amountCents,
   date: transaction.date,
   categoryId: transaction.categoryId,
+  subcategoryId: transaction.subcategoryId,
   description: transaction.description,
   createdAt: transaction.createdAt,
   updatedAt: transaction.updatedAt,
