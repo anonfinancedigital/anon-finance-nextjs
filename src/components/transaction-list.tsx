@@ -13,12 +13,13 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import type { Transaction } from "@/lib/db/repos/transactions";
+import type { Occurrence } from "@/lib/db/repos/transactions";
 import { colorVar } from "@/lib/domain/color";
 import { formatBRL } from "@/lib/domain/money";
+import { monthKey } from "@/lib/domain/recurrence";
 
 type Props = {
-  transactions: Transaction[];
+  transactions: Occurrence[];
   categories: {
     id: string;
     name: string;
@@ -39,8 +40,8 @@ const amountText = (cents: number) => formatBRL(cents).replace(/^R\$\s*/, "");
 /** The selected month's transactions, in the order received (latest date first). */
 export function TransactionList({ transactions, categories, filtered = false, searching = false }: Props) {
   const categoryById = new Map(categories.map((c) => [c.id, c]));
-  const [editing, setEditing] = useState<Transaction | null>(null);
-  const [deleting, setDeleting] = useState<Transaction | null>(null);
+  const [editing, setEditing] = useState<Occurrence | null>(null);
+  const [deleting, setDeleting] = useState<Occurrence | null>(null);
   const [deleteError, setDeleteError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
 
@@ -58,9 +59,9 @@ export function TransactionList({ transactions, categories, filtered = false, se
 
   function confirmDelete() {
     if (!deleting) return;
-    const { id } = deleting;
+    const { id, month } = deleting;
     startTransition(async () => {
-      const res = await deleteTransaction(id);
+      const res = await deleteTransaction(id, month);
       if (res.ok) setDeleting(null);
       else setDeleteError(res.error);
     });
@@ -81,6 +82,14 @@ export function TransactionList({ transactions, categories, filtered = false, se
               <span className="w-20 tabular-nums text-muted-foreground">{formatDate(t.date)}</span>
               <span className="min-w-0 flex-1">
                 {t.description ?? (t.kind === "income" ? "Ganho" : "Gasto")}
+                {t.recurring && (
+                  <span
+                    data-testid="recurring-badge"
+                    className="ml-2 rounded-sm bg-muted px-1.5 py-0.5 text-xs text-muted-foreground"
+                  >
+                    Recorrente
+                  </span>
+                )}
                 {category && (
                   <span className="ml-2 inline-flex items-center gap-1.5 text-muted-foreground">
                     <span
@@ -124,6 +133,7 @@ export function TransactionList({ transactions, categories, filtered = false, se
             <TransactionForm
               categories={categories}
               defaultDate={editing.date}
+              month={editing.month}
               transaction={{
                 id: editing.id,
                 kind: editing.kind,
@@ -132,6 +142,12 @@ export function TransactionList({ transactions, categories, filtered = false, se
                 categoryId: editing.categoryId ?? "",
                 subcategoryId: editing.subcategoryId ?? "",
                 description: editing.description ?? "",
+                recurrence: !editing.recurring
+                  ? "none"
+                  : editing.recurrenceEnd === null
+                    ? "forever"
+                    : "until",
+                recurrenceEnd: editing.recurrenceEnd ? monthKey(editing.recurrenceEnd) : "",
               }}
               onSaved={() => setEditing(null)}
             />
@@ -142,7 +158,11 @@ export function TransactionList({ transactions, categories, filtered = false, se
       <Dialog open={deleting !== null} onOpenChange={(open) => !open && setDeleting(null)}>
         <DialogContent showCloseButton={false}>
           <DialogHeader>
-            <DialogTitle>Excluir transação?</DialogTitle>
+            <DialogTitle>
+              {deleting?.recurring
+                ? "Excluir esta e as próximas ocorrências?"
+                : "Excluir transação?"}
+            </DialogTitle>
             <DialogDescription>
               {deleting &&
                 `${deleting.description ?? (deleting.kind === "income" ? "Ganho" : "Gasto")} de ${formatBRL(deleting.amountCents)} em ${formatDate(deleting.date)}. Esta ação não pode ser desfeita.`}

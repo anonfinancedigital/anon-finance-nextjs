@@ -516,10 +516,10 @@ T13 → T15
 
 **Done when**:
 
-- [ ] Toda ocorrência e todo lançamento recorrente mostram o selo "Recorrente"; avulsos não (AC 12 de RECUR-05)
-- [ ] A edição abre com a opção e o mês final atuais e com a data da ocorrência exibida (RECUR-07 AC 1)
-- [ ] Excluir uma ocorrência recorrente mostra o texto de "esta e as próximas" e chama `deleteTransaction` com o mês da ocorrência; avulsa mantém o texto atual
-- [ ] Gate build passa
+- [x] Toda ocorrência e todo lançamento recorrente mostram o selo "Recorrente"; avulsos não (AC 12 de RECUR-05)
+- [x] A edição abre com a opção e o mês final atuais e com a data da ocorrência exibida (RECUR-07 AC 1)
+- [x] Excluir uma ocorrência recorrente mostra o texto de "esta e as próximas" e chama `deleteTransaction` com o mês da ocorrência; avulsa mantém o texto atual
+- [x] Gate build passa
 
 **Tests**: none
 **Gate**: build
