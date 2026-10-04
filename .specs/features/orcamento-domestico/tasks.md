@@ -173,10 +173,10 @@ T25 → T26 → T27 → T28 → T29 → T30 → T31
 
 **Done when**:
 
-- [ ] "1.234,56" → 123456; "1234,5" → 123450; "1234" → 123400
-- [ ] Rejeita "0", "0,00", "-5", "abc", "1,234" (3 casas), vazio e valores > 999.999.999,99; aceita exatamente 999.999.999,99 e 0,01
-- [ ] `formatBRL(123456)` === "R$ 1.234,56" (comparando com espaço normalizado)
-- [ ] Gate quick passa; ≥ 12 testes
+- [x] "1.234,56" → 123456; "1234,5" → 123450; "1234" → 123400
+- [x] Rejeita "0", "0,00", "-5", "abc", "1,234" (3 casas), vazio e valores > 999.999.999,99; aceita exatamente 999.999.999,99 e 0,01
+- [x] `formatBRL(123456)` === "R$ 1.234,56" (comparando com espaço normalizado)
+- [x] Gate quick passa; ≥ 12 testes
 
 **Tests**: unit
 **Gate**: quick
