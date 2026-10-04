@@ -184,13 +184,13 @@ T15 → T16 → T17
 
 **Done when**:
 
-- [ ] Criar categoria nova com subcategorias no mesmo salvamento persiste tudo
-- [ ] Renomear mantém o id e os gastos vinculados (SUB-01 AC 2)
-- [ ] Excluir subcategoria sem gastos remove; com gastos → "Esta subcategoria tem N gasto(s) e não pode ser excluída" e **nada** do conjunto muda (rollback)
-- [ ] Excluir categoria sem gastos remove as subcategorias (SUB-03 AC 9); categoria com gastos mantém a mensagem atual de categoria
-- [ ] Id de subcategoria de outra categoria ou de outro usuário → "Subcategoria não encontrada"
-- [ ] Remover "Restaurante" e criar "restaurante" no mesmo salvamento é aceito (edge case); trocar só maiúsculas é aceito
-- [ ] Gate full passa; ≥ 8 testes novos em `categories.int.test.ts`
+- [x] Criar categoria nova com subcategorias no mesmo salvamento persiste tudo
+- [x] Renomear mantém o id e os gastos vinculados (SUB-01 AC 2)
+- [x] Excluir subcategoria sem gastos remove; com gastos → "Esta subcategoria tem N gasto(s) e não pode ser excluída" e **nada** do conjunto muda (rollback)
+- [x] Excluir categoria sem gastos remove as subcategorias (SUB-03 AC 9); categoria com gastos mantém a mensagem atual de categoria
+- [x] Id de subcategoria de outra categoria ou de outro usuário → "Subcategoria não encontrada"
+- [x] Remover "Restaurante" e criar "restaurante" no mesmo salvamento é aceito (edge case); trocar só maiúsculas é aceito
+- [x] Gate full passa; ≥ 8 testes novos em `categories.int.test.ts`
 
 **Tests**: integration
 **Gate**: full

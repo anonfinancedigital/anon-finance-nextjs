@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import { eq } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
 import { insertTestUser, setupTestDb } from "@/test/db";
 import { db } from "../client";
@@ -192,5 +193,166 @@ describe("categoriesRepo.list subcategories", () => {
     expect((await categoriesRepo.list(otherId))[0].subcategories.map((s) => s.name)).toEqual([
       "Segredo",
     ]);
+  });
+});
+
+describe("categoriesRepo.replaceSet subcategories", () => {
+  const names = (c: { subcategories: { name: string }[] }) => c.subcategories.map((s) => s.name);
+
+  /** BUDGET with the given subcategory names on "Conforto" (index 1). */
+  const withConforto = (...subs: { id?: string; name: string }[]) =>
+    BUDGET.map((c) => ({ ...c, subcategories: c.name === "Conforto" ? subs : [] }));
+
+  async function seed(userId: string, ...subs: string[]) {
+    await categoriesRepo.replaceSet(userId, withConforto(...subs.map((name) => ({ name }))));
+    return categoriesRepo.list(userId);
+  }
+
+  async function addSubExpenses(userId: string, categoryId: string, subId: string, n: number) {
+    for (let i = 0; i < n; i++) {
+      await db.insert(transaction).values({
+        id: randomUUID(),
+        userId,
+        kind: "expense",
+        amountCents: 1000,
+        date: "2026-10-04",
+        categoryId,
+        subcategoryId: subId,
+      });
+    }
+  }
+
+  it("creates a new category with subcategories in the same save", async () => {
+    const userId = await insertTestUser();
+    const result = await categoriesRepo.replaceSet(userId, [
+      { name: "Conforto", percentBp: 10000, color: 1, subcategories: [{ name: "Restaurante" }, { name: "Streaming" }] },
+    ]);
+    expect(result).toEqual({ ok: true });
+    const [conforto] = await categoriesRepo.list(userId);
+    expect(names(conforto)).toEqual(["Restaurante", "Streaming"]);
+  });
+
+  it("renames a subcategory keeping its id and its expenses", async () => {
+    const userId = await insertTestUser();
+    const saved = await seed(userId, "Restaurante");
+    const conforto = saved[1];
+    const sub = conforto.subcategories[0];
+    await addSubExpenses(userId, conforto.id, sub.id, 2);
+
+    const next = saved.map((c) => (c.id === conforto.id ? { ...c, subcategories: [{ id: sub.id, name: "Almoço" }] } : c));
+    expect(await categoriesRepo.replaceSet(userId, next)).toEqual({ ok: true });
+
+    const [after] = (await categoriesRepo.list(userId))[1].subcategories;
+    expect(after).toEqual({ id: sub.id, name: "Almoço" });
+    expect(await db.$count(transaction, eq(transaction.subcategoryId, sub.id))).toBe(2);
+  });
+
+  it("removes a subcategory without expenses", async () => {
+    const userId = await insertTestUser();
+    const saved = await seed(userId, "Restaurante", "Streaming");
+    const [keep] = saved[1].subcategories;
+    const next = saved.map((c) => (c.name === "Conforto" ? { ...c, subcategories: [keep] } : c));
+
+    expect(await categoriesRepo.replaceSet(userId, next)).toEqual({ ok: true });
+    expect(names((await categoriesRepo.list(userId))[1])).toEqual(["Restaurante"]);
+  });
+
+  it("blocks removing a subcategory with expenses and changes nothing in the set", async () => {
+    const userId = await insertTestUser();
+    const saved = await seed(userId, "Restaurante", "Streaming");
+    const [restaurante] = saved[1].subcategories;
+    await addSubExpenses(userId, saved[1].id, restaurante.id, 3);
+
+    // Also rename another category and drop the other subcategory: none of it may persist.
+    const next = saved.map((c) =>
+      c.name === "Conforto"
+        ? { ...c, subcategories: [saved[1].subcategories[1]] }
+        : c.name === "Moradia"
+          ? { ...c, name: "Casa" }
+          : c,
+    );
+    const result = await categoriesRepo.replaceSet(userId, next);
+
+    const message = "Esta subcategoria tem 3 gastos e não pode ser excluída";
+    expect(result).toEqual({ ok: false, error: message, fieldErrors: { "1.subcategories": message } });
+    expect(await categoriesRepo.list(userId)).toEqual(saved);
+  });
+
+  it("removes the subcategories along with a category that has no expenses", async () => {
+    const userId = await insertTestUser();
+    const saved = await seed(userId, "Restaurante", "Streaming");
+    const next = saved
+      .filter((c) => c.name !== "Conforto")
+      .map((c) => (c.name === "Liberdade" ? { ...c, percentBp: 5000 } : c));
+
+    expect(await categoriesRepo.replaceSet(userId, next)).toEqual({ ok: true });
+    expect(await db.$count(subcategory)).toBe(0);
+  });
+
+  it("keeps the category message when removing a category whose subcategory has expenses", async () => {
+    const userId = await insertTestUser();
+    const saved = await seed(userId, "Restaurante");
+    await addSubExpenses(userId, saved[1].id, saved[1].subcategories[0].id, 2);
+    const next = saved
+      .filter((c) => c.name !== "Conforto")
+      .map((c) => (c.name === "Liberdade" ? { ...c, percentBp: 5000 } : c));
+
+    expect(await categoriesRepo.replaceSet(userId, next)).toEqual({
+      ok: false,
+      error: "Esta categoria tem 2 gastos e não pode ser excluída",
+    });
+    expect(await categoriesRepo.list(userId)).toEqual(saved);
+  });
+
+  it("rejects a subcategory id from another category", async () => {
+    const userId = await insertTestUser();
+    const saved = await seed(userId, "Restaurante");
+    const foreign = saved[1].subcategories[0];
+    const next = saved.map((c) => (c.name === "Moradia" ? { ...c, subcategories: [foreign] } : c));
+
+    expect(await categoriesRepo.replaceSet(userId, next)).toEqual({
+      ok: false,
+      error: "Subcategoria não encontrada",
+    });
+    expect(await categoriesRepo.list(userId)).toEqual(saved);
+  });
+
+  it("rejects a subcategory id from another user", async () => {
+    const userId = await insertTestUser();
+    const otherId = await insertTestUser();
+    await seed(userId);
+    const otherSaved = await seed(otherId, "Segredo");
+    const foreign = otherSaved[1].subcategories[0];
+    const mine = await categoriesRepo.list(userId);
+    const next = mine.map((c) => (c.name === "Conforto" ? { ...c, subcategories: [foreign] } : c));
+
+    expect(await categoriesRepo.replaceSet(userId, next)).toEqual({
+      ok: false,
+      error: "Subcategoria não encontrada",
+    });
+    expect(names((await categoriesRepo.list(otherId))[1])).toEqual(["Segredo"]);
+  });
+
+  it("accepts removing 'Restaurante' and creating 'restaurante' in the same save", async () => {
+    const userId = await insertTestUser();
+    const saved = await seed(userId, "Restaurante");
+    const next = saved.map((c) =>
+      c.name === "Conforto" ? { ...c, subcategories: [{ name: "restaurante" }] } : c,
+    );
+
+    expect(await categoriesRepo.replaceSet(userId, next)).toEqual({ ok: true });
+    const [created] = (await categoriesRepo.list(userId))[1].subcategories;
+    expect(created.name).toBe("restaurante");
+    expect(created.id).not.toBe(saved[1].subcategories[0].id);
+  });
+
+  it("accepts a rename that only changes the case", async () => {
+    const userId = await insertTestUser();
+    const saved = await seed(userId, "restaurante");
+    const sub = saved[1].subcategories[0];
+    const next = saved.map((c) => (c.name === "Conforto" ? { ...c, subcategories: [{ id: sub.id, name: "Restaurante" }] } : c));
+
+    expect(await categoriesRepo.replaceSet(userId, next)).toEqual({ ok: true });
+    expect((await categoriesRepo.list(userId))[1].subcategories).toEqual([{ id: sub.id, name: "Restaurante" }]);
   });
 });
