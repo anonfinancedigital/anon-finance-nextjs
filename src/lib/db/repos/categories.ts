@@ -1,7 +1,12 @@
 import { and, asc, count, eq, inArray } from "drizzle-orm";
-import { type Category, type CategorySetResult, validateCategorySet } from "@/lib/domain/budget";
+import {
+  type Category,
+  type CategorySetResult,
+  type Subcategory,
+  validateCategorySet,
+} from "@/lib/domain/budget";
 import { db } from "../client";
-import { category, transaction } from "../schema";
+import { category, subcategory, transaction } from "../schema";
 
 export type CategoryItem = { id?: string; name: string; percentBp: number; color: number };
 
@@ -16,13 +21,24 @@ function expensesMessage(n: number) {
   return `Esta categoria tem ${n} ${n === 1 ? "gasto" : "gastos"} e não pode ser excluída`;
 }
 
-/** The user's categories in creation order. */
+/** The user's categories in creation order, each with its subcategories in creation order. */
 async function list(userId: string): Promise<Category[]> {
-  return db
+  const categories = await db
     .select(columns)
     .from(category)
     .where(eq(category.userId, userId))
     .orderBy(asc(category.createdAt), asc(category.id));
+  const subcategories = await db
+    .select({ id: subcategory.id, categoryId: subcategory.categoryId, name: subcategory.name })
+    .from(subcategory)
+    .where(eq(subcategory.userId, userId))
+    .orderBy(asc(subcategory.createdAt), asc(subcategory.id));
+
+  const byCategory = new Map<string, Subcategory[]>();
+  for (const { id, categoryId, name } of subcategories) {
+    byCategory.set(categoryId, [...(byCategory.get(categoryId) ?? []), { id, name }]);
+  }
+  return categories.map((c) => ({ ...c, subcategories: byCategory.get(c.id) ?? [] }));
 }
 
 /**

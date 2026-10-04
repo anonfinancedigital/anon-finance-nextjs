@@ -2,7 +2,7 @@ import { randomUUID } from "node:crypto";
 import { describe, expect, it } from "vitest";
 import { insertTestUser, setupTestDb } from "@/test/db";
 import { db } from "../client";
-import { transaction } from "../schema";
+import { subcategory, transaction } from "../schema";
 import { categoriesRepo } from "./categories";
 
 setupTestDb();
@@ -146,5 +146,51 @@ describe("categoriesRepo.countExpenses", () => {
 
     expect(await categoriesRepo.countExpenses(moradia.id)).toBe(3);
     expect(await categoriesRepo.countExpenses(conforto.id)).toBe(0);
+  });
+});
+
+describe("categoriesRepo.list subcategories", () => {
+  async function seedSubcategories(userId: string, categoryId: string, names: string[]) {
+    for (const name of names) {
+      await db.insert(subcategory).values({ userId, categoryId, name });
+    }
+  }
+
+  it("lists each category's subcategories in creation order", async () => {
+    const userId = await insertTestUser();
+    await categoriesRepo.replaceSet(userId, BUDGET);
+    const [moradia, conforto] = await categoriesRepo.list(userId);
+    await seedSubcategories(userId, conforto.id, ["Streaming", "Restaurante", "Cinema"]);
+    await seedSubcategories(userId, moradia.id, ["Aluguel"]);
+
+    const listed = await categoriesRepo.list(userId);
+    expect(listed[0].subcategories.map((s) => s.name)).toEqual(["Aluguel"]);
+    expect(listed[1].subcategories.map((s) => s.name)).toEqual([
+      "Streaming",
+      "Restaurante",
+      "Cinema",
+    ]);
+  });
+
+  it("returns an empty array for a category without subcategories", async () => {
+    const userId = await insertTestUser();
+    await categoriesRepo.replaceSet(userId, BUDGET);
+    const listed = await categoriesRepo.list(userId);
+    expect(listed.map((c) => c.subcategories)).toEqual([[], [], [], [], []]);
+  });
+
+  it("does not leak the subcategories of another user", async () => {
+    const userId = await insertTestUser();
+    const otherId = await insertTestUser();
+    await categoriesRepo.replaceSet(userId, BUDGET);
+    await categoriesRepo.replaceSet(otherId, [{ name: "Tudo", percentBp: 10000, color: 7 }]);
+    const [other] = await categoriesRepo.list(otherId);
+    await seedSubcategories(otherId, other.id, ["Segredo"]);
+
+    const mine = await categoriesRepo.list(userId);
+    expect(mine.flatMap((c) => c.subcategories)).toEqual([]);
+    expect((await categoriesRepo.list(otherId))[0].subcategories.map((s) => s.name)).toEqual([
+      "Segredo",
+    ]);
   });
 });

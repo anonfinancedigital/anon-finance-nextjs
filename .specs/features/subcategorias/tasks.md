@@ -157,10 +157,10 @@ T15 → T16 → T17
 
 **Done when**:
 
-- [ ] Tipos `Subcategory` e `Category.subcategories` exportados de `src/lib/domain/budget.ts`
-- [ ] `list` devolve subcategorias na ordem de criação e só as do usuário (outro usuário com subcategorias não vaza)
-- [ ] Categoria sem subcategorias vem com `[]`
-- [ ] Gate full passa; ≥ 3 testes novos em `categories.int.test.ts`; nenhum teste existente removido
+- [x] Tipos `Subcategory` e `Category.subcategories` exportados de `src/lib/domain/budget.ts`
+- [x] `list` devolve subcategorias na ordem de criação e só as do usuário (outro usuário com subcategorias não vaza)
+- [x] Categoria sem subcategorias vem com `[]`
+- [x] Gate full passa; ≥ 3 testes novos em `categories.int.test.ts`; nenhum teste existente removido
 
 **Tests**: integration
 **Gate**: full
