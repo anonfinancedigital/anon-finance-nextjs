@@ -267,6 +267,84 @@ describe("transactionsRepo.monthTotals", () => {
   });
 });
 
+describe("transactionsRepo.monthTotals recurrence", () => {
+  const month = (year: number, m: number) => monthRange({ year, month: m });
+  const spentIn = async (range: ReturnType<typeof monthRange>) =>
+    (await transactionsRepo.monthTotals(userId, range)).spentByCategory.get(conforto) ?? 0;
+  const recurringExpense = (date: string, amountCents: number, recurrenceEndMonth?: string) => ({
+    ...expense(date, amountCents),
+    recurrence: recurrenceEndMonth ? ("until" as const) : ("forever" as const),
+    recurrenceEndMonth: recurrenceEndMonth ?? null,
+  });
+
+  it("sums a 'forever' expense of 15/10 in Oct, Nov and Dec/2026 but not in Sep/2026", async () => {
+    await transactionsRepo.create(userId, recurringExpense("2026-10-15", 10000));
+
+    expect(await spentIn(month(2026, 9))).toBe(0);
+    expect(await spentIn(month(2026, 10))).toBe(10000);
+    expect(await spentIn(month(2026, 11))).toBe(10000);
+    expect(await spentIn(month(2026, 12))).toBe(10000);
+    expect(await spentIn(month(2030, 6))).toBe(10000);
+  });
+
+  it("sums an 'until' expense through the final month, inclusive, and not after", async () => {
+    await transactionsRepo.create(userId, recurringExpense("2026-10-15", 10000, "2026-12"));
+
+    expect(await spentIn(month(2026, 12))).toBe(10000);
+    expect(await spentIn(month(2027, 1))).toBe(0);
+  });
+
+  it("adds a recurring income to the income of each applicable month", async () => {
+    await transactionsRepo.create(userId, {
+      id: randomUUID(),
+      kind: "income",
+      amountCents: 500000,
+      date: "2026-10-05",
+      recurrence: "forever",
+    });
+    await transactionsRepo.create(userId, {
+      id: randomUUID(),
+      kind: "income",
+      amountCents: 1000,
+      date: "2026-11-20",
+    });
+
+    expect((await transactionsRepo.monthTotals(userId, month(2026, 9))).incomeCents).toBe(0);
+    expect((await transactionsRepo.monthTotals(userId, month(2026, 10))).incomeCents).toBe(500000);
+    expect((await transactionsRepo.monthTotals(userId, month(2026, 11))).incomeCents).toBe(501000);
+  });
+
+  it("sums a recurring expense with the single expenses of the same month and category", async () => {
+    await transactionsRepo.create(userId, recurringExpense("2026-10-15", 10000));
+    await transactionsRepo.create(userId, expense("2026-11-02", 2500));
+    await transactionsRepo.create(userId, expense("2026-10-02", 700));
+
+    expect(await spentIn(month(2026, 11))).toBe(12500);
+    expect(await spentIn(month(2026, 10))).toBe(10700);
+  });
+
+  it("leaves recurring transactions of other users out", async () => {
+    const otherId = await insertTestUser();
+    await categoriesRepo.replaceSet(otherId, [{ name: "Tudo", percentBp: 10000, color: 1 }]);
+    const [tudo] = await categoriesRepo.list(otherId);
+    await transactionsRepo.create(otherId, {
+      ...recurringExpense("2026-10-15", 9000),
+      categoryId: tudo.id,
+    });
+    await transactionsRepo.create(otherId, {
+      id: randomUUID(),
+      kind: "income",
+      amountCents: 700000,
+      date: "2026-10-01",
+      recurrence: "forever",
+    });
+
+    const totals = await transactionsRepo.monthTotals(userId, month(2026, 11));
+    expect(totals.incomeCents).toBe(0);
+    expect(totals.spentByCategory).toEqual(new Map());
+  });
+});
+
 describe("transactionsRepo subcategory", () => {
   let restaurante: string;
   let streaming: string;

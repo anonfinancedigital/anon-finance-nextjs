@@ -281,13 +281,13 @@ T13 → T15
 
 **Done when**:
 
-- [ ] `transactions.int.test.ts`: gasto "Sempre" de 15/10 soma na categoria em out, nov e dez/2026 e não soma em set/2026 (AC 5 e 8 dos totais)
-- [ ] `transactions.int.test.ts`: gasto "Até mês/ano" soma até o mês final inclusive e não soma depois (AC 6 e 7)
-- [ ] `transactions.int.test.ts`: ganho recorrente entra em `incomeCents` dos meses aplicáveis (AC 10)
-- [ ] `transactions.int.test.ts`: gasto recorrente soma com gasto avulso do mesmo mês e categoria (AC 9)
-- [ ] `transactions.int.test.ts`: recorrente de outro usuário não entra nos totais
-- [ ] Os testes antigos de `monthTotals` continuam passando
-- [ ] Gate full passa; ≥ 5 testes novos
+- [x] `transactions.int.test.ts`: gasto "Sempre" de 15/10 soma na categoria em out, nov e dez/2026 e não soma em set/2026 (AC 5 e 8 dos totais)
+- [x] `transactions.int.test.ts`: gasto "Até mês/ano" soma até o mês final inclusive e não soma depois (AC 6 e 7)
+- [x] `transactions.int.test.ts`: ganho recorrente entra em `incomeCents` dos meses aplicáveis (AC 10)
+- [x] `transactions.int.test.ts`: gasto recorrente soma com gasto avulso do mesmo mês e categoria (AC 9)
+- [x] `transactions.int.test.ts`: recorrente de outro usuário não entra nos totais
+- [x] Os testes antigos de `monthTotals` continuam passando
+- [x] Gate full passa; ≥ 5 testes novos
 
 **Tests**: integration
 **Gate**: full

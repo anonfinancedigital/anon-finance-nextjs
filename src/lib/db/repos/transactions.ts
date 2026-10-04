@@ -1,4 +1,4 @@
-import { and, desc, eq, gte, lt, sql } from "drizzle-orm";
+import { and, desc, eq, gte, isNull, lt, not, or, sql } from "drizzle-orm";
 import { db } from "../client";
 import { transaction } from "../schema";
 
@@ -52,6 +52,27 @@ const inMonth = (userId: string, range: MonthRange) =>
     eq(transaction.userId, userId),
     gte(transaction.date, range.start),
     lt(transaction.date, range.endExclusive),
+  );
+
+/**
+ * Rows with an occurrence in the month: single rows dated in it, and recurring segments that
+ * started by the month's end and have not ended before its start (AD-004).
+ */
+const applicableInMonth = (userId: string, range: MonthRange) =>
+  and(
+    eq(transaction.userId, userId),
+    or(
+      and(
+        not(transaction.recurring),
+        gte(transaction.date, range.start),
+        lt(transaction.date, range.endExclusive),
+      ),
+      and(
+        transaction.recurring,
+        lt(transaction.date, range.endExclusive),
+        or(isNull(transaction.recurrenceEnd), gte(transaction.recurrenceEnd, range.start)),
+      ),
+    ),
   );
 
 /** Recurrence columns of a new series starting at `tx.date`, whose id is `id`. */
@@ -119,7 +140,7 @@ async function monthTotals(userId: string, range: MonthRange): Promise<MonthTota
       cents: sql<number>`sum(${transaction.amountCents})`.mapWith(Number),
     })
     .from(transaction)
-    .where(inMonth(userId, range))
+    .where(applicableInMonth(userId, range))
     .groupBy(transaction.kind, transaction.categoryId, transaction.subcategoryId);
 
   const totals: MonthTotals = {
