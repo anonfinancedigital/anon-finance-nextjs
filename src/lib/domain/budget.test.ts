@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { allocateCents, buildMonthlySummary, validateCategorySet } from "./budget";
+import { allocateCents, buildMonthlySummary, shareBp, validateCategorySet } from "./budget";
 
 const cats = (...bps: number[]) => bps.map((bp, i) => ({ name: `Categoria ${i + 1}`, bp }));
 
@@ -240,5 +240,128 @@ describe("validateCategorySet subcategories", () => {
       ok: false,
       error: "A soma dos percentuais deve ser 100% (atual: 90%)",
     });
+  });
+});
+
+describe("shareBp", () => {
+  it("rounds part × 10000 / total to basis points", () => {
+    expect(shareBp(30000, 50000)).toBe(6000);
+    expect(shareBp(1, 3)).toBe(3333);
+    expect(shareBp(2, 3)).toBe(6667);
+  });
+
+  it("is 0 when the total is 0", () => {
+    expect(shareBp(0, 0)).toBe(0);
+  });
+});
+
+describe("buildMonthlySummary breakdown", () => {
+  const sub = (id: string, name: string) => ({ id, name });
+  const conforto = {
+    id: "c1",
+    name: "Conforto",
+    percentBp: 3000,
+    color: 1,
+    subcategories: [sub("s1", "Restaurante"), sub("s2", "Streaming"), sub("s3", "Cinema")],
+  };
+
+  const breakdownOf = (spent: [string | null, number][], total?: number) => {
+    const spentCents = total ?? spent.reduce((sum, [, cents]) => sum + cents, 0);
+    const [row] = buildMonthlySummary({
+      categories: [conforto],
+      incomeCents: 500000,
+      spentByCategory: new Map([["c1", spentCents]]),
+      spentBySubcategory: new Map([["c1", new Map(spent)]]),
+    }).rows;
+    return row.breakdown;
+  };
+
+  it("details Restaurante 300, Streaming 100 and Sem subcategoria 100 of a 500 spend", () => {
+    expect(
+      breakdownOf([
+        ["s1", 30000],
+        ["s2", 10000],
+        [null, 10000],
+      ]),
+    ).toEqual([
+      { subcategoryId: "s1", name: "Restaurante", spentCents: 30000, shareBp: 6000 },
+      { subcategoryId: "s2", name: "Streaming", spentCents: 10000, shareBp: 2000 },
+      { subcategoryId: null, name: "Sem subcategoria", spentCents: 10000, shareBp: 2000 },
+    ]);
+  });
+
+  it("lists only lines with spending above zero", () => {
+    const lines = breakdownOf([
+      ["s1", 5000],
+      ["s2", 0],
+    ]);
+    expect(lines.map((l) => l.subcategoryId)).toEqual(["s1"]);
+  });
+
+  it("orders by spending descending, whichever line is largest", () => {
+    const lines = breakdownOf([
+      ["s1", 1000],
+      ["s3", 3000],
+      [null, 5000],
+      ["s2", 2000],
+    ]);
+    expect(lines.map((l) => l.subcategoryId)).toEqual([null, "s3", "s2", "s1"]);
+  });
+
+  it("breaks ties by creation order with Sem subcategoria last", () => {
+    const lines = breakdownOf([
+      [null, 1000],
+      ["s3", 1000],
+      ["s1", 1000],
+    ]);
+    expect(lines.map((l) => l.subcategoryId)).toEqual(["s1", "s3", null]);
+  });
+
+  it("sums the breakdown to the category spending even when shares round", () => {
+    const lines = breakdownOf([
+      ["s1", 1],
+      ["s2", 1],
+      [null, 1],
+    ]);
+    expect(lines.reduce((sum, l) => sum + l.spentCents, 0)).toBe(3);
+    expect(lines.map((l) => l.shareBp)).toEqual([3333, 3333, 3333]);
+  });
+
+  it("keeps a line that rounds to 0 bp when its spending is above zero", () => {
+    const lines = breakdownOf([
+      ["s1", 1],
+      ["s2", 99999],
+    ]);
+    expect(lines.find((l) => l.subcategoryId === "s1")).toMatchObject({
+      spentCents: 1,
+      shareBp: 0,
+    });
+  });
+
+  it("is empty when no subcategory spending is given", () => {
+    const [row] = buildMonthlySummary({
+      categories: [conforto],
+      incomeCents: 500000,
+      spentByCategory: new Map([["c1", 5000]]),
+    }).rows;
+    expect(row.breakdown).toEqual([]);
+  });
+
+  it("leaves target, remaining and overspending untouched by the breakdown", () => {
+    const base = {
+      categories: [conforto],
+      incomeCents: 500000,
+      spentByCategory: new Map([["c1", 160000]]),
+    };
+    const withSubs = buildMonthlySummary({
+      ...base,
+      spentBySubcategory: new Map([["c1", new Map([["s1", 160000]])]]),
+    });
+    const { breakdown, ...rowWithSubs } = withSubs.rows[0];
+    const { breakdown: none, ...rowWithout } = buildMonthlySummary(base).rows[0];
+    expect(breakdown).toHaveLength(1);
+    expect(none).toEqual([]);
+    expect(rowWithSubs).toEqual(rowWithout);
+    expect(rowWithSubs).toMatchObject({ targetCents: 150000, overspentCents: 10000 });
   });
 });

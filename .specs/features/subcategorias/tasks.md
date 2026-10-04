@@ -241,12 +241,12 @@ T15 → T16 → T17
 
 **Done when**:
 
-- [ ] Exemplo do Independent Test: Restaurante 30000 (6000 bp), Streaming 10000 (2000 bp), Sem subcategoria 10000 (2000 bp), soma 50000
-- [ ] Só linhas com gasto > 0; ordem decrescente de gasto; empate por ordem de criação e "Sem subcategoria" por último
-- [ ] Soma do `breakdown` === `spentCents` da categoria (SUB-07 AC 5), inclusive com arredondamento de participação
-- [ ] Participação que arredonda para 0 com gasto > 0 gera linha com `shareBp` 0 (edge case)
-- [ ] Meta, restante, estouro e `consumedPct` não mudam (SUB-07 AC 7): testes atuais de `buildMonthlySummary` passam sem alteração
-- [ ] Gate quick passa; ≥ 7 testes novos
+- [x] Exemplo do Independent Test: Restaurante 30000 (6000 bp), Streaming 10000 (2000 bp), Sem subcategoria 10000 (2000 bp), soma 50000
+- [x] Só linhas com gasto > 0; ordem decrescente de gasto; empate por ordem de criação e "Sem subcategoria" por último
+- [x] Soma do `breakdown` === `spentCents` da categoria (SUB-07 AC 5), inclusive com arredondamento de participação
+- [x] Participação que arredonda para 0 com gasto > 0 gera linha com `shareBp` 0 (edge case)
+- [x] Meta, restante, estouro e `consumedPct` não mudam (SUB-07 AC 7): testes atuais de `buildMonthlySummary` passam sem alteração
+- [x] Gate quick passa; ≥ 7 testes novos
 
 **Tests**: unit
 **Gate**: quick

@@ -80,6 +80,22 @@ export type Category = {
   subcategories: Subcategory[];
 };
 
+export type SubcategorySpend = {
+  /** `null` is the "Sem subcategoria" line. */
+  subcategoryId: string | null;
+  name: string;
+  spentCents: number;
+  /** Share of the category's spending, in basis points: round(spent × 10000 / category spent). */
+  shareBp: number;
+};
+
+export const NO_SUBCATEGORY_NAME = "Sem subcategoria";
+
+/** round(part × 10000 / total) in basis points; 0 when total is 0. */
+export function shareBp(partCents: number, totalCents: number): number {
+  return totalCents > 0 ? Math.round((partCents * TOTAL_BP) / totalCents) : 0;
+}
+
 export type CategorySummary = Category & {
   targetCents: number;
   spentCents: number;
@@ -88,6 +104,11 @@ export type CategorySummary = Category & {
   overspentCents: number;
   /** Share of the target already spent, in whole percent (may exceed 100). */
   consumedPct: number;
+  /**
+   * Spending by subcategory, only lines with spending, highest first (ties: creation order,
+   * "Sem subcategoria" last). Sums to `spentCents`. Empty without `spentBySubcategory`.
+   */
+  breakdown: SubcategorySpend[];
 };
 
 export type MonthlySummary = {
@@ -97,13 +118,34 @@ export type MonthlySummary = {
   balanceCents: number;
 };
 
+function buildBreakdown(
+  cat: Category,
+  categorySpentCents: number,
+  spent: Map<string | null, number> | undefined,
+): SubcategorySpend[] {
+  if (!spent) return [];
+  const line = (subcategoryId: string | null, name: string): SubcategorySpend[] => {
+    const spentCents = spent.get(subcategoryId) ?? 0;
+    return spentCents > 0
+      ? [{ subcategoryId, name, spentCents, shareBp: shareBp(spentCents, categorySpentCents) }]
+      : [];
+  };
+  const lines = [
+    ...cat.subcategories.flatMap((sub) => line(sub.id, sub.name)),
+    ...line(null, NO_SUBCATEGORY_NAME),
+  ];
+  // Array.sort is stable: equal spending keeps creation order, "Sem subcategoria" last.
+  return lines.sort((a, b) => b.spentCents - a.spentCents);
+}
+
 /** Target per category = round(income × bp / 10000); overspent when spent > target. */
 export function buildMonthlySummary(input: {
   categories: Category[];
   incomeCents: number;
   spentByCategory: Map<string, number>;
+  spentBySubcategory?: Map<string, Map<string | null, number>>;
 }): MonthlySummary {
-  const { categories, incomeCents, spentByCategory } = input;
+  const { categories, incomeCents, spentByCategory, spentBySubcategory } = input;
 
   const rows = categories.map((cat): CategorySummary => {
     const targetCents = allocateCents(incomeCents, cat.percentBp);
@@ -118,6 +160,7 @@ export function buildMonthlySummary(input: {
       overspent: spentCents > targetCents,
       overspentCents: Math.max(0, spentCents - targetCents),
       consumedPct,
+      breakdown: buildBreakdown(cat, spentCents, spentBySubcategory?.get(cat.id)),
     };
   });
 
