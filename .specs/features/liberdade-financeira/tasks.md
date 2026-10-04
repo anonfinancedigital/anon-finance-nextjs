@@ -290,11 +290,11 @@ T7 → T8 → T9 → T10 → T11
 
 **Done when**:
 
-- [ ] Barra limitada a 100 com o texto do percentual real ("120,0%")
-- [ ] Aporte formatado em BRL; "Prazo encerrado" quando `monthlyCents` é `null`
-- [ ] Prazo exibido como "X anos e Y meses" (singular e zero tratados)
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
-- [ ] Test count: nenhum teste removido; suíte existente verde
+- [x] Barra limitada a 100 com o texto do percentual real ("120,0%")
+- [x] Aporte formatado em BRL; "Prazo encerrado" quando `monthlyCents` é `null`
+- [x] Prazo exibido como "X anos e Y meses" (singular e zero tratados)
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
+- [x] Test count: nenhum teste removido; suíte existente verde
 
 **Tests**: none
 **Gate**: build
