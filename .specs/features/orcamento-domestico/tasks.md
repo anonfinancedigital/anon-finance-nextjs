@@ -713,10 +713,10 @@ T25 → T26 → T27 → T28 → T29 → T30 → T31
 
 **Done when**:
 
-- [ ] Editar altera os campos e revalida; excluir remove e revalida
-- [ ] `id` inexistente → erro "Transação não encontrada"
-- [ ] Sem sessão → `UNAUTHORIZED`; dados inválidos na edição → `fieldErrors`
-- [ ] Gate full passa; ≥ 5 testes
+- [x] Editar altera os campos e revalida; excluir remove e revalida
+- [x] `id` inexistente → erro "Transação não encontrada"
+- [x] Sem sessão → `UNAUTHORIZED`; dados inválidos na edição → `fieldErrors`
+- [x] Gate full passa; ≥ 5 testes
 
 **Tests**: integration
 **Gate**: full

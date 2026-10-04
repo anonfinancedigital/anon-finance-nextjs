@@ -5,7 +5,7 @@ import { transactionsRepo } from "@/lib/db/repos/transactions";
 import { category, transaction } from "@/lib/db/schema";
 import { createSignedInUser } from "@/test/auth";
 import { insertTestUser, setupTestDb } from "@/test/db";
-import { createTransaction } from "./transactions";
+import { createTransaction, deleteTransaction, updateTransaction } from "./transactions";
 
 const request = vi.hoisted(() => ({ headers: new Headers() }));
 
@@ -155,5 +155,173 @@ describe("createTransaction", () => {
     });
     expect(consoleError).toHaveBeenCalled();
     expect(revalidatePath).not.toHaveBeenCalled();
+  });
+});
+
+describe("updateTransaction", () => {
+  it("updates date, amount, category and description and revalidates /", async () => {
+    const original = expense();
+    await createTransaction(original);
+    const [other] = await db
+      .insert(category)
+      .values({ userId, name: "Metas", percentBp: 1 })
+      .returning({ id: category.id });
+    vi.mocked(revalidatePath).mockClear();
+
+    const edited = {
+      ...original,
+      amount: "350,50",
+      date: "2026-11-02",
+      categoryId: other.id,
+      description: "Curso",
+    };
+    expect(await updateTransaction(edited)).toEqual({ ok: true });
+
+    expect(await transactionsRepo.listByMonth(userId, OCTOBER)).toEqual([]);
+    const november = { start: "2026-11-01", endExclusive: "2026-12-01" };
+    expect(await transactionsRepo.listByMonth(userId, november)).toMatchObject([
+      {
+        id: original.id,
+        amountCents: 35050,
+        date: "2026-11-02",
+        categoryId: other.id,
+        description: "Curso",
+      },
+    ]);
+    const totals = await transactionsRepo.monthTotals(userId, november);
+    expect(totals.spentByCategory.get(other.id)).toBe(35050);
+    expect(revalidatePath).toHaveBeenCalledWith("/");
+  });
+
+  it("keeps the last of two edits received in sequence", async () => {
+    const original = expense();
+    await createTransaction(original);
+
+    await updateTransaction({ ...original, amount: "10,00" });
+    await updateTransaction({ ...original, amount: "20,00" });
+
+    expect(await transactionsRepo.listByMonth(userId, OCTOBER)).toMatchObject([
+      { id: original.id, amountCents: 2000 },
+    ]);
+  });
+
+  it("returns field errors for invalid data and keeps the transaction unchanged", async () => {
+    const original = expense();
+    await createTransaction(original);
+    vi.mocked(revalidatePath).mockClear();
+
+    const result = await updateTransaction({ ...original, amount: "0", date: "2026-02-29" });
+
+    expect(result).toMatchObject({
+      ok: false,
+      fieldErrors: { amount: "O valor deve ser maior que zero", date: "Data inválida" },
+    });
+    expect(await transactionsRepo.listByMonth(userId, OCTOBER)).toMatchObject([
+      { id: original.id, amountCents: 20000, date: "2026-10-15" },
+    ]);
+    expect(revalidatePath).not.toHaveBeenCalled();
+  });
+
+  it("answers 'Transação não encontrada' for an unknown id", async () => {
+    expect(await updateTransaction(expense())).toEqual({
+      ok: false,
+      error: "Transação não encontrada",
+    });
+    expect(await db.$count(transaction)).toBe(0);
+  });
+
+  it("does not touch another user's transaction", async () => {
+    const owner = await insertTestUser();
+    const id = randomUUID();
+    await transactionsRepo.create(owner, { id, kind: "income", amountCents: 100, date: "2026-10-01" });
+
+    expect(await updateTransaction({ ...income(), id, amount: "999,00" })).toEqual({
+      ok: false,
+      error: "Transação não encontrada",
+    });
+    expect(await transactionsRepo.listByMonth(owner, OCTOBER)).toMatchObject([
+      { id, amountCents: 100 },
+    ]);
+  });
+
+  it("returns UNAUTHORIZED without a session and changes nothing", async () => {
+    const original = expense();
+    await createTransaction(original);
+    request.headers = new Headers();
+
+    expect(await updateTransaction({ ...original, amount: "1,00" })).toEqual({
+      ok: false,
+      error: "UNAUTHORIZED",
+    });
+    expect(await transactionsRepo.listByMonth(userId, OCTOBER)).toMatchObject([
+      { amountCents: 20000 },
+    ]);
+  });
+
+  it("returns the generic message when the database fails", async () => {
+    const original = expense();
+    await createTransaction(original);
+    vi.spyOn(transactionsRepo, "update").mockRejectedValueOnce(new Error("connection refused"));
+    const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
+
+    expect(await updateTransaction(original)).toEqual({
+      ok: false,
+      error: "Não foi possível salvar. Tente novamente",
+    });
+    expect(consoleError).toHaveBeenCalled();
+  });
+});
+
+describe("deleteTransaction", () => {
+  it("removes the transaction, updates the month totals and revalidates /", async () => {
+    const salary = income();
+    await createTransaction(salary);
+    vi.mocked(revalidatePath).mockClear();
+
+    expect(await deleteTransaction(salary.id)).toEqual({ ok: true });
+
+    expect(await db.$count(transaction)).toBe(0);
+    expect((await transactionsRepo.monthTotals(userId, OCTOBER)).incomeCents).toBe(0);
+    expect(revalidatePath).toHaveBeenCalledWith("/");
+  });
+
+  it("answers 'Transação não encontrada' for an unknown or malformed id", async () => {
+    expect(await deleteTransaction(randomUUID())).toEqual({
+      ok: false,
+      error: "Transação não encontrada",
+    });
+    expect(await deleteTransaction("nao-e-um-uuid")).toEqual({
+      ok: false,
+      error: "Transação não encontrada",
+    });
+  });
+
+  it("does not delete another user's transaction", async () => {
+    const owner = await insertTestUser();
+    const id = randomUUID();
+    await transactionsRepo.create(owner, { id, kind: "income", amountCents: 100, date: "2026-10-01" });
+
+    expect(await deleteTransaction(id)).toEqual({ ok: false, error: "Transação não encontrada" });
+    expect(await db.$count(transaction)).toBe(1);
+  });
+
+  it("returns UNAUTHORIZED without a session and deletes nothing", async () => {
+    const salary = income();
+    await createTransaction(salary);
+    request.headers = new Headers();
+
+    expect(await deleteTransaction(salary.id)).toEqual({ ok: false, error: "UNAUTHORIZED" });
+    expect(await db.$count(transaction)).toBe(1);
+  });
+
+  it("returns the generic message when the database fails", async () => {
+    vi.spyOn(transactionsRepo, "delete").mockRejectedValueOnce(new Error("connection refused"));
+    const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
+
+    expect(await deleteTransaction(randomUUID())).toEqual({
+      ok: false,
+      error: "Não foi possível salvar. Tente novamente",
+    });
+    expect(consoleError).toHaveBeenCalled();
   });
 });
