@@ -115,12 +115,12 @@ T7 → T8 → T9 → T10 → T11
 
 **Done when**:
 
-- [ ] `targetCents(1_000_000)` = 150_000_000 (R$ 10.000,00 → R$ 1.500.000,00)
-- [ ] `progressBp(15_000_000, 150_000_000)` = 1000 e `progressBp(0, alvo)` = 0; valor guardado acima do alvo devolve acima de 10000 (sem teto)
-- [ ] `ageOn` conta anos completos, antes e depois do aniversário, e trata nascimento em 29/02 como 28/02 em ano não bissexto
-- [ ] `monthsUntilRetirement` conta meses de calendário (aniversário no mês corrente = 0; já passado = 0, nunca negativo)
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
-- [ ] Test count: um teste por AC e Edge Case de cálculo, todos passam
+- [x] `targetCents(1_000_000)` = 150_000_000 (R$ 10.000,00 → R$ 1.500.000,00)
+- [x] `progressBp(15_000_000, 150_000_000)` = 1000 e `progressBp(0, alvo)` = 0; valor guardado acima do alvo devolve acima de 10000 (sem teto)
+- [x] `ageOn` conta anos completos, antes e depois do aniversário, e trata nascimento em 29/02 como 28/02 em ano não bissexto
+- [x] `monthsUntilRetirement` conta meses de calendário (aniversário no mês corrente = 0; já passado = 0, nunca negativo)
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Test count: um teste por AC e Edge Case de cálculo, todos passam
 
 **Tests**: unit
 **Gate**: quick
