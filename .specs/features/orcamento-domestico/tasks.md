@@ -200,10 +200,10 @@ T25 → T26 → T27 → T28 → T29 → T30 → T31
 
 **Done when**:
 
-- [ ] "30" → 3000; "12,5" → 1250; "0,01" → 1; "100" → 10000
-- [ ] Rejeita "0", "0,001", "100,01", "-1", "abc", vazio
-- [ ] `formatPercent(1250)` === "12,5%"; `formatPercent(3000)` === "30%"
-- [ ] Gate quick passa; ≥ 10 testes
+- [x] "30" → 3000; "12,5" → 1250; "0,01" → 1; "100" → 10000
+- [x] Rejeita "0", "0,001", "100,01", "-1", "abc", vazio
+- [x] `formatPercent(1250)` === "12,5%"; `formatPercent(3000)` === "30%"
+- [x] Gate quick passa; ≥ 10 testes
 
 **Tests**: unit
 **Gate**: quick
