@@ -105,11 +105,11 @@ T2 → T3 → T4 → T5
 
 **Done when**:
 
-- [ ] `createTransaction` com descrição vazia e com só espaços devolve `ok: false` com `fieldErrors.description = "Informe a descrição"` e nenhuma linha é criada
-- [ ] `updateTransaction` com descrição vazia devolve o mesmo erro e a linha mantém a descrição anterior
-- [ ] `createTransaction` com descrição válida continua funcionando e chama `revalidatePath("/")`
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
-- [ ] Test count: os testes existentes do arquivo continuam e entram ao menos 3 novos
+- [x] `createTransaction` com descrição vazia e com só espaços devolve `ok: false` com `fieldErrors.description = "Informe a descrição"` e nenhuma linha é criada
+- [x] `updateTransaction` com descrição vazia devolve o mesmo erro e a linha mantém a descrição anterior
+- [x] `createTransaction` com descrição válida continua funcionando e chama `revalidatePath("/")`
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
+- [x] Test count: os testes existentes do arquivo continuam e entram ao menos 3 novos
 
 **Tests**: integration
 **Gate**: full

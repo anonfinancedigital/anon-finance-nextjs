@@ -97,10 +97,23 @@ describe("createTransaction", () => {
     ["date", { date: "" }, "Informe a data"],
     ["date", { date: "2026-02-29" }, "Data inválida"],
     ["categoryId", { categoryId: undefined }, "Selecione uma categoria"],
+    ["description", { description: "" }, "Informe a descrição"],
+    ["description", { description: "   " }, "Informe a descrição"],
   ])("rejects an invalid %s (%j) with a field error", async (field, overrides, message) => {
     const result = await createTransaction(expense(overrides));
 
     expect(result).toMatchObject({ ok: false, fieldErrors: { [field]: message } });
+    expect(await db.$count(transaction)).toBe(0);
+    expect(revalidatePath).not.toHaveBeenCalled();
+  });
+
+  it("rejects an income without a description and saves nothing", async () => {
+    const result = await createTransaction({ ...income(), description: "" });
+
+    expect(result).toMatchObject({
+      ok: false,
+      fieldErrors: { description: "Informe a descrição" },
+    });
     expect(await db.$count(transaction)).toBe(0);
     expect(revalidatePath).not.toHaveBeenCalled();
   });
@@ -191,6 +204,23 @@ describe("updateTransaction", () => {
     const totals = await transactionsRepo.monthTotals(userId, november);
     expect(totals.spentByCategory.get(other.id)).toBe(35050);
     expect(revalidatePath).toHaveBeenCalledWith("/");
+  });
+
+  it("rejects an empty description and keeps the saved one", async () => {
+    const original = expense();
+    await createTransaction(original);
+    vi.mocked(revalidatePath).mockClear();
+
+    const result = await updateTransaction({ ...original, description: "  " });
+
+    expect(result).toMatchObject({
+      ok: false,
+      fieldErrors: { description: "Informe a descrição" },
+    });
+    expect(await transactionsRepo.listByMonth(userId, OCTOBER)).toMatchObject([
+      { id: original.id, description: "Cinema" },
+    ]);
+    expect(revalidatePath).not.toHaveBeenCalled();
   });
 
   it("keeps the last of two edits received in sequence", async () => {
