@@ -1,6 +1,11 @@
 import { describe, expect, it } from "vitest";
 import type { Category } from "./budget";
-import { filterTransactions, parseTransactionFilter } from "./transaction-filter";
+import {
+  filterTransactions,
+  parseSearch,
+  parseTransactionFilter,
+  searchTransactions,
+} from "./transaction-filter";
 
 const categories: Category[] = [
   {
@@ -119,5 +124,67 @@ describe("filterTransactions", () => {
     expect(ids(filterTransactions(txs, { categoryId: "conforto", subcategoryId: "none" }))).toEqual(
       ["mercado"],
     );
+  });
+});
+
+describe("parseSearch", () => {
+  it("is empty without a param or with only whitespace", () => {
+    expect(parseSearch(undefined)).toBe("");
+    expect(parseSearch("   ")).toBe("");
+  });
+
+  it("trims the text", () => {
+    expect(parseSearch("  cafe ")).toBe("cafe");
+  });
+
+  it("ignores everything beyond 120 characters", () => {
+    expect(parseSearch("a".repeat(130))).toBe("a".repeat(120));
+  });
+});
+
+describe("searchTransactions", () => {
+  const d = (id: string, description: string | null, categoryId: string | null = "conforto") => ({
+    id,
+    description,
+    categoryId,
+    subcategoryId: null,
+  });
+  const list = [
+    d("cafe", "Café da manhã"),
+    d("aluguel", "Aluguel"),
+    d("salario", "Salário", null),
+    d("antiga", null),
+    d("desconto", "100% (promo) *"),
+  ];
+
+  it("keeps everything, undescribed included, for an empty search", () => {
+    expect(ids(searchTransactions(list, ""))).toEqual(ids(list));
+  });
+
+  it("matches a fragment ignoring case and accents", () => {
+    expect(ids(searchTransactions(list, "CAFE"))).toEqual(["cafe"]);
+    expect(ids(searchTransactions(list, "salario"))).toEqual(["salario"]);
+    expect(ids(searchTransactions(list, "manha"))).toEqual(["cafe"]);
+  });
+
+  it("never matches a transaction without description", () => {
+    expect(ids(searchTransactions(list, "a"))).not.toContain("antiga");
+  });
+
+  it("returns nothing when no description matches", () => {
+    expect(searchTransactions(list, "zzz")).toEqual([]);
+  });
+
+  it("matches special characters as literal text", () => {
+    expect(ids(searchTransactions(list, "100%"))).toEqual(["desconto"]);
+    expect(ids(searchTransactions(list, "(promo)"))).toEqual(["desconto"]);
+    expect(ids(searchTransactions(list, "%"))).toEqual(["desconto"]);
+    expect(ids(searchTransactions(list, "*"))).toEqual(["desconto"]);
+  });
+
+  it("combines with the category filter: both must hold", () => {
+    const filtered = filterTransactions(list, { categoryId: "conforto", subcategoryId: null });
+    expect(ids(searchTransactions(filtered, "salario"))).toEqual([]);
+    expect(ids(searchTransactions(filtered, "cafe"))).toEqual(["cafe"]);
   });
 });
