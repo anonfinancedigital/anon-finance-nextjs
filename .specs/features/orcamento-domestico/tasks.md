@@ -631,9 +631,9 @@ T25 → T26 → T27 → T28 → T29 → T30 → T31
 
 **Done when**:
 
-- [ ] e2e: visitante sem sessão em `/` e em `/categorias` → `/login`
-- [ ] e2e: `/login` acessível sem sessão
-- [ ] Gate build passa; ≥ 2 testes e2e
+- [x] e2e: visitante sem sessão em `/` e em `/categorias` → `/login`
+- [x] e2e: `/login` acessível sem sessão
+- [x] Gate build passa; ≥ 2 testes e2e
 
 **Tests**: e2e
 **Gate**: build
