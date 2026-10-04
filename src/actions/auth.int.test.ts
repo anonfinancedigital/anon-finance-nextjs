@@ -79,7 +79,7 @@ describe("signInAction", () => {
     expect(await sessionsOf(userId)).toBe(0);
   });
 
-  it("tells how many minutes remain until the oldest failure leaves the 15-minute window", async () => {
+  it("tells how many minutes remain until the lock ends", async () => {
     vi.useFakeTimers({ toFake: ["Date"] });
     vi.setSystemTime(new Date("2026-10-04T12:00:00Z"));
     for (let i = 0; i < 5; i++) await signIn(EMAIL, "senha-errada-000");
@@ -89,6 +89,48 @@ describe("signInAction", () => {
       ok: false,
       error: "Muitas tentativas. Tente novamente em 5 minutos",
     });
+  });
+
+  it("locks for 15 minutes counted from the 5th failure when failures are spread out", async () => {
+    vi.useFakeTimers({ toFake: ["Date"] });
+    const start = Date.parse("2026-10-04T12:00:00Z");
+    for (const minute of [0, 3, 6, 9, 14]) {
+      vi.setSystemTime(new Date(start + minute * MINUTE));
+      expect(await signIn(EMAIL, "senha-errada-000")).toEqual(INVALID);
+    }
+
+    vi.setSystemTime(new Date(start + 20 * MINUTE));
+    expect(await signIn(EMAIL, TEST_PASSWORD)).toEqual({
+      ok: false,
+      error: "Muitas tentativas. Tente novamente em 9 minutos",
+    });
+
+    vi.setSystemTime(new Date(start + 29 * MINUTE + 1000));
+    await expect(signIn(EMAIL, TEST_PASSWORD)).rejects.toThrow("NEXT_REDIRECT /");
+    expect(await sessionsOf(userId)).toBe(1);
+  });
+
+  it("uses the singular when 1 minute remains", async () => {
+    vi.useFakeTimers({ toFake: ["Date"] });
+    vi.setSystemTime(new Date("2026-10-04T12:00:00Z"));
+    for (let i = 0; i < 5; i++) await signIn(EMAIL, "senha-errada-000");
+
+    vi.setSystemTime(new Date("2026-10-04T12:14:30Z"));
+    expect(await signIn(EMAIL, TEST_PASSWORD)).toEqual({
+      ok: false,
+      error: "Muitas tentativas. Tente novamente em 1 minuto",
+    });
+  });
+
+  it("does not lock when the 5 failures span more than 15 minutes", async () => {
+    vi.useFakeTimers({ toFake: ["Date"] });
+    const start = Date.parse("2026-10-04T12:00:00Z");
+    for (const minute of [0, 4, 8, 12, 16]) {
+      vi.setSystemTime(new Date(start + minute * MINUTE));
+      await signIn(EMAIL, "senha-errada-000");
+    }
+
+    await expect(signIn(EMAIL, TEST_PASSWORD)).rejects.toThrow("NEXT_REDIRECT /");
   });
 
   it("releases the e-mail once 15 minutes have passed", async () => {

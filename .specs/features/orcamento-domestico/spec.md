@@ -47,6 +47,7 @@ Every ambiguity is resolved or recorded here - nothing is left silently unclear.
 | Receita do mês = 0 | Metas em R$ exibidas como R$ 0,00; gastos nesse mês contam como estouro | Comportamento definido para divisão sem base | n |
 | Estouro | Categoria estoura quando gasto > meta em R$ do mês | Alerta visual pedido | n |
 | Gráfico | Barras: gasto vs meta por categoria; e pizza da distribuição dos gastos | Cobre comparação e distribuição | n |
+| Duração do bloqueio de login (AUTH-03 AC 4) | Bloqueio começa na falha que completa 5 em 15 minutos e dura 15 minutos a partir dela; mensagem "Tente novamente em N minuto(s)" | Interpretação usual de bloqueio; lacuna apontada na validação | y |
 | Sessão | Sessão expira em 30 dias de inatividade | Conveniência em uso pessoal | n |
 | Criação da conta | Conta única criada por seed/variáveis de ambiente; sem tela de cadastro público | Um usuário, evita registro aberto | n |
 

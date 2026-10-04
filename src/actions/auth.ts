@@ -11,16 +11,25 @@ const MAX_FAILURES = 5;
 const WINDOW_MS = 15 * 60_000;
 const INVALID_CREDENTIALS = "E-mail ou senha inválidos";
 
-/** Minutes until the e-mail is released, or 0 when it is not locked. */
+/**
+ * Minutes until the e-mail is released, or 0 when it is not locked.
+ * The lock starts at the failure that completed 5 failures within 15 minutes and lasts 15 minutes.
+ * Attempts made while locked are not recorded, so that failure is always the latest one.
+ */
 async function lockedMinutes(email: string): Promise<number> {
-  const now = Date.now();
-  const since = new Date(now - WINDOW_MS);
-  const failures = await loginAttemptsRepo.countRecentFailures(email, since);
-  if (failures < MAX_FAILURES) return 0;
+  const latest = await loginAttemptsRepo.latestFailure(email);
+  if (!latest) return 0;
 
-  const oldest = await loginAttemptsRepo.oldestRecentFailure(email, since);
-  const releaseAt = (oldest?.getTime() ?? now) + WINDOW_MS;
-  return Math.max(1, Math.ceil((releaseAt - now) / 60_000));
+  const releaseAt = latest.getTime() + WINDOW_MS;
+  const now = Date.now();
+  if (releaseAt <= now) return 0;
+
+  const failures = await loginAttemptsRepo.countRecentFailures(
+    email,
+    new Date(latest.getTime() - WINDOW_MS),
+  );
+  if (failures < MAX_FAILURES) return 0;
+  return Math.ceil((releaseAt - now) / 60_000);
 }
 
 /** Login form action (useActionState): locks the e-mail after 5 failures in 15 minutes. */
@@ -33,7 +42,8 @@ export async function signInAction(
 
   const minutes = await lockedMinutes(email);
   if (minutes > 0) {
-    return { ok: false, error: `Muitas tentativas. Tente novamente em ${minutes} minutos` };
+    const unit = minutes === 1 ? "minuto" : "minutos";
+    return { ok: false, error: `Muitas tentativas. Tente novamente em ${minutes} ${unit}` };
   }
 
   try {

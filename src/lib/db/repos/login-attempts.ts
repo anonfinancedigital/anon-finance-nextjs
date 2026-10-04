@@ -1,4 +1,4 @@
-import { and, eq, gte, min } from "drizzle-orm";
+import { and, eq, gte, max } from "drizzle-orm";
 import { db } from "../client";
 import { loginAttempt } from "../schema";
 
@@ -12,12 +12,12 @@ async function countRecentFailures(email: string, since: Date): Promise<number> 
   );
 }
 
-/** When the oldest failure of the e-mail since the given instant happened, or null if none. */
-async function oldestRecentFailure(email: string, since: Date): Promise<Date | null> {
+/** When the most recent failure of the e-mail (any case) happened, or null if none. */
+async function latestFailure(email: string): Promise<Date | null> {
   const [row] = await db
-    .select({ at: min(loginAttempt.attemptedAt) })
+    .select({ at: max(loginAttempt.attemptedAt) })
     .from(loginAttempt)
-    .where(and(eq(loginAttempt.email, normalize(email)), gte(loginAttempt.attemptedAt, since)));
+    .where(eq(loginAttempt.email, normalize(email)));
   return row?.at ?? null;
 }
 
@@ -30,4 +30,4 @@ async function clear(email: string): Promise<void> {
   await db.delete(loginAttempt).where(eq(loginAttempt.email, normalize(email)));
 }
 
-export const loginAttemptsRepo = { countRecentFailures, oldestRecentFailure, recordFailure, clear };
+export const loginAttemptsRepo = { countRecentFailures, latestFailure, recordFailure, clear };
