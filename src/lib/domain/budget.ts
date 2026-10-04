@@ -38,3 +38,50 @@ export function validateCategorySet(cats: CategoryInput[]): CategorySetResult {
   if (hasFieldErrors) return { ok: false, error: "Corrija os nomes das categorias", fieldErrors };
   return { ok: true };
 }
+
+export type Category = { id: string; name: string; percentBp: number };
+
+export type CategorySummary = Category & {
+  targetCents: number;
+  spentCents: number;
+  remainingCents: number;
+  overspent: boolean;
+  overspentCents: number;
+  /** Share of the target already spent, in whole percent (may exceed 100). */
+  consumedPct: number;
+};
+
+export type MonthlySummary = {
+  rows: CategorySummary[];
+  incomeCents: number;
+  spentCents: number;
+  balanceCents: number;
+};
+
+/** Target per category = round(income × bp / 10000); overspent when spent > target. */
+export function buildMonthlySummary(input: {
+  categories: Category[];
+  incomeCents: number;
+  spentByCategory: Map<string, number>;
+}): MonthlySummary {
+  const { categories, incomeCents, spentByCategory } = input;
+
+  const rows = categories.map((cat): CategorySummary => {
+    const targetCents = Math.round((incomeCents * cat.percentBp) / TOTAL_BP);
+    const spentCents = spentByCategory.get(cat.id) ?? 0;
+    const consumedPct =
+      targetCents > 0 ? Math.round((spentCents * 100) / targetCents) : spentCents > 0 ? 100 : 0;
+    return {
+      ...cat,
+      targetCents,
+      spentCents,
+      remainingCents: targetCents - spentCents,
+      overspent: spentCents > targetCents,
+      overspentCents: Math.max(0, spentCents - targetCents),
+      consumedPct,
+    };
+  });
+
+  const spentCents = [...spentByCategory.values()].reduce((total, cents) => total + cents, 0);
+  return { rows, incomeCents, spentCents, balanceCents: incomeCents - spentCents };
+}

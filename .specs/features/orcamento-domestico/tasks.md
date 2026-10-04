@@ -283,13 +283,13 @@ T25 → T26 → T27 → T28 → T29 → T30 → T31
 
 **Done when**:
 
-- [ ] Receita 500000, "Conforto" 3000 bp, gasto 160000 → meta 150000, restante −10000, `overspent` true, `overspentCents` 10000
-- [ ] Gasto igual à meta → `overspent` false, `consumedPct` 100
-- [ ] Receita 0 e gasto 1 → meta 0, `overspent` true; receita 0 e gasto 0 → `overspent` false
-- [ ] Categoria sem gastos → gasto 0, restante = meta
-- [ ] Totais: receita, gasto total e saldo (receita − gasto, pode ser negativo)
-- [ ] Arredondamento: receita 100001 × 3333 bp → `Math.round` (33330)
-- [ ] Gate quick passa; ≥ 8 testes
+- [x] Receita 500000, "Conforto" 3000 bp, gasto 160000 → meta 150000, restante −10000, `overspent` true, `overspentCents` 10000
+- [x] Gasto igual à meta → `overspent` false, `consumedPct` 100
+- [x] Receita 0 e gasto 1 → meta 0, `overspent` true; receita 0 e gasto 0 → `overspent` false
+- [x] Categoria sem gastos → gasto 0, restante = meta
+- [x] Totais: receita, gasto total e saldo (receita − gasto, pode ser negativo)
+- [x] Arredondamento: receita 100001 × 3333 bp → `Math.round` (33330)
+- [x] Gate quick passa; ≥ 8 testes
 
 **Tests**: unit
 **Gate**: quick
