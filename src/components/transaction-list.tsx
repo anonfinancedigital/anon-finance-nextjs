@@ -19,7 +19,12 @@ import { formatBRL } from "@/lib/domain/money";
 
 type Props = {
   transactions: Transaction[];
-  categories: { id: string; name: string; color: number }[];
+  categories: {
+    id: string;
+    name: string;
+    color: number;
+    subcategories: { id: string; name: string }[];
+  }[];
 };
 
 const formatDate = (iso: string) => iso.split("-").reverse().join("/");
@@ -112,6 +117,7 @@ export function TransactionList({ transactions, categories }: Props) {
                 amount: amountText(editing.amountCents),
                 date: editing.date,
                 categoryId: editing.categoryId ?? "",
+                subcategoryId: editing.subcategoryId ?? "",
                 description: editing.description ?? "",
               }}
               onSaved={() => setEditing(null)}

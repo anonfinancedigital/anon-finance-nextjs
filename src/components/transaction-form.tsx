@@ -18,11 +18,13 @@ export type TransactionFormValues = {
   /** AAAA-MM-DD. */
   date: string;
   categoryId: string;
+  /** "" = Sem subcategoria. */
+  subcategoryId: string;
   description: string;
 };
 
 type Props = {
-  categories: { id: string; name: string }[];
+  categories: { id: string; name: string; subcategories: { id: string; name: string }[] }[];
   /** Date preselected when creating (today in America/Sao_Paulo). */
   defaultDate: string;
   /** When given, the form edits this transaction instead of creating one. */
@@ -36,6 +38,7 @@ const blank = (date: string): TransactionFormValues => ({
   amount: "",
   date,
   categoryId: "",
+  subcategoryId: "",
   description: "",
 });
 
@@ -54,6 +57,7 @@ export function TransactionForm({ categories, defaultDate, transaction, onSaved 
   const [pending, startTransition] = useTransition();
 
   const fieldErrors = result && !result.ok ? (result.fieldErrors ?? {}) : {};
+  const subcategories = categories.find((c) => c.id === values.categoryId)?.subcategories ?? [];
   const needsCategories = values.kind === "expense" && categories.length === 0;
 
   function set<K extends keyof TransactionFormValues>(key: K, value: TransactionFormValues[K]) {
@@ -63,10 +67,10 @@ export function TransactionForm({ categories, defaultDate, transaction, onSaved 
   function submit(event: React.FormEvent) {
     event.preventDefault();
     if (pending) return;
-    const { id, kind, amount, date, categoryId, description } = values;
+    const { id, kind, amount, date, categoryId, subcategoryId, description } = values;
     const input =
       kind === "expense"
-        ? { id, kind, amount, date, categoryId, description }
+        ? { id, kind, amount, date, categoryId, subcategoryId, description }
         : { id, kind, amount, date, description };
 
     startTransition(async () => {
@@ -74,7 +78,7 @@ export function TransactionForm({ categories, defaultDate, transaction, onSaved 
       setResult(res);
       if (!res.ok) return;
       if (!transaction) {
-        // Next entry: new id, same kind/date/category for quick sequential input.
+        // Next entry: new id, same kind/date/category/subcategory for quick sequential input.
         setValues((v) => ({ ...v, id: crypto.randomUUID(), amount: "", description: "" }));
       }
       onSaved?.();
@@ -148,7 +152,9 @@ export function TransactionForm({ categories, defaultDate, transaction, onSaved 
                 className={selectClass}
                 value={values.categoryId}
                 aria-invalid={!!fieldErrors.categoryId}
-                onChange={(e) => set("categoryId", e.target.value)}
+                onChange={(e) =>
+                  setValues((v) => ({ ...v, categoryId: e.target.value, subcategoryId: "" }))
+                }
               >
                 <option value="">Selecione…</option>
                 {categories.map((c) => (
@@ -159,6 +165,25 @@ export function TransactionForm({ categories, defaultDate, transaction, onSaved 
               </select>
               {fieldErrors.categoryId && (
                 <p className="text-sm text-destructive">{fieldErrors.categoryId}</p>
+              )}
+              <Label htmlFor={field("subcategory")}>Subcategoria</Label>
+              <select
+                id={field("subcategory")}
+                className={selectClass}
+                value={values.subcategoryId}
+                disabled={subcategories.length === 0}
+                aria-invalid={!!fieldErrors.subcategoryId}
+                onChange={(e) => set("subcategoryId", e.target.value)}
+              >
+                <option value="">Sem subcategoria</option>
+                {subcategories.map((s) => (
+                  <option key={s.id} value={s.id}>
+                    {s.name}
+                  </option>
+                ))}
+              </select>
+              {fieldErrors.subcategoryId && (
+                <p className="text-sm text-destructive">{fieldErrors.subcategoryId}</p>
               )}
             </>
           )}
