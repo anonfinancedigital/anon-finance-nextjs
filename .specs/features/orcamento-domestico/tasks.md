@@ -523,9 +523,9 @@ T25 → T26 → T27 → T28 → T29 → T30 → T31
 
 **Done when**:
 
-- [ ] Sem sessão → a versão de action devolve `UNAUTHORIZED` e a de página chama `redirect('/login')` (mock de `next/navigation` e `next/headers`)
-- [ ] Com sessão válida → devolve `userId`
-- [ ] Gate full passa; ≥ 3 testes
+- [x] Sem sessão → a versão de action devolve `UNAUTHORIZED` e a de página chama `redirect('/login')` (mock de `next/navigation` e `next/headers`)
+- [x] Com sessão válida → devolve `userId`
+- [x] Gate full passa; ≥ 3 testes
 
 **Tests**: integration
 **Gate**: full
