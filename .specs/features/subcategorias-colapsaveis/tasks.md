@@ -136,15 +136,15 @@ T2 → T6
 
 **Done when**:
 
-- [ ] Props novas `name` e `color`; a única chamada em `src/components/category-editor.tsx` passa `row.name` e `row.color`
-- [ ] Categorias começam fechadas e abrem e fecham de forma independente; o texto digitado sobrevive a fechar e reabrir
-- [ ] Cada item mostra marcador `colorVar(color)`, campo de nome e botão "Remover", com os `aria-label` atuais
-- [ ] Última linha "Nova subcategoria em <nome>" com `PlusIcon` acrescenta um item vazio e foca seu campo
-- [ ] Linha de adição fica `disabled` com 30 itens
-- [ ] Erro de lista ou de nome abre a categoria fechada e mostra a mensagem
-- [ ] `TableRow` com `colSpan={5}` preservado em `category-editor.tsx`
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
-- [ ] Verificação manual em /categorias: abrir "Lazer", adicionar, salvar, recarregar
+- [x] Props novas `name` e `color`; a única chamada em `src/components/category-editor.tsx` passa `row.name` e `row.color`
+- [x] Categorias começam fechadas e abrem e fecham de forma independente; o texto digitado sobrevive a fechar e reabrir
+- [x] Cada item mostra marcador `colorVar(color)`, campo de nome e botão "Remover", com os `aria-label` atuais
+- [x] Última linha "Nova subcategoria em <nome>" com `PlusIcon` acrescenta um item vazio e foca seu campo
+- [x] Linha de adição fica `disabled` com 30 itens
+- [x] Erro de lista ou de nome abre a categoria fechada e mostra a mensagem
+- [x] `TableRow` com `colSpan={5}` preservado em `category-editor.tsx`
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
+- [ ] Verificação manual em /categorias: abrir "Lazer", adicionar, salvar, recarregar (pendente: sem e2e, AD-005)
 
 **Tests**: none
 **Gate**: build

@@ -307,6 +307,8 @@ export function CategoryEditor({ categories }: { categories: Category[] }) {
                 <TableCell colSpan={5} className="pt-0">
                   <SubcategoryEditor
                     index={i}
+                    name={row.name}
+                    color={row.color}
                     items={row.subcategories}
                     errors={fieldErrors}
                     onChange={(subcategories) => update(i, { subcategories })}
