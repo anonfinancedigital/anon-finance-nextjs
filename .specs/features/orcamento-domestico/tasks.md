@@ -123,8 +123,8 @@ T25 → T26 → T27 → T28 → T29 → T30 → T31
 
 **Done when**:
 
-- [ ] `npm run test:unit` e `npm run test:int` rodam (passam com zero testes, `passWithNoTests`)
-- [ ] `playwright.config.ts` criado; `npx playwright install chromium` documentado no README
+- [x] `npm run test:unit` e `npm run test:int` rodam (passam com zero testes, `passWithNoTests`)
+- [x] `playwright.config.ts` criado; `npx playwright install chromium` documentado no README
 
 **Tests**: none
 **Gate**: build

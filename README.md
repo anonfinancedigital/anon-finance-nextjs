@@ -20,6 +20,15 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
+## Tests
+
+```bash
+npm run test:unit   # Vitest, *.test.ts
+npm run test:int    # Vitest, *.int.test.ts (single thread, uses .env.test)
+npx playwright install chromium   # once, downloads the browser for e2e
+npm run e2e         # Playwright on next build && next start (port 3100, .env.test)
+```
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:
