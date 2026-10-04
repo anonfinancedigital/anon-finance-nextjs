@@ -179,3 +179,78 @@ describe("saveCategories", () => {
     expect(revalidatePath).not.toHaveBeenCalled();
   });
 });
+
+describe("saveCategories subcategories", () => {
+  const withSubs = (...subs: { id?: string; name: string }[]) =>
+    FIVE.map((c) => ({ ...c, subcategories: c.name === "Conforto" ? subs : [] }));
+
+  it("persists the subcategories under their category and revalidates /", async () => {
+    expect(await saveCategories(withSubs({ name: "Restaurante" }, { name: "Streaming" }))).toEqual({
+      ok: true,
+    });
+
+    const conforto = (await categoriesRepo.list(userId)).find((c) => c.name === "Conforto")!;
+    expect(conforto.subcategories.map((s) => s.name)).toEqual(["Restaurante", "Streaming"]);
+    expect(revalidatePath).toHaveBeenCalledWith("/");
+  });
+
+  it("rejects a repeated name in the category at its field and persists nothing", async () => {
+    const result = await saveCategories(withSubs({ name: "Restaurante" }, { name: "restaurante" }));
+
+    expect(result).toMatchObject({
+      ok: false,
+      fieldErrors: {
+        "1.subcategories.1.name": "Já existe uma subcategoria com esse nome nesta categoria",
+      },
+    });
+    expect(await names()).toEqual([]);
+    expect(revalidatePath).not.toHaveBeenCalled();
+  });
+
+  it("blocks removing a subcategory that has expenses, telling how many, and persists nothing", async () => {
+    await saveCategories(withSubs({ name: "Restaurante" }, { name: "Streaming" }));
+    const saved = await categoriesRepo.list(userId);
+    const conforto = saved.find((c) => c.name === "Conforto")!;
+    const [restaurante, streaming] = conforto.subcategories;
+    for (const amountCents of [100, 200, 300]) {
+      await transactionsRepo.create(userId, {
+        id: randomUUID(),
+        kind: "expense",
+        amountCents,
+        date: "2026-10-01",
+        categoryId: conforto.id,
+        subcategoryId: restaurante.id,
+      });
+    }
+    vi.mocked(revalidatePath).mockClear();
+
+    // Restaurante removed; the rename of "Metas" must not persist either.
+    const input = saved.map((c) => ({
+      id: c.id,
+      name: c.name === "Metas" ? "Objetivos" : c.name,
+      percent: String(c.percentBp / 100),
+      color: c.color,
+      subcategories: c.id === conforto.id ? [{ id: streaming.id, name: streaming.name }] : [],
+    }));
+    const message = "Esta subcategoria tem 3 gastos e não pode ser excluída";
+
+    expect(await saveCategories(input)).toEqual({
+      ok: false,
+      error: message,
+      fieldErrors: { "1.subcategories": message },
+    });
+    expect(await categoriesRepo.list(userId)).toEqual(saved);
+    expect(revalidatePath).not.toHaveBeenCalled();
+  });
+
+  it("returns the generic message when the database fails while saving subcategories", async () => {
+    vi.spyOn(categoriesRepo, "replaceSet").mockRejectedValueOnce(new Error("connection refused"));
+    vi.spyOn(console, "error").mockImplementation(() => {});
+
+    expect(await saveCategories(withSubs({ name: "Restaurante" }))).toEqual({
+      ok: false,
+      error: "Não foi possível salvar. Tente novamente",
+    });
+    expect(revalidatePath).not.toHaveBeenCalled();
+  });
+});

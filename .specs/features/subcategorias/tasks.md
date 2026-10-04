@@ -352,11 +352,11 @@ T15 → T16 → T17
 
 **Done when**:
 
-- [ ] Salvamento com subcategorias persiste e chama `revalidatePath("/")`
-- [ ] Nome repetido na categoria → `fieldErrors["0.subcategories.1.name"]`
-- [ ] Excluir subcategoria com gastos → erro com a contagem; nada persiste
-- [ ] Falha de banco → `SAVE_FAILED`
-- [ ] Gate full passa; ≥ 4 testes novos em `categories.int.test.ts` (actions)
+- [x] Salvamento com subcategorias persiste e chama `revalidatePath("/")`
+- [x] Nome repetido na categoria → `fieldErrors["0.subcategories.1.name"]`
+- [x] Excluir subcategoria com gastos → erro com a contagem; nada persiste
+- [x] Falha de banco → `SAVE_FAILED`
+- [x] Gate full passa; ≥ 4 testes novos em `categories.int.test.ts` (actions)
 
 **Tests**: integration
 **Gate**: full
