@@ -347,11 +347,11 @@ T7 → T8 → T9 → T10 → T11
 
 **Done when**:
 
-- [ ] Sem objetivo: só o formulário vazio, sem resumo
-- [ ] Com objetivo: resumo e formulário preenchido; `summarize` recebe `new Date()`
-- [ ] Título e `metadata` "Liberdade · Orçamento"; guarda de sessão com `requireSessionForPage`
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
-- [ ] Test count: nenhum teste removido; suíte existente verde
+- [x] Sem objetivo: só o formulário vazio, sem resumo
+- [x] Com objetivo: resumo e formulário preenchido; `summarize` recebe `new Date()`
+- [x] Título e `metadata` "Liberdade · Orçamento"; guarda de sessão com `requireSessionForPage`
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
+- [x] Test count: nenhum teste removido; suíte existente verde
 
 **Tests**: none
 **Gate**: build
