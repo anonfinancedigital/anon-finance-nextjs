@@ -403,11 +403,11 @@ T13 → T15
 
 **Done when**:
 
-- [ ] `transactions.int.test.ts` (actions): criar gasto "Sempre" e "Até mês/ano" grava uma única linha recorrente (AC 3 e 4 de RECUR-02)
-- [ ] `transactions.int.test.ts` (actions): criar ganho recorrente grava a linha
-- [ ] `transactions.int.test.ts` (actions): "Até mês/ano" sem mês final, com mês final anterior e com mês inválido retornam `fieldErrors.recurrenceEnd` com as mensagens da spec e não gravam nada
-- [ ] `transactions.int.test.ts` (actions): `forever` com `recurrenceEnd` enviado grava sem mês final
-- [ ] Gate full passa; ≥ 5 testes novos
+- [x] `transactions.int.test.ts` (actions): criar gasto "Sempre" e "Até mês/ano" grava uma única linha recorrente (AC 3 e 4 de RECUR-02)
+- [x] `transactions.int.test.ts` (actions): criar ganho recorrente grava a linha
+- [x] `transactions.int.test.ts` (actions): "Até mês/ano" sem mês final, com mês final anterior e com mês inválido retornam `fieldErrors.recurrenceEnd` com as mensagens da spec e não gravam nada
+- [x] `transactions.int.test.ts` (actions): `forever` com `recurrenceEnd` enviado grava sem mês final
+- [x] Gate full passa; ≥ 5 testes novos
 
 **Tests**: integration
 **Gate**: full

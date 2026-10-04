@@ -171,6 +171,67 @@ describe("createTransaction", () => {
   });
 });
 
+describe("createTransaction recurrence", () => {
+  const rows = () => db.select().from(transaction);
+  const NOVEMBER = { start: "2026-11-01", endExclusive: "2026-12-01" };
+
+  it("stores a single recurring row for 'Sempre' without end and shows it in later months", async () => {
+    const input = expense({ recurrence: "forever" });
+
+    expect(await createTransaction(input)).toEqual({ ok: true });
+
+    expect(await rows()).toMatchObject([
+      { id: input.id, recurring: true, recurrenceDay: 15, recurrenceEnd: null, seriesId: input.id },
+    ]);
+    expect(await transactionsRepo.listByMonth(userId, NOVEMBER)).toMatchObject([
+      { id: input.id, date: "2026-11-15", amountCents: 20000 },
+    ]);
+  });
+
+  it("stores a single recurring row for 'Até mês/ano' with the end month", async () => {
+    const input = expense({ recurrence: "until", recurrenceEnd: "2026-12" });
+
+    expect(await createTransaction(input)).toEqual({ ok: true });
+
+    expect(await rows()).toMatchObject([
+      { id: input.id, recurring: true, recurrenceEnd: "2026-12-01" },
+    ]);
+  });
+
+  it("stores a recurring income that counts in later months", async () => {
+    const input = { ...income(), recurrence: "forever" as const };
+
+    expect(await createTransaction(input)).toEqual({ ok: true });
+
+    expect(await rows()).toMatchObject([{ id: input.id, kind: "income", recurring: true }]);
+    expect((await transactionsRepo.monthTotals(userId, NOVEMBER)).incomeCents).toBe(500000);
+  });
+
+  it.each([
+    ["is missing", { recurrenceEnd: undefined }, "Informe o mês final"],
+    [
+      "is before the date's month",
+      { recurrenceEnd: "2026-09" },
+      "O mês final deve ser igual ou posterior ao mês do lançamento",
+    ],
+    ["is invalid", { recurrenceEnd: "2026-13" }, "Mês final inválido"],
+  ])("rejects 'Até mês/ano' when the end month %s and saves nothing", async (_, overrides, message) => {
+    const result = await createTransaction(expense({ recurrence: "until", ...overrides }));
+
+    expect(result).toMatchObject({ ok: false, fieldErrors: { recurrenceEnd: message } });
+    expect(await db.$count(transaction)).toBe(0);
+    expect(revalidatePath).not.toHaveBeenCalled();
+  });
+
+  it("ignores an end month sent with 'Sempre'", async () => {
+    const input = expense({ recurrence: "forever", recurrenceEnd: "2026-12" });
+
+    expect(await createTransaction(input)).toEqual({ ok: true });
+
+    expect(await rows()).toMatchObject([{ id: input.id, recurring: true, recurrenceEnd: null }]);
+  });
+});
+
 describe("updateTransaction", () => {
   it("updates date, amount, category and description and revalidates /", async () => {
     const original = expense();
