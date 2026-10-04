@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useId, useState, useTransition } from "react";
 import { createTransaction, updateTransaction } from "@/actions/transactions";
+import { CategoryPicker } from "@/components/category-picker";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -29,7 +30,12 @@ export type TransactionFormValues = {
 };
 
 type Props = {
-  categories: { id: string; name: string; subcategories: { id: string; name: string }[] }[];
+  categories: {
+    id: string;
+    name: string;
+    color: number;
+    subcategories: { id: string; name: string }[];
+  }[];
   /** Date preselected when creating (today in America/Sao_Paulo). */
   defaultDate: string;
   /** When given, the form edits this transaction instead of creating one. */
@@ -51,11 +57,6 @@ const blank = (date: string): TransactionFormValues => ({
   recurrenceEnd: "",
 });
 
-// SPEC_DEVIATION: native <select> and radio inputs instead of the shadcn/Radix Select.
-// Reason: same behavior with less code, native keyboard/mobile pickers and simpler e2e selectors.
-const selectClass =
-  "h-8 w-full rounded-lg border border-input bg-transparent px-2.5 text-base md:text-sm dark:bg-input/30 aria-invalid:border-destructive";
-
 /**
  * Creates (id generated on mount, so a double submit creates one row) or edits a transaction.
  * It does not reset after saving: the parent closes the dialog, which unmounts it.
@@ -69,7 +70,6 @@ export function TransactionForm({ categories, defaultDate, transaction, month, o
   const [pending, startTransition] = useTransition();
 
   const fieldErrors = result && !result.ok ? (result.fieldErrors ?? {}) : {};
-  const subcategories = categories.find((c) => c.id === values.categoryId)?.subcategories ?? [];
   const needsCategories = values.kind === "expense" && categories.length === 0;
 
   function set<K extends keyof TransactionFormValues>(key: K, value: TransactionFormValues[K]) {
@@ -157,42 +157,17 @@ export function TransactionForm({ categories, defaultDate, transaction, month, o
             </p>
           ) : (
             <>
-              <Label htmlFor={field("category")}>Categoria</Label>
-              <select
-                id={field("category")}
-                className={selectClass}
-                value={values.categoryId}
-                aria-invalid={!!fieldErrors.categoryId}
-                onChange={(e) =>
-                  setValues((v) => ({ ...v, categoryId: e.target.value, subcategoryId: "" }))
-                }
-              >
-                <option value="">Selecione…</option>
-                {categories.map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.name}
-                  </option>
-                ))}
-              </select>
+              <Label>Categoria</Label>
+              <CategoryPicker
+                categories={categories}
+                categoryId={values.categoryId}
+                subcategoryId={values.subcategoryId}
+                invalid={!!fieldErrors.categoryId || !!fieldErrors.subcategoryId}
+                onChange={(selection) => setValues((v) => ({ ...v, ...selection }))}
+              />
               {fieldErrors.categoryId && (
                 <p className="text-sm text-destructive">{fieldErrors.categoryId}</p>
               )}
-              <Label htmlFor={field("subcategory")}>Subcategoria</Label>
-              <select
-                id={field("subcategory")}
-                className={selectClass}
-                value={values.subcategoryId}
-                disabled={subcategories.length === 0}
-                aria-invalid={!!fieldErrors.subcategoryId}
-                onChange={(e) => set("subcategoryId", e.target.value)}
-              >
-                <option value="">Sem subcategoria</option>
-                {subcategories.map((s) => (
-                  <option key={s.id} value={s.id}>
-                    {s.name}
-                  </option>
-                ))}
-              </select>
               {fieldErrors.subcategoryId && (
                 <p className="text-sm text-destructive">{fieldErrors.subcategoryId}</p>
               )}

@@ -9,7 +9,7 @@ Implement these tasks with the `tlc-spec-driven` skill: **activate it by name an
 ---
 
 **Design**: `.specs/features/subcategorias-colapsaveis/design.md`
-**Status**: Draft
+**Status**: In Progress
 
 ---
 
@@ -245,12 +245,12 @@ T2 → T6
 
 **Done when**:
 
-- [ ] Tipo de `categories` inclui `color: number`
-- [ ] O picker atualiza `categoryId` e `subcategoryId` juntos em `values`
-- [ ] Erros de categoria e subcategoria aparecem abaixo do picker
-- [ ] Ganho continua sem seletor de categoria; ramo `needsCategories` inalterado
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
-- [ ] Verificação manual: lançar "Lazer › Cinema", ver na lista; editar a transação e ver a categoria atual aberta e marcada
+- [x] Tipo de `categories` inclui `color: number`
+- [x] O picker atualiza `categoryId` e `subcategoryId` juntos em `values`
+- [x] Erros de categoria e subcategoria aparecem abaixo do picker
+- [x] Ganho continua sem seletor de categoria; ramo `needsCategories` inalterado
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
+- [ ] Verificação manual (pendente: sem e2e, AD-005): lançar "Lazer › Cinema", ver na lista; editar a transação e ver a categoria atual aberta e marcada
 
 **Tests**: none
 **Gate**: build
