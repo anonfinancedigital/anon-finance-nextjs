@@ -1,6 +1,7 @@
 import { BudgetCharts } from "@/components/budget-charts";
 import { MonthPicker } from "@/components/month-picker";
 import { SummaryTable } from "@/components/summary-table";
+import { TransactionFilter } from "@/components/transaction-filter";
 import { TransactionForm } from "@/components/transaction-form";
 import { TransactionList } from "@/components/transaction-list";
 import { requireSessionForPage } from "@/lib/auth-guard";
@@ -9,6 +10,7 @@ import { transactionsRepo } from "@/lib/db/repos/transactions";
 import { buildMonthlySummary } from "@/lib/domain/budget";
 import { formatBRL } from "@/lib/domain/money";
 import { monthRange, parseMonth } from "@/lib/domain/month";
+import { filterTransactions, parseTransactionFilter } from "@/lib/domain/transaction-filter";
 
 /** Today as AAAA-MM-DD in America/Sao_Paulo. */
 const todayInSaoPaulo = () =>
@@ -16,7 +18,7 @@ const todayInSaoPaulo = () =>
 
 export default async function SummaryPage({ searchParams }: PageProps<"/">) {
   const { userId } = await requireSessionForPage();
-  const { mes } = await searchParams;
+  const { mes, categoria, subcategoria } = await searchParams;
   const month = parseMonth(typeof mes === "string" ? mes : undefined, new Date());
   const range = monthRange(month);
 
@@ -26,6 +28,14 @@ export default async function SummaryPage({ searchParams }: PageProps<"/">) {
     transactionsRepo.monthTotals(userId, range),
   ]);
   const summary = buildMonthlySummary({ categories, ...totals });
+  // The filter only narrows the list; summary and charts keep the whole month.
+  const filter = parseTransactionFilter(
+    {
+      categoria: typeof categoria === "string" ? categoria : undefined,
+      subcategoria: typeof subcategoria === "string" ? subcategoria : undefined,
+    },
+    categories,
+  );
 
   const cards = [
     { label: "Receita", testId: "total-income", cents: summary.incomeCents },
@@ -67,7 +77,12 @@ export default async function SummaryPage({ searchParams }: PageProps<"/">) {
         </section>
         <section className="space-y-3">
           <h2 className="text-lg font-semibold">Transações do mês</h2>
-          <TransactionList transactions={transactions} categories={categories} />
+          <TransactionFilter categories={categories} filter={filter} />
+          <TransactionList
+            transactions={filterTransactions(transactions, filter)}
+            categories={categories}
+            filtered={filter.categoryId !== null}
+          />
         </section>
       </div>
     </div>
