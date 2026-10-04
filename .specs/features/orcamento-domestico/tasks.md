@@ -657,11 +657,11 @@ T25 → T26 → T27 → T28 → T29 → T30 → T31
 
 **Done when**:
 
-- [ ] Sucesso persiste e chama `revalidatePath('/')`
-- [ ] Soma ≠ 100, percentual inválido, nome inválido e categoria com gastos removida → erros da spec e nada persistido
-- [ ] Sem sessão → `UNAUTHORIZED` e nenhuma escrita
-- [ ] Repo lançando exceção → mensagem genérica
-- [ ] Gate full passa; ≥ 6 testes
+- [x] Sucesso persiste e chama `revalidatePath('/')`
+- [x] Soma ≠ 100, percentual inválido, nome inválido e categoria com gastos removida → erros da spec e nada persistido
+- [x] Sem sessão → `UNAUTHORIZED` e nenhuma escrita
+- [x] Repo lançando exceção → mensagem genérica
+- [x] Gate full passa; ≥ 6 testes
 
 **Tests**: integration
 **Gate**: full
