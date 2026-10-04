@@ -431,13 +431,13 @@ T13 → T15
 
 **Done when**:
 
-- [ ] `transactions.int.test.ts` (actions): editar a ocorrência de dezembro altera dezembro em diante e preserva out e nov (RECUR-07 AC 2 e 3)
-- [ ] `transactions.int.test.ts` (actions): data com mês diferente do `month` numa linha recorrente retorna `fieldErrors.date` = "A data deve estar no mês da ocorrência" (AC 7) e nada muda
-- [ ] `transactions.int.test.ts` (actions): editar para "Não recorrente" funciona (RECUR-08 AC 6)
-- [ ] `transactions.int.test.ts` (actions): `month` omitido numa linha avulsa mantém o comportamento atual (mudança livre de data)
-- [ ] `transactions.int.test.ts` (actions): `month` malformado, id de outro usuário e mês fora do intervalo retornam "Transação não encontrada"
-- [ ] `transactions.int.test.ts` (actions): categoria de outro usuário continua retornando "Categoria não encontrada"
-- [ ] Gate full passa; ≥ 6 testes novos
+- [x] `transactions.int.test.ts` (actions): editar a ocorrência de dezembro altera dezembro em diante e preserva out e nov (RECUR-07 AC 2 e 3)
+- [x] `transactions.int.test.ts` (actions): data com mês diferente do `month` numa linha recorrente retorna `fieldErrors.date` = "A data deve estar no mês da ocorrência" (AC 7) e nada muda
+- [x] `transactions.int.test.ts` (actions): editar para "Não recorrente" funciona (RECUR-08 AC 6)
+- [x] `transactions.int.test.ts` (actions): `month` omitido numa linha avulsa mantém o comportamento atual (mudança livre de data)
+- [x] `transactions.int.test.ts` (actions): `month` malformado, id de outro usuário e mês fora do intervalo retornam "Transação não encontrada"
+- [x] `transactions.int.test.ts` (actions): categoria de outro usuário continua retornando "Categoria não encontrada"
+- [x] Gate full passa; ≥ 6 testes novos
 
 **Tests**: integration
 **Gate**: full

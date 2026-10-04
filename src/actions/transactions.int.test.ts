@@ -24,7 +24,7 @@ let categoryId: string;
 async function insertCategory(owner: string) {
   const [row] = await db
     .insert(category)
-    .values({ userId: owner, name: "Conforto", percentBp: 10000, color: 1 })
+    .values({ userId: owner, name: "Conforto", percentMicro: 100000000, color: 1 })
     .returning({ id: category.id });
   return row.id;
 }
@@ -238,7 +238,7 @@ describe("updateTransaction", () => {
     await createTransaction(original);
     const [other] = await db
       .insert(category)
-      .values({ userId, name: "Metas", percentBp: 1, color: 1 })
+      .values({ userId, name: "Metas", percentMicro: 10000, color: 1 })
       .returning({ id: category.id });
     vi.mocked(revalidatePath).mockClear();
 
@@ -352,7 +352,7 @@ describe("updateTransaction", () => {
   it("returns the generic message when the database fails", async () => {
     const original = expense();
     await createTransaction(original);
-    vi.spyOn(transactionsRepo, "update").mockRejectedValueOnce(new Error("connection refused"));
+    vi.spyOn(transactionsRepo, "updateFrom").mockRejectedValueOnce(new Error("connection refused"));
     const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
 
     expect(await updateTransaction(original)).toEqual({
@@ -360,6 +360,121 @@ describe("updateTransaction", () => {
       error: "Não foi possível salvar. Tente novamente",
     });
     expect(consoleError).toHaveBeenCalled();
+  });
+});
+
+describe("updateTransaction from a month", () => {
+  const range = (key: string) => {
+    const [y, m] = key.split("-").map(Number);
+    const next = m === 12 ? `${y + 1}-01` : `${y}-${String(m + 1).padStart(2, "0")}`;
+    return { start: `${key}-01`, endExclusive: `${next}-01` };
+  };
+  const amountIn = async (key: string) =>
+    (await transactionsRepo.listByMonth(userId, range(key))).map((o) => o.amountCents);
+  const created = async () => {
+    const original = expense({ amount: "100,00", recurrence: "forever" });
+    await createTransaction(original);
+    return original;
+  };
+
+  it("changes the edited month onward and keeps the earlier months", async () => {
+    const original = await created();
+
+    const result = await updateTransaction(
+      { ...original, amount: "120,00", date: "2026-12-15" },
+      "2026-12",
+    );
+
+    expect(result).toEqual({ ok: true });
+    expect(await amountIn("2026-10")).toEqual([10000]);
+    expect(await amountIn("2026-11")).toEqual([10000]);
+    expect(await amountIn("2026-12")).toEqual([12000]);
+    expect(await amountIn("2027-01")).toEqual([12000]);
+  });
+
+  it("rejects a date outside the occurrence month of a recurring row and changes nothing", async () => {
+    const original = await created();
+    vi.mocked(revalidatePath).mockClear();
+
+    const result = await updateTransaction(
+      { ...original, amount: "120,00", date: "2027-01-15" },
+      "2026-12",
+    );
+
+    expect(result).toMatchObject({
+      ok: false,
+      fieldErrors: { date: "A data deve estar no mês da ocorrência" },
+    });
+    expect(await db.$count(transaction)).toBe(1);
+    expect(await amountIn("2026-12")).toEqual([10000]);
+    expect(revalidatePath).not.toHaveBeenCalled();
+  });
+
+  it("turns the edited month into a single non-recurring row when set to 'Não recorrente'", async () => {
+    const original = await created();
+
+    const result = await updateTransaction(
+      { ...original, amount: "130,00", date: "2026-12-15", recurrence: "none" },
+      "2026-12",
+    );
+
+    expect(result).toEqual({ ok: true });
+    expect(await amountIn("2026-11")).toEqual([10000]);
+    expect(await amountIn("2026-12")).toEqual([13000]);
+    expect(await amountIn("2027-01")).toEqual([]);
+  });
+
+  it("keeps the free date change of a non-recurring row when month is omitted", async () => {
+    const original = expense();
+    await createTransaction(original);
+
+    expect(await updateTransaction({ ...original, date: "2026-11-02" })).toEqual({ ok: true });
+
+    expect(await amountIn("2026-10")).toEqual([]);
+    expect(await amountIn("2026-11")).toEqual([20000]);
+  });
+
+  it.each([
+    ["malformed month", "2026-13", "2026-10-15", true],
+    ["month out of the segment's range", "2026-09", "2026-09-15", true],
+    ["unknown id with a valid month", "2026-10", "2026-10-15", false],
+  ])("answers 'Transação não encontrada' for %s", async (_, month, date, existing) => {
+    const original = await created();
+    const input = existing ? original : expense({ recurrence: "forever" });
+
+    expect(await updateTransaction({ ...input, date }, month)).toEqual({
+      ok: false,
+      error: "Transação não encontrada",
+    });
+    expect(await amountIn("2026-10")).toEqual([10000]);
+  });
+
+  it("answers 'Transação não encontrada' for another user's row", async () => {
+    const owner = await insertTestUser();
+    const id = randomUUID();
+    await transactionsRepo.create(owner, {
+      id,
+      kind: "income",
+      amountCents: 100,
+      date: "2026-10-01",
+      recurrence: "forever",
+    });
+
+    expect(await updateTransaction({ ...income(), id, amount: "999,00" }, "2026-10")).toEqual({
+      ok: false,
+      error: "Transação não encontrada",
+    });
+    expect(await transactionsRepo.listByMonth(owner, OCTOBER)).toMatchObject([{ amountCents: 100 }]);
+  });
+
+  it("keeps answering 'Categoria não encontrada' for another user's category", async () => {
+    const original = await created();
+    const otherCategory = await insertCategory(await insertTestUser());
+
+    expect(
+      await updateTransaction({ ...original, categoryId: otherCategory, date: "2026-12-15" }, "2026-12"),
+    ).toMatchObject({ ok: false, fieldErrors: { categoryId: "Categoria não encontrada" } });
+    expect(await amountIn("2026-12")).toEqual([10000]);
   });
 });
 
@@ -431,7 +546,7 @@ describe("transaction subcategory", () => {
   async function insertOtherCategory(name = "Lazer") {
     const [row] = await db
       .insert(category)
-      .values({ userId, name, percentBp: 1, color: 2 })
+      .values({ userId, name, percentMicro: 10000, color: 2 })
       .returning({ id: category.id });
     return row.id;
   }

@@ -6,6 +6,7 @@ import { type ActionResult, invalidInput, SAVE_FAILED } from "@/lib/action-resul
 import { requireSessionForAction } from "@/lib/auth-guard";
 import { categoriesRepo } from "@/lib/db/repos/categories";
 import { transactionsRepo } from "@/lib/db/repos/transactions";
+import { monthKey } from "@/lib/domain/recurrence";
 import { type TransactionInput, transactionSchema } from "@/lib/validation/transaction";
 
 const CATEGORY_NOT_FOUND = "Categoria não encontrada";
@@ -60,22 +61,39 @@ export async function createTransaction(
   return { ok: true };
 }
 
-/** Replaces date, amount, kind, category, subcategory and description of the user's transaction (last write wins). */
+const isMonthKey = (value: string) => /^\d{4}-(0[1-9]|1[0-2])$/.test(value);
+
+const transactionNotFound: ActionResult = { ok: false, error: TRANSACTION_NOT_FOUND };
+
+const DATE_OUTSIDE_MONTH = "A data deve estar no mês da ocorrência";
+
+/**
+ * Replaces date, amount, kind, category, subcategory, description and recurrence of the user's
+ * transaction from `month` (AAAA-MM of the occurrence; omitted = month of the stored date) onward.
+ */
 export async function updateTransaction(
   input: z.input<typeof transactionSchema>,
+  month?: string,
 ): Promise<ActionResult> {
   const session = await requireSessionForAction();
   if (!session.ok) return session;
 
   const parsed = transactionSchema.safeParse(input);
   if (!parsed.success) return invalidInput(parsed.error);
+  if (month !== undefined && !isMonthKey(month)) return transactionNotFound;
 
   try {
     const rejected = await checkOwnership(session.userId, parsed.data);
     if (rejected) return rejected;
     const { id, ...data } = parsed.data;
-    if (!(await transactionsRepo.update(session.userId, id, data))) {
-      return { ok: false, error: TRANSACTION_NOT_FOUND };
+    const stored = await transactionsRepo.findStored(session.userId, id);
+    if (!stored) return transactionNotFound;
+    const occurrenceMonth = month ?? monthKey(stored.date);
+    if (stored.recurring && monthKey(data.date) !== occurrenceMonth) {
+      return { ok: false, error: DATE_OUTSIDE_MONTH, fieldErrors: { date: DATE_OUTSIDE_MONTH } };
+    }
+    if (!(await transactionsRepo.updateFrom(session.userId, id, occurrenceMonth, data))) {
+      return transactionNotFound;
     }
   } catch (error) {
     console.error("updateTransaction", error);

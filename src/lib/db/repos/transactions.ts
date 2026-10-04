@@ -240,6 +240,18 @@ async function deleteFrom(userId: string, id: string, month: string): Promise<bo
   });
 }
 
+/** Stored date and recurrence flag of the user's row; null when it does not exist. */
+async function findStored(
+  userId: string,
+  id: string,
+): Promise<{ date: string; recurring: boolean } | null> {
+  const [row] = await db
+    .select({ date: transaction.date, recurring: transaction.recurring })
+    .from(transaction)
+    .where(ownedBy(userId, id));
+  return row ?? null;
+}
+
 /** Returns false when the user has no transaction with this id. */
 async function remove(userId: string, id: string): Promise<boolean> {
   const rows = await db
@@ -320,6 +332,7 @@ export const transactionsRepo = {
   create,
   update,
   updateFrom,
+  findStored,
   delete: remove,
   deleteFrom,
   listByMonth,
