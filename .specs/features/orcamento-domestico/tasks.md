@@ -365,9 +365,9 @@ T25 → T26 → T27 → T28 → T29 → T30 → T31
 
 **Done when**:
 
-- [ ] Opções `disableSignUp` e `nextCookies` confirmadas na doc atual (sem API inventada)
-- [ ] Migração gerada inclui as tabelas de auth; `npm run db:migrate` aplica
-- [ ] Gate build passa
+- [x] Opções `disableSignUp` e `nextCookies` confirmadas na doc atual (sem API inventada)
+- [x] Migração gerada inclui as tabelas de auth; `npm run db:migrate` aplica
+- [x] Gate build passa
 
 **Tests**: none
 **Gate**: build
