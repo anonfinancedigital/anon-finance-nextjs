@@ -12,6 +12,10 @@ export type TransactionData = {
   categoryId?: string | null;
   subcategoryId?: string | null;
   description?: string | null;
+  /** Omitted = "none". */
+  recurrence?: "none" | "forever" | "until";
+  /** AAAA-MM, inclusive; read only when `recurrence` is "until". */
+  recurrenceEndMonth?: string | null;
 };
 
 export type Transaction = Omit<
@@ -50,11 +54,23 @@ const inMonth = (userId: string, range: MonthRange) =>
     lt(transaction.date, range.endExclusive),
   );
 
+/** Recurrence columns of a new series starting at `tx.date`, whose id is `id`. */
+const recurrenceFields = (id: string, tx: TransactionData) => {
+  const recurring = (tx.recurrence ?? "none") !== "none";
+  return {
+    recurring,
+    recurrenceDay: recurring ? Number(tx.date.slice(8, 10)) : null,
+    recurrenceEnd:
+      tx.recurrence === "until" && tx.recurrenceEndMonth ? `${tx.recurrenceEndMonth}-01` : null,
+    seriesId: recurring ? id : null,
+  };
+};
+
 /** Idempotent by the client-generated id: a repeated id is ignored. */
 async function create(userId: string, tx: TransactionData & { id: string }): Promise<void> {
   await db
     .insert(transaction)
-    .values({ id: tx.id, userId, ...fields(tx) })
+    .values({ id: tx.id, userId, ...fields(tx), ...recurrenceFields(tx.id, tx) })
     .onConflictDoNothing({ target: transaction.id });
 }
 

@@ -45,6 +45,75 @@ describe("transactionsRepo.create", () => {
   });
 });
 
+describe("transactionsRepo.create recurrence", () => {
+  const stored = async (id: string) =>
+    (await db.select().from(transaction)).find((r) => r.id === id)!;
+
+  it("stores a 'forever' expense as one recurring row with day, series = id and no end", async () => {
+    const tx = { ...expense("2026-10-15", 10000), recurrence: "forever" as const };
+    await transactionsRepo.create(userId, tx);
+
+    expect(await db.$count(transaction)).toBe(1);
+    expect(await stored(tx.id)).toMatchObject({
+      recurring: true,
+      recurrenceDay: 15,
+      seriesId: tx.id,
+      recurrenceEnd: null,
+      date: "2026-10-15",
+      amountCents: 10000,
+    });
+  });
+
+  it("stores an 'until' expense with recurrence_end = first day of the final month", async () => {
+    const tx = {
+      ...expense("2026-10-31"),
+      recurrence: "until" as const,
+      recurrenceEndMonth: "2027-03",
+    };
+    await transactionsRepo.create(userId, tx);
+
+    expect(await stored(tx.id)).toMatchObject({
+      recurring: true,
+      recurrenceDay: 31,
+      seriesId: tx.id,
+      recurrenceEnd: "2027-03-01",
+    });
+  });
+
+  it("stores a non-recurring row with recurring = false and the other fields null", async () => {
+    const tx = { ...expense("2026-10-15"), recurrence: "none" as const, recurrenceEndMonth: null };
+    await transactionsRepo.create(userId, tx);
+    await transactionsRepo.create(userId, { ...tx, recurrence: "forever" as const });
+
+    expect(await db.$count(transaction)).toBe(1);
+    expect(await stored(tx.id)).toMatchObject({
+      recurring: false,
+      recurrenceDay: null,
+      seriesId: null,
+      recurrenceEnd: null,
+    });
+  });
+
+  it("stores a recurring income", async () => {
+    const tx = {
+      id: randomUUID(),
+      kind: "income" as const,
+      amountCents: 500000,
+      date: "2026-10-05",
+      recurrence: "forever" as const,
+    };
+    await transactionsRepo.create(userId, tx);
+
+    expect(await stored(tx.id)).toMatchObject({
+      kind: "income",
+      categoryId: null,
+      recurring: true,
+      recurrenceDay: 5,
+      seriesId: tx.id,
+    });
+  });
+});
+
 describe("transactionsRepo.listByMonth", () => {
   it("returns only the month's transactions, latest date first", async () => {
     const sep30 = expense("2026-09-30");

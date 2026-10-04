@@ -253,11 +253,11 @@ T13 → T15
 
 **Done when**:
 
-- [ ] `transactions.int.test.ts`: criar "Sempre" grava uma linha com `recurring`, `recurrence_day` = dia da data, `series_id` = `id` e `recurrence_end` `NULL` (AC 3)
-- [ ] `transactions.int.test.ts`: criar "Até mês/ano" grava `recurrence_end` = primeiro dia do mês final (AC 4)
-- [ ] `transactions.int.test.ts`: criar sem recorrência grava `recurring = false` e os demais `NULL`; repetir o mesmo `id` continua ignorado
-- [ ] `transactions.int.test.ts`: ganho recorrente é gravado
-- [ ] Gate full passa; ≥ 4 testes novos
+- [x] `transactions.int.test.ts`: criar "Sempre" grava uma linha com `recurring`, `recurrence_day` = dia da data, `series_id` = `id` e `recurrence_end` `NULL` (AC 3)
+- [x] `transactions.int.test.ts`: criar "Até mês/ano" grava `recurrence_end` = primeiro dia do mês final (AC 4)
+- [x] `transactions.int.test.ts`: criar sem recorrência grava `recurring = false` e os demais `NULL`; repetir o mesmo `id` continua ignorado
+- [x] `transactions.int.test.ts`: ganho recorrente é gravado
+- [x] Gate full passa; ≥ 4 testes novos
 
 **Tests**: integration
 **Gate**: full
