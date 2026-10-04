@@ -3,6 +3,7 @@ import type { Result } from "./result";
 const PERCENT_PATTERN = /^(\d+)(?:,(\d{1,2}))?$/;
 
 const percent = new Intl.NumberFormat("pt-BR", { maximumFractionDigits: 2 });
+const share = new Intl.NumberFormat("pt-BR", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
 
 /** Parses a pt-BR percentage ("12,5") into integer basis points (1% = 100). */
 export function parsePercent(input: string): Result<number> {
@@ -24,4 +25,9 @@ export function parsePercent(input: string): Result<number> {
 /** Formats basis points as a percentage, e.g. 1250 → "12,5%". */
 export function formatPercent(bp: number): string {
   return `${percent.format(bp / 100)}%`;
+}
+
+/** Formats basis points with exactly one decimal, e.g. 6250 → "62,5%", 0 → "0,0%". */
+export function formatShare(bp: number): string {
+  return `${share.format(bp / 100)}%`;
 }

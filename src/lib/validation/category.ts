@@ -41,6 +41,9 @@ const item = z
 
 /** Whole category set: items parsed first, then the set rules (sum = 100%, unique names, subcategory names). */
 export const categorySetSchema = z.array(item).superRefine((items, ctx) => {
+  // An item that failed its own parsing was not transformed (no percentBp): its issues are
+  // already reported, so the set rules would only add noise (e.g. "soma NaN%").
+  if (items.some((i) => typeof i.percentBp !== "number")) return;
   const result = validateCategorySet(
     items.map((i) => ({ name: i.name, bp: i.percentBp, subcategories: i.subcategories })),
   );

@@ -44,3 +44,10 @@ export function isValidCalendarDate(iso: string): boolean {
     date.getUTCFullYear() === year && date.getUTCMonth() === month - 1 && date.getUTCDate() === day
   );
 }
+
+/** Link to a month (`AAAA-MM`) that keeps every other URL parameter, e.g. the list filters. */
+export function monthHref(current: URLSearchParams | string, month: string): string {
+  const next = new URLSearchParams(current);
+  next.set("mes", month);
+  return `/?${next.toString()}`;
+}

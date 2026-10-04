@@ -14,15 +14,7 @@ import {
 import type { CategorySummary } from "@/lib/domain/budget";
 import { colorVar } from "@/lib/domain/color";
 import { formatBRL } from "@/lib/domain/money";
-import { formatPercent } from "@/lib/domain/percent";
-
-const shareFormat = new Intl.NumberFormat("pt-BR", {
-  minimumFractionDigits: 1,
-  maximumFractionDigits: 1,
-});
-
-/** Share in basis points as text with one decimal, e.g. 6250 → "62,5%". */
-const formatShare = (bp: number) => `${shareFormat.format(bp / 100)}%`;
+import { formatPercent, formatShare } from "@/lib/domain/percent";
 
 /** Per category: percentage, target, spent, remaining and how much of the target was used. */
 export function SummaryTable({ rows }: { rows: CategorySummary[] }) {

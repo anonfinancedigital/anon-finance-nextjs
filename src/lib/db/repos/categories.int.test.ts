@@ -355,4 +355,27 @@ describe("categoriesRepo.replaceSet subcategories", () => {
     expect(await categoriesRepo.replaceSet(userId, next)).toEqual({ ok: true });
     expect((await categoriesRepo.list(userId))[1].subcategories).toEqual([{ id: sub.id, name: "Restaurante" }]);
   });
+
+  it("accepts swapping the names of two subcategories in one save", async () => {
+    const userId = await insertTestUser();
+    const saved = await seed(userId, "Restaurante", "Streaming");
+    const [a, b] = saved[1].subcategories;
+    const next = saved.map((c) =>
+      c.name === "Conforto"
+        ? {
+            ...c,
+            subcategories: [
+              { id: a.id, name: b.name },
+              { id: b.id, name: a.name },
+            ],
+          }
+        : c,
+    );
+
+    expect(await categoriesRepo.replaceSet(userId, next)).toEqual({ ok: true });
+    expect((await categoriesRepo.list(userId))[1].subcategories).toEqual([
+      { id: a.id, name: "Streaming" },
+      { id: b.id, name: "Restaurante" },
+    ]);
+  });
 });

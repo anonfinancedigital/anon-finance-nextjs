@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { formatPercent, parsePercent } from "./percent";
+import { formatPercent, formatShare, parsePercent } from "./percent";
 
 describe("parsePercent", () => {
   it.each([
@@ -27,5 +27,17 @@ describe("formatPercent", () => {
     [3000, "30%"],
   ])("formats %i bp as %s", (bp, text) => {
     expect(formatPercent(bp)).toBe(text);
+  });
+});
+
+describe("formatShare", () => {
+  it.each([
+    [6250, "62,5%"],
+    [2000, "20,0%"],
+    [0, "0,0%"],
+    [10000, "100,0%"],
+    [3333, "33,3%"],
+  ])("formats %i bp as %s", (bp, text) => {
+    expect(formatShare(bp)).toBe(text);
   });
 });

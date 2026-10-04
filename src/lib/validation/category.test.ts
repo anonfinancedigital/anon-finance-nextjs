@@ -109,10 +109,9 @@ describe("categorySetSchema", () => {
     });
 
     it("rejects a subcategory id that is not a uuid", () => {
-      expect(issues(withSubs([{ id: "abc", name: "Restaurante" }]))).toContainEqual({
-        path: "0.subcategories.0.id",
-        message: "Identificador inválido",
-      });
+      expect(issues(withSubs([{ id: "abc", name: "Restaurante" }]))).toEqual([
+        { path: "0.subcategories.0.id", message: "Identificador inválido" },
+      ]);
     });
   });
 });

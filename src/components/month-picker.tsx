@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import type { YearMonth } from "@/lib/domain/month";
+import { monthHref, type YearMonth } from "@/lib/domain/month";
 
 const param = ({ year, month }: YearMonth) => `${year}-${String(month).padStart(2, "0")}`;
 
@@ -22,12 +22,7 @@ const monthName = new Intl.DateTimeFormat("pt-BR", {
 export function MonthPicker({ month }: { month: YearMonth }) {
   const router = useRouter();
   const searchParams = useSearchParams();
-  // Only `mes` changes; filters and any other parameter stay in the URL.
-  const href = (value: string) => {
-    const next = new URLSearchParams(searchParams);
-    next.set("mes", value);
-    return `/?${next.toString()}`;
-  };
+  const href = (value: string) => monthHref(searchParams, value);
 
   return (
     <div className="flex flex-wrap items-center gap-2">

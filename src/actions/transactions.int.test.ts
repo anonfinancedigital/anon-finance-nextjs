@@ -417,4 +417,19 @@ describe("transaction subcategory", () => {
     });
     expect((await stored()).subcategoryId).toBe(restaurante);
   });
+
+  it("rejects an income with a subcategory and persists nothing", async () => {
+    const subcategoryId = await insertSubcategory(userId, categoryId);
+
+    // The types already forbid it; the action must still reject a tampered payload.
+    const tampered = { ...income(), subcategoryId } as unknown as Parameters<
+      typeof createTransaction
+    >[0];
+
+    expect(await createTransaction(tampered)).toMatchObject({
+      ok: false,
+      fieldErrors: { subcategoryId: "Ganho não tem subcategoria" },
+    });
+    expect(await db.$count(transaction)).toBe(0);
+  });
 });

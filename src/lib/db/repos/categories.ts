@@ -77,7 +77,7 @@ async function replaceSet(userId: string, cats: CategoryItem[]): Promise<Categor
     }
 
     const existingSubs = await tx
-      .select({ id: subcategory.id, categoryId: subcategory.categoryId })
+      .select({ id: subcategory.id, categoryId: subcategory.categoryId, name: subcategory.name })
       .from(subcategory)
       .where(eq(subcategory.userId, userId));
     const parentOf = new Map(existingSubs.map((s) => [s.id, s.categoryId]));
@@ -125,6 +125,15 @@ async function replaceSet(userId: string, cats: CategoryItem[]): Promise<Categor
       await tx
         .delete(category)
         .where(and(eq(category.userId, userId), inArray(category.id, removedIds)));
+    }
+
+    // Renamed subcategories first get a temporary unique name, so swapping two names in one save
+    // (A↔B) does not hit the unique index halfway.
+    const currentName = new Map(existingSubs.map((s) => [s.id, s.name]));
+    for (const { id, name } of items.flatMap((c) => c.subcategories)) {
+      if (id && currentName.get(id) !== name) {
+        await tx.update(subcategory).set({ name: `~${id}` }).where(eq(subcategory.id, id));
+      }
     }
 
     // One statement per item, in order, so clock_timestamp() preserves the creation order.
