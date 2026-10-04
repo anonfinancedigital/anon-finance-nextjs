@@ -125,17 +125,17 @@ Implicit-requirement dimensions: input validation (LIB-02, LIB-03), failure stat
 | -------------- | ----- | ----- | ------ |
 | LIB-01 | P1: Cadastrar e resumo (AC 1: link na navegação) | Specify | Implemented |
 | LIB-02 | P1: Cadastrar e resumo (AC 2, 3, 4, 5: salvar, estado vazio, substituir, preencher) | Specify | Implemented |
-| LIB-03 | P1: Cadastrar e resumo (AC 6: patrimônio-alvo) | Specify | Implementing |
+| LIB-03 | P1: Cadastrar e resumo (AC 6: patrimônio-alvo) | Specify | Implemented |
 | LIB-04 | P1: Cadastrar e resumo (AC 7, 8, 9: falta, percentual, barra, limite 100%) | Specify | Implemented |
 | LIB-05 | P1: Aporte mensal (AC 1: prazo n) e Edge Cases de data | Specify | Implemented |
-| LIB-06 | P1: Aporte mensal (AC 2, 4: fórmula, arredondamento, aporte zero) | Specify | Implementing |
+| LIB-06 | P1: Aporte mensal (AC 2, 4: fórmula, arredondamento, aporte zero) | Specify | Implemented |
 | LIB-07 | P1: Aporte mensal (AC 3, 5: exibição e prazo encerrado) | Specify | Implemented |
-| LIB-08 | P1: Validar (AC 1, 2: renda e guardado) | Specify | Implementing |
-| LIB-09 | P1: Validar (AC 3, 4: nascimento e idade de aposentadoria) | Specify | Implementing |
+| LIB-08 | P1: Validar (AC 1, 2: renda e guardado) | Specify | Implemented |
+| LIB-09 | P1: Validar (AC 3, 4: nascimento e idade de aposentadoria) | Specify | Implemented |
 | LIB-10 | P1: Validar (AC 5: falha de salvamento) | Specify | Implemented |
-| LIB-11 | P1: Validar (AC 6, 7: sessão e isolamento por usuário) | Specify | Implementing |
+| LIB-11 | P1: Validar (AC 6, 7: sessão e isolamento por usuário) | Specify | Implemented |
 
-**Coverage:** 11 total, 0 mapped to tasks, 11 unmapped ⚠️
+**Coverage:** 11 total, 11 mapped to tasks, 0 unmapped
 
 ---
 

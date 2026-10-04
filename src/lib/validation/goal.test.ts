@@ -80,6 +80,12 @@ describe("goalSchema", () => {
       expect(errors({ birthDate: "1906-06-15", retirementAge: "120" }).birthDate).toBeUndefined();
     });
 
+    it("usa o dia de São Paulo como hoje (23:00 de 15/06 em SP já é 16/06 em UTC)", () => {
+      const lateNow = new Date("2026-06-16T02:00:00Z");
+      const result = goalSchema(lateNow).safeParse({ ...valid, birthDate: "1990-06-16", retirementAge: "36" });
+      expect(result.success).toBe(true);
+    });
+
     it("aceita nascimento hoje", () => {
       const result = parse({ birthDate: "2026-06-15", retirementAge: "1" });
       expect(result.success).toBe(true);
@@ -87,7 +93,7 @@ describe("goalSchema", () => {
   });
 
   describe("idade de aposentadoria", () => {
-    it.each([[""], ["60,5"], ["abc"], ["-3"], ["0"], ["121"]])("rejeita %j no campo retirementAge", (retirementAge) => {
+    it.each([[""], ["60,5"], ["60.5"], ["1e2"], ["abc"], ["-3"], ["0"], ["121"]])("rejeita %j no campo retirementAge", (retirementAge) => {
       expect(errors({ retirementAge }).retirementAge?.length).toBeGreaterThan(0);
     });
 
