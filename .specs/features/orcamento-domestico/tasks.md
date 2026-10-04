@@ -765,10 +765,10 @@ T25 → T26 → T27 → T28 → T29 → T30 → T31
 
 **Done when**:
 
-- [ ] e2e: criar 30/30/10/10/20 → salvo e listado após o reload
-- [ ] e2e: com soma 105% → mensagem "A soma dos percentuais deve ser 100% (atual: 105%)" e salvar desabilitado
-- [ ] e2e: remover uma categoria com gastos → mensagem com a quantidade de gastos
-- [ ] Gate build passa; ≥ 3 testes e2e
+- [x] e2e: criar 30/30/10/10/20 → salvo e listado após o reload
+- [x] e2e: com soma 105% → mensagem "A soma dos percentuais deve ser 100% (atual: 105%)" e salvar desabilitado
+- [x] e2e: remover uma categoria com gastos → mensagem com a quantidade de gastos
+- [x] Gate build passa; ≥ 3 testes e2e
 
 **Tests**: e2e
 **Gate**: build

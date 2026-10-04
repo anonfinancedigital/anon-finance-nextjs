@@ -1,4 +1,10 @@
+import { randomUUID } from "node:crypto";
 import { expect, type Page } from "@playwright/test";
+import { eq } from "drizzle-orm";
+import { db } from "../src/lib/db/client";
+import { user } from "../src/lib/db/auth-schema";
+import { categoriesRepo } from "../src/lib/db/repos/categories";
+import { transactionsRepo } from "../src/lib/db/repos/transactions";
 import { seedAdminFromEnv } from "../src/lib/db/seed-user";
 import { truncateAll } from "../src/test/db-reset";
 
@@ -24,4 +30,32 @@ export async function fillLogin(page: Page, email: string, password: string) {
 export async function login(page: Page) {
   await fillLogin(page, ADMIN.email, ADMIN.password);
   await expect(page).toHaveURL("/");
+}
+
+/** Id of the seeded admin user. */
+export async function adminUserId(): Promise<string> {
+  const [row] = await db.select({ id: user.id }).from(user).where(eq(user.email, ADMIN.email));
+  return row.id;
+}
+
+/** Saves the admin's category set straight in the database; returns it with ids, in order. */
+export async function seedCategories(cats: { name: string; percent: number }[]) {
+  const userId = await adminUserId();
+  const result = await categoriesRepo.replaceSet(
+    userId,
+    cats.map((c) => ({ name: c.name, percentBp: c.percent * 100 })),
+  );
+  if (!result.ok) throw new Error(result.error);
+  return categoriesRepo.list(userId);
+}
+
+/** Inserts one admin transaction straight in the database. */
+export async function seedTransaction(tx: {
+  kind: "income" | "expense";
+  amountCents: number;
+  date: string;
+  categoryId?: string;
+  description?: string;
+}) {
+  await transactionsRepo.create(await adminUserId(), { id: randomUUID(), ...tx });
 }
