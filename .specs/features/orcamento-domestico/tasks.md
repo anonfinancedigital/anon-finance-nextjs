@@ -498,8 +498,8 @@ T25 → T26 → T27 → T28 → T29 → T30 → T31
 
 **Done when**:
 
-- [ ] Falhas antigas (16 min) não contam; "A@x.com" e "a@x.com" contam juntas; `clear` zera a contagem
-- [ ] Gate full passa; ≥ 4 testes
+- [x] Falhas antigas (16 min) não contam; "A@x.com" e "a@x.com" contam juntas; `clear` zera a contagem
+- [x] Gate full passa; ≥ 4 testes
 
 **Tests**: integration
 **Gate**: full
