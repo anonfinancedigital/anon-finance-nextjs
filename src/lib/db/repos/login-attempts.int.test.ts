@@ -37,4 +37,16 @@ describe("loginAttemptsRepo", () => {
     expect(await loginAttemptsRepo.countRecentFailures("a@x.com", windowStart())).toBe(0);
     expect(await loginAttemptsRepo.countRecentFailures("b@x.com", windowStart())).toBe(1);
   });
+
+  it("oldestRecentFailure returns the oldest failure inside the window, or null", async () => {
+    const outside = new Date(Date.now() - 16 * MINUTE);
+    const oldest = new Date(Date.now() - 10 * MINUTE);
+    await db.insert(loginAttempt).values([
+      { email: "a@x.com", attemptedAt: outside },
+      { email: "a@x.com", attemptedAt: oldest },
+      { email: "a@x.com", attemptedAt: new Date(Date.now() - 2 * MINUTE) },
+    ]);
+    expect(await loginAttemptsRepo.oldestRecentFailure("A@x.com", windowStart())).toEqual(oldest);
+    expect(await loginAttemptsRepo.oldestRecentFailure("b@x.com", windowStart())).toBeNull();
+  });
 });

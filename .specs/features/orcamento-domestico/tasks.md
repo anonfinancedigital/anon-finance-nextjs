@@ -576,12 +576,12 @@ T25 → T26 → T27 → T28 → T29 → T30 → T31
 
 **Done when**:
 
-- [ ] Credenciais corretas → sessão criada e redirect para `/`
-- [ ] E-mail errado e senha errada → exatamente a mesma mensagem "E-mail ou senha inválidos"
-- [ ] 5 falhas → a 6ª tentativa, mesmo com a senha correta, é bloqueada com a mensagem de bloqueio; após 15 min (relógio mockado) libera
-- [ ] Sucesso zera as falhas
-- [ ] `signOutAction` encerra a sessão (`getSession` devolve null depois)
-- [ ] Gate full passa; ≥ 6 testes
+- [x] Credenciais corretas → sessão criada e redirect para `/`
+- [x] E-mail errado e senha errada → exatamente a mesma mensagem "E-mail ou senha inválidos"
+- [x] 5 falhas → a 6ª tentativa, mesmo com a senha correta, é bloqueada com a mensagem de bloqueio; após 15 min (relógio mockado) libera
+- [x] Sucesso zera as falhas
+- [x] `signOutAction` encerra a sessão (`getSession` devolve null depois)
+- [x] Gate full passa; ≥ 6 testes
 
 **Tests**: integration
 **Gate**: full
