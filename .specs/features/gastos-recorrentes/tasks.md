@@ -162,14 +162,14 @@ T13 → T15
 
 **Done when**:
 
-- [ ] `recurrence.test.ts`: editar no mês do meio divide: o segmento original termina em M-1 e o novo começa em M com os dados novos e a mesma série (RECUR-07 AC 2 e 3)
-- [ ] `recurrence.test.ts`: editar no mês de início atualiza no lugar, sem inserir segmento (AC 8)
-- [ ] `recurrence.test.ts`: editar M e depois N > M: as operações do segundo passo mantêm o segmento de M até N-1 (RECUR-08 AC 4)
-- [ ] `recurrence.test.ts`: editar M depois de ter editado N > M apaga o segmento de N (AC 5)
-- [ ] `recurrence.test.ts`: dados novos "não recorrente" tornam o mês editado avulso (`seriesId` `null`) e a série anterior termina em M-1 (AC 6)
-- [ ] `recurrence.test.ts`: editar uma linha avulsa para recorrente cria a série com `seriesId` = id da linha
-- [ ] `recurrence.test.ts` (invariante): após qualquer sequência de edições e exclusões simuladas, nenhum mês tem mais de uma ocorrência por série
-- [ ] Gate quick passa; ≥ 9 testes novos
+- [x] `recurrence.test.ts`: editar no mês do meio divide: o segmento original termina em M-1 e o novo começa em M com os dados novos e a mesma série (RECUR-07 AC 2 e 3)
+- [x] `recurrence.test.ts`: editar no mês de início atualiza no lugar, sem inserir segmento (AC 8)
+- [x] `recurrence.test.ts`: editar M e depois N > M: as operações do segundo passo mantêm o segmento de M até N-1 (RECUR-08 AC 4)
+- [x] `recurrence.test.ts`: editar M depois de ter editado N > M apaga o segmento de N (AC 5)
+- [x] `recurrence.test.ts`: dados novos "não recorrente" tornam o mês editado avulso (`seriesId` `null`) e a série anterior termina em M-1 (AC 6)
+- [x] `recurrence.test.ts`: editar uma linha avulsa para recorrente cria a série com `seriesId` = id da linha
+- [x] `recurrence.test.ts` (invariante): após qualquer sequência de edições e exclusões simuladas, nenhum mês tem mais de uma ocorrência por série
+- [x] Gate quick passa; ≥ 9 testes novos
 
 **Tests**: unit
 **Gate**: quick

@@ -1,11 +1,13 @@
 import { describe, expect, it } from "vitest";
 import {
+  type EditPlan,
   type Segment,
   appliesInMonth,
   lastDayOfMonth,
   monthKey,
   occurrenceDate,
   planDelete,
+  planEdit,
   previousMonthKey,
   resolveDay,
 } from "./recurrence";
@@ -159,5 +161,214 @@ describe("resolveDay", () => {
 
   it("uses the submitted day for a non-recurring row", () => {
     expect(resolveDay(single("2026-02-28"), "2026-02", "2026-02-28")).toBe(28);
+  });
+});
+
+const forever = (date: string) => ({ date, recurring: true, endMonth: null });
+
+/** Applies a plan to an in-memory table; an inserted segment gets id `newId`. */
+function apply(segments: Segment[], plan: EditPlan, newId: string): Segment[] {
+  let next = segments.filter((s) => !plan.deleteIds.includes(s.id));
+  next = next.map((s) => {
+    if (plan.updateInPlace?.id === s.id) return plan.updateInPlace;
+    if (plan.truncate?.id === s.id) return { ...s, endMonth: plan.truncate.endMonth };
+    return s;
+  });
+  return plan.insert ? [...next, { id: newId, ...plan.insert }] : next;
+}
+
+/** The segment of series "S" (or the given row) that applies in each month. */
+const seriesIn = (segments: Segment[], months: string[]) =>
+  months.map((m) =>
+    segments.filter((s) => s.seriesId === "S" && appliesInMonth(s, m)).map((s) => s.id),
+  );
+
+/** Finds the segment that applies to `month` in series "S" and plans an edit on it. */
+function editSeries(segments: Segment[], month: string, date: string, newId: string) {
+  const target = segments.find((s) => s.seriesId === "S" && appliesInMonth(s, month))!;
+  return apply(segments, planEdit({ segments, id: target.id, month, next: forever(date) }), newId);
+}
+
+describe("planEdit", () => {
+  const origin = seg("S", "2026-10-15");
+
+  it("splits in a middle month: the original ends in M-1, a new segment starts in M", () => {
+    const plan = planEdit({
+      segments: [origin],
+      id: "S",
+      month: "2026-12",
+      next: forever("2026-12-20"),
+    });
+    expect(plan).toEqual({
+      deleteIds: [],
+      truncate: { id: "S", endMonth: "2026-11" },
+      insert: { seriesId: "S", date: "2026-12-20", recurringDay: 20, endMonth: null },
+    });
+  });
+
+  it("keeps the earlier months on the original segment after a split", () => {
+    const after = editSeries([origin], "2026-12", "2026-12-15", "n1");
+    expect(seriesIn(after, ["2026-10", "2026-11", "2026-12", "2027-01"])).toEqual([
+      ["S"],
+      ["S"],
+      ["n1"],
+      ["n1"],
+    ]);
+  });
+
+  it("updates in place when editing the month the series starts, without inserting", () => {
+    const plan = planEdit({
+      segments: [origin],
+      id: "S",
+      month: "2026-10",
+      next: { date: "2026-10-10", recurring: true, endMonth: "2027-03" },
+    });
+    expect(plan).toEqual({
+      deleteIds: [],
+      updateInPlace: {
+        id: "S",
+        seriesId: "S",
+        date: "2026-10-10",
+        recurringDay: 10,
+        endMonth: "2027-03",
+      },
+    });
+  });
+
+  it("editing M then N > M keeps M's segment from M to N-1", () => {
+    let segments = editSeries([origin], "2026-12", "2026-12-15", "m");
+    const plan = planEdit({ segments, id: "m", month: "2027-02", next: forever("2027-02-15") });
+    expect(plan.truncate).toEqual({ id: "m", endMonth: "2027-01" });
+    expect(plan.deleteIds).toEqual([]);
+    segments = apply(segments, plan, "n");
+    expect(seriesIn(segments, ["2026-11", "2026-12", "2027-01", "2027-02", "2027-03"])).toEqual([
+      ["S"],
+      ["m"],
+      ["m"],
+      ["n"],
+      ["n"],
+    ]);
+  });
+
+  it("editing M after editing N > M deletes N's segment", () => {
+    let segments = editSeries([origin], "2027-02", "2027-02-15", "n");
+    const target = segments.find((s) => s.id === "S")!;
+    const plan = planEdit({
+      segments,
+      id: target.id,
+      month: "2026-12",
+      next: forever("2026-12-15"),
+    });
+    expect(plan.deleteIds).toEqual(["n"]);
+    segments = apply(segments, plan, "m");
+    expect(seriesIn(segments, ["2026-11", "2026-12", "2027-02", "2027-06"])).toEqual([
+      ["S"],
+      ["m"],
+      ["m"],
+      ["m"],
+    ]);
+  });
+
+  it("makes the edited month a single row when the new data is not recurring", () => {
+    const segments = [origin, seg("n", "2027-02-15")];
+    const plan = planEdit({
+      segments,
+      id: "S",
+      month: "2026-12",
+      next: { date: "2026-12-15", recurring: false, endMonth: null },
+    });
+    expect(plan).toEqual({
+      deleteIds: ["n"],
+      truncate: { id: "S", endMonth: "2026-11" },
+      insert: { seriesId: null, date: "2026-12-15", recurringDay: null, endMonth: null },
+    });
+  });
+
+  it("makes a series-start segment a single row when edited to not recurring", () => {
+    const plan = planEdit({
+      segments: [origin],
+      id: "S",
+      month: "2026-10",
+      next: { date: "2026-10-15", recurring: false, endMonth: null },
+    });
+    expect(plan.updateInPlace).toEqual({
+      id: "S",
+      seriesId: null,
+      date: "2026-10-15",
+      recurringDay: null,
+      endMonth: null,
+    });
+  });
+
+  it("turns a single row into a series whose id is the row id", () => {
+    const plan = planEdit({
+      segments: [single("2026-10-15")],
+      id: "a1",
+      month: "2026-10",
+      next: forever("2026-10-31"),
+    });
+    expect(plan).toEqual({
+      deleteIds: [],
+      updateInPlace: {
+        id: "a1",
+        seriesId: "a1",
+        date: "2026-10-31",
+        recurringDay: 31,
+        endMonth: null,
+      },
+    });
+  });
+
+  it("keeps day 31 when the edit resubmits the projected 28/02", () => {
+    const plan = planEdit({
+      segments: [seg("S", "2026-01-31")],
+      id: "S",
+      month: "2026-02",
+      next: forever("2026-02-28"),
+    });
+    expect(plan.insert).toEqual({
+      seriesId: "S",
+      date: "2026-02-28",
+      recurringDay: 31,
+      endMonth: null,
+    });
+  });
+
+  it("never leaves two occurrences of a series in the same month (invariant)", () => {
+    const months = Array.from({ length: 24 }, (_, i) => {
+      const y = 2026 + Math.floor((9 + i) / 12);
+      return `${y}-${String(((9 + i) % 12) + 1).padStart(2, "0")}`;
+    });
+    // Edits and deletes in mixed order, including re-edits of earlier months and the start month.
+    const steps: [kind: "edit" | "delete", month: string][] = [
+      ["edit", "2026-12"],
+      ["edit", "2027-03"],
+      ["edit", "2027-01"],
+      ["edit", "2027-06"],
+      ["edit", "2027-06"],
+      ["delete", "2027-09"],
+      ["edit", "2026-11"],
+      ["edit", "2027-02"],
+      ["delete", "2027-04"],
+      ["edit", "2026-10"],
+      ["edit", "2027-01"],
+    ];
+    let segments: Segment[] = [origin];
+    steps.forEach(([kind, month], i) => {
+      const target = segments.find((s) => s.seriesId === "S" && appliesInMonth(s, month))!;
+      expect(target).toBeDefined();
+      const plan =
+        kind === "edit"
+          ? planEdit({ segments, id: target.id, month, next: forever(`${month}-15`) })
+          : planDelete({ segments, id: target.id, month });
+      segments = apply(segments, plan, `n${i}`);
+      for (const ids of seriesIn(segments, months)) expect(ids.length).toBeLessThanOrEqual(1);
+    });
+    // Re-editing the start month rebuilt one endless segment; the final Jan/2027 edit split it.
+    expect(seriesIn(segments, ["2026-12", "2027-01", "2028-01"])).toEqual([
+      ["S"],
+      ["n10"],
+      ["n10"],
+    ]);
   });
 });

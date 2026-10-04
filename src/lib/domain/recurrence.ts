@@ -81,3 +81,52 @@ export function resolveDay(prev: Segment, key: string, submittedDate: string): n
   }
   return Number(submittedDate.slice(8, 10));
 }
+
+/** Recurrence part of the data submitted for an edit. */
+export type EditedData = {
+  /** AAAA-MM-DD submitted in the form. */
+  date: string;
+  recurring: boolean;
+  /** AAAA-MM, inclusive; null = no end (always null when not recurring). */
+  endMonth: string | null;
+};
+
+export type EditPlan = {
+  deleteIds: string[];
+  updateInPlace?: Segment;
+  truncate?: { id: string; endMonth: string };
+  insert?: Omit<Segment, "id">;
+};
+
+/**
+ * Editing the occurrence of `month` of segment `id`: the new data applies to `month` and every
+ * later month. Later segments of the series are deleted (this edit overrides later ones); the
+ * segment is updated in place when it starts in `month` or is non-recurring, otherwise it ends in
+ * the previous month and a new segment of the same series starts in `month`.
+ */
+export function planEdit(input: {
+  segments: Segment[];
+  id: string;
+  month: string;
+  next: EditedData;
+}): EditPlan {
+  const { segments, month, next } = input;
+  const seg = segments.find((s) => s.id === input.id)!;
+  const result: Omit<Segment, "id"> = next.recurring
+    ? {
+        seriesId: seg.seriesId ?? seg.id,
+        date: next.date,
+        recurringDay: resolveDay(seg, month, next.date),
+        endMonth: next.endMonth,
+      }
+    : { seriesId: null, date: next.date, recurringDay: null, endMonth: null };
+  const deleteIds = laterIds(segments, seg, month);
+  if (seg.recurringDay === null || monthKey(seg.date) === month) {
+    return { deleteIds, updateInPlace: { id: seg.id, ...result } };
+  }
+  return {
+    deleteIds,
+    truncate: { id: seg.id, endMonth: previousMonthKey(month) },
+    insert: result,
+  };
+}
