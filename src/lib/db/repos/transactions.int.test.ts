@@ -141,3 +141,59 @@ describe("transactionsRepo.delete", () => {
     expect((await transactionsRepo.listByMonth(userId, OCTOBER)).map((t) => t.id)).toEqual([tx.id]);
   });
 });
+
+describe("transactionsRepo.monthTotals", () => {
+  const income = (date: string, amountCents: number) => ({
+    id: randomUUID(),
+    kind: "income" as const,
+    amountCents,
+    date,
+  });
+  const spend = (categoryId: string, date: string, amountCents: number) => ({
+    ...expense(date, amountCents),
+    categoryId,
+  });
+
+  it("sums the month's income and spending per category, leaving other months out", async () => {
+    for (const tx of [
+      income("2026-10-01", 300000),
+      income("2026-10-20", 200000),
+      spend(conforto, "2026-10-02", 10000),
+      spend(conforto, "2026-10-31", 5000),
+      spend(lazer, "2026-10-15", 2500),
+      spend(conforto, "2026-11-01", 99900),
+    ]) {
+      await transactionsRepo.create(userId, tx);
+    }
+
+    const totals = await transactionsRepo.monthTotals(userId, OCTOBER);
+    expect(totals.incomeCents).toBe(500000);
+    expect(totals.spentByCategory).toEqual(
+      new Map([
+        [conforto, 15000],
+        [lazer, 2500],
+      ]),
+    );
+  });
+
+  it("returns zero income and an empty map for a month without transactions", async () => {
+    await transactionsRepo.create(userId, spend(conforto, "2026-09-30", 1000));
+
+    const totals = await transactionsRepo.monthTotals(userId, OCTOBER);
+    expect(totals.incomeCents).toBe(0);
+    expect(totals.spentByCategory).toEqual(new Map());
+  });
+
+  it("ignores transactions of other users", async () => {
+    const otherId = await insertTestUser();
+    await categoriesRepo.replaceSet(otherId, [{ name: "Tudo", percentBp: 10000 }]);
+    const [tudo] = await categoriesRepo.list(otherId);
+    await transactionsRepo.create(otherId, income("2026-10-01", 700000));
+    await transactionsRepo.create(otherId, spend(tudo.id, "2026-10-02", 3000));
+    await transactionsRepo.create(userId, income("2026-10-01", 100000));
+
+    const totals = await transactionsRepo.monthTotals(userId, OCTOBER);
+    expect(totals.incomeCents).toBe(100000);
+    expect(totals.spentByCategory).toEqual(new Map());
+  });
+});

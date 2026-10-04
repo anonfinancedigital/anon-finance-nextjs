@@ -80,4 +80,26 @@ async function listByMonth(userId: string, range: MonthRange): Promise<Transacti
     .orderBy(desc(transaction.date), desc(transaction.createdAt));
 }
 
-export const transactionsRepo = { create, update, delete: remove, listByMonth };
+export type MonthTotals = { incomeCents: number; spentByCategory: Map<string, number> };
+
+/** Month income and spending per category, from a single SUM … GROUP BY. */
+async function monthTotals(userId: string, range: MonthRange): Promise<MonthTotals> {
+  const rows = await db
+    .select({
+      kind: transaction.kind,
+      categoryId: transaction.categoryId,
+      cents: sql<number>`sum(${transaction.amountCents})`.mapWith(Number),
+    })
+    .from(transaction)
+    .where(inMonth(userId, range))
+    .groupBy(transaction.kind, transaction.categoryId);
+
+  const totals: MonthTotals = { incomeCents: 0, spentByCategory: new Map() };
+  for (const row of rows) {
+    if (row.kind === "income") totals.incomeCents += row.cents;
+    else if (row.categoryId) totals.spentByCategory.set(row.categoryId, row.cents);
+  }
+  return totals;
+}
+
+export const transactionsRepo = { create, update, delete: remove, listByMonth, monthTotals };

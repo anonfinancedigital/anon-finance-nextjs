@@ -472,9 +472,9 @@ T25 → T26 → T27 → T28 → T29 → T30 → T31
 
 **Done when**:
 
-- [ ] Com 2 ganhos e 3 gastos em 2 categorias no mês, mais 1 gasto no mês seguinte → totais corretos e o gasto do outro mês fica de fora
-- [ ] Mês vazio → receita 0 e mapa vazio
-- [ ] Gate full passa; ≥ 3 testes
+- [x] Com 2 ganhos e 3 gastos em 2 categorias no mês, mais 1 gasto no mês seguinte → totais corretos e o gasto do outro mês fica de fora
+- [x] Mês vazio → receita 0 e mapa vazio
+- [x] Gate full passa; ≥ 3 testes
 
 **Tests**: integration
 **Gate**: full
