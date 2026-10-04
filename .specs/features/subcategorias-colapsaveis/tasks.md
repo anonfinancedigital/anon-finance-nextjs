@@ -109,11 +109,11 @@ T2 → T6
 
 **Done when**:
 
-- [ ] Props `id`, `name`, `color`, `count`, `open`, `onToggle`, `children`
-- [ ] Cabeçalho é `<button>` com `aria-expanded` e `aria-controls` igual ao `id` do painel
-- [ ] Chevron para baixo quando fechado e para cima quando aberto; texto da contagem vem de `subcategoryCountLabel`
-- [ ] `children` só renderizam com `open`
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
+- [x] Props `id`, `name`, `color`, `count`, `open`, `onToggle`, `children`
+- [x] Cabeçalho é `<button>` com `aria-expanded` e `aria-controls` igual ao `id` do painel
+- [x] Chevron para baixo quando fechado e para cima quando aberto; texto da contagem vem de `subcategoryCountLabel`
+- [x] `children` só renderizam com `open`
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
 
 **Tests**: none
 **Gate**: build
