@@ -115,8 +115,8 @@ Na tela de Categorias o usuário define percentuais, mas não vê quanto cada pe
 | SIM-04 | P1: salvamento ignora e preserva a receita de referência (AC 9, 10) | Execute | Implementing |
 | COR-01 | P2: coluna `color`, migração e validação (AC 2, 4, 5) | Execute | Implementing |
 | COR-02 | P2: seletor de cor na edição de categorias (AC 1, 2, 3) | Execute | Implementing |
-| COR-03 | P2: cor no gráfico de pizza (AC 6, 9) | Execute | Pending |
-| COR-04 | P2: marcador de cor no resumo e na lista de transações (AC 7, 8, 9) | Execute | Pending |
+| COR-03 | P2: cor no gráfico de pizza (AC 6, 9) | Execute | Implementing |
+| COR-04 | P2: marcador de cor no resumo e na lista de transações (AC 7, 8, 9) | Execute | Implementing |
 
 **Coverage:** 8 total, 0 mapped to tasks, 8 unmapped (tasks.md é criado na fase Tasks)
 

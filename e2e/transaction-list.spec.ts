@@ -61,3 +61,21 @@ test("a month without transactions shows the empty message", async ({ page }) =>
   await expect(page.getByText("Nenhuma transação neste mês", { exact: true })).toBeVisible();
   await expect(page.getByTestId("transaction-row")).toHaveCount(0);
 });
+
+test("an expense shows a marker in its category's color; an income shows none", async ({ page }) => {
+  const [, metas] = await seedCategories([
+    { name: "Moradia", percent: 70, color: 1 },
+    { name: "Metas", percent: 30, color: 7 },
+  ]);
+  await seedTransaction({ kind: "income", amountCents: 500000, date: "2026-09-01", description: "Salário" });
+  await seedTransaction({ kind: "expense", amountCents: 20000, date: "2026-09-10", categoryId: metas.id, description: "Reserva" });
+
+  await login(page);
+  await page.goto("/?mes=2026-09");
+
+  const markers = (description: string) =>
+    page.getByTestId("transaction-row").filter({ hasText: description }).locator('span[aria-hidden][style*="--viz-"]');
+  await expect(markers("Reserva")).toHaveCount(1);
+  await expect(markers("Reserva")).toHaveAttribute("style", /background: ?var\(--viz-7\)/);
+  await expect(markers("Salário")).toHaveCount(0);
+});

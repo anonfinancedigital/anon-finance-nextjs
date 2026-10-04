@@ -327,9 +327,9 @@ T8 → T9 → T10
 
 **Done when**:
 
-- [ ] e2e em `e2e/transaction-list.spec.ts`: gasto de "Metas" mostra marcador `var(--viz-7)`; ganho não mostra marcador (AC 8, 9)
-- [ ] Testes e2e existentes da lista continuam passando
-- [ ] Gate build passa
+- [x] e2e em `e2e/transaction-list.spec.ts`: gasto de "Metas" mostra marcador `var(--viz-7)`; ganho não mostra marcador (AC 8, 9)
+- [x] Testes e2e existentes da lista continuam passando
+- [x] Gate build passa
 
 **Tests**: e2e
 **Gate**: build
