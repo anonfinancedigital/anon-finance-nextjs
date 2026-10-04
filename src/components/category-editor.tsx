@@ -5,6 +5,7 @@ import { useState, useTransition } from "react";
 import { saveCategories } from "@/actions/categories";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Table,
   TableBody,
@@ -15,7 +16,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import type { ActionResult } from "@/lib/action-result";
-import { type Category, TOTAL_BP } from "@/lib/domain/budget";
+import { allocateCents, type Category, TOTAL_BP } from "@/lib/domain/budget";
+import { formatBRL, parseBRL } from "@/lib/domain/money";
 import { formatPercent, parsePercent } from "@/lib/domain/percent";
 
 type Row = { key: string; id?: string; name: string; percent: string };
@@ -27,11 +29,16 @@ const toRow = (c: Category): Row => ({
   percent: formatPercent(c.percentBp).replace("%", ""),
 });
 
-/** Editable category set with a live sum; saving is blocked until the sum is exactly 100%. */
+/**
+ * Editable category set with a live sum; saving is blocked until the sum is exactly 100%.
+ * A reference income (local state only, never saved) previews each category's amount in R$.
+ */
 export function CategoryEditor({ categories }: { categories: Category[] }) {
   const router = useRouter();
   const [rows, setRows] = useState<Row[]>(() => categories.map(toRow));
   const [result, setResult] = useState<ActionResult | null>(null);
+  // Kept apart from the rows so it survives the reset after a save.
+  const [income, setIncome] = useState("");
   const [pending, startTransition] = useTransition();
 
   // After a save the server sends the set again (with ids of new categories): start from it.
@@ -44,6 +51,12 @@ export function CategoryEditor({ categories }: { categories: Category[] }) {
   const parsed = rows.map((r) => (r.percent.trim() === "" ? null : parsePercent(r.percent)));
   const sumBp = parsed.reduce((sum, p) => sum + (p?.ok ? p.value : 0), 0);
   const sumOk = sumBp === TOTAL_BP;
+  const parsedIncome = income.trim() === "" ? null : parseBRL(income);
+  const incomeCents = parsedIncome?.ok ? parsedIncome.value : null;
+  const amounts = parsed.map((p) =>
+    incomeCents !== null && p?.ok ? allocateCents(incomeCents, p.value) : null,
+  );
+  const amountSum = amounts.reduce<number>((sum, cents) => sum + (cents ?? 0), 0);
   const fieldErrors = result && !result.ok ? (result.fieldErrors ?? {}) : {};
 
   function update(index: number, patch: Partial<Row>) {
@@ -77,11 +90,27 @@ export function CategoryEditor({ categories }: { categories: Category[] }) {
         save();
       }}
     >
+      <div className="max-w-xs space-y-1">
+        <Label htmlFor="reference-income">Receita de referência (R$)</Label>
+        <Input
+          id="reference-income"
+          inputMode="decimal"
+          placeholder="5.000,00"
+          value={income}
+          aria-invalid={!!parsedIncome && !parsedIncome.ok}
+          onChange={(e) => setIncome(e.target.value)}
+        />
+        {parsedIncome && !parsedIncome.ok && (
+          <p className="text-sm text-destructive">{parsedIncome.error}</p>
+        )}
+      </div>
+
       <Table>
         <TableHeader>
           <TableRow>
             <TableHead>Nome</TableHead>
             <TableHead className="w-40">Percentual (%)</TableHead>
+            <TableHead className="w-40">Valor (R$)</TableHead>
             <TableHead className="w-24">
               <span className="sr-only">Ações</span>
             </TableHead>
@@ -114,6 +143,9 @@ export function CategoryEditor({ categories }: { categories: Category[] }) {
                   />
                   {percentError && <p className="mt-1 text-sm text-destructive">{percentError}</p>}
                 </TableCell>
+                <TableCell className="py-4 align-top" data-testid={`category-amount-${i + 1}`}>
+                  {amounts[i] === null ? "—" : formatBRL(amounts[i])}
+                </TableCell>
                 <TableCell className="align-top">
                   <Button
                     type="button"
@@ -133,6 +165,9 @@ export function CategoryEditor({ categories }: { categories: Category[] }) {
           <TableRow>
             <TableCell>Soma</TableCell>
             <TableCell data-testid="category-sum">{formatPercent(sumBp)}</TableCell>
+            <TableCell data-testid="category-amount-sum">
+              {incomeCents === null ? "—" : formatBRL(amountSum)}
+            </TableCell>
             <TableCell />
           </TableRow>
         </TableFooter>

@@ -106,13 +106,13 @@ T8 → T9 → T10
 
 **Done when**:
 
-- [ ] e2e em `e2e/categories.spec.ts`: categorias 30/30/25/7,5/2,5/5 + receita 5000 → R$ 1.500,00, 1.500,00, 1.250,00, 375,00, 125,00, 250,00 e soma R$ 5.000,00 (AC 1-3, 5)
-- [ ] e2e: trocar 7,5 por 10 → R$ 500,00 e soma R$ 5.125,00 sem salvar (AC 4, edge soma ≠ 100%)
-- [ ] e2e: campo vazio → "—" em todas as células e no rodapé (AC 6)
-- [ ] e2e: receita "abc" e "0" → mensagem do `parseBRL` abaixo do campo e "—" nas células (AC 7)
-- [ ] e2e: nova linha sem percentual → "—" nessa linha; remover linha recalcula a soma (AC 8, edge cases)
-- [ ] e2e: salvar com sucesso mantém a receita no campo e recarregar a página o deixa vazio (AC 9, 10)
-- [ ] Gate build passa; nenhum teste removido
+- [x] e2e em `e2e/categories.spec.ts`: categorias 30/30/25/7,5/2,5/5 + receita 5000 → R$ 1.500,00, 1.500,00, 1.250,00, 375,00, 125,00, 250,00 e soma R$ 5.000,00 (AC 1-3, 5)
+- [x] e2e: trocar 7,5 por 10 → R$ 500,00 e soma R$ 5.125,00 sem salvar (AC 4, edge soma ≠ 100%)
+- [x] e2e: campo vazio → "—" em todas as células e no rodapé (AC 6)
+- [x] e2e: receita "abc" e "0" → mensagem do `parseBRL` abaixo do campo e "—" nas células (AC 7)
+- [x] e2e: nova linha sem percentual → "—" nessa linha; remover linha recalcula a soma (AC 8, edge cases)
+- [x] e2e: salvar com sucesso mantém a receita no campo e recarregar a página o deixa vazio (AC 9, 10)
+- [x] Gate build passa; nenhum teste removido
 
 **Tests**: e2e
 **Gate**: build

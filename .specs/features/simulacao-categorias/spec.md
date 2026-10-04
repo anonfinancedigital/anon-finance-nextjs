@@ -109,10 +109,10 @@ Na tela de Categorias o usuário define percentuais, mas não vê quanto cada pe
 
 | Requirement ID | Story | Phase | Status |
 | -------------- | ----- | ----- | ------ |
-| SIM-01 | P1: campo de receita de referência (AC 1, 7) | Execute | Pending |
-| SIM-02 | P1: coluna e cálculo do valor por categoria (AC 2, 3, 4, 6, 8) | Execute | Pending |
-| SIM-03 | P1: soma em R$ no rodapé (AC 5, 6) | Execute | Pending |
-| SIM-04 | P1: salvamento ignora e preserva a receita de referência (AC 9, 10) | Execute | Pending |
+| SIM-01 | P1: campo de receita de referência (AC 1, 7) | Execute | Implementing |
+| SIM-02 | P1: coluna e cálculo do valor por categoria (AC 2, 3, 4, 6, 8) | Execute | Implementing |
+| SIM-03 | P1: soma em R$ no rodapé (AC 5, 6) | Execute | Implementing |
+| SIM-04 | P1: salvamento ignora e preserva a receita de referência (AC 9, 10) | Execute | Implementing |
 | COR-01 | P2: coluna `color`, migração e validação (AC 2, 4, 5) | Execute | Pending |
 | COR-02 | P2: seletor de cor na edição de categorias (AC 1, 2, 3) | Execute | Pending |
 | COR-03 | P2: cor no gráfico de pizza (AC 6, 9) | Execute | Pending |
