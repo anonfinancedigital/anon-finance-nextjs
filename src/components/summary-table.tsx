@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { Fragment, useState } from "react";
 import { Progress } from "@/components/ui/progress";
 import {
   Table,
@@ -13,8 +16,26 @@ import { colorVar } from "@/lib/domain/color";
 import { formatBRL } from "@/lib/domain/money";
 import { formatPercent } from "@/lib/domain/percent";
 
+const shareFormat = new Intl.NumberFormat("pt-BR", {
+  minimumFractionDigits: 1,
+  maximumFractionDigits: 1,
+});
+
+/** Share in basis points as text with one decimal, e.g. 6250 → "62,5%". */
+const formatShare = (bp: number) => `${shareFormat.format(bp / 100)}%`;
+
 /** Per category: percentage, target, spent, remaining and how much of the target was used. */
 export function SummaryTable({ rows }: { rows: CategorySummary[] }) {
+  const [expanded, setExpanded] = useState<Set<string>>(new Set());
+
+  function toggle(id: string) {
+    setExpanded((current) => {
+      const next = new Set(current);
+      if (!next.delete(id)) next.add(id);
+      return next;
+    });
+  }
+
   if (rows.length === 0) {
     return (
       <p className="text-sm">
@@ -38,9 +59,12 @@ export function SummaryTable({ rows }: { rows: CategorySummary[] }) {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {rows.map((row) => (
+        {rows.map((row) => {
+          const detailed = row.breakdown.some((line) => line.subcategoryId !== null);
+          const open = detailed && expanded.has(row.id);
+          return (
+          <Fragment key={row.id}>
           <TableRow
-            key={row.id}
             data-testid="summary-row"
             data-overspent={row.overspent}
             className={row.overspent ? "bg-destructive/5" : undefined}
@@ -53,6 +77,18 @@ export function SummaryTable({ rows }: { rows: CategorySummary[] }) {
                   style={{ background: colorVar(row.color) }}
                 />
                 {row.name}
+                {detailed && (
+                  <button
+                    type="button"
+                    aria-expanded={open}
+                    aria-controls={`summary-detail-${row.id}`}
+                    aria-label={`Detalhar ${row.name} por subcategoria`}
+                    onClick={() => toggle(row.id)}
+                    className="cursor-pointer text-xs text-muted-foreground"
+                  >
+                    {open ? "▾" : "▸"}
+                  </button>
+                )}
               </span>
             </TableCell>
             <TableCell className="text-right tabular-nums">{formatPercent(row.percentBp)}</TableCell>
@@ -80,7 +116,25 @@ export function SummaryTable({ rows }: { rows: CategorySummary[] }) {
               )}
             </TableCell>
           </TableRow>
-        ))}
+          {open &&
+            row.breakdown.map((line, k) => (
+              <TableRow
+                key={line.subcategoryId ?? "none"}
+                id={k === 0 ? `summary-detail-${row.id}` : undefined}
+                data-testid="summary-subrow"
+                className="text-muted-foreground"
+              >
+                <TableCell className="pl-9">{line.name}</TableCell>
+                <TableCell className="text-right tabular-nums">{formatShare(line.shareBp)}</TableCell>
+                <TableCell />
+                <TableCell className="text-right tabular-nums">{formatBRL(line.spentCents)}</TableCell>
+                <TableCell />
+                <TableCell />
+              </TableRow>
+            ))}
+          </Fragment>
+          );
+        })}
       </TableBody>
     </Table>
   );
