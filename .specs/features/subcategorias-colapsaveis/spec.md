@@ -100,13 +100,13 @@ Na tela de Categorias, as subcategorias ficam atrás de um link de texto "Subcat
 
 | Requirement ID | Story | Phase | Status |
 | -------------- | ----- | ----- | ------ |
-| SUBCOL-01 | P1: critérios 1-3, 10, 11 (cabeçalho colapsável) | Design | Pending |
-| SUBCOL-02 | P1: critérios 4-7 (lista e adição) | Design | Pending |
-| SUBCOL-03 | P1: critérios 8-9 (limite e erro) | Design | Pending |
-| SUBCOL-04 | P2: critérios 1-5 (seletor agrupado) | Design | Pending |
-| SUBCOL-05 | P2: critérios 6-7 (validação e ganhos) | Design | Pending |
+| SUBCOL-01 | P1: critérios 1-3, 10, 11 (cabeçalho colapsável) | Verified |
+| SUBCOL-02 | P1: critérios 4-7 (lista e adição) | Verified |
+| SUBCOL-03 | P1: critérios 8-9 (limite e erro) | Verified |
+| SUBCOL-04 | P2: critérios 1-5 (seletor agrupado) | Verified |
+| SUBCOL-05 | P2: critérios 6-7 (validação e ganhos) | Verified |
 
-**Coverage:** 5 total, 0 mapped to tasks, 5 unmapped ⚠️
+**Coverage:** 5 total, 5 mapped to tasks, 0 unmapped
 
 ---
 
