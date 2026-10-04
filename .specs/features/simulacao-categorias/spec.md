@@ -113,8 +113,8 @@ Na tela de Categorias o usuário define percentuais, mas não vê quanto cada pe
 | SIM-02 | P1: coluna e cálculo do valor por categoria (AC 2, 3, 4, 6, 8) | Execute | Implementing |
 | SIM-03 | P1: soma em R$ no rodapé (AC 5, 6) | Execute | Implementing |
 | SIM-04 | P1: salvamento ignora e preserva a receita de referência (AC 9, 10) | Execute | Implementing |
-| COR-01 | P2: coluna `color`, migração e validação (AC 2, 4, 5) | Execute | Pending |
-| COR-02 | P2: seletor de cor na edição de categorias (AC 1, 2, 3) | Execute | Pending |
+| COR-01 | P2: coluna `color`, migração e validação (AC 2, 4, 5) | Execute | Implementing |
+| COR-02 | P2: seletor de cor na edição de categorias (AC 1, 2, 3) | Execute | Implementing |
 | COR-03 | P2: cor no gráfico de pizza (AC 6, 9) | Execute | Pending |
 | COR-04 | P2: marcador de cor no resumo e na lista de transações (AC 7, 8, 9) | Execute | Pending |
 

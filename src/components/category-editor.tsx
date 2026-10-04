@@ -17,16 +17,18 @@ import {
 } from "@/components/ui/table";
 import type { ActionResult } from "@/lib/action-result";
 import { allocateCents, type Category, TOTAL_BP } from "@/lib/domain/budget";
+import { CATEGORY_COLORS, colorVar, nextFreeColor } from "@/lib/domain/color";
 import { formatBRL, parseBRL } from "@/lib/domain/money";
 import { formatPercent, parsePercent } from "@/lib/domain/percent";
 
-type Row = { key: string; id?: string; name: string; percent: string };
+type Row = { key: string; id?: string; name: string; percent: string; color: number };
 
 const toRow = (c: Category): Row => ({
   key: c.id,
   id: c.id,
   name: c.name,
   percent: formatPercent(c.percentBp).replace("%", ""),
+  color: c.color,
 });
 
 /**
@@ -70,13 +72,23 @@ export function CategoryEditor({ categories }: { categories: Category[] }) {
   }
 
   function add() {
-    setRows((current) => [...current, { key: crypto.randomUUID(), name: "", percent: "" }]);
+    setRows((current) => [
+      ...current,
+      {
+        key: crypto.randomUUID(),
+        name: "",
+        percent: "",
+        color: nextFreeColor(current.map((r) => r.color)),
+      },
+    ]);
     setResult(null);
   }
 
   function save() {
     startTransition(async () => {
-      const res = await saveCategories(rows.map(({ id, name, percent }) => ({ id, name, percent })));
+      const res = await saveCategories(
+        rows.map(({ id, name, percent, color }) => ({ id, name, percent, color })),
+      );
       setResult(res);
       if (res.ok) router.refresh();
     });
@@ -109,6 +121,7 @@ export function CategoryEditor({ categories }: { categories: Category[] }) {
         <TableHeader>
           <TableRow>
             <TableHead>Nome</TableHead>
+            <TableHead>Cor</TableHead>
             <TableHead className="w-40">Percentual (%)</TableHead>
             <TableHead className="w-40">Valor (R$)</TableHead>
             <TableHead className="w-24">
@@ -119,6 +132,7 @@ export function CategoryEditor({ categories }: { categories: Category[] }) {
         <TableBody>
           {rows.map((row, i) => {
             const nameError = fieldErrors[`${i}.name`];
+            const colorError = fieldErrors[`${i}.color`];
             const live = parsed[i];
             const percentError = fieldErrors[`${i}.percent`] ?? (live && !live.ok ? live.error : undefined);
             return (
@@ -132,6 +146,30 @@ export function CategoryEditor({ categories }: { categories: Category[] }) {
                     onChange={(e) => update(i, { name: e.target.value })}
                   />
                   {nameError && <p className="mt-1 text-sm text-destructive">{nameError}</p>}
+                </TableCell>
+                <TableCell className="align-top">
+                  <div
+                    role="radiogroup"
+                    aria-label={`Cor da categoria ${i + 1}`}
+                    aria-invalid={!!colorError}
+                    className="flex h-9 items-center gap-1.5"
+                  >
+                    {CATEGORY_COLORS.map((c) => (
+                      <input
+                        key={c.value}
+                        type="radio"
+                        name={`color-${row.key}`}
+                        value={c.value}
+                        aria-label={c.name}
+                        title={c.name}
+                        checked={row.color === c.value}
+                        onChange={() => update(i, { color: c.value })}
+                        style={{ backgroundColor: colorVar(c.value) }}
+                        className="size-5 cursor-pointer appearance-none rounded-full outline-none ring-offset-2 ring-offset-background checked:ring-2 checked:ring-foreground focus-visible:ring-2 focus-visible:ring-ring"
+                      />
+                    ))}
+                  </div>
+                  {colorError && <p className="mt-1 text-sm text-destructive">{colorError}</p>}
                 </TableCell>
                 <TableCell className="align-top">
                   <Input
@@ -164,6 +202,7 @@ export function CategoryEditor({ categories }: { categories: Category[] }) {
         <TableFooter>
           <TableRow>
             <TableCell>Soma</TableCell>
+            <TableCell />
             <TableCell data-testid="category-sum">{formatPercent(sumBp)}</TableCell>
             <TableCell data-testid="category-amount-sum">
               {incomeCents === null ? "—" : formatBRL(amountSum)}

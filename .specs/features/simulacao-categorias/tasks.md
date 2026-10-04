@@ -245,12 +245,12 @@ T8 → T9 → T10
 
 **Done when**:
 
-- [ ] e2e: cada linha mostra 8 opções acessíveis por nome (AC 1)
-- [ ] e2e: trocar "Metas" para Roxo, salvar, recarregar → Roxo selecionado (AC 2)
-- [ ] e2e: com cores 1 e 2 em uso, "Adicionar categoria" pré-seleciona Verde (3) (AC 3)
-- [ ] e2e: duas categorias com a mesma cor salvam normalmente (edge case)
-- [ ] Testes e2e existentes de categorias e da simulação (T2) continuam passando
-- [ ] Gate build passa
+- [x] e2e: cada linha mostra 8 opções acessíveis por nome (AC 1)
+- [x] e2e: trocar "Metas" para Roxo, salvar, recarregar → Roxo selecionado (AC 2)
+- [x] e2e: com cores 1 e 2 em uso, "Adicionar categoria" pré-seleciona Verde (3) (AC 3)
+- [x] e2e: duas categorias com a mesma cor salvam normalmente (edge case)
+- [x] Testes e2e existentes de categorias e da simulação (T2) continuam passando
+- [x] Gate build passa
 
 **Tests**: e2e
 **Gate**: build
