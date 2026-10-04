@@ -227,11 +227,11 @@ T25 → T26 → T27 → T28 → T29 → T30 → T31
 
 **Done when**:
 
-- [ ] `currentMonth(new Date('2026-02-01T02:30:00Z'))` → jan/2026 (23:30 de 31/01 em São Paulo)
-- [ ] `parseMonth('2026-10')` → out/2026; `parseMonth('2026-13')`, `parseMonth('x')` e `undefined` → mês corrente
-- [ ] `monthRange` de dez/2026 → `{ start: '2026-12-01', endExclusive: '2027-01-01' }`
-- [ ] `isValidCalendarDate('2025-02-29')` false; `'2024-02-29'` true; `''` e `'2026-04-31'` false
-- [ ] Gate quick passa; ≥ 10 testes
+- [x] `currentMonth(new Date('2026-02-01T02:30:00Z'))` → jan/2026 (23:30 de 31/01 em São Paulo)
+- [x] `parseMonth('2026-10')` → out/2026; `parseMonth('2026-13')`, `parseMonth('x')` e `undefined` → mês corrente
+- [x] `monthRange` de dez/2026 → `{ start: '2026-12-01', endExclusive: '2027-01-01' }`
+- [x] `isValidCalendarDate('2025-02-29')` false; `'2024-02-29'` true; `''` e `'2026-04-31'` false
+- [x] Gate quick passa; ≥ 10 testes
 
 **Tests**: unit
 **Gate**: quick
