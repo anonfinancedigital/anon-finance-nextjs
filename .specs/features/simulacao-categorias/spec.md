@@ -81,7 +81,7 @@ Na tela de Categorias o usuário define percentuais, mas não vê quanto cada pe
 
 **Acceptance Criteria**:
 
-1. The system SHALL exibir em cada linha da edição de categorias um seletor de cor com as 8 cores da paleta, cada opção com nome acessível (Azul, Laranja, Verde, Amarelo, Rosa, Verde-escuro, Roxo, Vermelho).  <!-- ubiquitous -->
+1. The system SHALL exibir em cada linha da edição de categorias um seletor de cor com as 8 cores da paleta, cada opção com nome acessível (Azul, Laranja, Verde, Amarelo, Rosa, Verde-claro, Roxo, Vermelho).  <!-- ubiquitous -->
 2. WHEN o usuário escolhe uma cor e salva com sucesso THEN the system SHALL persistir o índice da cor (1–8) da categoria e exibi-la selecionada ao recarregar a página.  <!-- event-driven -->
 3. WHEN o usuário adiciona uma categoria THEN the system SHALL pré-selecionar a primeira cor da paleta não usada pelas linhas exibidas, ou a cor 1 se todas estiverem em uso.  <!-- event-driven -->
 4. IF o salvamento recebe uma cor fora de 1–8 ou não inteira THEN the system SHALL rejeitar o conjunto inteiro sem gravar nada e exibir "Cor inválida" na linha correspondente.  <!-- unwanted-behavior -->

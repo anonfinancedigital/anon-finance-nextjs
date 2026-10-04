@@ -5,7 +5,7 @@ export const CATEGORY_COLORS = [
   { value: 3, name: "Verde" },
   { value: 4, name: "Amarelo" },
   { value: 5, name: "Rosa" },
-  { value: 6, name: "Verde-escuro" },
+  { value: 6, name: "Verde-claro" },
   { value: 7, name: "Roxo" },
   { value: 8, name: "Vermelho" },
 ] as const;

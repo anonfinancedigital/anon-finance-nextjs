@@ -123,7 +123,7 @@ T8 → T9 → T10
 
 ### T3: Paleta de cores de categoria
 
-**What**: Criar o módulo da paleta: `CATEGORY_COLORS` (índices 1-8 com nomes Azul, Laranja, Verde, Amarelo, Rosa, Verde-escuro, Roxo, Vermelho), `colorVar(n)` → `var(--viz-n)`, `isCategoryColor(value)` e `nextFreeColor(used)` (primeira não usada, senão 1).
+**What**: Criar o módulo da paleta: `CATEGORY_COLORS` (índices 1-8 com nomes Azul, Laranja, Verde, Amarelo, Rosa, Verde-claro, Roxo, Vermelho), `colorVar(n)` → `var(--viz-n)`, `isCategoryColor(value)` e `nextFreeColor(used)` (primeira não usada, senão 1).
 **Where**: `src/lib/domain/color.ts`
 **Depends on**: None (fase anterior concluída)
 **Reuses**: tokens `--viz-1` … `--viz-8` de `src/app/globals.css`

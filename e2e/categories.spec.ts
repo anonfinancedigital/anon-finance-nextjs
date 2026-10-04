@@ -189,7 +189,7 @@ test("saving keeps the reference income, does not send it, and a reload clears i
   await expect(income(page)).toHaveValue("");
 });
 
-const PALETTE = ["Azul", "Laranja", "Verde", "Amarelo", "Rosa", "Verde-escuro", "Roxo", "Vermelho"];
+const PALETTE = ["Azul", "Laranja", "Verde", "Amarelo", "Rosa", "Verde-claro", "Roxo", "Vermelho"];
 const colorButton = (page: Page, n: number) =>
   page.getByRole("button", { name: new RegExp(`^Cor da categoria ${n}:`) });
 const colorOf = (page: Page, n: number) =>
