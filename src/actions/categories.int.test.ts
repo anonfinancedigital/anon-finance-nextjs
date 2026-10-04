@@ -126,6 +126,38 @@ describe("saveCategories", () => {
     expect(revalidatePath).not.toHaveBeenCalled();
   });
 
+  it("persists the chosen color index of each category", async () => {
+    const input = FIVE.map((c, i) => ({ ...c, color: [7, 7, 1, 8, 2][i] }));
+
+    expect(await saveCategories(input)).toEqual({ ok: true });
+    expect((await categoriesRepo.list(userId)).map((c) => [c.name, c.color])).toEqual([
+      ["Custos fixos", 7],
+      ["Conforto", 7],
+      ["Metas", 1],
+      ["Prazeres", 8],
+      ["Liberdade financeira", 2],
+    ]);
+  });
+
+  it("rejects a color outside 1..8 on its row and changes nothing", async () => {
+    await saveCategories(FIVE);
+    const saved = await categoriesRepo.list(userId);
+    vi.mocked(revalidatePath).mockClear();
+    const edited = saved.map((c, i) => ({
+      id: c.id,
+      name: c.name,
+      percent: String(c.percentBp / 100),
+      color: i === 1 ? 9 : 6,
+    }));
+
+    expect(await saveCategories(edited)).toMatchObject({
+      ok: false,
+      fieldErrors: { "1.color": "Cor inválida" },
+    });
+    expect(await categoriesRepo.list(userId)).toEqual(saved);
+    expect(revalidatePath).not.toHaveBeenCalled();
+  });
+
   it("returns UNAUTHORIZED without a session and writes nothing", async () => {
     request.headers = new Headers();
     const replaceSet = vi.spyOn(categoriesRepo, "replaceSet");

@@ -218,10 +218,10 @@ T8 → T9 → T10
 
 **Done when**:
 
-- [ ] `categories.int.test.ts` (actions): salvar com cores persiste os índices (AC 2)
-- [ ] Uma linha com cor 9 → `fieldErrors["1.color"] = "Cor inválida"` e nenhuma categoria alterada no banco (AC 4)
-- [ ] Testes existentes continuam passando
-- [ ] Gate full passa
+- [x] `categories.int.test.ts` (actions): salvar com cores persiste os índices (AC 2)
+- [x] Uma linha com cor 9 → `fieldErrors["1.color"] = "Cor inválida"` e nenhuma categoria alterada no banco (AC 4)
+- [x] Testes existentes continuam passando
+- [x] Gate full passa
 
 **Tests**: integration
 **Gate**: full
