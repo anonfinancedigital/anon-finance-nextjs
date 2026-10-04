@@ -30,7 +30,7 @@ export function MonthPicker({ month }: { month: YearMonth }) {
           ‹
         </Link>
       </Button>
-      <span data-testid="month-label" className="min-w-36 text-center font-medium capitalize">
+      <span data-testid="month-label" className="min-w-36 text-center font-medium first-letter:uppercase">
         {monthName.format(new Date(Date.UTC(month.year, month.month - 1, 1)))}
       </span>
       <Button variant="outline" size="sm" asChild>
