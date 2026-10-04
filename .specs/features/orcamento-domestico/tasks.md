@@ -847,10 +847,10 @@ T25 → T26 → T27 → T28 → T29 → T30 → T31
 
 **Done when**:
 
-- [ ] e2e: ganho de 5.000 e "Conforto" a 30% com gasto de 1.600 → meta "R$ 1.500,00", "Estourou R$ 100,00" visível
-- [ ] e2e: depois de lançar um gasto, o resumo muda sem reload manual
-- [ ] e2e: mês sem receita e com gasto → metas "R$ 0,00" e a categoria marcada como estourada
-- [ ] Gate build passa; ≥ 3 testes e2e
+- [x] e2e: ganho de 5.000 e "Conforto" a 30% com gasto de 1.600 → meta "R$ 1.500,00", "Estourou R$ 100,00" visível
+- [x] e2e: depois de lançar um gasto, o resumo muda sem reload manual
+- [x] e2e: mês sem receita e com gasto → metas "R$ 0,00" e a categoria marcada como estourada
+- [x] Gate build passa; ≥ 3 testes e2e
 
 **Tests**: e2e
 **Gate**: build
