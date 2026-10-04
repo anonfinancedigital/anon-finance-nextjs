@@ -18,11 +18,10 @@ const date = z
   .refine(isValidCalendarDate, "Data inválida");
 
 const description = z
-  .string()
+  .string({ error: "Informe a descrição" })
   .trim()
-  .max(120, "A descrição deve ter no máximo 120 caracteres")
-  .optional()
-  .transform((value) => value || null);
+  .min(1, "Informe a descrição")
+  .max(120, "A descrição deve ter no máximo 120 caracteres");
 
 /** AAAA-MM between 2000-01 and 2100-12. */
 const isValidMonth = (key: string) =>

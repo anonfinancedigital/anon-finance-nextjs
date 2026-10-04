@@ -13,7 +13,13 @@ const expense = {
   categoryId: CATEGORY_ID,
   description: "Mercado",
 };
-const income = { id: ID, kind: "income", amount: "5.000", date: "2026-10-01" };
+const income = {
+  id: ID,
+  kind: "income",
+  amount: "5.000",
+  date: "2026-10-01",
+  description: "Salário",
+};
 
 /** Keys of the fields that failed validation. */
 function failedFields(input: unknown) {
@@ -37,15 +43,45 @@ describe("transactionSchema", () => {
     });
   });
 
-  it("accepts a valid income without category or description", () => {
+  it("accepts a valid income without category", () => {
     expect(transactionSchema.parse(income)).toEqual({
       id: ID,
       kind: "income",
       amountCents: 500000,
       date: "2026-10-01",
-      description: null,
+      description: "Salário",
       recurrence: "none",
       recurrenceEndMonth: null,
+    });
+  });
+
+  it("trims the description", () => {
+    expect(transactionSchema.parse({ ...expense, description: "  Mercado  " }).description).toBe(
+      "Mercado",
+    );
+  });
+
+  it.each([
+    ["expense without description", { ...expense, description: undefined }],
+    ["expense with an empty description", { ...expense, description: "" }],
+    ["expense with a whitespace-only description", { ...expense, description: "   " }],
+    ["income without description", { ...income, description: undefined }],
+    ["income with an empty description", { ...income, description: "" }],
+  ])("rejects %s with 'Informe a descrição'", (_label, input) => {
+    const result = transactionSchema.safeParse(input);
+    expect(result.success).toBe(false);
+    if (result.success) return;
+    expect(z.flattenError(result.error).fieldErrors).toEqual({
+      description: ["Informe a descrição"],
+    });
+  });
+
+  it("rejects a 121-character description with 'A descrição deve ter no máximo 120 caracteres'", () => {
+    const result = transactionSchema.safeParse({ ...expense, description: "a".repeat(121) });
+    expect(result.success).toBe(false);
+    if (result.success) return;
+    expect(z.flattenError(result.error).fieldErrors).toEqual({
+      description: ["A descrição deve ter no máximo 120 caracteres"],
     });
   });
 
