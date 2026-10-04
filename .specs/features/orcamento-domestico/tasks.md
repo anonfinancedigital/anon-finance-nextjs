@@ -685,11 +685,11 @@ T25 → T26 → T27 → T28 → T29 → T30 → T31
 
 **Done when**:
 
-- [ ] Gasto e ganho válidos persistem e chamam `revalidatePath('/')`
-- [ ] `categoryId` inexistente ou de outro usuário → erro no campo `categoryId`
-- [ ] Mesmo `id` enviado 2 vezes → 1 transação
-- [ ] Sem sessão → `UNAUTHORIZED`; erro de banco → mensagem genérica
-- [ ] Gate full passa; ≥ 6 testes
+- [x] Gasto e ganho válidos persistem e chamam `revalidatePath('/')`
+- [x] `categoryId` inexistente ou de outro usuário → erro no campo `categoryId`
+- [x] Mesmo `id` enviado 2 vezes → 1 transação
+- [x] Sem sessão → `UNAUTHORIZED`; erro de banco → mensagem genérica
+- [x] Gate full passa; ≥ 6 testes
 
 **Tests**: integration
 **Gate**: full
