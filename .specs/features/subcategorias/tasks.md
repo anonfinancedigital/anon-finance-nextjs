@@ -298,10 +298,10 @@ T15 → T16 → T17
 
 **Done when**:
 
-- [ ] Nome inválido gera issue em `[i, "subcategories", j, "name"]`; limite em `[i, "subcategories"]`
-- [ ] Id de subcategoria que não é uuid → "Identificador inválido"
-- [ ] Payload sem `subcategories` continua válido (compatível com o editor atual)
-- [ ] Gate quick passa; ≥ 4 testes novos em `category.test.ts`
+- [x] Nome inválido gera issue em `[i, "subcategories", j, "name"]`; limite em `[i, "subcategories"]`
+- [x] Id de subcategoria que não é uuid → "Identificador inválido"
+- [x] Payload sem `subcategories` continua válido (compatível com o editor atual)
+- [x] Gate quick passa; ≥ 4 testes novos em `category.test.ts`
 
 **Tests**: unit
 **Gate**: quick

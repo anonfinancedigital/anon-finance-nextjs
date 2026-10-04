@@ -19,11 +19,11 @@ describe("categorySetSchema", () => {
     const input = set("30", "30", "10", "10", "20");
     input[0] = { ...input[0], id: ID } as (typeof input)[0];
     expect(categorySetSchema.parse(input)).toEqual([
-      { id: ID, name: "Cat 1", percentBp: 3000, color: 1 },
-      { name: "Cat 2", percentBp: 3000, color: 2 },
-      { name: "Cat 3", percentBp: 1000, color: 3 },
-      { name: "Cat 4", percentBp: 1000, color: 4 },
-      { name: "Cat 5", percentBp: 2000, color: 5 },
+      { id: ID, name: "Cat 1", percentBp: 3000, color: 1, subcategories: [] },
+      { name: "Cat 2", percentBp: 3000, color: 2, subcategories: [] },
+      { name: "Cat 3", percentBp: 1000, color: 3, subcategories: [] },
+      { name: "Cat 4", percentBp: 1000, color: 4, subcategories: [] },
+      { name: "Cat 5", percentBp: 2000, color: 5, subcategories: [] },
     ]);
   });
 
@@ -64,5 +64,55 @@ describe("categorySetSchema", () => {
       { name: "lazer", percent: "50", color: 2 },
     ]);
     expect(result.map((i) => i.path)).toEqual(["1.name", ""]);
+  });
+
+  describe("subcategories", () => {
+    const withSubs = (subcategories: unknown) => [
+      { name: "Conforto", percent: "50", color: 1, subcategories },
+      { name: "Lazer", percent: "50", color: 2 },
+    ];
+
+    it("accepts valid subcategories, keeping an existing id and trimming names", () => {
+      const [first] = categorySetSchema.parse(
+        withSubs([{ id: ID, name: "  Restaurante " }, { name: "Streaming" }]),
+      );
+      expect(first.subcategories).toEqual([
+        { id: ID, name: "Restaurante" },
+        { name: "Streaming" },
+      ]);
+    });
+
+    it("defaults to no subcategories when the payload omits them", () => {
+      expect(categorySetSchema.parse(set("100"))[0].subcategories).toEqual([]);
+    });
+
+    it("reports an invalid name at [i, subcategories, j, name]", () => {
+      expect(issues(withSubs([{ name: "Ok" }, { name: "  " }]))).toEqual([
+        { path: "0.subcategories.1.name", message: "Informe o nome da subcategoria" },
+        { path: "", message: "Corrija os nomes das categorias" },
+      ]);
+    });
+
+    it("reports a repeated name at the repeated subcategory", () => {
+      expect(issues(withSubs([{ name: "Restaurante" }, { name: "restaurante" }]))[0]).toEqual({
+        path: "0.subcategories.1.name",
+        message: "Já existe uma subcategoria com esse nome nesta categoria",
+      });
+    });
+
+    it("reports more than 30 subcategories at [i, subcategories]", () => {
+      const many = Array.from({ length: 31 }, (_, k) => ({ name: `Sub ${k}` }));
+      expect(issues(withSubs(many))[0]).toEqual({
+        path: "0.subcategories",
+        message: "Máximo de 30 subcategorias por categoria",
+      });
+    });
+
+    it("rejects a subcategory id that is not a uuid", () => {
+      expect(issues(withSubs([{ id: "abc", name: "Restaurante" }]))).toContainEqual({
+        path: "0.subcategories.0.id",
+        message: "Identificador inválido",
+      });
+    });
   });
 });

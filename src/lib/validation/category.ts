@@ -24,23 +24,32 @@ const color = z
     return input;
   });
 
+const subcategory = z.object({
+  id: z.uuid({ error: "Identificador inválido" }).optional(),
+  name: z.string({ error: "Informe o nome da subcategoria" }).trim(),
+});
+
 const item = z
   .object({
     id: z.uuid({ error: "Identificador inválido" }).optional(),
     name: z.string({ error: "Informe o nome da categoria" }).trim(),
     percent,
     color,
+    subcategories: z.array(subcategory).default([]),
   })
   .transform(({ percent, ...rest }) => ({ ...rest, percentBp: percent }));
 
-/** Whole category set: items parsed first, then the set rules (sum = 100%, unique names). */
+/** Whole category set: items parsed first, then the set rules (sum = 100%, unique names, subcategory names). */
 export const categorySetSchema = z.array(item).superRefine((items, ctx) => {
-  const result = validateCategorySet(items.map((i) => ({ name: i.name, bp: i.percentBp })));
+  const result = validateCategorySet(
+    items.map((i) => ({ name: i.name, bp: i.percentBp, subcategories: i.subcategories })),
+  );
   if (result.ok) return;
 
   for (const [key, message] of Object.entries(result.fieldErrors ?? {})) {
-    const [index, field] = key.split(".");
-    ctx.addIssue({ code: "custom", path: [Number(index), field], message });
+    // "0.subcategories.2.name" → [0, "subcategories", 2, "name"]
+    const path = key.split(".").map((part) => (/^\d+$/.test(part) ? Number(part) : part));
+    ctx.addIssue({ code: "custom", path, message });
   }
   ctx.addIssue({ code: "custom", path: [], message: result.error });
 });
