@@ -186,23 +186,23 @@ Every ambiguity is resolved or recorded here - nothing is left silently unclear.
 
 | Requirement ID | Story | Phase | Status |
 | -------------- | ----- | ----- | ------ |
-| CAT-01 | P1: Categorias com meta percentual (AC 1, 4, 5) | Design | In Design |
-| CAT-02 | P1: Categorias com meta percentual (AC 2, 3, 7) | Design | In Design |
-| CAT-03 | P1: Categorias com meta percentual (AC 6) | Design | In Design |
-| TRX-01 | P1: Registrar ganhos e gastos (AC 1, 2, 9) | Design | In Design |
-| TRX-02 | P1: Registrar ganhos e gastos (AC 3, 4, 5) | Design | In Design |
-| TRX-03 | P1: Registrar ganhos e gastos (AC 6, 7) | Design | In Design |
-| TRX-04 | P1: Registrar ganhos e gastos (AC 8) | Design | In Design |
-| SUM-01 | P1: Resumo por categoria (AC 1, 2, 7) | Design | In Design |
-| SUM-02 | P1: Resumo por categoria (AC 3, 4, 5) | Design | In Design |
-| SUM-03 | P1: Resumo por categoria (AC 6) | Design | In Design |
-| MON-01 | P2: Navegar entre meses | Design | In Design |
-| CHT-01 | P2: Gráficos no resumo | Design | In Design |
-| AUTH-01 | P1: Acesso com login (AC 1, 2, 5) | Design | In Design |
-| AUTH-02 | P1: Acesso com login (AC 3) | Design | In Design |
-| AUTH-03 | P1: Acesso com login (AC 4, 6) | Design | In Design |
+| CAT-01 | P1: Categorias com meta percentual (AC 1, 4, 5) | Execute | Implementing |
+| CAT-02 | P1: Categorias com meta percentual (AC 2, 3, 7) | Execute | Implementing |
+| CAT-03 | P1: Categorias com meta percentual (AC 6) | Execute | Implementing |
+| TRX-01 | P1: Registrar ganhos e gastos (AC 1, 2, 9) | Execute | Implementing |
+| TRX-02 | P1: Registrar ganhos e gastos (AC 3, 4, 5) | Execute | Implementing |
+| TRX-03 | P1: Registrar ganhos e gastos (AC 6, 7) | Execute | Implementing |
+| TRX-04 | P1: Registrar ganhos e gastos (AC 8) | Execute | Implementing |
+| SUM-01 | P1: Resumo por categoria (AC 1, 2, 7) | Execute | Implementing |
+| SUM-02 | P1: Resumo por categoria (AC 3, 4, 5) | Execute | Implementing |
+| SUM-03 | P1: Resumo por categoria (AC 6) | Execute | Implementing |
+| MON-01 | P2: Navegar entre meses | Execute | Implementing |
+| CHT-01 | P2: Gráficos no resumo | Execute | Implementing |
+| AUTH-01 | P1: Acesso com login (AC 1, 2, 5) | Execute | Implementing |
+| AUTH-02 | P1: Acesso com login (AC 3) | Execute | Implementing |
+| AUTH-03 | P1: Acesso com login (AC 4, 6) | Execute | Implementing |
 
-**Coverage:** 15 total, 0 mapped to tasks, 15 unmapped ⚠️
+**Coverage:** 15 total, 15 mapped to tasks, 0 unmapped
 
 ---
 
