@@ -5,6 +5,7 @@ import {
   appliesInMonth,
   monthKey,
   occurrenceDate,
+  planDelete,
   planEdit,
 } from "@/lib/domain/recurrence";
 import { db } from "../client";
@@ -214,6 +215,31 @@ async function updateFrom(
   });
 }
 
+/**
+ * Deletes the occurrence of `month` (AAAA-MM) of row `id` and every later one; earlier months
+ * stay (see `planDelete`). Returns false when the user has no such row or it has no occurrence
+ * in `month`.
+ */
+async function deleteFrom(userId: string, id: string, month: string): Promise<boolean> {
+  return db.transaction(async (tx) => {
+    const segments = await lockSeries(tx, userId, id, month);
+    if (!segments) return false;
+    const plan = planDelete({ segments, id, month });
+    if (plan.deleteIds.length > 0) {
+      await tx
+        .delete(transaction)
+        .where(and(eq(transaction.userId, userId), inArray(transaction.id, plan.deleteIds)));
+    }
+    if (plan.truncate) {
+      await tx
+        .update(transaction)
+        .set({ recurrenceEnd: `${plan.truncate.endMonth}-01`, updatedAt: sql`clock_timestamp()` })
+        .where(ownedBy(userId, plan.truncate.id));
+    }
+    return true;
+  });
+}
+
 /** Returns false when the user has no transaction with this id. */
 async function remove(userId: string, id: string): Promise<boolean> {
   const rows = await db
@@ -295,6 +321,7 @@ export const transactionsRepo = {
   update,
   updateFrom,
   delete: remove,
+  deleteFrom,
   listByMonth,
   monthTotals,
 };

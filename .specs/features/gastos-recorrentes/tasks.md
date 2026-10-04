@@ -374,12 +374,12 @@ T13 → T15
 
 **Done when**:
 
-- [ ] `transactions.int.test.ts`: ganho "Sempre" criado em out, excluído em dez: out e nov listam o ganho e dez em diante não (teste de aceitação)
-- [ ] `transactions.int.test.ts`: excluir no mês de início remove o lançamento de todos os meses (AC 3)
-- [ ] `transactions.int.test.ts`: excluir depois de uma edição em série apaga o segmento da edição e posteriores, e mantém o anterior até o mês anterior
-- [ ] `transactions.int.test.ts`: `false` para outro usuário e para mês fora do intervalo; nenhuma linha muda
-- [ ] `transactions.int.test.ts`: excluir categoria com gasto recorrente continua bloqueado
-- [ ] Gate full passa; ≥ 5 testes novos
+- [x] `transactions.int.test.ts`: ganho "Sempre" criado em out, excluído em dez: out e nov listam o ganho e dez em diante não (teste de aceitação)
+- [x] `transactions.int.test.ts`: excluir no mês de início remove o lançamento de todos os meses (AC 3)
+- [x] `transactions.int.test.ts`: excluir depois de uma edição em série apaga o segmento da edição e posteriores, e mantém o anterior até o mês anterior
+- [x] `transactions.int.test.ts`: `false` para outro usuário e para mês fora do intervalo; nenhuma linha muda
+- [x] `transactions.int.test.ts`: excluir categoria com gasto recorrente continua bloqueado
+- [x] Gate full passa; ≥ 5 testes novos
 
 **Tests**: integration
 **Gate**: full

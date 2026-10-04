@@ -479,6 +479,112 @@ describe("transactionsRepo.updateFrom", () => {
   });
 });
 
+describe("transactionsRepo.deleteFrom", () => {
+  const month = (key: string) =>
+    monthRange({ year: Number(key.slice(0, 4)), month: Number(key.slice(5, 7)) });
+  const listIn = (key: string) => transactionsRepo.listByMonth(userId, month(key));
+  const amountsIn = async (...keys: string[]) =>
+    Promise.all(keys.map(async (k) => (await listIn(k)).map((t) => t.amountCents)));
+  const rent = () => ({
+    ...expense("2026-10-15", 10000),
+    recurrence: "forever" as "forever" | "until",
+    recurrenceEndMonth: null as string | null,
+  });
+  const snapshot = async () =>
+    (await db.select().from(transaction)).sort((a, b) => a.id.localeCompare(b.id));
+
+  it("deletes a 'forever' income of Oct from Dec on: Oct and Nov keep it, Dec onward not", async () => {
+    const salary = {
+      id: randomUUID(),
+      kind: "income" as const,
+      amountCents: 500000,
+      date: "2026-10-05",
+      recurrence: "forever" as const,
+    };
+    await transactionsRepo.create(userId, salary);
+
+    expect(await transactionsRepo.deleteFrom(userId, salary.id, "2026-12")).toBe(true);
+
+    expect(await amountsIn("2026-10", "2026-11", "2026-12", "2027-01")).toEqual([
+      [500000],
+      [500000],
+      [],
+      [],
+    ]);
+  });
+
+  it("removes the transaction from every month when deleting in the month it starts", async () => {
+    const tx = rent();
+    await transactionsRepo.create(userId, tx);
+
+    expect(await transactionsRepo.deleteFrom(userId, tx.id, "2026-10")).toBe(true);
+
+    expect(await db.$count(transaction)).toBe(0);
+    expect(await amountsIn("2026-10", "2026-11", "2027-06")).toEqual([[], [], []]);
+  });
+
+  it("after series edits, deletes the edited segment and later ones, keeping the earlier one", async () => {
+    const tx = rent();
+    await transactionsRepo.create(userId, tx);
+    await transactionsRepo.updateFrom(userId, tx.id, "2026-12", {
+      ...tx,
+      date: "2026-12-15",
+      amountCents: 12000,
+    });
+    const [dec] = await listIn("2026-12");
+    await transactionsRepo.updateFrom(userId, dec.id, "2027-02", {
+      ...tx,
+      date: "2027-02-15",
+      amountCents: 15000,
+    });
+
+    expect(await transactionsRepo.deleteFrom(userId, dec.id, "2026-12")).toBe(true);
+
+    expect(await amountsIn("2026-10", "2026-11", "2026-12", "2027-02")).toEqual([
+      [10000],
+      [10000],
+      [],
+      [],
+    ]);
+    expect((await db.select().from(transaction)).map((r) => [r.id, r.recurrenceEnd])).toEqual([
+      [tx.id, "2026-11-01"],
+    ]);
+  });
+
+  it("returns false for another user's id and changes no row", async () => {
+    const tx = rent();
+    await transactionsRepo.create(userId, tx);
+    const before = await snapshot();
+
+    expect(await transactionsRepo.deleteFrom(await insertTestUser(), tx.id, "2026-12")).toBe(false);
+    expect(await snapshot()).toEqual(before);
+  });
+
+  it("returns false for a month outside the segment and changes no row", async () => {
+    const tx = { ...rent(), recurrence: "until" as const, recurrenceEndMonth: "2026-12" };
+    await transactionsRepo.create(userId, tx);
+    const before = await snapshot();
+
+    expect(await transactionsRepo.deleteFrom(userId, tx.id, "2026-09")).toBe(false);
+    expect(await transactionsRepo.deleteFrom(userId, tx.id, "2027-01")).toBe(false);
+    expect(await snapshot()).toEqual(before);
+  });
+
+  it("still blocks deleting a category that has a recurring expense", async () => {
+    await transactionsRepo.create(userId, rent());
+    const before = await categoriesRepo.list(userId);
+    const next = before
+      .filter((c) => c.id !== conforto)
+      .map((c) => ({ ...c, percentBp: 10000 }));
+
+    expect(await categoriesRepo.replaceSet(userId, next)).toEqual({
+      ok: false,
+      error: "Esta categoria tem 1 gasto e não pode ser excluída",
+    });
+    expect(await categoriesRepo.list(userId)).toEqual(before);
+  });
+});
+
 describe("transactionsRepo.delete", () => {
   it("removes the transaction", async () => {
     const tx = expense("2026-10-04");
