@@ -2,15 +2,24 @@ import { formatPercent } from "./percent";
 
 export const TOTAL_BP = 10000;
 export const MAX_CATEGORY_NAME = 40;
+export const MAX_SUBCATEGORY_NAME = 40;
+export const MAX_SUBCATEGORIES = 30;
 
-export type CategoryInput = { name: string; bp: number };
+export type CategoryInput = { name: string; bp: number; subcategories?: { name: string }[] };
 
-/** Failure carries field errors keyed by "<index>.name" so callers can show them next to the item. */
+/**
+ * Failure carries field errors keyed by "<index>.name", "<index>.subcategories.<j>.name" and
+ * "<index>.subcategories" so callers can show them next to the item.
+ */
 export type CategorySetResult =
   | { ok: true }
   | { ok: false; error: string; fieldErrors?: Record<string, string> };
 
-/** Rules of the whole set: percentages sum to exactly 100% and names are 1..40 chars, unique ignoring case. */
+/**
+ * Rules of the whole set: percentages sum to exactly 100% and names are 1..40 chars, unique ignoring
+ * case. Subcategories (at most 30 per category) follow the same name rule within their category and
+ * do not take part in the sum.
+ */
 export function validateCategorySet(cats: CategoryInput[]): CategorySetResult {
   const fieldErrors: Record<string, string> = {};
   const seen = new Set<string>();
@@ -23,6 +32,22 @@ export function validateCategorySet(cats: CategoryInput[]): CategorySetResult {
       fieldErrors[`${i}.name`] = `O nome deve ter no máximo ${MAX_CATEGORY_NAME} caracteres`;
     else if (seen.has(key)) fieldErrors[`${i}.name`] = "Já existe uma categoria com este nome";
     seen.add(key);
+
+    const subs = cat.subcategories ?? [];
+    if (subs.length > MAX_SUBCATEGORIES)
+      fieldErrors[`${i}.subcategories`] = `Máximo de ${MAX_SUBCATEGORIES} subcategorias por categoria`;
+    const seenSubs = new Set<string>();
+    subs.forEach((sub, j) => {
+      const subName = sub.name.trim();
+      const subKey = subName.toLocaleLowerCase("pt-BR");
+      const path = `${i}.subcategories.${j}.name`;
+      if (subName === "") fieldErrors[path] = "Informe o nome da subcategoria";
+      else if (subName.length > MAX_SUBCATEGORY_NAME)
+        fieldErrors[path] = `O nome deve ter no máximo ${MAX_SUBCATEGORY_NAME} caracteres`;
+      else if (seenSubs.has(subKey))
+        fieldErrors[path] = "Já existe uma subcategoria com esse nome nesta categoria";
+      seenSubs.add(subKey);
+    });
   });
 
   const sum = cats.reduce((total, cat) => total + cat.bp, 0);

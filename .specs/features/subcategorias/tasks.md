@@ -128,12 +128,12 @@ T15 → T16 → T17
 
 **Done when**:
 
-- [ ] Nome vazio, só espaços e com 41 caracteres → mensagem no campo; 40 caracteres aceito
-- [ ] "Restaurante" + "restaurante" na mesma categoria → "Já existe uma subcategoria com esse nome nesta categoria"
-- [ ] Mesmo nome em categorias diferentes → ok
-- [ ] 30 subcategorias aceitas; 31 → "Máximo de 30 subcategorias por categoria" em `"<i>.subcategories"`
-- [ ] Soma 100% continua independente das subcategorias (SUB-01 AC 10); itens sem `subcategories` continuam válidos
-- [ ] Gate quick passa; ≥ 8 testes novos em `budget.test.ts`
+- [x] Nome vazio, só espaços e com 41 caracteres → mensagem no campo; 40 caracteres aceito
+- [x] "Restaurante" + "restaurante" na mesma categoria → "Já existe uma subcategoria com esse nome nesta categoria"
+- [x] Mesmo nome em categorias diferentes → ok
+- [x] 30 subcategorias aceitas; 31 → "Máximo de 30 subcategorias por categoria" em `"<i>.subcategories"`
+- [x] Soma 100% continua independente das subcategorias (SUB-01 AC 10); itens sem `subcategories` continuam válidos
+- [x] Gate quick passa; ≥ 8 testes novos em `budget.test.ts`
 
 **Tests**: unit
 **Gate**: quick

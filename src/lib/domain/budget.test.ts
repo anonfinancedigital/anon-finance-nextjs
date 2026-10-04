@@ -170,3 +170,75 @@ describe("allocateCents", () => {
     expect(allocateCents(100001, 5000)).toBe(50001);
   });
 });
+
+describe("validateCategorySet subcategories", () => {
+  const withSubs = (...subs: string[][]) =>
+    subs.map((names, i) => ({
+      name: `Categoria ${i + 1}`,
+      bp: 10000 / subs.length,
+      subcategories: names.map((name) => ({ name })),
+    }));
+  const fieldErrorsOf = (result: ReturnType<typeof validateCategorySet>) =>
+    result.ok ? undefined : result.fieldErrors;
+
+  it("accepts valid subcategories and items without subcategories", () => {
+    expect(validateCategorySet(withSubs(["Restaurante", "Streaming"], []))).toEqual({ ok: true });
+    expect(validateCategorySet(cats(5000, 5000))).toEqual({ ok: true });
+  });
+
+  it("rejects an empty subcategory name on that field", () => {
+    expect(fieldErrorsOf(validateCategorySet(withSubs(["Ok", ""], [])))).toEqual({
+      "0.subcategories.1.name": "Informe o nome da subcategoria",
+    });
+  });
+
+  it("rejects a whitespace-only subcategory name", () => {
+    expect(fieldErrorsOf(validateCategorySet(withSubs(["   "], [])))).toEqual({
+      "0.subcategories.0.name": "Informe o nome da subcategoria",
+    });
+  });
+
+  it("accepts 40 characters and rejects 41", () => {
+    expect(validateCategorySet(withSubs(["a".repeat(40)], []))).toEqual({ ok: true });
+    expect(fieldErrorsOf(validateCategorySet(withSubs(["a".repeat(41)], [])))).toEqual({
+      "0.subcategories.0.name": "O nome deve ter no máximo 40 caracteres",
+    });
+  });
+
+  it("measures the 40 characters after trimming", () => {
+    expect(validateCategorySet(withSubs([`  ${"a".repeat(40)}  `], []))).toEqual({ ok: true });
+  });
+
+  it("rejects a repeated name in the same category ignoring case", () => {
+    expect(fieldErrorsOf(validateCategorySet(withSubs(["Restaurante", "restaurante"], [])))).toEqual(
+      { "0.subcategories.1.name": "Já existe uma subcategoria com esse nome nesta categoria" },
+    );
+  });
+
+  it("accepts the same name in different categories", () => {
+    expect(validateCategorySet(withSubs(["Restaurante"], ["Restaurante"]))).toEqual({ ok: true });
+  });
+
+  it("accepts 30 subcategories in a category", () => {
+    const names = Array.from({ length: 30 }, (_, k) => `Sub ${k}`);
+    expect(validateCategorySet(withSubs(names, []))).toEqual({ ok: true });
+  });
+
+  it("rejects 31 subcategories with the limit message on the category", () => {
+    const names = Array.from({ length: 31 }, (_, k) => `Sub ${k}`);
+    expect(fieldErrorsOf(validateCategorySet(withSubs(names, [])))).toEqual({
+      "0.subcategories": "Máximo de 30 subcategorias por categoria",
+    });
+  });
+
+  it("keeps the 100% rule independent of the subcategories", () => {
+    const set = [
+      { name: "A", bp: 6000, subcategories: [{ name: "X" }] },
+      { name: "B", bp: 3000, subcategories: [{ name: "Y" }] },
+    ];
+    expect(validateCategorySet(set)).toMatchObject({
+      ok: false,
+      error: "A soma dos percentuais deve ser 100% (atual: 90%)",
+    });
+  });
+});
