@@ -203,11 +203,11 @@ T7 → T8 → T9 → T10 → T11
 
 **Done when**:
 
-- [ ] Tabela com `user_id` PK referenciando `user` (`onDelete: cascade`), os quatro campos e `updated_at`, e os três CHECKs do design
-- [ ] `npm run db:generate` produz uma migração `0005_*.sql` que contém só `CREATE TABLE financial_goal` (nada da recorrência)
-- [ ] Migração aplicada no banco de teste (`npm run db:migrate`)
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
-- [ ] Test count: nenhum teste removido; suíte existente verde
+- [x] Tabela com `user_id` PK referenciando `user` (`onDelete: cascade`), os quatro campos e `updated_at`, e os três CHECKs do design
+- [x] `npm run db:generate` produz uma migração `0005_*.sql` que contém só `CREATE TABLE financial_goal` (nada da recorrência)
+- [x] Migração aplicada no banco de teste (`npm run db:migrate`)
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
+- [x] Test count: nenhum teste removido; suíte existente verde
 
 **Tests**: none
 **Gate**: build
