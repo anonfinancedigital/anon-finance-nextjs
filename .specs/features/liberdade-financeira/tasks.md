@@ -318,12 +318,12 @@ T7 → T8 → T9 → T10 → T11
 
 **Done when**:
 
-- [ ] Quatro campos rotulados; `type="date"` para nascimento
-- [ ] Preenchido com os valores salvos quando `initial` existe; vazio caso contrário
-- [ ] Erro do servidor aparece sob o campo correspondente; falha geral em `role="alert"`
-- [ ] Botão desabilitado durante o envio
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
-- [ ] Test count: nenhum teste removido; suíte existente verde
+- [x] Quatro campos rotulados; `type="date"` para nascimento
+- [x] Preenchido com os valores salvos quando `initial` existe; vazio caso contrário
+- [x] Erro do servidor aparece sob o campo correspondente; falha geral em `role="alert"`
+- [x] Botão desabilitado durante o envio
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
+- [x] Test count: nenhum teste removido; suíte existente verde
 
 **Tests**: none
 **Gate**: build
