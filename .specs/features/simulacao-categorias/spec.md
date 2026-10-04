@@ -66,7 +66,7 @@ Na tela de Categorias o usuário define percentuais, mas não vê quanto cada pe
 6. IF o campo de receita de referência está vazio THEN the system SHALL exibir "—" em todas as células da coluna "Valor (R$)", inclusive no rodapé.  <!-- unwanted-behavior -->
 7. IF a receita de referência é inválida (não numérica, ≤ 0 ou > R$ 999.999.999,99) THEN the system SHALL exibir abaixo do campo a mensagem de erro retornada por `parseBRL` e "—" em todas as células da coluna "Valor (R$)".  <!-- unwanted-behavior -->
 8. IF o percentual de uma linha está vazio ou inválido THEN the system SHALL exibir "—" na célula "Valor (R$)" dessa linha.  <!-- unwanted-behavior -->
-9. WHEN o usuário salva as categorias THEN the system SHALL enviar ao servidor apenas nome e percentual de cada categoria, sem a receita de referência.  <!-- event-driven -->
+9. WHEN o usuário salva as categorias THEN the system SHALL enviar ao servidor os dados das categorias sem a receita de referência.  <!-- event-driven -->
 10. WHEN as categorias são salvas com sucesso THEN the system SHALL manter a receita de referência digitada no campo.  <!-- event-driven -->
 
 **Independent Test**: Abrir /categorias com as categorias da imagem (30, 30, 25, 7,5, 2,5, 5), digitar 5000 na receita de referência e ver R$ 1.500,00, R$ 1.500,00, R$ 1.250,00, R$ 375,00, R$ 125,00, R$ 250,00 e soma R$ 5.000,00; mudar 7,5 para 10 e ver R$ 500,00 e soma R$ 5.125,00.
@@ -109,14 +109,14 @@ Na tela de Categorias o usuário define percentuais, mas não vê quanto cada pe
 
 | Requirement ID | Story | Phase | Status |
 | -------------- | ----- | ----- | ------ |
-| SIM-01 | P1: campo de receita de referência (AC 1, 7) | Execute | Implementing |
-| SIM-02 | P1: coluna e cálculo do valor por categoria (AC 2, 3, 4, 6, 8) | Execute | Implementing |
-| SIM-03 | P1: soma em R$ no rodapé (AC 5, 6) | Execute | Implementing |
-| SIM-04 | P1: salvamento ignora e preserva a receita de referência (AC 9, 10) | Execute | Implementing |
-| COR-01 | P2: coluna `color`, migração e validação (AC 2, 4, 5) | Execute | Implementing |
-| COR-02 | P2: seletor de cor na edição de categorias (AC 1, 2, 3) | Execute | Implementing |
-| COR-03 | P2: cor no gráfico de pizza (AC 6, 9) | Execute | Implementing |
-| COR-04 | P2: marcador de cor no resumo e na lista de transações (AC 7, 8, 9) | Execute | Implementing |
+| SIM-01 | P1: campo de receita de referência (AC 1, 7) | Execute | Verified |
+| SIM-02 | P1: coluna e cálculo do valor por categoria (AC 2, 3, 4, 6, 8) | Execute | Verified |
+| SIM-03 | P1: soma em R$ no rodapé (AC 5, 6) | Execute | Verified |
+| SIM-04 | P1: salvamento ignora e preserva a receita de referência (AC 9, 10) | Execute | Verified |
+| COR-01 | P2: coluna `color`, migração e validação (AC 2, 4, 5) | Execute | Verified |
+| COR-02 | P2: seletor de cor na edição de categorias (AC 1, 2, 3) | Execute | Verified |
+| COR-03 | P2: cor no gráfico de pizza (AC 6, 9) | Execute | Verified |
+| COR-04 | P2: marcador de cor no resumo e na lista de transações (AC 7, 8, 9) | Execute | Verified |
 
 **Coverage:** 8 total, 0 mapped to tasks, 8 unmapped (tasks.md é criado na fase Tasks)
 

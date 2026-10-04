@@ -10,7 +10,7 @@ Implement these tasks with the `tlc-spec-driven` skill: **activate it by name an
 
 **Spec**: `.specs/features/simulacao-categorias/spec.md`
 **Design**: inline (sem `design.md`) - segue as camadas e padrões de `orcamento-domestico`
-**Status**: Approved
+**Status**: Done
 
 ---
 
