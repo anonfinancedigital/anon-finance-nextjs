@@ -136,10 +136,10 @@ T8 → T9 → T10
 
 **Done when**:
 
-- [ ] Testes em `src/lib/domain/color.test.ts`: 8 cores com os nomes da spec; `colorVar(7) === "var(--viz-7)"`
-- [ ] `isCategoryColor` aceita 1 e 8, rejeita 0, 9, 1.5, "1", null
-- [ ] `nextFreeColor([])=1`, `([1,2])=3`, `([2])=1`, todas 1-8 usadas → 1
-- [ ] Gate quick passa
+- [x] Testes em `src/lib/domain/color.test.ts`: 8 cores com os nomes da spec; `colorVar(7) === "var(--viz-7)"`
+- [x] `isCategoryColor` aceita 1 e 8, rejeita 0, 9, 1.5, "1", null
+- [x] `nextFreeColor([])=1`, `([1,2])=3`, `([2])=1`, todas 1-8 usadas → 1
+- [x] Gate quick passa
 
 **Tests**: unit
 **Gate**: quick
