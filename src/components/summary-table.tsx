@@ -9,6 +9,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import type { CategorySummary } from "@/lib/domain/budget";
+import { colorVar } from "@/lib/domain/color";
 import { formatBRL } from "@/lib/domain/money";
 import { formatPercent } from "@/lib/domain/percent";
 
@@ -44,7 +45,16 @@ export function SummaryTable({ rows }: { rows: CategorySummary[] }) {
             data-overspent={row.overspent}
             className={row.overspent ? "bg-destructive/5" : undefined}
           >
-            <TableCell className="font-medium">{row.name}</TableCell>
+            <TableCell className="font-medium">
+              <span className="flex items-center gap-2">
+                <span
+                  aria-hidden
+                  className="inline-block size-2.5 shrink-0 rounded-sm"
+                  style={{ background: colorVar(row.color) }}
+                />
+                {row.name}
+              </span>
+            </TableCell>
             <TableCell className="text-right tabular-nums">{formatPercent(row.percentBp)}</TableCell>
             <TableCell className="text-right tabular-nums">{formatBRL(row.targetCents)}</TableCell>
             <TableCell className="text-right tabular-nums">{formatBRL(row.spentCents)}</TableCell>

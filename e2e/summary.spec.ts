@@ -88,3 +88,25 @@ test("a month with no income shows R$ 0,00 targets and spent categories as overs
   await expect(untouched.getByRole("cell").nth(2)).toHaveText("R$ 0,00");
   await expect(untouched).not.toContainText("Estourou");
 });
+
+test("each summary row shows a marker in its category's chosen color", async ({ page }) => {
+  await seedCategories([
+    { name: "Moradia", percent: 70, color: 1 },
+    { name: "Metas", percent: 30, color: 2 },
+  ]);
+  await seedTransaction({ kind: "income", amountCents: 500000, date: "2026-09-01" });
+
+  await login(page);
+  await page.goto("/categorias");
+  await page
+    .getByRole("radiogroup", { name: "Cor da categoria 2", exact: true })
+    .getByRole("radio", { name: "Roxo", exact: true })
+    .check();
+  await page.getByRole("button", { name: "Salvar" }).click();
+  await expect(page.getByText("Categorias salvas", { exact: true })).toBeVisible();
+
+  await page.goto("/?mes=2026-09");
+  const marker = (category: string) => summaryRow(page, category).getByRole("cell").first().locator("span[aria-hidden]");
+  await expect(marker("Metas")).toHaveAttribute("style", /background: ?var\(--viz-7\)/);
+  await expect(marker("Moradia")).toHaveAttribute("style", /background: ?var\(--viz-1\)/);
+});

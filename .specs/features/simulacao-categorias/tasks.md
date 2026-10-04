@@ -301,9 +301,9 @@ T8 → T9 → T10
 
 **Done when**:
 
-- [ ] e2e em `e2e/summary.spec.ts`: linha de "Metas" com marcador de cor `var(--viz-7)` após escolher Roxo (AC 7, 9)
-- [ ] Testes e2e existentes de resumo continuam passando
-- [ ] Gate build passa
+- [x] e2e em `e2e/summary.spec.ts`: linha de "Metas" com marcador de cor `var(--viz-7)` após escolher Roxo (AC 7, 9)
+- [x] Testes e2e existentes de resumo continuam passando
+- [x] Gate build passa
 
 **Tests**: e2e
 **Gate**: build
