@@ -792,11 +792,11 @@ T25 → T26 → T27 → T28 → T29 → T30 → T31
 
 **Done when**:
 
-- [ ] e2e (em `/`): lançar um ganho e um gasto → ambos aparecem na lista
-- [ ] e2e: valor "0" → mensagem de validação e campos preservados
-- [ ] e2e: duplo clique rápido em salvar → 1 transação
-- [ ] e2e: sem categorias → link "Crie suas categorias primeiro"
-- [ ] Gate build passa; ≥ 4 testes e2e
+- [x] e2e (em `/`): lançar um ganho e um gasto → ambos aparecem na lista
+- [x] e2e: valor "0" → mensagem de validação e campos preservados
+- [x] e2e: duplo clique rápido em salvar → 1 transação
+- [x] e2e: sem categorias → link "Crie suas categorias primeiro"
+- [x] Gate build passa; ≥ 4 testes e2e
 
 **Tests**: e2e
 **Gate**: build
