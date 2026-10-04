@@ -1,8 +1,8 @@
 import { BudgetCharts } from "@/components/budget-charts";
 import { MonthPicker } from "@/components/month-picker";
+import { NewTransactionButton } from "@/components/new-transaction-button";
 import { SummaryTable } from "@/components/summary-table";
 import { TransactionFilter } from "@/components/transaction-filter";
-import { TransactionForm } from "@/components/transaction-form";
 import { TransactionList } from "@/components/transaction-list";
 import { requireSessionForPage } from "@/lib/auth-guard";
 import { categoriesRepo } from "@/lib/db/repos/categories";
@@ -44,7 +44,7 @@ export default async function SummaryPage({ searchParams }: PageProps<"/">) {
   ];
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 pb-24">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <h1 className="text-2xl font-semibold">Resumo</h1>
         <MonthPicker month={month} />
@@ -70,21 +70,17 @@ export default async function SummaryPage({ searchParams }: PageProps<"/">) {
         <BudgetCharts rows={summary.rows} spentCents={summary.spentCents} />
       </section>
 
-      <div className="grid gap-8 lg:grid-cols-2">
-        <section className="space-y-3">
-          <h2 className="text-lg font-semibold">Nova transação</h2>
-          <TransactionForm categories={categories} defaultDate={todayInSaoPaulo()} />
-        </section>
-        <section className="space-y-3">
-          <h2 className="text-lg font-semibold">Transações do mês</h2>
-          <TransactionFilter categories={categories} filter={filter} />
-          <TransactionList
-            transactions={filterTransactions(transactions, filter)}
-            categories={categories}
-            filtered={filter.categoryId !== null}
-          />
-        </section>
-      </div>
+      <section className="space-y-3">
+        <h2 className="text-lg font-semibold">Transações do mês</h2>
+        <TransactionFilter categories={categories} filter={filter} />
+        <TransactionList
+          transactions={filterTransactions(transactions, filter)}
+          categories={categories}
+          filtered={filter.categoryId !== null}
+        />
+      </section>
+
+      <NewTransactionButton categories={categories} defaultDate={todayInSaoPaulo()} />
     </div>
   );
 }

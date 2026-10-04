@@ -9,7 +9,7 @@ Implement these tasks with the `tlc-spec-driven` skill: **activate it by name an
 ---
 
 **Design**: `.specs/features/lancamento-flutuante/design.md`
-**Status**: In Progress
+**Status**: Done
 
 **Dívida registrada (AD-005):** os specs e2e `e2e/transaction-form.spec.ts`, `e2e/summary.spec.ts` e `e2e/month-picker.spec.ts` usam o formulário inline e o rótulo "Descrição (opcional)". Eles vão quebrar com esta feature e não serão ajustados aqui, porque o e2e está suspenso. Reativar o e2e exige um helper que abra o modal e a troca do rótulo.
 
@@ -191,12 +191,12 @@ T2 → T3 → T4 → T5
 
 **Done when**:
 
-- [ ] A página não importa nem renderiza `TransactionForm` diretamente
-- [ ] A seção "Transações do mês" ocupa a largura do contêiner (o grid de duas colunas sai)
-- [ ] O botão aparece só no Resumo
-- [ ] Verificação manual: criar um gasto e um ganho pelo "+" atualiza lista, totais e gráficos sem recarregar; descrição vazia mostra "Informe a descrição" sem fechar o modal
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
-- [ ] Test count: mesmo total de testes passando que ao fim da T4
+- [x] A página não importa nem renderiza `TransactionForm` diretamente
+- [x] A seção "Transações do mês" ocupa a largura do contêiner (o grid de duas colunas sai)
+- [x] O botão aparece só no Resumo
+- [x] Verificação manual: criar um gasto e um ganho pelo "+" atualiza lista, totais e gráficos sem recarregar; descrição vazia mostra "Informe a descrição" sem fechar o modal
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
+- [x] Test count: mesmo total de testes passando que ao fim da T4
 
 **Tests**: none
 **Gate**: build

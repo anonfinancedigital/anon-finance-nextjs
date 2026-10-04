@@ -91,12 +91,12 @@ Implicit-requirement dimensions: input validation (coberta em LANC-04/05), failu
 
 | Requirement ID | Story | Phase | Status |
 | -------------- | ----- | ----- | ------ |
-| LANC-01 | P1: Registrar pelo botão flutuante (AC 1: sem formulário inline) | Specify | Pending |
-| LANC-02 | P1: Registrar pelo botão flutuante (AC 2: botão "+" fixo) | Specify | Pending |
-| LANC-03 | P1: Registrar pelo botão flutuante (AC 3, 4, 5, 6, 7: modal, abertura em branco, salvar e fechar, descartar) | Specify | Pending |
-| LANC-04 | P1: Descrição obrigatória (AC 1, 2, 5: validação no schema para criar e editar) | Specify | Implementing |
-| LANC-05 | P1: Descrição obrigatória (AC 3: rótulo sem "opcional") | Specify | Pending |
-| LANC-06 | P1: Descrição obrigatória (AC 4) e Edge Cases de falha | Specify | Pending |
+| LANC-01 | P1: Registrar pelo botão flutuante (AC 1: sem formulário inline) | Specify | Implemented |
+| LANC-02 | P1: Registrar pelo botão flutuante (AC 2: botão "+" fixo) | Specify | Implemented |
+| LANC-03 | P1: Registrar pelo botão flutuante (AC 3, 4, 5, 6, 7: modal, abertura em branco, salvar e fechar, descartar) | Specify | Implemented |
+| LANC-04 | P1: Descrição obrigatória (AC 1, 2, 5: validação no schema para criar e editar) | Specify | Implemented |
+| LANC-05 | P1: Descrição obrigatória (AC 3: rótulo sem "opcional") | Specify | Implemented |
+| LANC-06 | P1: Descrição obrigatória (AC 4) e Edge Cases de falha | Specify | Implemented |
 
 **Coverage:** 6 total, 0 mapped to tasks, 6 unmapped ⚠️
 
