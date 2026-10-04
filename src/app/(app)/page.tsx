@@ -1,3 +1,4 @@
+import { MonthPicker } from "@/components/month-picker";
 import { SummaryTable } from "@/components/summary-table";
 import { TransactionForm } from "@/components/transaction-form";
 import { TransactionList } from "@/components/transaction-list";
@@ -33,7 +34,10 @@ export default async function SummaryPage({ searchParams }: PageProps<"/">) {
 
   return (
     <div className="space-y-8">
-      <h1 className="text-2xl font-semibold">Resumo</h1>
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <h1 className="text-2xl font-semibold">Resumo</h1>
+        <MonthPicker month={month} />
+      </div>
 
       <dl className="grid gap-3 sm:grid-cols-3">
         {cards.map((card) => (

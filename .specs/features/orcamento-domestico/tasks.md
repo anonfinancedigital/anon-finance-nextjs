@@ -874,11 +874,11 @@ T25 → T26 → T27 → T28 → T29 → T30 → T31
 
 **Done when**:
 
-- [ ] e2e: sem `?mes` mostra o mês corrente
-- [ ] e2e: gastos em set e out → trocar o mês mostra totais diferentes
-- [ ] e2e: reload mantém o mês da URL
-- [ ] e2e: lançar um gasto com data de outro mês → aparece no mês da data, não no exibido
-- [ ] Gate build passa; ≥ 4 testes e2e
+- [x] e2e: sem `?mes` mostra o mês corrente
+- [x] e2e: gastos em set e out → trocar o mês mostra totais diferentes
+- [x] e2e: reload mantém o mês da URL
+- [x] e2e: lançar um gasto com data de outro mês → aparece no mês da data, não no exibido
+- [x] Gate build passa; ≥ 4 testes e2e
 
 **Tests**: e2e
 **Gate**: build
