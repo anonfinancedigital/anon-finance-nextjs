@@ -391,8 +391,8 @@ T25 → T26 → T27 → T28 → T29 → T30 → T31
 
 **Done when**:
 
-- [ ] Teste de integração de constraints: banco rejeita `percent_bp` 0 e 10001, `amount_cents` 0, gasto sem categoria, ganho com categoria, nome duplicado com caixa diferente, delete de categoria com gasto
-- [ ] Gate full passa; ≥ 6 testes
+- [x] Teste de integração de constraints: banco rejeita `percent_bp` 0 e 10001, `amount_cents` 0, gasto sem categoria, ganho com categoria, nome duplicado com caixa diferente, delete de categoria com gasto
+- [x] Gate full passa; ≥ 6 testes
 
 **Tests**: integration
 **Gate**: full
