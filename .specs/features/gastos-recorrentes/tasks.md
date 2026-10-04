@@ -134,11 +134,11 @@ T13 → T15
 
 **Done when**:
 
-- [ ] `recurrence.test.ts`: excluir no mês de início apaga o segmento e todos os posteriores da mesma série (RECUR-09 AC 1 e 3)
-- [ ] `recurrence.test.ts`: excluir num mês depois do início deixa o segmento com `endMonth` = mês anterior e apaga os posteriores; os anteriores permanecem (AC 1 e 2)
-- [ ] `recurrence.test.ts`: segmento avulso (série `null`) excluído só apaga ele mesmo
-- [ ] `recurrence.test.ts`: `resolveDay` mantém 31 quando a data enviada é 28/02 e o dia pretendido é 31; usa o dia enviado quando difere do projetado
-- [ ] Gate quick passa; ≥ 7 testes novos
+- [x] `recurrence.test.ts`: excluir no mês de início apaga o segmento e todos os posteriores da mesma série (RECUR-09 AC 1 e 3)
+- [x] `recurrence.test.ts`: excluir num mês depois do início deixa o segmento com `endMonth` = mês anterior e apaga os posteriores; os anteriores permanecem (AC 1 e 2)
+- [x] `recurrence.test.ts`: segmento avulso (série `null`) excluído só apaga ele mesmo
+- [x] `recurrence.test.ts`: `resolveDay` mantém 31 quando a data enviada é 28/02 e o dia pretendido é 31; usa o dia enviado quando difere do projetado
+- [x] Gate quick passa; ≥ 7 testes novos
 
 **Tests**: unit
 **Gate**: quick

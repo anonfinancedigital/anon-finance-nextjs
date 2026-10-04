@@ -46,3 +46,38 @@ export function appliesInMonth(seg: Segment, key: string): boolean {
   if (seg.recurringDay === null) return start === key;
   return start <= key && (seg.endMonth === null || seg.endMonth >= key);
 }
+
+/** Segments of the same series as `seg` that start after `month`. */
+function laterIds(segments: Segment[], seg: Segment, month: string): string[] {
+  if (seg.seriesId === null) return [];
+  return segments
+    .filter((s) => s.seriesId === seg.seriesId && monthKey(s.date) > month)
+    .map((s) => s.id);
+}
+
+export type DeletePlan = { deleteIds: string[]; truncate?: { id: string; endMonth: string } };
+
+/**
+ * Deleting the occurrence of `month` of segment `id`: removes that month and every later one.
+ * Segments of the series starting after `month` go away; the segment itself is deleted when it
+ * starts in `month` (or is non-recurring), otherwise it ends in the previous month.
+ */
+export function planDelete(input: { segments: Segment[]; id: string; month: string }): DeletePlan {
+  const seg = input.segments.find((s) => s.id === input.id)!;
+  const later = laterIds(input.segments, seg, input.month);
+  if (seg.recurringDay === null || monthKey(seg.date) === input.month) {
+    return { deleteIds: [seg.id, ...later] };
+  }
+  return { deleteIds: later, truncate: { id: seg.id, endMonth: previousMonthKey(input.month) } };
+}
+
+/**
+ * Intended day after an edit in month `key`: the original day when the submitted date is the
+ * projected one (keeps 31 through a 28/02 occurrence), otherwise the submitted day.
+ */
+export function resolveDay(prev: Segment, key: string, submittedDate: string): number {
+  if (prev.recurringDay !== null && submittedDate === occurrenceDate(prev, key)) {
+    return prev.recurringDay;
+  }
+  return Number(submittedDate.slice(8, 10));
+}
