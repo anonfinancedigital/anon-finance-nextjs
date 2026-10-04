@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { buildMonthlySummary, validateCategorySet } from "./budget";
+import { allocateCents, buildMonthlySummary, validateCategorySet } from "./budget";
 
 const cats = (...bps: number[]) => bps.map((bp, i) => ({ name: `Categoria ${i + 1}`, bp }));
 
@@ -143,5 +143,30 @@ describe("buildMonthlySummary", () => {
   ])("rounds the target with Math.round: %i × %i bp → %i", (income, percentBp, target) => {
     const [row] = summarize(income, [], [{ ...conforto, percentBp }]).rows;
     expect(row.targetCents).toBe(target);
+  });
+});
+
+describe("allocateCents", () => {
+  it("income 5.000,00 and 7,5% → R$ 375,00", () => {
+    expect(allocateCents(500000, 750)).toBe(37500);
+  });
+
+  it.each([
+    [3000, 150000],
+    [3000, 150000],
+    [2500, 125000],
+    [750, 37500],
+    [250, 12500],
+    [500, 25000],
+  ])("income 5.000,00 and %i bp → %i cents", (percentBp, cents) => {
+    expect(allocateCents(500000, percentBp)).toBe(cents);
+  });
+
+  it("rounds a fraction of a cent: 100001 × 3333 bp → 33330", () => {
+    expect(allocateCents(100001, 3333)).toBe(33330);
+  });
+
+  it("rounds half a cent up: 100001 × 5000 bp → 50001", () => {
+    expect(allocateCents(100001, 5000)).toBe(50001);
   });
 });

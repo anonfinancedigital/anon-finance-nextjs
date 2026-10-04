@@ -39,6 +39,11 @@ export function validateCategorySet(cats: CategoryInput[]): CategorySetResult {
   return { ok: true };
 }
 
+/** Share of an income given to a category: round(income × bp / 10000). */
+export function allocateCents(incomeCents: number, percentBp: number): number {
+  return Math.round((incomeCents * percentBp) / TOTAL_BP);
+}
+
 export type Category = { id: string; name: string; percentBp: number };
 
 export type CategorySummary = Category & {
@@ -67,7 +72,7 @@ export function buildMonthlySummary(input: {
   const { categories, incomeCents, spentByCategory } = input;
 
   const rows = categories.map((cat): CategorySummary => {
-    const targetCents = Math.round((incomeCents * cat.percentBp) / TOTAL_BP);
+    const targetCents = allocateCents(incomeCents, cat.percentBp);
     const spentCents = spentByCategory.get(cat.id) ?? 0;
     const consumedPct =
       targetCents > 0 ? Math.round((spentCents * 100) / targetCents) : spentCents > 0 ? 100 : 0;

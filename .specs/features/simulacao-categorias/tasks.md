@@ -79,10 +79,10 @@ T8 → T9 → T10
 
 **Done when**:
 
-- [ ] `allocateCents(500000, 750) === 37500` e os 6 valores do Independent Test da P1 (receita 5.000,00) testados
-- [ ] Arredondamento testado em caso com fração de centavo (ex.: 100001 × 3333)
-- [ ] `buildMonthlySummary` usa a função; testes existentes de `budget.test.ts` continuam passando sem alteração
-- [ ] Gate quick passa; nenhum teste removido
+- [x] `allocateCents(500000, 750) === 37500` e os 6 valores do Independent Test da P1 (receita 5.000,00) testados
+- [x] Arredondamento testado em caso com fração de centavo (ex.: 100001 × 3333)
+- [x] `buildMonthlySummary` usa a função; testes existentes de `budget.test.ts` continuam passando sem alteração
+- [x] Gate quick passa; nenhum teste removido
 
 **Tests**: unit
 **Gate**: quick
