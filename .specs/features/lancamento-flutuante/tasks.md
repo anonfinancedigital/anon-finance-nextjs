@@ -162,12 +162,12 @@ T2 → T3 → T4 → T5
 
 **Done when**:
 
-- [ ] O botão tem `aria-label="Nova transação"`, `fixed bottom-4 right-4 z-40`, 48px e ícone de "+"
-- [ ] Clicar abre o modal com título "Nova transação" e o formulário em branco (tipo Gasto, data de hoje)
-- [ ] Salvar com sucesso fecha o modal; Esc e clique fora fecham sem salvar
-- [ ] O conteúdo do modal rola em telas baixas (`max-h-[calc(100dvh-2rem)] overflow-y-auto`)
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
-- [ ] Test count: mesmo total de testes passando que ao fim da T3
+- [x] O botão tem `aria-label="Nova transação"`, `fixed bottom-4 right-4 z-40`, 48px e ícone de "+"
+- [x] Clicar abre o modal com título "Nova transação" e o formulário em branco (tipo Gasto, data de hoje)
+- [x] Salvar com sucesso fecha o modal; Esc e clique fora fecham sem salvar
+- [x] O conteúdo do modal rola em telas baixas (`max-h-[calc(100dvh-2rem)] overflow-y-auto`)
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
+- [x] Test count: mesmo total de testes passando que ao fim da T3
 
 **Tests**: none
 **Gate**: build
