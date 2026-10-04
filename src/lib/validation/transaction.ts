@@ -37,11 +37,17 @@ export const transactionSchema = z
       ...common,
       kind: z.literal("expense"),
       categoryId: z.uuid({ error: "Selecione uma categoria" }),
+      // The form sends "" for "Sem subcategoria".
+      subcategoryId: z
+        .uuid({ error: "Subcategoria inválida" })
+        .optional()
+        .or(z.literal("").transform(() => undefined)),
     }),
     z.object({
       ...common,
       kind: z.literal("income"),
       categoryId: z.undefined({ error: "Ganho não tem categoria" }).optional(),
+      subcategoryId: z.undefined({ error: "Ganho não tem subcategoria" }).optional(),
     }),
   ])
   .transform(({ amount, ...rest }) => ({ ...rest, amountCents: amount }));

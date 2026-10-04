@@ -63,3 +63,34 @@ describe("transactionSchema", () => {
     expect(failedFields(input)).toEqual([field]);
   });
 });
+
+describe("transactionSchema subcategoryId", () => {
+  const SUBCATEGORY_ID = "9a8b7c6d-5e4f-4a3b-8c2d-1e0f9a8b7c6d";
+
+  it("accepts an expense with a subcategory uuid", () => {
+    expect(
+      transactionSchema.parse({ ...expense, subcategoryId: SUBCATEGORY_ID }).subcategoryId,
+    ).toBe(SUBCATEGORY_ID);
+  });
+
+  it("accepts an expense without the field as having no subcategory", () => {
+    expect(transactionSchema.parse(expense).subcategoryId).toBeUndefined();
+  });
+
+  it("accepts an expense with an empty subcategory as having no subcategory", () => {
+    expect(transactionSchema.parse({ ...expense, subcategoryId: "" }).subcategoryId).toBeUndefined();
+  });
+
+  it("rejects an expense subcategory that is not a uuid, on that field only", () => {
+    expect(failedFields({ ...expense, subcategoryId: "abc" })).toEqual(["subcategoryId"]);
+  });
+
+  it("rejects an income with a subcategory with 'Ganho não tem subcategoria'", () => {
+    const result = transactionSchema.safeParse({ ...income, subcategoryId: SUBCATEGORY_ID });
+    expect(result.success).toBe(false);
+    if (result.success) return;
+    expect(z.flattenError(result.error).fieldErrors).toEqual({
+      subcategoryId: ["Ganho não tem subcategoria"],
+    });
+  });
+});

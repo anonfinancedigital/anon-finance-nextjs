@@ -325,10 +325,10 @@ T15 → T16 → T17
 
 **Done when**:
 
-- [ ] Gasto com uuid, sem campo e com "" passam (os dois últimos sem subcategoria)
-- [ ] Gasto com id que não é uuid → mensagem de validação
-- [ ] Ganho com `subcategoryId` → "Ganho não tem subcategoria" (SUB-05 AC 8)
-- [ ] Gate quick passa; ≥ 5 testes novos em `transaction.test.ts`
+- [x] Gasto com uuid, sem campo e com "" passam (os dois últimos sem subcategoria)
+- [x] Gasto com id que não é uuid → mensagem de validação
+- [x] Ganho com `subcategoryId` → "Ganho não tem subcategoria" (SUB-05 AC 8)
+- [x] Gate quick passa; ≥ 5 testes novos em `transaction.test.ts`
 
 **Tests**: unit
 **Gate**: quick
