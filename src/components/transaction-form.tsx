@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import type { ActionResult } from "@/lib/action-result";
 
 type Kind = "income" | "expense";
+type Recurrence = "none" | "forever" | "until";
 
 export type TransactionFormValues = {
   id: string;
@@ -21,6 +22,10 @@ export type TransactionFormValues = {
   /** "" = Sem subcategoria. */
   subcategoryId: string;
   description: string;
+  /** Omitted = "none". */
+  recurrence?: Recurrence;
+  /** AAAA-MM; read only when `recurrence` is "until". */
+  recurrenceEnd?: string;
 };
 
 type Props = {
@@ -29,6 +34,8 @@ type Props = {
   defaultDate: string;
   /** When given, the form edits this transaction instead of creating one. */
   transaction?: TransactionFormValues;
+  /** AAAA-MM of the occurrence being edited; sent to `updateTransaction`. */
+  month?: string;
   onSaved?: () => void;
 };
 
@@ -40,6 +47,8 @@ const blank = (date: string): TransactionFormValues => ({
   categoryId: "",
   subcategoryId: "",
   description: "",
+  recurrence: "none",
+  recurrenceEnd: "",
 });
 
 // SPEC_DEVIATION: native <select> and radio inputs instead of the shadcn/Radix Select.
@@ -51,7 +60,7 @@ const selectClass =
  * Creates (id generated on mount, so a double submit creates one row) or edits a transaction.
  * It does not reset after saving: the parent closes the dialog, which unmounts it.
  */
-export function TransactionForm({ categories, defaultDate, transaction, onSaved }: Props) {
+export function TransactionForm({ categories, defaultDate, transaction, month, onSaved }: Props) {
   const uid = useId();
   const [values, setValues] = useState<TransactionFormValues>(
     () => transaction ?? blank(defaultDate),
@@ -71,13 +80,17 @@ export function TransactionForm({ categories, defaultDate, transaction, onSaved 
     event.preventDefault();
     if (pending) return;
     const { id, kind, amount, date, categoryId, subcategoryId, description } = values;
+    const recurrence = {
+      recurrence: values.recurrence ?? "none",
+      recurrenceEnd: values.recurrenceEnd ?? "",
+    };
     const input =
       kind === "expense"
-        ? { id, kind, amount, date, categoryId, subcategoryId, description }
-        : { id, kind, amount, date, description };
+        ? { id, kind, amount, date, categoryId, subcategoryId, description, ...recurrence }
+        : { id, kind, amount, date, description, ...recurrence };
 
     startTransition(async () => {
-      const res = await (transaction ? updateTransaction(input) : createTransaction(input));
+      const res = await (transaction ? updateTransaction(input, month) : createTransaction(input));
       setResult(res);
       if (res.ok) onSaved?.();
     });
@@ -201,6 +214,44 @@ export function TransactionForm({ categories, defaultDate, transaction, onSaved 
           <p className="text-sm text-destructive">{fieldErrors.description}</p>
         )}
       </div>
+
+      <fieldset className="flex flex-wrap gap-4">
+        <legend className="mb-1 text-sm font-medium">Repetir</legend>
+        {(
+          [
+            ["none", "Não recorrente"],
+            ["forever", "Sempre"],
+            ["until", "Até mês/ano"],
+          ] as const
+        ).map(([option, label]) => (
+          <label key={option} className="flex items-center gap-1.5 text-sm">
+            <input
+              type="radio"
+              name={field("recurrence")}
+              value={option}
+              checked={(values.recurrence ?? "none") === option}
+              onChange={() => set("recurrence", option)}
+            />
+            {label}
+          </label>
+        ))}
+      </fieldset>
+
+      {values.recurrence === "until" && (
+        <div className="space-y-1">
+          <Label htmlFor={field("recurrenceEnd")}>Mês final</Label>
+          <Input
+            id={field("recurrenceEnd")}
+            type="month"
+            value={values.recurrenceEnd ?? ""}
+            aria-invalid={!!fieldErrors.recurrenceEnd}
+            onChange={(e) => set("recurrenceEnd", e.target.value)}
+          />
+          {fieldErrors.recurrenceEnd && (
+            <p className="text-sm text-destructive">{fieldErrors.recurrenceEnd}</p>
+          )}
+        </div>
+      )}
 
       {result && !result.ok && !Object.keys(fieldErrors).length && (
         <p role="alert" className="text-sm text-destructive">

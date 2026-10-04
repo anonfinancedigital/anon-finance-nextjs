@@ -489,10 +489,10 @@ T13 → T15
 
 **Done when**:
 
-- [ ] O formulário mostra as três opções com "Não recorrente" selecionada por padrão (AC 1)
-- [ ] O campo de mês final só aparece em "Até mês/ano" (AC 2)
-- [ ] O envio inclui `recurrence` e `recurrenceEnd`, e na edição repassa `month`; o erro de `recurrenceEnd` aparece sob o campo
-- [ ] Gate build passa
+- [x] O formulário mostra as três opções com "Não recorrente" selecionada por padrão (AC 1)
+- [x] O campo de mês final só aparece em "Até mês/ano" (AC 2)
+- [x] O envio inclui `recurrence` e `recurrenceEnd`, e na edição repassa `month`; o erro de `recurrenceEnd` aparece sob o campo
+- [x] Gate build passa
 
 **Tests**: none
 **Gate**: build
