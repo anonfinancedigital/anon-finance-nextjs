@@ -217,12 +217,12 @@ T2 → T6
 
 **Done when**:
 
-- [ ] Props `categories`, `categoryId`, `subcategoryId`, `invalid`, `onChange({ categoryId, subcategoryId })`
-- [ ] Container `role="radiogroup"` rotulado "Categoria"
-- [ ] Categoria com subcategorias vira card; a categoria atual começa aberta; dentro há "Sem subcategoria" e uma opção por subcategoria
-- [ ] Categoria sem subcategorias é uma linha selecionável direta, sem chevron
-- [ ] Escolher uma opção chama `onChange` com o resultado de `pickSelection`
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
+- [x] Props `categories`, `categoryId`, `subcategoryId`, `invalid`, `onChange({ categoryId, subcategoryId })`
+- [x] Container `role="radiogroup"` rotulado "Categoria"
+- [x] Categoria com subcategorias vira card; a categoria atual começa aberta; dentro há "Sem subcategoria" e uma opção por subcategoria
+- [x] Categoria sem subcategorias é uma linha selecionável direta, sem chevron
+- [x] Escolher uma opção chama `onChange` com o resultado de `pickSelection`
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
 
 **Tests**: none
 **Gate**: build
