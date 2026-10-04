@@ -2,7 +2,7 @@ import { randomUUID } from "node:crypto";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { db } from "@/lib/db/client";
 import { transactionsRepo } from "@/lib/db/repos/transactions";
-import { category, transaction } from "@/lib/db/schema";
+import { category, subcategory, transaction } from "@/lib/db/schema";
 import { createSignedInUser } from "@/test/auth";
 import { insertTestUser, setupTestDb } from "@/test/db";
 import { createTransaction, deleteTransaction, updateTransaction } from "./transactions";
@@ -323,5 +323,98 @@ describe("deleteTransaction", () => {
       error: "Não foi possível salvar. Tente novamente",
     });
     expect(consoleError).toHaveBeenCalled();
+  });
+});
+
+describe("transaction subcategory", () => {
+  const SUBCATEGORY_MESSAGE = "Subcategoria não pertence à categoria";
+
+  async function insertSubcategory(owner: string, ofCategory: string, name = "Restaurante") {
+    const [row] = await db
+      .insert(subcategory)
+      .values({ userId: owner, categoryId: ofCategory, name })
+      .returning({ id: subcategory.id });
+    return row.id;
+  }
+
+  async function insertOtherCategory(name = "Lazer") {
+    const [row] = await db
+      .insert(category)
+      .values({ userId, name, percentBp: 1, color: 2 })
+      .returning({ id: category.id });
+    return row.id;
+  }
+
+  const stored = async () => (await transactionsRepo.listByMonth(userId, OCTOBER))[0];
+
+  it("creates an expense with a subcategory of its category", async () => {
+    const subcategoryId = await insertSubcategory(userId, categoryId);
+
+    expect(await createTransaction(expense({ subcategoryId }))).toEqual({ ok: true });
+
+    expect((await stored()).subcategoryId).toBe(subcategoryId);
+  });
+
+  it.each([[undefined], [""]])("creates an expense without subcategory when it is %j", async (value) => {
+    expect(await createTransaction(expense({ subcategoryId: value }))).toEqual({ ok: true });
+
+    expect((await stored()).subcategoryId).toBeNull();
+  });
+
+  it("rejects a subcategory of another category, naming the field", async () => {
+    const lazer = await insertOtherCategory();
+    const foreign = await insertSubcategory(userId, lazer, "Cinema");
+
+    expect(await createTransaction(expense({ subcategoryId: foreign }))).toMatchObject({
+      ok: false,
+      fieldErrors: { subcategoryId: SUBCATEGORY_MESSAGE },
+    });
+    expect(await db.$count(transaction)).toBe(0);
+    expect(revalidatePath).not.toHaveBeenCalled();
+  });
+
+  it("rejects a subcategory that does not exist", async () => {
+    expect(await createTransaction(expense({ subcategoryId: randomUUID() }))).toMatchObject({
+      ok: false,
+      fieldErrors: { subcategoryId: SUBCATEGORY_MESSAGE },
+    });
+    expect(await db.$count(transaction)).toBe(0);
+  });
+
+  it("rejects a subcategory of another user", async () => {
+    const otherOwner = await insertTestUser();
+    const otherSubcategory = await insertSubcategory(otherOwner, await insertCategory(otherOwner));
+
+    expect(await createTransaction(expense({ subcategoryId: otherSubcategory }))).toMatchObject({
+      ok: false,
+      fieldErrors: { subcategoryId: SUBCATEGORY_MESSAGE },
+    });
+    expect(await db.$count(transaction)).toBe(0);
+  });
+
+  it("updates the subcategory of an expense", async () => {
+    const restaurante = await insertSubcategory(userId, categoryId, "Restaurante");
+    const streaming = await insertSubcategory(userId, categoryId, "Streaming");
+    const original = expense({ subcategoryId: restaurante });
+    await createTransaction(original);
+
+    expect(await updateTransaction({ ...original, subcategoryId: streaming })).toEqual({ ok: true });
+    expect((await stored()).subcategoryId).toBe(streaming);
+
+    expect(await updateTransaction({ ...original, subcategoryId: "" })).toEqual({ ok: true });
+    expect((await stored()).subcategoryId).toBeNull();
+  });
+
+  it("rejects an update with a subcategory outside the category and keeps the expense", async () => {
+    const restaurante = await insertSubcategory(userId, categoryId);
+    const foreign = await insertSubcategory(userId, await insertOtherCategory(), "Cinema");
+    const original = expense({ subcategoryId: restaurante });
+    await createTransaction(original);
+
+    expect(await updateTransaction({ ...original, subcategoryId: foreign })).toMatchObject({
+      ok: false,
+      fieldErrors: { subcategoryId: SUBCATEGORY_MESSAGE },
+    });
+    expect((await stored()).subcategoryId).toBe(restaurante);
   });
 });

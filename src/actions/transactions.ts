@@ -17,10 +17,24 @@ const categoryNotFound: ActionResult = {
   fieldErrors: { categoryId: CATEGORY_NOT_FOUND },
 };
 
-async function isOwnCategory(userId: string, tx: TransactionInput): Promise<boolean> {
-  if (tx.kind !== "expense") return true;
+const SUBCATEGORY_OUTSIDE_CATEGORY = "Subcategoria não pertence à categoria";
+
+const subcategoryOutsideCategory: ActionResult = {
+  ok: false,
+  error: SUBCATEGORY_OUTSIDE_CATEGORY,
+  fieldErrors: { subcategoryId: SUBCATEGORY_OUTSIDE_CATEGORY },
+};
+
+/** An expense's category must be the user's and its subcategory, if any, one of that category's. */
+async function checkOwnership(userId: string, tx: TransactionInput): Promise<ActionResult | null> {
+  if (tx.kind !== "expense") return null;
   const categories = await categoriesRepo.list(userId);
-  return categories.some((c) => c.id === tx.categoryId);
+  const own = categories.find((c) => c.id === tx.categoryId);
+  if (!own) return categoryNotFound;
+  if (tx.subcategoryId && !own.subcategories.some((s) => s.id === tx.subcategoryId)) {
+    return subcategoryOutsideCategory;
+  }
+  return null;
 }
 
 /** Creates an income or expense; a repeated `id` (double submit) is ignored. */
@@ -34,7 +48,8 @@ export async function createTransaction(
   if (!parsed.success) return invalidInput(parsed.error);
 
   try {
-    if (!(await isOwnCategory(session.userId, parsed.data))) return categoryNotFound;
+    const rejected = await checkOwnership(session.userId, parsed.data);
+    if (rejected) return rejected;
     await transactionsRepo.create(session.userId, parsed.data);
   } catch (error) {
     console.error("createTransaction", error);
@@ -45,7 +60,7 @@ export async function createTransaction(
   return { ok: true };
 }
 
-/** Replaces date, amount, kind, category and description of the user's transaction (last write wins). */
+/** Replaces date, amount, kind, category, subcategory and description of the user's transaction (last write wins). */
 export async function updateTransaction(
   input: z.input<typeof transactionSchema>,
 ): Promise<ActionResult> {
@@ -56,7 +71,8 @@ export async function updateTransaction(
   if (!parsed.success) return invalidInput(parsed.error);
 
   try {
-    if (!(await isOwnCategory(session.userId, parsed.data))) return categoryNotFound;
+    const rejected = await checkOwnership(session.userId, parsed.data);
+    if (rejected) return rejected;
     const { id, ...data } = parsed.data;
     if (!(await transactionsRepo.update(session.userId, id, data))) {
       return { ok: false, error: TRANSACTION_NOT_FOUND };

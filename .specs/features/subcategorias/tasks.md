@@ -380,10 +380,10 @@ T15 → T16 → T17
 
 **Done when**:
 
-- [ ] Criar gasto com subcategoria da categoria → persiste (SUB-04 AC 2); sem subcategoria → `null` (AC 3)
-- [ ] Subcategoria de outra categoria, inexistente ou de outro usuário → mensagem no campo; nada persiste (SUB-05 AC 4)
-- [ ] Editar trocando a subcategoria → atualizado (SUB-05 AC 6)
-- [ ] Gate full passa; ≥ 5 testes novos em `transactions.int.test.ts` (actions)
+- [x] Criar gasto com subcategoria da categoria → persiste (SUB-04 AC 2); sem subcategoria → `null` (AC 3)
+- [x] Subcategoria de outra categoria, inexistente ou de outro usuário → mensagem no campo; nada persiste (SUB-05 AC 4)
+- [x] Editar trocando a subcategoria → atualizado (SUB-05 AC 6)
+- [x] Gate full passa; ≥ 5 testes novos em `transactions.int.test.ts` (actions)
 
 **Tests**: integration
 **Gate**: full
