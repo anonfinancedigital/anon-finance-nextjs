@@ -549,10 +549,10 @@ T25 → T26 → T27 → T28 → T29 → T30 → T31
 
 **Done when**:
 
-- [ ] Após o seed, `auth.api.signInEmail` com as credenciais do env tem sucesso
-- [ ] A senha armazenada em `account.password` ≠ texto puro (AUTH-01 / AC 6)
-- [ ] Rodar o seed duas vezes não duplica o usuário
-- [ ] Gate full passa; ≥ 3 testes
+- [x] Após o seed, `auth.api.signInEmail` com as credenciais do env tem sucesso
+- [x] A senha armazenada em `account.password` ≠ texto puro (AUTH-01 / AC 6)
+- [x] Rodar o seed duas vezes não duplica o usuário
+- [x] Gate full passa; ≥ 3 testes
 
 **Tests**: integration
 **Gate**: full
