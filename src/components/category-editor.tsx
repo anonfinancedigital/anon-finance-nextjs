@@ -27,22 +27,27 @@ import type { ActionResult } from "@/lib/action-result";
 import { allocateCents, type Category, TOTAL_BP } from "@/lib/domain/budget";
 import { CATEGORY_COLORS, colorVar, nextFreeColor } from "@/lib/domain/color";
 import { formatBRL, parseBRL } from "@/lib/domain/money";
-import { formatPercent, parsePercent } from "@/lib/domain/percent";
+import { bpFromCents, formatPercent, parsePercent } from "@/lib/domain/percent";
 
 type Row = {
   key: string;
   id?: string;
   name: string;
   percent: string;
+  /** Text typed in the amount field; shown as is until the percent changes or the field loses focus. */
+  amountText?: string;
   color: number;
   subcategories: SubcategoryRow[];
 };
+
+const percentText = (bp: number) => formatPercent(bp).replace("%", "");
+const amountField = (cents: number) => formatBRL(cents).replace(/^R\$\s*/, "");
 
 const toRow = (c: Category): Row => ({
   key: c.id,
   id: c.id,
   name: c.name,
-  percent: formatPercent(c.percentBp).replace("%", ""),
+  percent: percentText(c.percentBp),
   color: c.color,
   subcategories: c.subcategories.map((s) => ({ key: s.id, id: s.id, name: s.name })),
 });
@@ -146,6 +151,16 @@ export function CategoryEditor({ categories }: { categories: Category[] }) {
     setResult(null);
   }
 
+  function changeAmount(index: number, text: string) {
+    const patch: Partial<Row> = { amountText: text };
+    const cents = parseBRL(text);
+    if (incomeCents !== null && cents.ok) {
+      const bp = bpFromCents(cents.value, incomeCents);
+      if (bp.ok) patch.percent = percentText(bp.value);
+    }
+    update(index, patch);
+  }
+
   function remove(index: number) {
     setRows((current) => current.filter((_, i) => i !== index));
     setResult(null);
@@ -221,6 +236,9 @@ export function CategoryEditor({ categories }: { categories: Category[] }) {
             const nameError = fieldErrors[`${i}.name`];
             const colorError = fieldErrors[`${i}.color`];
             const live = parsed[i];
+            const typed = row.amountText !== undefined && incomeCents !== null ? parseBRL(row.amountText) : null;
+            const typedBp = typed?.ok && incomeCents !== null ? bpFromCents(typed.value, incomeCents) : typed;
+            const amountError = typedBp && !typedBp.ok ? typedBp.error : undefined;
             const percentError = fieldErrors[`${i}.percent`] ?? (live && !live.ok ? live.error : undefined);
             return (
               <Fragment key={row.key}>
@@ -255,12 +273,23 @@ export function CategoryEditor({ categories }: { categories: Category[] }) {
                     inputMode="decimal"
                     value={row.percent}
                     aria-invalid={!!percentError}
-                    onChange={(e) => update(i, { percent: e.target.value })}
+                    onChange={(e) => update(i, { percent: e.target.value, amountText: undefined })}
                   />
                   {percentError && <p className="mt-1 text-sm text-destructive">{percentError}</p>}
                 </TableCell>
-                <TableCell className="py-4 align-top" data-testid={`category-amount-${i + 1}`}>
-                  {amounts[i] === null ? "—" : formatBRL(amounts[i])}
+                <TableCell className="align-top">
+                  <Input
+                    aria-label={`Valor da categoria ${i + 1}`}
+                    data-testid={`category-amount-${i + 1}`}
+                    inputMode="decimal"
+                    disabled={incomeCents === null}
+                    title={incomeCents === null ? "Informe a receita de referência" : undefined}
+                    value={row.amountText ?? (amounts[i] === null ? "" : amountField(amounts[i]))}
+                    aria-invalid={!!amountError}
+                    onChange={(e) => changeAmount(i, e.target.value)}
+                    onBlur={() => update(i, { amountText: undefined })}
+                  />
+                  {amountError && <p className="mt-1 text-sm text-destructive">{amountError}</p>}
                 </TableCell>
                 <TableCell className="align-top">
                   <Button

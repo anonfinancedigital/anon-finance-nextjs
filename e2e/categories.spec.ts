@@ -98,20 +98,44 @@ test("a reference income shows the amount of each category and their sum", async
   expect(headers.slice(valueAt - 1, valueAt + 2)).toEqual(["Percentual (%)", "Valor (R$)", "Ações"]);
 
   await income(page).fill("5000");
-  const expected = ["R$ 1.500,00", "R$ 1.500,00", "R$ 1.250,00", "R$ 375,00", "R$ 125,00", "R$ 250,00"];
-  for (const [i, value] of expected.entries()) await expect(amount(page, i + 1)).toHaveText(value);
+  const expected = ["1.500,00", "1.500,00", "1.250,00", "375,00", "125,00", "250,00"];
+  for (const [i, value] of expected.entries()) await expect(amount(page, i + 1)).toHaveValue(value);
   await expect(amountSum(page)).toHaveText("R$ 5.000,00");
 
   // Changing a percentage updates its amount and the sum without saving (sum ≠ 100% still shown).
   await percent(page, 4).fill("10");
-  await expect(amount(page, 4)).toHaveText("R$ 500,00");
+  await expect(amount(page, 4)).toHaveValue("500,00");
   await expect(amountSum(page)).toHaveText("R$ 5.125,00");
   await expect(page.getByText("Categorias salvas", { exact: true })).toHaveCount(0);
 
   // Changing the income updates every amount.
   await income(page).fill("1.000,00");
-  await expect(amount(page, 1)).toHaveText("R$ 300,00");
+  await expect(amount(page, 1)).toHaveValue("300,00");
   await expect(amountSum(page)).toHaveText("R$ 1.025,00");
+});
+
+test("editing an amount adjusts the percent, and editing the percent adjusts the amount", async ({ page }) => {
+  await seedCategories(IMAGE_BUDGET);
+  await login(page);
+  await page.goto("/categorias");
+
+  await expect(amount(page, 1)).toBeDisabled();
+  await income(page).fill("5000");
+
+  await amount(page, 4).fill("500,00");
+  await expect(percent(page, 4)).toHaveValue("10");
+  await expect(amountSum(page)).toHaveText("R$ 5.125,00");
+
+  await amount(page, 4).fill("333,33");
+  await expect(percent(page, 4)).toHaveValue("6,67");
+  await expect(amount(page, 4)).toHaveValue("333,33");
+
+  await amount(page, 4).fill("0");
+  await expect(percent(page, 4)).toHaveValue("6,67");
+  await expect(page.getByText("O percentual deve estar entre 0,01 e 100")).toBeVisible();
+
+  await percent(page, 4).fill("12,5");
+  await expect(amount(page, 4)).toHaveValue("625,00");
 });
 
 test("an empty reference income shows a dash in every amount cell and the sum", async ({ page }) => {
@@ -122,7 +146,7 @@ test("an empty reference income shows a dash in every amount cell and the sum", 
   await income(page).fill("5000");
   await expect(amountSum(page)).toHaveText("R$ 5.000,00");
   await income(page).fill("");
-  for (let n = 1; n <= IMAGE_BUDGET.length; n++) await expect(amount(page, n)).toHaveText("—");
+  for (let n = 1; n <= IMAGE_BUDGET.length; n++) await expect(amount(page, n)).toHaveValue("");
   await expect(amountSum(page)).toHaveText("—");
 });
 
@@ -138,7 +162,7 @@ for (const [typed, message] of [
 
     await income(page).fill(typed);
     await expect(page.getByText(message, { exact: true })).toBeVisible();
-    for (let n = 1; n <= IMAGE_BUDGET.length; n++) await expect(amount(page, n)).toHaveText("—");
+    for (let n = 1; n <= IMAGE_BUDGET.length; n++) await expect(amount(page, n)).toHaveValue("");
     await expect(amountSum(page)).toHaveText("—");
   });
 }
@@ -152,9 +176,9 @@ test("a row without a valid percentage shows a dash; removing a row recalculates
   await income(page).fill("5000");
 
   await page.getByRole("button", { name: "Adicionar categoria" }).click();
-  await expect(amount(page, 7)).toHaveText("—");
+  await expect(amount(page, 7)).toHaveValue("");
   await percent(page, 7).fill("abc");
-  await expect(amount(page, 7)).toHaveText("—");
+  await expect(amount(page, 7)).toHaveValue("");
   await expect(amountSum(page)).toHaveText("R$ 5.000,00");
 
   await page.getByRole("button", { name: "Remover categoria 1" }).click();
@@ -183,7 +207,7 @@ test("saving keeps the reference income, does not send it, and a reload clears i
   expect(bodies[0]).not.toContain("4321");
 
   await expect(income(page)).toHaveValue("4321,09");
-  await expect(amount(page, 1)).toHaveText("R$ 1.296,33");
+  await expect(amount(page, 1)).toHaveValue("1.296,33");
 
   await page.reload();
   await expect(income(page)).toHaveValue("");
