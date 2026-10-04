@@ -72,8 +72,8 @@ describe("validateCategorySet", () => {
 });
 
 describe("buildMonthlySummary", () => {
-  const conforto = { id: "c1", name: "Conforto", percentBp: 3000 };
-  const lazer = { id: "c2", name: "Lazer", percentBp: 7000 };
+  const conforto = { id: "c1", name: "Conforto", percentBp: 3000, color: 1 };
+  const lazer = { id: "c2", name: "Lazer", percentBp: 7000, color: 2 };
 
   const summarize = (incomeCents: number, spent: [string, number][], categories = [conforto]) =>
     buildMonthlySummary({ categories, incomeCents, spentByCategory: new Map(spent) });

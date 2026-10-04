@@ -44,7 +44,8 @@ export function allocateCents(incomeCents: number, percentBp: number): number {
   return Math.round((incomeCents * percentBp) / TOTAL_BP);
 }
 
-export type Category = { id: string; name: string; percentBp: number };
+/** `color` is the palette index 1..8 (see `./color`). */
+export type Category = { id: string; name: string; percentBp: number; color: number };
 
 export type CategorySummary = Category & {
   targetCents: number;

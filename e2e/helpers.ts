@@ -38,12 +38,15 @@ export async function adminUserId(): Promise<string> {
   return row.id;
 }
 
-/** Saves the admin's category set straight in the database; returns it with ids, in order. */
-export async function seedCategories(cats: { name: string; percent: number }[]) {
+/**
+ * Saves the admin's category set straight in the database; returns it with ids, in order.
+ * Without `color`, the n-th category gets palette color ((n − 1) mod 8) + 1.
+ */
+export async function seedCategories(cats: { name: string; percent: number; color?: number }[]) {
   const userId = await adminUserId();
   const result = await categoriesRepo.replaceSet(
     userId,
-    cats.map((c) => ({ name: c.name, percentBp: c.percent * 100 })),
+    cats.map((c, i) => ({ name: c.name, percentBp: c.percent * 100, color: c.color ?? (i % 8) + 1 })),
   );
   if (!result.ok) throw new Error(result.error);
   return categoriesRepo.list(userId);

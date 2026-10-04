@@ -8,15 +8,15 @@ import { categoriesRepo } from "./categories";
 setupTestDb();
 
 const BUDGET = [
-  { name: "Moradia", percentBp: 3000 },
-  { name: "Conforto", percentBp: 3000 },
-  { name: "Metas", percentBp: 1000 },
-  { name: "Prazeres", percentBp: 1000 },
-  { name: "Liberdade", percentBp: 2000 },
+  { name: "Moradia", percentBp: 3000, color: 1 },
+  { name: "Conforto", percentBp: 3000, color: 2 },
+  { name: "Metas", percentBp: 1000, color: 3 },
+  { name: "Prazeres", percentBp: 1000, color: 4 },
+  { name: "Liberdade", percentBp: 2000, color: 5 },
 ];
 
-const strip = (cats: { name: string; percentBp: number }[]) =>
-  cats.map(({ name, percentBp }) => ({ name, percentBp }));
+const strip = (cats: { name: string; percentBp: number; color: number }[]) =>
+  cats.map(({ name, percentBp, color }) => ({ name, percentBp, color }));
 
 async function addExpenses(userId: string, categoryId: string, count: number) {
   for (let i = 0; i < count; i++) {
@@ -42,8 +42,10 @@ describe("categoriesRepo.replaceSet + list", () => {
     const userId = await insertTestUser();
     const otherId = await insertTestUser();
     await categoriesRepo.replaceSet(userId, BUDGET);
-    await categoriesRepo.replaceSet(otherId, [{ name: "Tudo", percentBp: 10000 }]);
-    expect(strip(await categoriesRepo.list(otherId))).toEqual([{ name: "Tudo", percentBp: 10000 }]);
+    await categoriesRepo.replaceSet(otherId, [{ name: "Tudo", percentBp: 10000, color: 7 }]);
+    expect(strip(await categoriesRepo.list(otherId))).toEqual([
+      { name: "Tudo", percentBp: 10000, color: 7 },
+    ]);
     expect(strip(await categoriesRepo.list(userId))).toEqual(BUDGET);
   });
 
@@ -63,7 +65,7 @@ describe("categoriesRepo.replaceSet + list", () => {
     const userId = await insertTestUser();
     const result = await categoriesRepo.replaceSet(userId, [
       ...BUDGET,
-      { name: "Extra", percentBp: 500 },
+      { name: "Extra", percentBp: 500, color: 6 },
     ]);
     expect(result).toMatchObject({
       ok: false,
@@ -102,6 +104,36 @@ describe("categoriesRepo.replaceSet + list", () => {
 
     expect(await categoriesRepo.replaceSet(userId, next)).toEqual({ ok: true });
     expect(await categoriesRepo.list(userId)).toEqual(next);
+  });
+});
+
+describe("categoriesRepo color", () => {
+  it("creates categories with the given colors and lists them back", async () => {
+    const userId = await insertTestUser();
+    const withColors = BUDGET.map((c, i) => ({ ...c, color: [7, 7, 1, 8, 2][i] }));
+    await categoriesRepo.replaceSet(userId, withColors);
+    expect((await categoriesRepo.list(userId)).map((c) => c.color)).toEqual([7, 7, 1, 8, 2]);
+  });
+
+  it("updates the color of an existing category", async () => {
+    const userId = await insertTestUser();
+    await categoriesRepo.replaceSet(userId, BUDGET);
+    const saved = await categoriesRepo.list(userId);
+    const edited = saved.map((c) => (c.name === "Metas" ? { ...c, color: 7 } : c));
+
+    expect(await categoriesRepo.replaceSet(userId, edited)).toEqual({ ok: true });
+    const listed = await categoriesRepo.list(userId);
+    expect(listed.find((c) => c.name === "Metas")).toMatchObject({ id: saved[2].id, color: 7 });
+    expect(listed.map((c) => c.color)).toEqual([1, 2, 7, 4, 5]);
+  });
+
+  it("does not leak another user's colors", async () => {
+    const userId = await insertTestUser();
+    const otherId = await insertTestUser();
+    await categoriesRepo.replaceSet(userId, BUDGET);
+    await categoriesRepo.replaceSet(otherId, [{ name: "Moradia", percentBp: 10000, color: 8 }]);
+    expect((await categoriesRepo.list(userId)).map((c) => c.color)).toEqual([1, 2, 3, 4, 5]);
+    expect((await categoriesRepo.list(otherId)).map((c) => c.color)).toEqual([8]);
   });
 });
 

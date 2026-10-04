@@ -3,9 +3,14 @@ import { type Category, type CategorySetResult, validateCategorySet } from "@/li
 import { db } from "../client";
 import { category, transaction } from "../schema";
 
-export type CategoryItem = { id?: string; name: string; percentBp: number };
+export type CategoryItem = { id?: string; name: string; percentBp: number; color: number };
 
-const columns = { id: category.id, name: category.name, percentBp: category.percentBp };
+const columns = {
+  id: category.id,
+  name: category.name,
+  percentBp: category.percentBp,
+  color: category.color,
+};
 
 function expensesMessage(n: number) {
   return `Esta categoria tem ${n} ${n === 1 ? "gasto" : "gastos"} e não pode ser excluída`;
@@ -57,14 +62,14 @@ async function replaceSet(userId: string, cats: CategoryItem[]): Promise<Categor
     }
 
     // One statement per item, in order, so clock_timestamp() preserves the creation order.
-    for (const { id, name, percentBp } of cats) {
+    for (const { id, name, percentBp, color } of cats) {
       if (id) {
         await tx
           .update(category)
-          .set({ name, percentBp })
+          .set({ name, percentBp, color })
           .where(and(eq(category.id, id), eq(category.userId, userId)));
       } else {
-        await tx.insert(category).values({ userId, name, percentBp });
+        await tx.insert(category).values({ userId, name, percentBp, color });
       }
     }
     return { ok: true };

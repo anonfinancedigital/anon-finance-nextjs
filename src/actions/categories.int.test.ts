@@ -18,11 +18,11 @@ const { revalidatePath } = await import("next/cache");
 setupTestDb();
 
 const FIVE = [
-  { name: "Custos fixos", percent: "30" },
-  { name: "Conforto", percent: "30" },
-  { name: "Metas", percent: "10" },
-  { name: "Prazeres", percent: "10" },
-  { name: "Liberdade financeira", percent: "20" },
+  { name: "Custos fixos", percent: "30", color: 1 },
+  { name: "Conforto", percent: "30", color: 2 },
+  { name: "Metas", percent: "10", color: 3 },
+  { name: "Prazeres", percent: "10", color: 4 },
+  { name: "Liberdade financeira", percent: "20", color: 5 },
 ];
 
 let userId: string;
@@ -70,7 +70,7 @@ describe("saveCategories", () => {
     ["100,01", "O percentual deve estar entre 0,01 e 100"],
     ["12,345", "Percentual inválido. Use um número com até 2 casas decimais"],
   ])("rejects percent %s with a field error and persists nothing", async (percent, message) => {
-    const result = await saveCategories([{ name: "Tudo", percent }]);
+    const result = await saveCategories([{ name: "Tudo", percent, color: 1 }]);
 
     expect(result).toMatchObject({ ok: false, fieldErrors: { "0.percent": message } });
     expect(await names()).toEqual([]);
@@ -82,8 +82,8 @@ describe("saveCategories", () => {
     ["conforto", "Já existe uma categoria com este nome"],
   ])("rejects name %j with a field error and persists nothing", async (name, message) => {
     const input = [
-      { name: "Conforto", percent: "50" },
-      { name, percent: "50" },
+      { name: "Conforto", percent: "50", color: 1 },
+      { name, percent: "50", color: 2 },
     ];
 
     expect(await saveCategories(input)).toMatchObject({
@@ -115,6 +115,7 @@ describe("saveCategories", () => {
         id: c.id,
         name: c.name,
         percent: c.name === "Metas" ? "40" : String(c.percentBp / 100),
+        color: c.color,
       }));
 
     expect(await saveCategories(withoutConforto)).toEqual({

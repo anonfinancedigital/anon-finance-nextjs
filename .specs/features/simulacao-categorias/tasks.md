@@ -163,12 +163,12 @@ T8 → T9 → T10
 
 **Done when**:
 
-- [ ] `schema.int.test.ts`: color 0 e 9 → CHECK_VIOLATION; color nulo → NOT NULL violation; 1 e 8 aceitos
-- [ ] Teste de integração do backfill: executa o UPDATE da migração sobre 9 categorias de um usuário e 2 de outro → cores 1..8,1 e 1,2 (AC 5)
-- [ ] `categories.int.test.ts` (repo): `replaceSet` cria e atualiza com cor; `list` devolve a cor salva; cor de outro usuário não vaza
-- [ ] `npm run db:migrate` aplica do zero sem erro
-- [ ] Testes existentes ajustados só para incluir `color` nas entradas; nenhum removido
-- [ ] Gate full passa
+- [x] `schema.int.test.ts`: color 0 e 9 → CHECK_VIOLATION; color nulo → NOT NULL violation; 1 e 8 aceitos
+- [x] Teste de integração do backfill: executa o UPDATE da migração sobre 9 categorias de um usuário e 2 de outro → cores 1..8,1 e 1,2 (AC 5)
+- [x] `categories.int.test.ts` (repo): `replaceSet` cria e atualiza com cor; `list` devolve a cor salva; cor de outro usuário não vaza
+- [x] `npm run db:migrate` aplica do zero sem erro
+- [x] Testes existentes ajustados só para incluir `color` nas entradas; nenhum removido
+- [x] Gate full passa
 
 **Tests**: integration
 **Gate**: full

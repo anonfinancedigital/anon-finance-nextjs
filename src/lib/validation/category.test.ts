@@ -3,7 +3,8 @@ import { categorySetSchema } from "./category";
 
 const ID = "7d9e1f2a-3b4c-4d5e-8f6a-7b8c9d0e1f2a";
 
-const set = (...percents: string[]) => percents.map((percent, i) => ({ name: `Cat ${i + 1}`, percent }));
+const set = (...percents: string[]) =>
+  percents.map((percent, i) => ({ name: `Cat ${i + 1}`, percent, color: i + 1 }));
 
 /** Issues as "path → message" pairs, path joined with ".". */
 function issues(input: unknown) {
@@ -18,16 +19,16 @@ describe("categorySetSchema", () => {
     const input = set("30", "30", "10", "10", "20");
     input[0] = { ...input[0], id: ID } as (typeof input)[0];
     expect(categorySetSchema.parse(input)).toEqual([
-      { id: ID, name: "Cat 1", percentBp: 3000 },
-      { name: "Cat 2", percentBp: 3000 },
-      { name: "Cat 3", percentBp: 1000 },
-      { name: "Cat 4", percentBp: 1000 },
-      { name: "Cat 5", percentBp: 2000 },
+      { id: ID, name: "Cat 1", percentBp: 3000, color: 1 },
+      { name: "Cat 2", percentBp: 3000, color: 2 },
+      { name: "Cat 3", percentBp: 1000, color: 3 },
+      { name: "Cat 4", percentBp: 1000, color: 4 },
+      { name: "Cat 5", percentBp: 2000, color: 5 },
     ]);
   });
 
   it.each([["0"], ["100,01"], ["12,345"]])("rejects percent %j with an error on the item", (bad) => {
-    const result = issues([{ name: "Lazer", percent: bad }, ...set("50")]);
+    const result = issues([{ name: "Lazer", percent: bad, color: 1 }, ...set("50")]);
     expect(result.map((i) => i.path)).toEqual(["0.percent"]);
   });
 
@@ -39,8 +40,8 @@ describe("categorySetSchema", () => {
 
   it("rejects duplicate names (Lazer/lazer) on the repeated item plus a set-level message", () => {
     const result = issues([
-      { name: "Lazer", percent: "50" },
-      { name: "lazer", percent: "50" },
+      { name: "Lazer", percent: "50", color: 1 },
+      { name: "lazer", percent: "50", color: 2 },
     ]);
     expect(result.map((i) => i.path)).toEqual(["1.name", ""]);
   });

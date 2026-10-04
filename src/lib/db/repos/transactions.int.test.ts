@@ -18,8 +18,8 @@ let lazer: string;
 beforeEach(async () => {
   userId = await insertTestUser();
   await categoriesRepo.replaceSet(userId, [
-    { name: "Conforto", percentBp: 6000 },
-    { name: "Lazer", percentBp: 4000 },
+    { name: "Conforto", percentBp: 6000, color: 1 },
+    { name: "Lazer", percentBp: 4000, color: 2 },
   ]);
   [conforto, lazer] = (await categoriesRepo.list(userId)).map((c) => c.id);
 });
@@ -186,7 +186,7 @@ describe("transactionsRepo.monthTotals", () => {
 
   it("ignores transactions of other users", async () => {
     const otherId = await insertTestUser();
-    await categoriesRepo.replaceSet(otherId, [{ name: "Tudo", percentBp: 10000 }]);
+    await categoriesRepo.replaceSet(otherId, [{ name: "Tudo", percentBp: 10000, color: 1 }]);
     const [tudo] = await categoriesRepo.list(otherId);
     await transactionsRepo.create(otherId, income("2026-10-01", 700000));
     await transactionsRepo.create(otherId, spend(tudo.id, "2026-10-02", 3000));

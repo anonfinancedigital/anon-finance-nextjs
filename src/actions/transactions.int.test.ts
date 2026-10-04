@@ -24,7 +24,7 @@ let categoryId: string;
 async function insertCategory(owner: string) {
   const [row] = await db
     .insert(category)
-    .values({ userId: owner, name: "Conforto", percentBp: 10000 })
+    .values({ userId: owner, name: "Conforto", percentBp: 10000, color: 1 })
     .returning({ id: category.id });
   return row.id;
 }
@@ -164,7 +164,7 @@ describe("updateTransaction", () => {
     await createTransaction(original);
     const [other] = await db
       .insert(category)
-      .values({ userId, name: "Metas", percentBp: 1 })
+      .values({ userId, name: "Metas", percentBp: 1, color: 1 })
       .returning({ id: category.id });
     vi.mocked(revalidatePath).mockClear();
 

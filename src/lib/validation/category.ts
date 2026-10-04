@@ -16,6 +16,8 @@ const item = z
     id: z.uuid({ error: "Identificador inválido" }).optional(),
     name: z.string({ error: "Informe o nome da categoria" }).trim(),
     percent,
+    // Optional input key so callers still type-check; a missing color is still rejected.
+    color: z.number().optional().pipe(z.number()),
   })
   .transform(({ percent, ...rest }) => ({ ...rest, percentBp: percent }));
 
