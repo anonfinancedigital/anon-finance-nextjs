@@ -32,6 +32,8 @@ describe("transactionSchema", () => {
       date: "2026-10-04",
       categoryId: CATEGORY_ID,
       description: "Mercado",
+      recurrence: "none",
+      recurrenceEndMonth: null,
     });
   });
 
@@ -42,6 +44,8 @@ describe("transactionSchema", () => {
       amountCents: 500000,
       date: "2026-10-01",
       description: null,
+      recurrence: "none",
+      recurrenceEndMonth: null,
     });
   });
 
@@ -92,5 +96,93 @@ describe("transactionSchema subcategoryId", () => {
     expect(z.flattenError(result.error).fieldErrors).toEqual({
       subcategoryId: ["Ganho não tem subcategoria"],
     });
+  });
+});
+
+describe("transactionSchema recurrence", () => {
+  /** Field errors of a failed parse. */
+  function fieldErrors(input: unknown) {
+    const result = transactionSchema.safeParse(input);
+    expect(result.success).toBe(false);
+    if (result.success) return {};
+    return z.flattenError(result.error).fieldErrors;
+  }
+
+  it("defaults to not recurring when recurrence is not sent", () => {
+    const parsed = transactionSchema.parse(expense);
+    expect(parsed.recurrence).toBe("none");
+    expect(parsed.recurrenceEndMonth).toBeNull();
+  });
+
+  it("accepts a recurring expense forever", () => {
+    expect(transactionSchema.parse({ ...expense, recurrence: "forever" })).toMatchObject({
+      kind: "expense",
+      recurrence: "forever",
+      recurrenceEndMonth: null,
+    });
+  });
+
+  it("accepts a recurring income until a final month", () => {
+    const parsed = transactionSchema.parse({
+      ...income,
+      recurrence: "until",
+      recurrenceEnd: "2027-03",
+    });
+    expect(parsed).toMatchObject({
+      kind: "income",
+      recurrence: "until",
+      recurrenceEndMonth: "2027-03",
+    });
+  });
+
+  it("rejects 'until' without a final month on recurrenceEnd only, with 'Informe o mês final'", () => {
+    expect(fieldErrors({ ...expense, recurrence: "until" })).toEqual({
+      recurrenceEnd: ["Informe o mês final"],
+    });
+    expect(fieldErrors({ ...expense, recurrence: "until", recurrenceEnd: "" })).toEqual({
+      recurrenceEnd: ["Informe o mês final"],
+    });
+  });
+
+  it("rejects a final month before the month of the date", () => {
+    expect(fieldErrors({ ...expense, recurrence: "until", recurrenceEnd: "2026-09" })).toEqual({
+      recurrenceEnd: ["O mês final deve ser igual ou posterior ao mês do lançamento"],
+    });
+  });
+
+  it("accepts a final month equal to the month of the date", () => {
+    expect(
+      transactionSchema.parse({ ...expense, recurrence: "until", recurrenceEnd: "2026-10" })
+        .recurrenceEndMonth,
+    ).toBe("2026-10");
+  });
+
+  it.each([["2026-13"], ["1999-12"], ["2101-01"], ["dezembro"], ["2026-1"], ["2026-00"]])(
+    "rejects the final month %s with 'Mês final inválido'",
+    (recurrenceEnd) => {
+      expect(fieldErrors({ ...expense, recurrence: "until", recurrenceEnd })).toEqual({
+        recurrenceEnd: ["Mês final inválido"],
+      });
+    },
+  );
+
+  it("accepts the final month bounds 2100-12", () => {
+    expect(
+      transactionSchema.parse({ ...expense, recurrence: "until", recurrenceEnd: "2100-12" })
+        .recurrenceEndMonth,
+    ).toBe("2100-12");
+  });
+
+  it.each([["none"], ["forever"]])(
+    "ignores a final month sent with '%s' and stores none",
+    (recurrence) => {
+      const parsed = transactionSchema.parse({ ...expense, recurrence, recurrenceEnd: "2026-09" });
+      expect(parsed.recurrence).toBe(recurrence);
+      expect(parsed.recurrenceEndMonth).toBeNull();
+    },
+  );
+
+  it("rejects an unknown recurrence option on that field only", () => {
+    expect(failedFields({ ...expense, recurrence: "weekly" })).toEqual(["recurrence"]);
   });
 });

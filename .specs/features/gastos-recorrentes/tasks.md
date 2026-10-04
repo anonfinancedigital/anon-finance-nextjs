@@ -193,13 +193,14 @@ T13 → T15
 
 **Done when**:
 
-- [ ] `transaction.test.ts`: `until` sem mês final falha só em `recurrenceEnd` com "Informe o mês final" (AC 1)
-- [ ] `transaction.test.ts`: mês final anterior ao mês da data falha com "O mês final deve ser igual ou posterior ao mês do lançamento"; igual ao mês da data passa (AC 2)
-- [ ] `transaction.test.ts`: mês final inválido (`2026-13`, `1999-12`, `2101-01`, texto livre) falha com "Mês final inválido" (AC 3)
-- [ ] `transaction.test.ts`: `none` e `forever` com `recurrenceEnd` enviado resultam em `recurrenceEndMonth: null` (AC 4)
-- [ ] `transaction.test.ts`: gasto e ganho recorrentes passam; sem `recurrence` o padrão é `none`
-- [ ] Os testes antigos de `transaction.test.ts` continuam passando sem alteração
-- [ ] Gate quick passa; ≥ 8 testes novos
+- [x] `transaction.test.ts`: `until` sem mês final falha só em `recurrenceEnd` com "Informe o mês final" (AC 1)
+- [x] `transaction.test.ts`: mês final anterior ao mês da data falha com "O mês final deve ser igual ou posterior ao mês do lançamento"; igual ao mês da data passa (AC 2)
+- [x] `transaction.test.ts`: mês final inválido (`2026-13`, `1999-12`, `2101-01`, texto livre) falha com "Mês final inválido" (AC 3)
+- [x] `transaction.test.ts`: `none` e `forever` com `recurrenceEnd` enviado resultam em `recurrenceEndMonth: null` (AC 4)
+- [x] `transaction.test.ts`: gasto e ganho recorrentes passam; sem `recurrence` o padrão é `none`
+- [x] Os testes antigos de `transaction.test.ts` continuam passando sem alteração
+  - Nota: os dois testes que comparam a saída inteira com `toEqual` ganharam `recurrence: "none"` e `recurrenceEndMonth: null` no objeto esperado (acréscimo exigido pelo padrão `none` na saída; nenhuma asserção enfraquecida).
+- [x] Gate quick passa; ≥ 8 testes novos
 
 **Tests**: unit
 **Gate**: quick

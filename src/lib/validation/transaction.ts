@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { parseBRL } from "@/lib/domain/money";
 import { isValidCalendarDate } from "@/lib/domain/month";
+import { monthKey } from "@/lib/domain/recurrence";
 
 const amount = z.string({ error: "Informe o valor" }).transform((input, ctx) => {
   const result = parseBRL(input);
@@ -23,14 +24,24 @@ const description = z
   .optional()
   .transform((value) => value || null);
 
+/** AAAA-MM between 2000-01 and 2100-12. */
+const isValidMonth = (key: string) =>
+  /^\d{4}-(0[1-9]|1[0-2])$/.test(key) && key >= "2000-01" && key <= "2100-12";
+
 const common = {
   id: z.uuid({ error: "Identificador inválido" }),
   amount,
   date,
   description,
+  recurrence: z.enum(["none", "forever", "until"]).default("none"),
+  /** AAAA-MM, only read when `recurrence` is "until". */
+  recurrenceEnd: z.string().optional(),
 };
 
-/** Input of create/update transaction actions; `amount` is pt-BR text, output has `amountCents`. */
+/**
+ * Input of create/update transaction actions; `amount` is pt-BR text, output has `amountCents`.
+ * `recurrence` defaults to "none"; output has `recurrenceEndMonth` instead of `recurrenceEnd`.
+ */
 export const transactionSchema = z
   .discriminatedUnion("kind", [
     z.object({
@@ -50,6 +61,21 @@ export const transactionSchema = z
       subcategoryId: z.undefined({ error: "Ganho não tem subcategoria" }).optional(),
     }),
   ])
-  .transform(({ amount, ...rest }) => ({ ...rest, amountCents: amount }));
+  .superRefine(({ recurrence, recurrenceEnd, date }, ctx) => {
+    if (recurrence !== "until") return;
+    const issue = (message: string) =>
+      ctx.addIssue({ code: "custom", path: ["recurrenceEnd"], message });
+    if (!recurrenceEnd) return issue("Informe o mês final");
+    if (!isValidMonth(recurrenceEnd)) return issue("Mês final inválido");
+    if (recurrenceEnd < monthKey(date)) {
+      issue("O mês final deve ser igual ou posterior ao mês do lançamento");
+    }
+  })
+  .transform(({ amount, recurrenceEnd, ...rest }) => ({
+    ...rest,
+    amountCents: amount,
+    /** AAAA-MM; null unless `recurrence` is "until". */
+    recurrenceEndMonth: rest.recurrence === "until" ? recurrenceEnd! : null,
+  }));
 
 export type TransactionInput = z.output<typeof transactionSchema>;
