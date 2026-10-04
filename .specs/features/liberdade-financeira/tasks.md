@@ -260,13 +260,13 @@ T7 → T8 → T9 → T10 → T11
 
 **Done when**:
 
-- [ ] Entrada válida grava e devolve `{ ok: true }`; reenviar substitui o objetivo
-- [ ] Entrada inválida devolve `fieldErrors` por campo e não grava nem altera a linha existente
-- [ ] Sem sessão devolve `UNAUTHORIZED` e não grava
-- [ ] Falha do banco (repo simulado com erro) devolve `SAVE_FAILED` e o objetivo anterior permanece
-- [ ] Grava somente para o `userId` da sessão
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
-- [ ] Test count: testes novos passam, existentes intactos
+- [x] Entrada válida grava e devolve `{ ok: true }`; reenviar substitui o objetivo
+- [x] Entrada inválida devolve `fieldErrors` por campo e não grava nem altera a linha existente
+- [x] Sem sessão devolve `UNAUTHORIZED` e não grava
+- [x] Falha do banco (repo simulado com erro) devolve `SAVE_FAILED` e o objetivo anterior permanece
+- [x] Grava somente para o `userId` da sessão
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
+- [x] Test count: testes novos passam, existentes intactos
 
 **Tests**: integration
 **Gate**: full

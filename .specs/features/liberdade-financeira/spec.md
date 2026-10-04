@@ -132,7 +132,7 @@ Implicit-requirement dimensions: input validation (LIB-02, LIB-03), failure stat
 | LIB-07 | P1: Aporte mensal (AC 3, 5: exibição e prazo encerrado) | Specify | Implementing |
 | LIB-08 | P1: Validar (AC 1, 2: renda e guardado) | Specify | Implementing |
 | LIB-09 | P1: Validar (AC 3, 4: nascimento e idade de aposentadoria) | Specify | Implementing |
-| LIB-10 | P1: Validar (AC 5: falha de salvamento) | Specify | Pending |
+| LIB-10 | P1: Validar (AC 5: falha de salvamento) | Specify | Implementing |
 | LIB-11 | P1: Validar (AC 6, 7: sessão e isolamento por usuário) | Specify | Implementing |
 
 **Coverage:** 11 total, 0 mapped to tasks, 11 unmapped ⚠️
