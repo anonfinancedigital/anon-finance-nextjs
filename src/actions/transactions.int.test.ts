@@ -521,14 +521,87 @@ describe("deleteTransaction", () => {
   });
 
   it("returns the generic message when the database fails", async () => {
-    vi.spyOn(transactionsRepo, "delete").mockRejectedValueOnce(new Error("connection refused"));
+    const salary = income();
+    await createTransaction(salary);
+    vi.spyOn(transactionsRepo, "deleteFrom").mockRejectedValueOnce(new Error("connection refused"));
     const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
 
-    expect(await deleteTransaction(randomUUID())).toEqual({
+    expect(await deleteTransaction(salary.id)).toEqual({
       ok: false,
       error: "Não foi possível salvar. Tente novamente",
     });
     expect(consoleError).toHaveBeenCalled();
+  });
+});
+
+describe("deleteTransaction from a month", () => {
+  const range = (key: string) => {
+    const [y, m] = key.split("-").map(Number);
+    const next = m === 12 ? `${y + 1}-01` : `${y}-${String(m + 1).padStart(2, "0")}`;
+    return { start: `${key}-01`, endExclusive: `${next}-01` };
+  };
+  const count = async (key: string) =>
+    (await transactionsRepo.listByMonth(userId, range(key))).length;
+  const created = async () => {
+    const original = income();
+    await createTransaction({ ...original, recurrence: "forever" });
+    return original;
+  };
+
+  it("removes the edited month onward and keeps the earlier months", async () => {
+    const salary = await created();
+
+    expect(await deleteTransaction(salary.id, "2026-12")).toEqual({ ok: true });
+
+    expect(await count("2026-10")).toBe(1);
+    expect(await count("2026-11")).toBe(1);
+    expect(await count("2026-12")).toBe(0);
+    expect(await count("2027-01")).toBe(0);
+  });
+
+  it("removes everything when deleting in the start month", async () => {
+    const salary = await created();
+
+    expect(await deleteTransaction(salary.id, "2026-10")).toEqual({ ok: true });
+
+    expect(await db.$count(transaction)).toBe(0);
+  });
+
+  it("still deletes a non-recurring transaction without month", async () => {
+    const single = expense();
+    await createTransaction(single);
+
+    expect(await deleteTransaction(single.id)).toEqual({ ok: true });
+
+    expect(await db.$count(transaction)).toBe(0);
+  });
+
+  it("answers 'Transação não encontrada' for a malformed month and keeps the rows", async () => {
+    const salary = await created();
+
+    expect(await deleteTransaction(salary.id, "2026-13")).toEqual({
+      ok: false,
+      error: "Transação não encontrada",
+    });
+    expect(await count("2026-12")).toBe(1);
+  });
+
+  it("answers 'Transação não encontrada' for another user's row", async () => {
+    const owner = await insertTestUser();
+    const id = randomUUID();
+    await transactionsRepo.create(owner, {
+      id,
+      kind: "income",
+      amountCents: 100,
+      date: "2026-10-01",
+      recurrence: "forever",
+    });
+
+    expect(await deleteTransaction(id, "2026-10")).toEqual({
+      ok: false,
+      error: "Transação não encontrada",
+    });
+    expect(await db.$count(transaction)).toBe(1);
   });
 });
 

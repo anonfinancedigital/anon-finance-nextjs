@@ -461,11 +461,11 @@ T13 → T15
 
 **Done when**:
 
-- [ ] `transactions.int.test.ts` (actions): excluir a ocorrência de dezembro remove dezembro em diante e mantém out e nov (AC 1 e 2)
-- [ ] `transactions.int.test.ts` (actions): excluir no mês de início remove tudo (AC 3)
-- [ ] `transactions.int.test.ts` (actions): excluir transação avulsa sem `month` continua funcionando
-- [ ] `transactions.int.test.ts` (actions): `month` malformado e id de outro usuário retornam "Transação não encontrada"
-- [ ] Gate full passa; ≥ 4 testes novos
+- [x] `transactions.int.test.ts` (actions): excluir a ocorrência de dezembro remove dezembro em diante e mantém out e nov (AC 1 e 2)
+- [x] `transactions.int.test.ts` (actions): excluir no mês de início remove tudo (AC 3)
+- [x] `transactions.int.test.ts` (actions): excluir transação avulsa sem `month` continua funcionando
+- [x] `transactions.int.test.ts` (actions): `month` malformado e id de outro usuário retornam "Transação não encontrada"
+- [x] Gate full passa; ≥ 4 testes novos
 
 **Tests**: integration
 **Gate**: full

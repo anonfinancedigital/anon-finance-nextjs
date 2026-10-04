@@ -104,15 +104,20 @@ export async function updateTransaction(
   return { ok: true };
 }
 
-export async function deleteTransaction(id: string): Promise<ActionResult> {
+/** Deletes the occurrence of `month` (omitted = month of the stored date) and every later one. */
+export async function deleteTransaction(id: string, month?: string): Promise<ActionResult> {
   const session = await requireSessionForAction();
   if (!session.ok) return session;
 
-  if (!z.uuid().safeParse(id).success) return { ok: false, error: TRANSACTION_NOT_FOUND };
+  if (!z.uuid().safeParse(id).success) return transactionNotFound;
+  if (month !== undefined && !isMonthKey(month)) return transactionNotFound;
 
   try {
-    if (!(await transactionsRepo.delete(session.userId, id))) {
-      return { ok: false, error: TRANSACTION_NOT_FOUND };
+    const stored = await transactionsRepo.findStored(session.userId, id);
+    if (!stored) return transactionNotFound;
+    const occurrenceMonth = month ?? monthKey(stored.date);
+    if (!(await transactionsRepo.deleteFrom(session.userId, id, occurrenceMonth))) {
+      return transactionNotFound;
     }
   } catch (error) {
     console.error("deleteTransaction", error);
