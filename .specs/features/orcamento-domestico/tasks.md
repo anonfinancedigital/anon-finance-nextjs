@@ -313,9 +313,9 @@ T25 → T26 → T27 → T28 → T29 → T30 → T31
 
 **Done when**:
 
-- [ ] Gasto válido e ganho válido aceitos
-- [ ] Rejeita: valor ≤ 0, valor acima do máximo, data vazia, `2025-02-29`, gasto sem categoria, descrição com 121 caracteres, `id` que não é UUID, cada um com `fieldErrors` no campo certo
-- [ ] Gate quick passa; ≥ 9 testes
+- [x] Gasto válido e ganho válido aceitos
+- [x] Rejeita: valor ≤ 0, valor acima do máximo, data vazia, `2025-02-29`, gasto sem categoria, descrição com 121 caracteres, `id` que não é UUID, cada um com `fieldErrors` no campo certo
+- [x] Gate quick passa; ≥ 9 testes
 
 **Tests**: unit
 **Gate**: quick
