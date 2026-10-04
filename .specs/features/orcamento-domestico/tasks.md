@@ -902,10 +902,10 @@ T25 → T26 → T27 → T28 → T29 → T30 → T31
 
 **Done when**:
 
-- [ ] e2e: com gastos em 3 categorias, os gráficos de barras e pizza aparecem (por `data-testid`)
-- [ ] e2e: categoria estourada tem rótulo "Estourou" no gráfico
-- [ ] e2e: mês sem gastos → "Sem gastos no mês" e nenhum gráfico de pizza
-- [ ] Gate build passa; ≥ 3 testes e2e
+- [x] e2e: com gastos em 3 categorias, os gráficos de barras e pizza aparecem (por `data-testid`)
+- [x] e2e: categoria estourada tem rótulo "Estourou" no gráfico
+- [x] e2e: mês sem gastos → "Sem gastos no mês" e nenhum gráfico de pizza
+- [x] Gate build passa; ≥ 3 testes e2e
 
 **Tests**: e2e
 **Gate**: build

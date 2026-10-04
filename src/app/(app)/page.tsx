@@ -1,3 +1,4 @@
+import { BudgetCharts } from "@/components/budget-charts";
 import { MonthPicker } from "@/components/month-picker";
 import { SummaryTable } from "@/components/summary-table";
 import { TransactionForm } from "@/components/transaction-form";
@@ -56,6 +57,7 @@ export default async function SummaryPage({ searchParams }: PageProps<"/">) {
       <section className="space-y-3">
         <h2 className="text-lg font-semibold">Gastos por categoria</h2>
         <SummaryTable rows={summary.rows} />
+        <BudgetCharts rows={summary.rows} spentCents={summary.spentCents} />
       </section>
 
       <div className="grid gap-8 lg:grid-cols-2">
