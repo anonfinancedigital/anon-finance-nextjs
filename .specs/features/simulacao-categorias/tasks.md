@@ -274,10 +274,10 @@ T8 → T9 → T10
 
 **Done when**:
 
-- [ ] e2e em `e2e/charts.spec.ts`: categoria com cor Roxo → fatia e marcador da legenda com `var(--viz-7)` (AC 6, 9)
-- [ ] e2e: 9 categorias com gasto → 9 fatias, nenhuma "Outras" (edge case)
-- [ ] Testes e2e existentes de gráficos continuam passando (ajustados só onde dependiam de "Outras")
-- [ ] Gate build passa
+- [x] e2e em `e2e/charts.spec.ts`: categoria com cor Roxo → fatia e marcador da legenda com `var(--viz-7)` (AC 6, 9)
+- [x] e2e: 9 categorias com gasto → 9 fatias, nenhuma "Outras" (edge case)
+- [x] Testes e2e existentes de gráficos continuam passando (ajustados só onde dependiam de "Outras")
+- [x] Gate build passa
 
 **Tests**: e2e
 **Gate**: build

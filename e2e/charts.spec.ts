@@ -63,3 +63,47 @@ test("a month without spending shows 'Sem gastos no mês' and no pie chart", asy
   await expect(page.getByTestId("pie-chart")).toHaveCount(0);
   await expect(page.getByTestId("bar-chart")).toBeVisible();
 });
+
+test("each pie slice and its legend swatch use the category's chosen color", async ({ page }) => {
+  const [moradia, metas] = await seedCategories([
+    { name: "Moradia", percent: 70, color: 1 },
+    { name: "Metas", percent: 30, color: 7 },
+  ]);
+  await seedTransaction({ kind: "income", amountCents: 500000, date: "2026-09-01" });
+  await seedTransaction({ kind: "expense", amountCents: 100000, date: "2026-09-05", categoryId: moradia.id });
+  await seedTransaction({ kind: "expense", amountCents: 50000, date: "2026-09-06", categoryId: metas.id });
+
+  await login(page);
+  await page.goto("/?mes=2026-09");
+
+  const pie = page.getByTestId("pie-chart");
+  // Roxo (7) is "Metas"'s color, not its position in the set (2nd).
+  await expect(pie.locator('.recharts-pie-sector path[fill="var(--viz-7)"]')).toHaveCount(1);
+  await expect(pie.locator('.recharts-pie-sector path[fill="var(--viz-1)"]')).toHaveCount(1);
+  await expect(pie.locator('.recharts-pie-sector path[fill="var(--viz-2)"]')).toHaveCount(0);
+  const swatch = (name: string) => pie.getByRole("listitem").filter({ hasText: name }).locator("span").first();
+  await expect(swatch("Metas")).toHaveAttribute("style", /background: ?var\(--viz-7\)/);
+  await expect(swatch("Moradia")).toHaveAttribute("style", /background: ?var\(--viz-1\)/);
+});
+
+test("with 9 categories with spending the pie shows 9 slices and no 'Outras'", async ({ page }) => {
+  const names = ["C1", "C2", "C3", "C4", "C5", "C6", "C7", "C8", "C9"];
+  const cats = await seedCategories(names.map((name, i) => ({ name, percent: i === 0 ? 4 : 12 })));
+  await seedTransaction({ kind: "income", amountCents: 1000000, date: "2026-09-01" });
+  for (const [i, cat] of cats.entries()) {
+    await seedTransaction({ kind: "expense", amountCents: 10000, date: "2026-09-05", categoryId: cat.id, description: `G${i}` });
+  }
+
+  await login(page);
+  await page.goto("/?mes=2026-09");
+
+  const pie = page.getByTestId("pie-chart");
+  await expect(pie.locator(".recharts-pie-sector")).toHaveCount(9);
+  await expect(pie.getByRole("listitem")).toHaveCount(9);
+  await expect(pie).not.toContainText("Outras");
+  // The 9th category keeps its own color (cycled back to 1) instead of a grey "other" slice.
+  await expect(
+    pie.getByRole("listitem").filter({ hasText: "C9" }).locator("span").first(),
+  ).toHaveAttribute("style", /background: ?var\(--viz-1\)/);
+  await expect(pie.locator('.recharts-pie-sector path[fill="var(--viz-other)"]')).toHaveCount(0);
+});

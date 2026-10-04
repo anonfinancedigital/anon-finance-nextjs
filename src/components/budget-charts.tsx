@@ -14,13 +14,10 @@ import {
   YAxis,
 } from "recharts";
 import type { CategorySummary } from "@/lib/domain/budget";
+import { colorVar } from "@/lib/domain/color";
 import { formatBRL } from "@/lib/domain/money";
 
-type Row = Pick<CategorySummary, "id" | "name" | "targetCents" | "spentCents" | "overspent" | "overspentCents">;
-
-/** Categorical slots in fixed order; a category keeps its slot (its position in the set). */
-const SLOTS = 8;
-const slotColor = (i: number) => `var(--viz-${i + 1})`;
+type Row = Pick<CategorySummary, "id" | "name" | "color" | "targetCents" | "spentCents" | "overspent" | "overspentCents">;
 
 const compactBRL = new Intl.NumberFormat("pt-BR", {
   style: "currency",
@@ -98,17 +95,11 @@ function SpentVsTarget({ rows }: { rows: Row[] }) {
   );
 }
 
-/** Donut: each category's share of the month's spending. */
+/** Donut: each category's share of the month's spending, one slice per category in its own color. */
 function SpendingShare({ rows, spentCents }: { rows: Row[]; spentCents: number }) {
-  const slices = rows
-    .map((r, i) => ({ name: r.name, cents: r.spentCents, color: i < SLOTS ? slotColor(i) : "var(--viz-other)", slot: i }))
+  const data = rows
+    .map((r) => ({ name: r.name, cents: r.spentCents, color: colorVar(r.color) }))
     .filter((s) => s.cents > 0);
-  // Past the 8 categorical slots, fold the tail into "Outras" instead of inventing hues.
-  const head = slices.filter((s) => s.slot < SLOTS);
-  const tail = slices.filter((s) => s.slot >= SLOTS);
-  const data = tail.length
-    ? [...head, { name: "Outras", cents: tail.reduce((t, s) => t + s.cents, 0), color: "var(--viz-other)", slot: SLOTS }]
-    : head;
 
   return (
     <figure data-testid="pie-chart" className="space-y-2">
