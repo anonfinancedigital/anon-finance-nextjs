@@ -47,7 +47,10 @@ const blank = (date: string): TransactionFormValues => ({
 const selectClass =
   "h-8 w-full rounded-lg border border-input bg-transparent px-2.5 text-base md:text-sm dark:bg-input/30 aria-invalid:border-destructive";
 
-/** Creates (id generated on mount, so a double submit creates one row) or edits a transaction. */
+/**
+ * Creates (id generated on mount, so a double submit creates one row) or edits a transaction.
+ * It does not reset after saving: the parent closes the dialog, which unmounts it.
+ */
 export function TransactionForm({ categories, defaultDate, transaction, onSaved }: Props) {
   const uid = useId();
   const [values, setValues] = useState<TransactionFormValues>(
@@ -76,12 +79,7 @@ export function TransactionForm({ categories, defaultDate, transaction, onSaved 
     startTransition(async () => {
       const res = await (transaction ? updateTransaction(input) : createTransaction(input));
       setResult(res);
-      if (!res.ok) return;
-      if (!transaction) {
-        // Next entry: new id, same kind/date/category/subcategory for quick sequential input.
-        setValues((v) => ({ ...v, id: crypto.randomUUID(), amount: "", description: "" }));
-      }
-      onSaved?.();
+      if (res.ok) onSaved?.();
     });
   }
 
@@ -191,7 +189,7 @@ export function TransactionForm({ categories, defaultDate, transaction, onSaved 
       )}
 
       <div className="space-y-1">
-        <Label htmlFor={field("description")}>Descrição (opcional)</Label>
+        <Label htmlFor={field("description")}>Descrição</Label>
         <Input
           id={field("description")}
           maxLength={120}
@@ -207,11 +205,6 @@ export function TransactionForm({ categories, defaultDate, transaction, onSaved 
       {result && !result.ok && !Object.keys(fieldErrors).length && (
         <p role="alert" className="text-sm text-destructive">
           {result.error}
-        </p>
-      )}
-      {result?.ok && !transaction && (
-        <p role="status" className="text-sm text-muted-foreground">
-          Transação salva
         </p>
       )}
 

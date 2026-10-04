@@ -133,12 +133,12 @@ T2 → T3 → T4 → T5
 
 **Done when**:
 
-- [ ] O rótulo do campo é exatamente "Descrição", sem "(opcional)"
-- [ ] O erro `fieldErrors.description` aparece sob o campo e os valores digitados permanecem
-- [ ] Após salvar com sucesso, o componente só chama `onSaved` (sem resetar valores nem mostrar "Transação salva")
-- [ ] O modo de edição continua igual
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
-- [ ] Test count: a suíte unit e a de integração têm o mesmo total de testes passando que ao fim da T2
+- [x] O rótulo do campo é exatamente "Descrição", sem "(opcional)"
+- [x] O erro `fieldErrors.description` aparece sob o campo e os valores digitados permanecem
+- [x] Após salvar com sucesso, o componente só chama `onSaved` (sem resetar valores nem mostrar "Transação salva")
+- [x] O modo de edição continua igual
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
+- [x] Test count: a suíte unit e a de integração têm o mesmo total de testes passando que ao fim da T2
 
 **Tests**: none
 **Gate**: build
