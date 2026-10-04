@@ -416,11 +416,11 @@ T25 → T26 → T27 → T28 → T29 → T30 → T31
 
 **Done when**:
 
-- [ ] `replaceSet` válido persiste; `list` devolve na ordem de criação, só do `userId` informado
-- [ ] Soma ≠ 100 → erro, nada é persistido
-- [ ] Remover categoria com 3 gastos → erro "Esta categoria tem 3 gastos e não pode ser excluída" e o conjunto anterior permanece intacto (rollback)
-- [ ] Remover categoria sem gastos e reequilibrar para 100% → sucesso
-- [ ] Gate full passa; ≥ 6 testes
+- [x] `replaceSet` válido persiste; `list` devolve na ordem de criação, só do `userId` informado
+- [x] Soma ≠ 100 → erro, nada é persistido
+- [x] Remover categoria com 3 gastos → erro "Esta categoria tem 3 gastos e não pode ser excluída" e o conjunto anterior permanece intacto (rollback)
+- [x] Remover categoria sem gastos e reequilibrar para 100% → sucesso
+- [x] Gate full passa; ≥ 6 testes
 
 **Tests**: integration
 **Gate**: full

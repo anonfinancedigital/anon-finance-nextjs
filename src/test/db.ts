@@ -1,5 +1,7 @@
+import { randomUUID } from "node:crypto";
 import { migrate } from "drizzle-orm/node-postgres/migrator";
 import { afterAll, beforeAll, beforeEach } from "vitest";
+import { user } from "@/lib/db/auth-schema";
 import { db, pool } from "@/lib/db/client";
 
 function assertTestDatabase() {
@@ -30,4 +32,11 @@ export function setupTestDb() {
   beforeAll(migrateTestDb);
   beforeEach(truncateAll);
   afterAll(() => pool.end());
+}
+
+/** Inserts a bare user row (no credentials) and returns its id. */
+export async function insertTestUser(): Promise<string> {
+  const id = randomUUID();
+  await db.insert(user).values({ id, name: "Teste", email: `${id}@example.com` });
+  return id;
 }
