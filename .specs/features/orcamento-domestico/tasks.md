@@ -339,9 +339,9 @@ T25 → T26 → T27 → T28 → T29 → T30 → T31
 
 **Done when**:
 
-- [ ] Conjunto válido produz `{ name, percentBp }[]`
-- [ ] Percentual "0", "100,01" e "12,345" rejeitados com erro no item; soma ≠ 100 rejeitada com a mensagem de T7
-- [ ] Gate quick passa; ≥ 5 testes
+- [x] Conjunto válido produz `{ name, percentBp }[]`
+- [x] Percentual "0", "100,01" e "12,345" rejeitados com erro no item; soma ≠ 100 rejeitada com a mensagem de T7
+- [x] Gate quick passa; ≥ 5 testes
 
 **Tests**: unit
 **Gate**: quick
