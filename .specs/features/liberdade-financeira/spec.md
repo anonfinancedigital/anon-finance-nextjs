@@ -123,7 +123,7 @@ Implicit-requirement dimensions: input validation (LIB-02, LIB-03), failure stat
 
 | Requirement ID | Story | Phase | Status |
 | -------------- | ----- | ----- | ------ |
-| LIB-01 | P1: Cadastrar e resumo (AC 1: link na navegação) | Specify | Pending |
+| LIB-01 | P1: Cadastrar e resumo (AC 1: link na navegação) | Specify | Implemented |
 | LIB-02 | P1: Cadastrar e resumo (AC 2, 3, 4, 5: salvar, estado vazio, substituir, preencher) | Specify | Implemented |
 | LIB-03 | P1: Cadastrar e resumo (AC 6: patrimônio-alvo) | Specify | Implementing |
 | LIB-04 | P1: Cadastrar e resumo (AC 7, 8, 9: falta, percentual, barra, limite 100%) | Specify | Implemented |

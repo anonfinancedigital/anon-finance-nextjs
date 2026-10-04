@@ -19,6 +19,9 @@ export default async function AppLayout({ children }: LayoutProps<"/">) {
             <Button variant="ghost" size="sm" asChild>
               <Link href="/categorias">Categorias</Link>
             </Button>
+            <Button variant="ghost" size="sm" asChild>
+              <Link href="/liberdade">Liberdade</Link>
+            </Button>
           </nav>
           <form action={signOutAction} className="ml-auto">
             <Button type="submit" variant="outline" size="sm">

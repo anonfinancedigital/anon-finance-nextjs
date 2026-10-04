@@ -375,10 +375,10 @@ T7 → T8 → T9 → T10 → T11
 
 **Done when**:
 
-- [ ] Terceiro link "Liberdade" depois de "Categorias", apontando para `/liberdade`
-- [ ] Verificação manual: o link navega para a aba e o formulário salva e mostra o resumo (R$ 10.000,00 de renda, R$ 150.000,00 guardado → 10,0%)
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
-- [ ] Test count: nenhum teste removido; suíte existente verde
+- [x] Terceiro link "Liberdade" depois de "Categorias", apontando para `/liberdade`
+- [x] Verificação manual: o link navega para a aba e o formulário salva e mostra o resumo (R$ 10.000,00 de renda, R$ 150.000,00 guardado → 10,0%)
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
+- [x] Test count: nenhum teste removido; suíte existente verde
 
 **Tests**: none
 **Gate**: build
