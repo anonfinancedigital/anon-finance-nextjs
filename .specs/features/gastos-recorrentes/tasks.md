@@ -106,11 +106,11 @@ T13 → T15
 
 **Done when**:
 
-- [ ] `recurrence.test.ts`: `occurrenceDate` usa o dia pretendido no mês exibido (15/10 → 15/11) e o último dia quando o mês é curto (dia 31 → 28/02/2026, 29/02/2028, 30/04)
-- [ ] `recurrence.test.ts`: `occurrenceDate` de linha não recorrente devolve `date` sem alteração
-- [ ] `recurrence.test.ts`: `appliesInMonth` é falso antes do mês da data, verdadeiro do mês da data até o mês final inclusive, falso depois do mês final e verdadeiro para sempre sem mês final
-- [ ] `recurrence.test.ts`: `previousMonthKey("2026-01")` = `"2025-12"`
-- [ ] Gate quick passa; ≥ 10 testes novos
+- [x] `recurrence.test.ts`: `occurrenceDate` usa o dia pretendido no mês exibido (15/10 → 15/11) e o último dia quando o mês é curto (dia 31 → 28/02/2026, 29/02/2028, 30/04)
+- [x] `recurrence.test.ts`: `occurrenceDate` de linha não recorrente devolve `date` sem alteração
+- [x] `recurrence.test.ts`: `appliesInMonth` é falso antes do mês da data, verdadeiro do mês da data até o mês final inclusive, falso depois do mês final e verdadeiro para sempre sem mês final
+- [x] `recurrence.test.ts`: `previousMonthKey("2026-01")` = `"2025-12"`
+- [x] Gate quick passa; ≥ 10 testes novos
 
 **Tests**: unit
 **Gate**: quick
