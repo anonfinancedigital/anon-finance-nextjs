@@ -10,7 +10,12 @@ import { transactionsRepo } from "@/lib/db/repos/transactions";
 import { buildMonthlySummary } from "@/lib/domain/budget";
 import { formatBRL } from "@/lib/domain/money";
 import { monthRange, parseMonth } from "@/lib/domain/month";
-import { filterTransactions, parseTransactionFilter } from "@/lib/domain/transaction-filter";
+import {
+  filterTransactions,
+  parseSearch,
+  parseTransactionFilter,
+  searchTransactions,
+} from "@/lib/domain/transaction-filter";
 
 /** Today as AAAA-MM-DD in America/Sao_Paulo. */
 const todayInSaoPaulo = () =>
@@ -18,7 +23,7 @@ const todayInSaoPaulo = () =>
 
 export default async function SummaryPage({ searchParams }: PageProps<"/">) {
   const { userId } = await requireSessionForPage();
-  const { mes, categoria, subcategoria } = await searchParams;
+  const { mes, categoria, subcategoria, busca } = await searchParams;
   const month = parseMonth(typeof mes === "string" ? mes : undefined, new Date());
   const range = monthRange(month);
 
@@ -36,6 +41,8 @@ export default async function SummaryPage({ searchParams }: PageProps<"/">) {
     },
     categories,
   );
+
+  const search = parseSearch(typeof busca === "string" ? busca : undefined);
 
   const cards = [
     { label: "Receita", testId: "total-income", cents: summary.incomeCents },
@@ -72,11 +79,12 @@ export default async function SummaryPage({ searchParams }: PageProps<"/">) {
 
       <section className="space-y-3">
         <h2 className="text-lg font-semibold">Transações do mês</h2>
-        <TransactionFilter categories={categories} filter={filter} />
+        <TransactionFilter categories={categories} filter={filter} search={search} />
         <TransactionList
-          transactions={filterTransactions(transactions, filter)}
+          transactions={searchTransactions(filterTransactions(transactions, filter), search)}
           categories={categories}
           filtered={filter.categoryId !== null}
+          searching={search !== ""}
         />
       </section>
 

@@ -27,6 +27,8 @@ type Props = {
   }[];
   /** A filter is active: an empty list means no match, not an empty month. */
   filtered?: boolean;
+  /** A description search is active. */
+  searching?: boolean;
 };
 
 const formatDate = (iso: string) => iso.split("-").reverse().join("/");
@@ -35,7 +37,7 @@ const formatDate = (iso: string) => iso.split("-").reverse().join("/");
 const amountText = (cents: number) => formatBRL(cents).replace(/^R\$\s*/, "");
 
 /** The selected month's transactions, in the order received (latest date first). */
-export function TransactionList({ transactions, categories, filtered = false }: Props) {
+export function TransactionList({ transactions, categories, filtered = false, searching = false }: Props) {
   const categoryById = new Map(categories.map((c) => [c.id, c]));
   const [editing, setEditing] = useState<Transaction | null>(null);
   const [deleting, setDeleting] = useState<Transaction | null>(null);
@@ -45,7 +47,11 @@ export function TransactionList({ transactions, categories, filtered = false }: 
   if (transactions.length === 0) {
     return (
       <p className="text-sm text-muted-foreground">
-        {filtered ? "Nenhum gasto encontrado para este filtro" : "Nenhuma transação neste mês"}
+        {searching
+          ? "Nenhuma transação encontrada para esta busca"
+          : filtered
+            ? "Nenhum gasto encontrado para este filtro"
+            : "Nenhuma transação neste mês"}
       </p>
     );
   }

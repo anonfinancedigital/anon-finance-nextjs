@@ -79,3 +79,40 @@ test("an expense shows a marker in its category's color; an income shows none", 
   await expect(markers("Reserva")).toHaveAttribute("style", /background: ?var\(--viz-7\)/);
   await expect(markers("Salário")).toHaveCount(0);
 });
+
+test("searching by description narrows the list, combines with the category filter and survives reload", async ({
+  page,
+}) => {
+  const [conforto, lazer] = await seedCategories([
+    { name: "Conforto", percent: 60 },
+    { name: "Lazer", percent: 40 },
+  ]);
+  await seedTransaction({ kind: "expense", amountCents: 1000, date: "2026-09-03", categoryId: conforto.id, description: "Café da manhã" });
+  await seedTransaction({ kind: "expense", amountCents: 2000, date: "2026-09-04", categoryId: lazer.id, description: "Café com amigos" });
+  await seedTransaction({ kind: "expense", amountCents: 90000, date: "2026-09-05", categoryId: conforto.id, description: "Aluguel" });
+
+  await login(page);
+  await page.goto("/?mes=2026-09");
+  const rows = page.getByTestId("transaction-row");
+  await expect(rows).toHaveCount(3);
+
+  await page.getByLabel("Buscar por descrição").fill("CAFE");
+  await expect(rows).toHaveCount(2);
+  await expect(page).toHaveURL(/busca=CAFE/);
+
+  await page.getByLabel("Filtrar por categoria").selectOption({ label: "Lazer" });
+  await expect(rows).toHaveCount(1);
+  await expect(rows.first()).toContainText("Café com amigos");
+  await expect(page.getByLabel("Buscar por descrição")).toHaveValue("CAFE");
+  // The summary keeps the whole month.
+  await expect(page.getByTestId("total-spent")).toContainText("930,00");
+
+  await page.reload();
+  await expect(rows).toHaveCount(1);
+
+  await page.getByLabel("Buscar por descrição").fill("zzz");
+  await expect(page.getByText("Nenhuma transação encontrada para esta busca")).toBeVisible();
+
+  await page.getByLabel("Buscar por descrição").fill("");
+  await expect(rows).toHaveCount(1);
+});

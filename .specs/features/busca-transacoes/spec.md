@@ -91,15 +91,15 @@ Implicit-requirement dimensions: input validation (BUSCA-04); remaining dimensio
 
 | Requirement ID | Story | Phase | Status |
 | -------------- | ----- | ----- | ------ |
-| BUSCA-01 | P1: Buscar por descrição (AC 1: campo rotulado) | Specify | Pending |
-| BUSCA-02 | P1: Buscar por descrição (AC 2, 3, 5 e Edge Cases: correspondência) | Specify | Pending |
-| BUSCA-03 | P1: Buscar por descrição (AC 6: estado vazio) | Specify | Pending |
-| BUSCA-04 | P1: Buscar por descrição (AC 4: limite de 120) | Specify | Pending |
-| BUSCA-05 | P1: Busca combinada (AC 1, 2: combina com o filtro) | Specify | Pending |
-| BUSCA-06 | P1: Busca combinada (AC 3, 4: URL e troca de mês) | Specify | Pending |
-| BUSCA-07 | P1: Busca combinada (AC 5: resumo inalterado) | Specify | Pending |
+| BUSCA-01 | P1: Buscar por descrição (AC 1: campo rotulado) | Specify | Verified |
+| BUSCA-02 | P1: Buscar por descrição (AC 2, 3, 5 e Edge Cases: correspondência) | Specify | Verified |
+| BUSCA-03 | P1: Buscar por descrição (AC 6: estado vazio) | Specify | Verified |
+| BUSCA-04 | P1: Buscar por descrição (AC 4: limite de 120) | Specify | Verified |
+| BUSCA-05 | P1: Busca combinada (AC 1, 2: combina com o filtro) | Specify | Verified |
+| BUSCA-06 | P1: Busca combinada (AC 3, 4: URL e troca de mês) | Specify | Verified |
+| BUSCA-07 | P1: Busca combinada (AC 5: resumo inalterado) | Specify | Verified |
 
-**Coverage:** 7 total, 0 mapped to tasks, 7 unmapped ⚠️
+**Coverage:** 7 total, 7 implemented
 
 ---
 
