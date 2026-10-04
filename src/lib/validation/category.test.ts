@@ -32,6 +32,26 @@ describe("categorySetSchema", () => {
     expect(result.map((i) => i.path)).toEqual(["0.percent"]);
   });
 
+  it.each([[1], [2], [3], [4], [5], [6], [7], [8]])("accepts color %i", (color) => {
+    const [first] = categorySetSchema.parse([{ name: "Tudo", percent: "100", color }]);
+    expect(first.color).toBe(color);
+  });
+
+  it.each([[0], [9], [2.5], ["3"]])(
+    "rejects color %j with \"Cor inválida\" on the item",
+    (color) => {
+      expect(issues([...set("50"), { name: "Lazer", percent: "50", color }])).toEqual([
+        { path: "1.color", message: "Cor inválida" },
+      ]);
+    },
+  );
+
+  it("rejects an item without the color key with \"Cor inválida\"", () => {
+    expect(issues([{ name: "Tudo", percent: "100" }])).toEqual([
+      { path: "0.color", message: "Cor inválida" },
+    ]);
+  });
+
   it("rejects a set that does not sum to 100% with the set message", () => {
     expect(issues(set("30", "30", "10", "10", "20", "5"))).toEqual([
       { path: "", message: "A soma dos percentuais deve ser 100% (atual: 105%)" },

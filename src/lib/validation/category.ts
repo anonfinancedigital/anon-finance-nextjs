@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { validateCategorySet } from "@/lib/domain/budget";
+import { isCategoryColor } from "@/lib/domain/color";
 import { parsePercent } from "@/lib/domain/percent";
 
 const percent = z.string({ error: "Informe o percentual" }).transform((input, ctx) => {
@@ -11,13 +12,24 @@ const percent = z.string({ error: "Informe o percentual" }).transform((input, ct
   return result.value;
 });
 
+// Optional input key so callers type-check without it; a missing color is rejected like any other.
+const color = z
+  .unknown()
+  .optional()
+  .transform((input, ctx) => {
+    if (!isCategoryColor(input)) {
+      ctx.addIssue({ code: "custom", message: "Cor inválida" });
+      return z.NEVER;
+    }
+    return input;
+  });
+
 const item = z
   .object({
     id: z.uuid({ error: "Identificador inválido" }).optional(),
     name: z.string({ error: "Informe o nome da categoria" }).trim(),
     percent,
-    // Optional input key so callers still type-check; a missing color is still rejected.
-    color: z.number().optional().pipe(z.number()),
+    color,
   })
   .transform(({ percent, ...rest }) => ({ ...rest, percentBp: percent }));
 

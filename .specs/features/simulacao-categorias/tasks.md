@@ -192,9 +192,9 @@ T8 → T9 → T10
 
 **Done when**:
 
-- [ ] `category.test.ts`: cor 1-8 válida; 0, 9, 2.5, "3", ausente → "Cor inválida" no caminho da linha (AC 4)
-- [ ] Testes existentes continuam passando (entradas ajustadas para incluir `color`)
-- [ ] Gate quick passa
+- [x] `category.test.ts`: cor 1-8 válida; 0, 9, 2.5, "3", ausente → "Cor inválida" no caminho da linha (AC 4)
+- [x] Testes existentes continuam passando (entradas ajustadas para incluir `color`)
+- [x] Gate quick passa
 
 **Tests**: unit
 **Gate**: quick
