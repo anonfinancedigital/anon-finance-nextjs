@@ -13,7 +13,12 @@ import {
 } from "@/components/ui/dialog";
 
 type Props = {
-  categories: { id: string; name: string; subcategories: { id: string; name: string }[] }[];
+  categories: {
+    id: string;
+    name: string;
+    color: number;
+    subcategories: { id: string; name: string }[];
+  }[];
   /** Date preselected in the form (today in America/Sao_Paulo). */
   defaultDate: string;
 };

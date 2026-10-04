@@ -167,8 +167,8 @@ T2 → T6
 
 **Done when**:
 
-- [ ] Tipo de `categories` inclui `color: number`
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
+- [x] Tipo de `categories` inclui `color: number`
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
 
 **Tests**: none
 **Gate**: build
@@ -191,8 +191,10 @@ T2 → T6
 
 **Done when**:
 
-- [ ] Tipo de `categories` (linha ~23) inclui `color: number`
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
+- [x] Tipo de `categories` (linha ~23) inclui `color: number`
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
+
+**Note**: já satisfeita: o tipo em `transaction-list.tsx:26` já tinha `color: number`; sem mudança de código nem commit próprio.
 
 **Tests**: none
 **Gate**: build
