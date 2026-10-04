@@ -214,10 +214,10 @@ T15 → T16 → T17
 
 **Done when**:
 
-- [ ] `create`/`update` gravam e limpam (`null`) `subcategoryId`; `listByMonth` o devolve
-- [ ] `monthTotals`: gastos com e sem subcategoria na mesma categoria aparecem em chaves separadas (`id` e `null`); `spentByCategory` continua igual à soma delas
-- [ ] Gastos de outro mês e de outro usuário não entram
-- [ ] Gate full passa; ≥ 4 testes novos em `transactions.int.test.ts`
+- [x] `create`/`update` gravam e limpam (`null`) `subcategoryId`; `listByMonth` o devolve
+- [x] `monthTotals`: gastos com e sem subcategoria na mesma categoria aparecem em chaves separadas (`id` e `null`); `spentByCategory` continua igual à soma delas
+- [x] Gastos de outro mês e de outro usuário não entram
+- [x] Gate full passa; ≥ 4 testes novos em `transactions.int.test.ts`
 
 **Tests**: integration
 **Gate**: full

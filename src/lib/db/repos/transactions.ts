@@ -10,6 +10,7 @@ export type TransactionData = {
   /** Calendar day, AAAA-MM-DD. */
   date: string;
   categoryId?: string | null;
+  subcategoryId?: string | null;
   description?: string | null;
 };
 
@@ -32,6 +33,7 @@ const fields = (tx: TransactionData) => ({
   amountCents: tx.amountCents,
   date: tx.date,
   categoryId: tx.categoryId ?? null,
+  subcategoryId: tx.subcategoryId ?? null,
   description: tx.description ?? null,
 });
 
@@ -81,24 +83,43 @@ async function listByMonth(userId: string, range: MonthRange): Promise<Transacti
     .orderBy(desc(transaction.date), desc(transaction.createdAt));
 }
 
-export type MonthTotals = { incomeCents: number; spentByCategory: Map<string, number> };
+export type MonthTotals = {
+  incomeCents: number;
+  spentByCategory: Map<string, number>;
+  /** Per category, spending by subcategory; the `null` key holds expenses without one. */
+  spentBySubcategory: Map<string, Map<string | null, number>>;
+};
 
-/** Month income and spending per category, from a single SUM … GROUP BY. */
+/** Month income and spending per category and subcategory, from a single SUM … GROUP BY. */
 async function monthTotals(userId: string, range: MonthRange): Promise<MonthTotals> {
   const rows = await db
     .select({
       kind: transaction.kind,
       categoryId: transaction.categoryId,
+      subcategoryId: transaction.subcategoryId,
       cents: sql<number>`sum(${transaction.amountCents})`.mapWith(Number),
     })
     .from(transaction)
     .where(inMonth(userId, range))
-    .groupBy(transaction.kind, transaction.categoryId);
+    .groupBy(transaction.kind, transaction.categoryId, transaction.subcategoryId);
 
-  const totals: MonthTotals = { incomeCents: 0, spentByCategory: new Map() };
+  const totals: MonthTotals = {
+    incomeCents: 0,
+    spentByCategory: new Map(),
+    spentBySubcategory: new Map(),
+  };
   for (const row of rows) {
-    if (row.kind === "income") totals.incomeCents += row.cents;
-    else if (row.categoryId) totals.spentByCategory.set(row.categoryId, row.cents);
+    if (row.kind === "income") {
+      totals.incomeCents += row.cents;
+    } else if (row.categoryId) {
+      totals.spentByCategory.set(
+        row.categoryId,
+        (totals.spentByCategory.get(row.categoryId) ?? 0) + row.cents,
+      );
+      const bySub = totals.spentBySubcategory.get(row.categoryId) ?? new Map();
+      bySub.set(row.subcategoryId, row.cents);
+      totals.spentBySubcategory.set(row.categoryId, bySub);
+    }
   }
   return totals;
 }

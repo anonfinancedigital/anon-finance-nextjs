@@ -197,3 +197,90 @@ describe("transactionsRepo.monthTotals", () => {
     expect(totals.spentByCategory).toEqual(new Map());
   });
 });
+
+describe("transactionsRepo subcategory", () => {
+  let restaurante: string;
+  let streaming: string;
+
+  beforeEach(async () => {
+    const saved = await categoriesRepo.list(userId);
+    await categoriesRepo.replaceSet(
+      userId,
+      saved.map((c) =>
+        c.id === conforto
+          ? { ...c, subcategories: [{ name: "Restaurante" }, { name: "Streaming" }] }
+          : c,
+      ),
+    );
+    [restaurante, streaming] = (await categoriesRepo.list(userId))[0].subcategories.map((s) => s.id);
+  });
+
+  const spend = (subcategoryId: string | null, date: string, amountCents: number) => ({
+    ...expense(date, amountCents),
+    subcategoryId,
+  });
+
+  it("stores the subcategory on create and returns it from listByMonth", async () => {
+    const withSub = spend(restaurante, "2026-10-04", 8000);
+    const withoutSub = spend(null, "2026-10-03", 4000);
+    await transactionsRepo.create(userId, withSub);
+    await transactionsRepo.create(userId, withoutSub);
+
+    const listed = await transactionsRepo.listByMonth(userId, OCTOBER);
+    expect(listed.map((t) => [t.id, t.subcategoryId])).toEqual([
+      [withSub.id, restaurante],
+      [withoutSub.id, null],
+    ]);
+  });
+
+  it("changes the subcategory on update and clears it with null", async () => {
+    const tx = spend(restaurante, "2026-10-04", 8000);
+    await transactionsRepo.create(userId, tx);
+
+    await transactionsRepo.update(userId, tx.id, { ...tx, subcategoryId: streaming });
+    expect((await transactionsRepo.listByMonth(userId, OCTOBER))[0].subcategoryId).toBe(streaming);
+
+    await transactionsRepo.update(userId, tx.id, { ...tx, subcategoryId: null });
+    expect((await transactionsRepo.listByMonth(userId, OCTOBER))[0].subcategoryId).toBeNull();
+  });
+
+  it("totals expenses with and without subcategory under separate keys of the same category", async () => {
+    for (const tx of [
+      spend(restaurante, "2026-10-02", 30000),
+      spend(restaurante, "2026-10-09", 5000),
+      spend(streaming, "2026-10-10", 10000),
+      spend(null, "2026-10-11", 10000),
+    ]) {
+      await transactionsRepo.create(userId, tx);
+    }
+
+    const totals = await transactionsRepo.monthTotals(userId, OCTOBER);
+    expect(totals.spentBySubcategory).toEqual(
+      new Map([
+        [
+          conforto,
+          new Map<string | null, number>([
+            [restaurante, 35000],
+            [streaming, 10000],
+            [null, 10000],
+          ]),
+        ],
+      ]),
+    );
+    expect(totals.spentByCategory).toEqual(new Map([[conforto, 55000]]));
+  });
+
+  it("leaves other months and other users out of the subcategory totals", async () => {
+    const otherId = await insertTestUser();
+    await categoriesRepo.replaceSet(otherId, [{ name: "Tudo", percentBp: 10000, color: 1 }]);
+    const [tudo] = await categoriesRepo.list(otherId);
+    await transactionsRepo.create(otherId, { ...expense("2026-10-02", 7000), categoryId: tudo.id });
+    await transactionsRepo.create(userId, spend(restaurante, "2026-11-01", 99900));
+    await transactionsRepo.create(userId, spend(restaurante, "2026-10-02", 2000));
+
+    const totals = await transactionsRepo.monthTotals(userId, OCTOBER);
+    expect(totals.spentBySubcategory).toEqual(
+      new Map([[conforto, new Map<string | null, number>([[restaurante, 2000]])]]),
+    );
+  });
+});
