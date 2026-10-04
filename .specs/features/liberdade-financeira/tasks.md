@@ -231,12 +231,12 @@ T7 → T8 → T9 → T10 → T11
 
 **Done when**:
 
-- [ ] `get` devolve `null` sem objetivo e o objetivo salvo depois do `upsert`
-- [ ] Segundo `upsert` do mesmo usuário substitui os valores e a tabela segue com uma linha para ele
-- [ ] Objetivo de um usuário não aparece na leitura de outro
-- [ ] Valor fora da faixa dos CHECKs é recusado pelo banco
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
-- [ ] Test count: testes novos passam, existentes intactos
+- [x] `get` devolve `null` sem objetivo e o objetivo salvo depois do `upsert`
+- [x] Segundo `upsert` do mesmo usuário substitui os valores e a tabela segue com uma linha para ele
+- [x] Objetivo de um usuário não aparece na leitura de outro
+- [x] Valor fora da faixa dos CHECKs é recusado pelo banco
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
+- [x] Test count: testes novos passam, existentes intactos
 
 **Tests**: integration
 **Gate**: full
