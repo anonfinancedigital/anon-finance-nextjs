@@ -190,10 +190,18 @@ test("saving keeps the reference income, does not send it, and a reload clears i
 });
 
 const PALETTE = ["Azul", "Laranja", "Verde", "Amarelo", "Rosa", "Verde-escuro", "Roxo", "Vermelho"];
+const colorButton = (page: Page, n: number) =>
+  page.getByRole("button", { name: new RegExp(`^Cor da categoria ${n}:`) });
 const colorOf = (page: Page, n: number) =>
   page.getByRole("radiogroup", { name: `Cor da categoria ${n}`, exact: true });
+const openColors = (page: Page, n: number) => colorButton(page, n).click();
+const pickColor = async (page: Page, n: number, color: string) => {
+  await openColors(page, n);
+  await colorOf(page, n).getByRole("radio", { name: color, exact: true }).click();
+  await expect(colorOf(page, n)).toBeHidden();
+};
 
-test("every category row offers the 8 palette colors by accessible name", async ({ page }) => {
+test("each category row shows only its color; clicking it opens the 8 palette colors", async ({ page }) => {
   await seedCategories([
     { name: "Moradia", percent: 50 },
     { name: "Lazer", percent: 50 },
@@ -201,16 +209,22 @@ test("every category row offers the 8 palette colors by accessible name", async 
   await login(page);
   await page.goto("/categorias");
 
+  // Saved colors (seeded by position: 1 and 2) are shown, the palette is not.
+  await expect(colorButton(page, 1)).toHaveAccessibleName("Cor da categoria 1: Azul");
+  await expect(colorButton(page, 2)).toHaveAccessibleName("Cor da categoria 2: Laranja");
+  await expect(page.getByRole("radio")).toHaveCount(0);
+
   for (const n of [1, 2]) {
+    await openColors(page, n);
     const radios = colorOf(page, n).getByRole("radio");
     await expect(radios).toHaveCount(8);
     for (const [i, colorName] of PALETTE.entries()) {
       await expect(radios.nth(i)).toHaveAccessibleName(colorName);
     }
+    await expect(colorOf(page, n).getByRole("radio", { checked: true })).toHaveCount(1);
+    await page.keyboard.press("Escape");
+    await expect(colorOf(page, n)).toBeHidden();
   }
-  // Saved colors (seeded by position: 1 and 2) are shown selected.
-  await expect(colorOf(page, 1).getByRole("radio", { name: "Azul", exact: true })).toBeChecked();
-  await expect(colorOf(page, 2).getByRole("radio", { name: "Laranja", exact: true })).toBeChecked();
 });
 
 test("a color chosen for a category is saved and shown selected after reload", async ({ page }) => {
@@ -219,13 +233,13 @@ test("a color chosen for a category is saved and shown selected after reload", a
   await page.goto("/categorias");
   await expect(name(page, 4)).toHaveValue("Metas");
 
-  await colorOf(page, 4).getByRole("radio", { name: "Roxo", exact: true }).check();
+  await pickColor(page, 4, "Roxo");
+  await expect(colorButton(page, 4)).toHaveAccessibleName("Cor da categoria 4: Roxo");
   await page.getByRole("button", { name: "Salvar" }).click();
   await expect(page.getByText("Categorias salvas", { exact: true })).toBeVisible();
 
   await page.reload();
-  await expect(colorOf(page, 4).getByRole("radio", { name: "Roxo", exact: true })).toBeChecked();
-  await expect(colorOf(page, 4).getByRole("radio", { checked: true })).toHaveCount(1);
+  await expect(colorButton(page, 4)).toHaveAccessibleName("Cor da categoria 4: Roxo");
 });
 
 test("a new category preselects the first palette color not in use", async ({ page }) => {
@@ -237,7 +251,7 @@ test("a new category preselects the first palette color not in use", async ({ pa
   await page.goto("/categorias");
 
   await page.getByRole("button", { name: "Adicionar categoria" }).click();
-  await expect(colorOf(page, 3).getByRole("radio", { name: "Verde", exact: true })).toBeChecked();
+  await expect(colorButton(page, 3)).toHaveAccessibleName("Cor da categoria 3: Verde");
 });
 
 test("all 8 colors in use make a new category preselect color 1", async ({ page }) => {
@@ -248,7 +262,7 @@ test("all 8 colors in use make a new category preselect color 1", async ({ page 
   await page.goto("/categorias");
 
   await page.getByRole("button", { name: "Adicionar categoria" }).click();
-  await expect(colorOf(page, 9).getByRole("radio", { name: "Azul", exact: true })).toBeChecked();
+  await expect(colorButton(page, 9)).toHaveAccessibleName("Cor da categoria 9: Azul");
 });
 
 test("two categories with the same color save normally", async ({ page }) => {
@@ -259,12 +273,12 @@ test("two categories with the same color save normally", async ({ page }) => {
   await login(page);
   await page.goto("/categorias");
 
-  await colorOf(page, 2).getByRole("radio", { name: "Azul", exact: true }).check();
+  await pickColor(page, 2, "Azul");
   await page.getByRole("button", { name: "Salvar" }).click();
   await expect(page.getByText("Categorias salvas", { exact: true })).toBeVisible();
 
   await page.reload();
   for (const n of [1, 2]) {
-    await expect(colorOf(page, n).getByRole("radio", { name: "Azul", exact: true })).toBeChecked();
+    await expect(colorButton(page, n)).toHaveAccessibleName(`Cor da categoria ${n}: Azul`);
   }
 });

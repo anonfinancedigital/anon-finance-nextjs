@@ -98,10 +98,11 @@ test("each summary row shows a marker in its category's chosen color", async ({ 
 
   await login(page);
   await page.goto("/categorias");
+  await page.getByRole("button", { name: /^Cor da categoria 2:/ }).click();
   await page
     .getByRole("radiogroup", { name: "Cor da categoria 2", exact: true })
     .getByRole("radio", { name: "Roxo", exact: true })
-    .check();
+    .click();
   await page.getByRole("button", { name: "Salvar" }).click();
   await expect(page.getByText("Categorias salvas", { exact: true })).toBeVisible();
 

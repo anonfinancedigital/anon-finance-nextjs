@@ -4,6 +4,13 @@ import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { saveCategories } from "@/actions/categories";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -30,6 +37,70 @@ const toRow = (c: Category): Row => ({
   percent: formatPercent(c.percentBp).replace("%", ""),
   color: c.color,
 });
+
+/** Shows only the chosen color; clicking it opens a dialog with the whole palette. */
+function ColorPicker({
+  label,
+  groupName,
+  value,
+  errorId,
+  onChange,
+}: {
+  label: string;
+  groupName: string;
+  value: number;
+  /** Id of the row's color error message, when there is one. */
+  errorId?: string;
+  onChange: (color: number) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const current = CATEGORY_COLORS.find((c) => c.value === value);
+
+  return (
+    <>
+      <button
+        type="button"
+        aria-label={`${label}: ${current?.name ?? "nenhuma"}`}
+        title={current?.name}
+        aria-describedby={errorId}
+        onClick={() => setOpen(true)}
+        className="flex h-9 cursor-pointer items-center"
+      >
+        <span
+          style={{ backgroundColor: colorVar(value) }}
+          className="size-6 rounded-full ring-2 ring-foreground ring-offset-2 ring-offset-background"
+        />
+      </button>
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent className="sm:max-w-xs">
+          <DialogHeader>
+            <DialogTitle>Escolher cor</DialogTitle>
+            <DialogDescription>{label}</DialogDescription>
+          </DialogHeader>
+          <div role="radiogroup" aria-label={label} className="flex flex-wrap items-center gap-3 py-2">
+            {CATEGORY_COLORS.map((c) => (
+              <input
+                key={c.value}
+                type="radio"
+                name={groupName}
+                value={c.value}
+                aria-label={c.name}
+                title={c.name}
+                checked={value === c.value}
+                onChange={() => {
+                  onChange(c.value);
+                  setOpen(false);
+                }}
+                style={{ backgroundColor: colorVar(c.value) }}
+                className="size-8 cursor-pointer appearance-none rounded-full outline-none ring-offset-2 ring-offset-background checked:ring-2 checked:ring-foreground focus-visible:ring-2 focus-visible:ring-ring"
+              />
+            ))}
+          </div>
+        </DialogContent>
+      </Dialog>
+    </>
+  );
+}
 
 /**
  * Editable category set with a live sum; saving is blocked until the sum is exactly 100%.
@@ -148,28 +219,18 @@ export function CategoryEditor({ categories }: { categories: Category[] }) {
                   {nameError && <p className="mt-1 text-sm text-destructive">{nameError}</p>}
                 </TableCell>
                 <TableCell className="align-top">
-                  <div
-                    role="radiogroup"
-                    aria-label={`Cor da categoria ${i + 1}`}
-                    aria-invalid={!!colorError}
-                    className="flex h-9 items-center gap-1.5"
-                  >
-                    {CATEGORY_COLORS.map((c) => (
-                      <input
-                        key={c.value}
-                        type="radio"
-                        name={`color-${row.key}`}
-                        value={c.value}
-                        aria-label={c.name}
-                        title={c.name}
-                        checked={row.color === c.value}
-                        onChange={() => update(i, { color: c.value })}
-                        style={{ backgroundColor: colorVar(c.value) }}
-                        className="size-5 cursor-pointer appearance-none rounded-full outline-none ring-offset-2 ring-offset-background checked:ring-2 checked:ring-foreground focus-visible:ring-2 focus-visible:ring-ring"
-                      />
-                    ))}
-                  </div>
-                  {colorError && <p className="mt-1 text-sm text-destructive">{colorError}</p>}
+                  <ColorPicker
+                    label={`Cor da categoria ${i + 1}`}
+                    groupName={`color-${row.key}`}
+                    value={row.color}
+                    errorId={colorError ? `color-error-${row.key}` : undefined}
+                    onChange={(color) => update(i, { color })}
+                  />
+                  {colorError && (
+                    <p id={`color-error-${row.key}`} className="mt-1 text-sm text-destructive">
+                      {colorError}
+                    </p>
+                  )}
                 </TableCell>
                 <TableCell className="align-top">
                   <Input
