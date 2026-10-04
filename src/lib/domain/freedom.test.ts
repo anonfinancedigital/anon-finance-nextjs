@@ -1,5 +1,13 @@
 import { describe, expect, it } from "vitest";
-import { ageOn, ANNUAL_RATE_BP, monthsUntilRetirement, progressBp, targetCents } from "./freedom";
+import {
+  ageOn,
+  ANNUAL_RATE_BP,
+  monthsUntilRetirement,
+  progressBp,
+  requiredMonthlyCents,
+  summarize,
+  targetCents,
+} from "./freedom";
 
 describe("targetCents", () => {
   it("R$ 10.000,00 de renda dá alvo de R$ 1.500.000,00", () => {
@@ -80,5 +88,99 @@ describe("monthsUntilRetirement", () => {
 
   it("mês seguinte ao corrente dá 1", () => {
     expect(monthsUntilRetirement("1966-07-10", 60, { year: 2026, month: 6 })).toBe(1);
+  });
+});
+
+describe("requiredMonthlyCents", () => {
+  it("alvo R$ 1.500.000,00, guardado zero e 240 meses dá 263.621 centavos (R$ 2.636,21)", () => {
+    expect(requiredMonthlyCents({ targetCents: 150_000_000, savedCents: 0, months: 240 })).toBe(263_621);
+  });
+
+  it("guardado capitalizado que já alcança o alvo dá 0", () => {
+    // 100.000.000 × 1,08^20 ≈ 466.096.000 > 150.000.000
+    expect(requiredMonthlyCents({ targetCents: 150_000_000, savedCents: 100_000_000, months: 240 })).toBe(0);
+  });
+
+  it("guardado igual ao alvo dá 0", () => {
+    expect(requiredMonthlyCents({ targetCents: 150_000_000, savedCents: 150_000_000, months: 12 })).toBe(0);
+  });
+
+  it.each([
+    { targetCents: 150_000_000, savedCents: 0, months: 240 },
+    { targetCents: 150_000_000, savedCents: 20_000_000, months: 120 },
+    { targetCents: 30_000_000, savedCents: 1_234_567, months: 37 },
+  ])("o aporte atinge o alvo a 8%% a.a. efetivos (%j)", ({ targetCents, savedCents, months }) => {
+    const payment = requiredMonthlyCents({ targetCents, savedCents, months });
+    const i = 1.08 ** (1 / 12) - 1;
+    const growth = (1 + i) ** months;
+    const future = savedCents * growth + (payment * (growth - 1)) / i;
+    expect(future).toBeGreaterThanOrEqual(targetCents - 1e-3);
+    // arredondado para cima: sobra menos que 1 centavo de aporte capitalizado
+    expect(future - targetCents).toBeLessThan((growth - 1) / i);
+  });
+});
+
+describe("summarize", () => {
+  // 2026-06-15 12:00 em São Paulo
+  const now = new Date("2026-06-15T15:00:00Z");
+
+  it("devolve alvo, falta, progresso, prazo e aporte", () => {
+    const summary = summarize(
+      { monthlyIncomeCents: 1_000_000, savedCents: 15_000_000, birthDate: "1986-06-15", retirementAge: 60 },
+      now,
+    );
+    expect(summary).toMatchObject({
+      targetCents: 150_000_000,
+      savedCents: 15_000_000,
+      remainingCents: 135_000_000,
+      progressBp: 1000,
+      months: 240,
+    });
+    expect(summary.monthlyCents).toBe(
+      requiredMonthlyCents({ targetCents: 150_000_000, savedCents: 15_000_000, months: 240 }),
+    );
+  });
+
+  it("guardado zero e 240 meses dá aporte de 263.621 centavos e 0 pb", () => {
+    const summary = summarize(
+      { monthlyIncomeCents: 1_000_000, savedCents: 0, birthDate: "1986-06-15", retirementAge: 60 },
+      now,
+    );
+    expect(summary.monthlyCents).toBe(263_621);
+    expect(summary.progressBp).toBe(0);
+  });
+
+  it("guardado acima do alvo: falta 0, progresso acima de 10000 e aporte 0", () => {
+    const summary = summarize(
+      { monthlyIncomeCents: 1_000_000, savedCents: 180_000_000, birthDate: "1986-06-15", retirementAge: 60 },
+      now,
+    );
+    expect(summary.remainingCents).toBe(0);
+    expect(summary.progressBp).toBe(12_000);
+    expect(summary.monthlyCents).toBe(0);
+  });
+
+  it("months = 0 e guardado < alvo: monthlyCents nulo e falta mantida", () => {
+    const summary = summarize(
+      { monthlyIncomeCents: 1_000_000, savedCents: 15_000_000, birthDate: "1966-06-20", retirementAge: 60 },
+      now,
+    );
+    expect(summary.months).toBe(0);
+    expect(summary.monthlyCents).toBeNull();
+    expect(summary.remainingCents).toBe(135_000_000);
+  });
+
+  it("months = 0 e guardado >= alvo: aporte 0", () => {
+    const summary = summarize(
+      { monthlyIncomeCents: 1_000_000, savedCents: 150_000_000, birthDate: "1966-06-20", retirementAge: 60 },
+      now,
+    );
+    expect(summary.months).toBe(0);
+    expect(summary.monthlyCents).toBe(0);
+  });
+
+  it("recalcula o prazo só com o passar do tempo (mês seguinte, 1 mês a menos)", () => {
+    const goal = { monthlyIncomeCents: 1_000_000, savedCents: 0, birthDate: "1986-06-15", retirementAge: 60 };
+    expect(summarize(goal, new Date("2026-07-15T15:00:00Z")).months).toBe(239);
   });
 });

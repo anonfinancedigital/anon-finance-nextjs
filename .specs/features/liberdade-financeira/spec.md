@@ -128,8 +128,8 @@ Implicit-requirement dimensions: input validation (LIB-02, LIB-03), failure stat
 | LIB-03 | P1: Cadastrar e resumo (AC 6: patrimônio-alvo) | Specify | Implementing |
 | LIB-04 | P1: Cadastrar e resumo (AC 7, 8, 9: falta, percentual, barra, limite 100%) | Specify | Implementing |
 | LIB-05 | P1: Aporte mensal (AC 1: prazo n) e Edge Cases de data | Specify | Implementing |
-| LIB-06 | P1: Aporte mensal (AC 2, 4: fórmula, arredondamento, aporte zero) | Specify | Pending |
-| LIB-07 | P1: Aporte mensal (AC 3, 5: exibição e prazo encerrado) | Specify | Pending |
+| LIB-06 | P1: Aporte mensal (AC 2, 4: fórmula, arredondamento, aporte zero) | Specify | Implementing |
+| LIB-07 | P1: Aporte mensal (AC 3, 5: exibição e prazo encerrado) | Specify | Implementing |
 | LIB-08 | P1: Validar (AC 1, 2: renda e guardado) | Specify | Implementing |
 | LIB-09 | P1: Validar (AC 3, 4: nascimento e idade de aposentadoria) | Specify | Pending |
 | LIB-10 | P1: Validar (AC 5: falha de salvamento) | Specify | Pending |

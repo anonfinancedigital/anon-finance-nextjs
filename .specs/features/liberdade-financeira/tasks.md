@@ -144,12 +144,12 @@ T7 → T8 → T9 → T10 → T11
 
 **Done when**:
 
-- [ ] Alvo R$ 1.500.000,00, guardado R$ 0,00 e 240 meses → 263_621 centavos (R$ 2.636,21)
-- [ ] Guardado cujo valor capitalizado já alcança o alvo → 0
-- [ ] `summarize` devolve `remainingCents = max(0, alvo − guardado)` e `monthlyCents = null` quando `months = 0` e guardado < alvo; 0 quando `months = 0` e guardado ≥ alvo
-- [ ] O aporte devolvido, aplicado por n meses sobre o guardado a 8% a.a. efetivos, atinge o alvo (teste de propriedade com 3 combinações)
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
-- [ ] Test count: testes novos passam, os da T2 intactos
+- [x] Alvo R$ 1.500.000,00, guardado R$ 0,00 e 240 meses → 263_621 centavos (R$ 2.636,21)
+- [x] Guardado cujo valor capitalizado já alcança o alvo → 0
+- [x] `summarize` devolve `remainingCents = max(0, alvo − guardado)` e `monthlyCents = null` quando `months = 0` e guardado < alvo; 0 quando `months = 0` e guardado ≥ alvo
+- [x] O aporte devolvido, aplicado por n meses sobre o guardado a 8% a.a. efetivos, atinge o alvo (teste de propriedade com 3 combinações)
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Test count: testes novos passam, os da T2 intactos
 
 **Tests**: unit
 **Gate**: quick
