@@ -444,11 +444,11 @@ T25 → T26 → T27 → T28 → T29 → T30 → T31
 
 **Done when**:
 
-- [ ] `create` duas vezes com o mesmo `id` → 1 linha
-- [ ] `listByMonth(out/2026)` exclui as datas 2026-09-30 e 2026-11-01 e ordena de forma decrescente
-- [ ] `update` muda data, valor, categoria e descrição; duas atualizações seguidas → o valor final é o da última
-- [ ] `delete` remove; `update`/`delete` de outro `userId` não afetam a linha
-- [ ] Gate full passa; ≥ 7 testes
+- [x] `create` duas vezes com o mesmo `id` → 1 linha
+- [x] `listByMonth(out/2026)` exclui as datas 2026-09-30 e 2026-11-01 e ordena de forma decrescente
+- [x] `update` muda data, valor, categoria e descrição; duas atualizações seguidas → o valor final é o da última
+- [x] `delete` remove; `update`/`delete` de outro `userId` não afetam a linha
+- [x] Gate full passa; ≥ 7 testes
 
 **Tests**: integration
 **Gate**: full
