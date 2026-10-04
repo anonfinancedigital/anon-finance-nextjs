@@ -173,13 +173,13 @@ T7 → T8 → T9 → T10 → T11
 
 **Done when**:
 
-- [ ] Renda: vazia, R$ 0,00 e acima de R$ 1.000.000,00 rejeitadas; R$ 0,01 e R$ 1.000.000,00 aceitas, cada rejeição com mensagem no campo `monthlyIncome`
-- [ ] Guardado: vazio, negativo e acima de R$ 999.999.999,99 rejeitados; R$ 0,00 aceito
-- [ ] Nascimento: vazio, inválido (ex.: 31/02), futuro e com idade atual > 120 rejeitados
-- [ ] Idade de aposentadoria: não inteira, 0, 121 e ≤ idade atual rejeitadas; igual à idade atual + 1 aceita
-- [ ] Saída: `{ monthlyIncomeCents, savedCents, birthDate, retirementAge }`
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
-- [ ] Test count: um teste por AC de validação e por limite, todos passam
+- [x] Renda: vazia, R$ 0,00 e acima de R$ 1.000.000,00 rejeitadas; R$ 0,01 e R$ 1.000.000,00 aceitas, cada rejeição com mensagem no campo `monthlyIncome`
+- [x] Guardado: vazio, negativo e acima de R$ 999.999.999,99 rejeitados; R$ 0,00 aceito
+- [x] Nascimento: vazio, inválido (ex.: 31/02), futuro e com idade atual > 120 rejeitados
+- [x] Idade de aposentadoria: não inteira, 0, 121 e ≤ idade atual rejeitadas; igual à idade atual + 1 aceita
+- [x] Saída: `{ monthlyIncomeCents, savedCents, birthDate, retirementAge }`
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Test count: um teste por AC de validação e por limite, todos passam
 
 **Tests**: unit
 **Gate**: quick
