@@ -527,7 +527,7 @@ T15 → T16 → T17
 
 **Done when**:
 
-- [ ] Gate build passa
+- [x] Gate build passa
 
 **Tests**: none
 **Gate**: build
