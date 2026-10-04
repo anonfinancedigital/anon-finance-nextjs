@@ -59,6 +59,7 @@ export function TransactionList({ transactions, categories }: Props) {
       <ul data-testid="transaction-list" className="divide-y rounded-lg border">
         {transactions.map((t) => {
           const category = t.categoryId ? categoryById.get(t.categoryId) : undefined;
+          const subcategory = category?.subcategories.find((s) => s.id === t.subcategoryId);
           return (
             <li
               key={t.id}
@@ -75,7 +76,7 @@ export function TransactionList({ transactions, categories }: Props) {
                       className="inline-block size-2.5 shrink-0 rounded-sm"
                       style={{ background: colorVar(category.color) }}
                     />
-                    {category.name}
+                    {subcategory ? `${category.name} › ${subcategory.name}` : category.name}
                   </span>
                 )}
               </span>
