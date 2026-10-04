@@ -820,10 +820,10 @@ T25 → T26 → T27 → T28 → T29 → T30 → T31
 
 **Done when**:
 
-- [ ] e2e: 3 transações com datas diferentes aparecem em ordem decrescente
-- [ ] e2e: editar o valor e excluir com confirmação refletem na lista
-- [ ] e2e: mês sem transações → "Nenhuma transação neste mês"
-- [ ] Gate build passa; ≥ 3 testes e2e
+- [x] e2e: 3 transações com datas diferentes aparecem em ordem decrescente
+- [x] e2e: editar o valor e excluir com confirmação refletem na lista
+- [x] e2e: mês sem transações → "Nenhuma transação neste mês"
+- [x] Gate build passa; ≥ 3 testes e2e
 
 **Tests**: e2e
 **Gate**: build

@@ -1,0 +1,63 @@
+import { expect, test } from "@playwright/test";
+import { login, resetDatabase, seedCategories, seedTransaction } from "./helpers";
+
+test.beforeEach(resetDatabase);
+
+test("the month's transactions are listed latest date first", async ({ page }) => {
+  const [conforto] = await seedCategories([{ name: "Conforto", percent: 100 }]);
+  // Inserted out of date order on purpose.
+  await seedTransaction({ kind: "expense", amountCents: 1000, date: "2026-09-03", categoryId: conforto.id, description: "Padaria" });
+  await seedTransaction({ kind: "income", amountCents: 500000, date: "2026-09-20", description: "Salário" });
+  await seedTransaction({ kind: "expense", amountCents: 3000, date: "2026-09-11", categoryId: conforto.id, description: "Cinema" });
+
+  await login(page);
+  await page.goto("/?mes=2026-09");
+
+  const rows = page.getByTestId("transaction-row");
+  await expect(rows).toHaveCount(3);
+  await expect(rows.nth(0)).toContainText("20/09/2026");
+  await expect(rows.nth(0)).toContainText("Salário");
+  await expect(rows.nth(1)).toContainText("11/09/2026");
+  await expect(rows.nth(1)).toContainText("Cinema");
+  await expect(rows.nth(2)).toContainText("03/09/2026");
+  await expect(rows.nth(2)).toContainText("Padaria");
+});
+
+test("editing the amount and deleting with confirmation are reflected in the list", async ({
+  page,
+}) => {
+  const [conforto] = await seedCategories([{ name: "Conforto", percent: 100 }]);
+  await seedTransaction({ kind: "expense", amountCents: 10000, date: "2026-09-10", categoryId: conforto.id, description: "Mercado" });
+
+  await login(page);
+  await page.goto("/?mes=2026-09");
+  const row = page.getByTestId("transaction-row").filter({ hasText: "Mercado" });
+  await expect(row).toContainText("R$ 100,00");
+
+  await row.getByRole("button", { name: "Editar" }).click();
+  const editForm = page.getByRole("form", { name: "Editar transação" });
+  await expect(editForm.getByLabel("Valor (R$)")).toHaveValue("100,00");
+  await editForm.getByLabel("Valor (R$)").fill("150,00");
+  await editForm.getByRole("button", { name: "Salvar" }).click();
+  await expect(editForm).toBeHidden();
+  await expect(row).toContainText("R$ 150,00");
+
+  await row.getByRole("button", { name: "Excluir" }).click();
+  const confirm = page.getByRole("dialog", { name: "Excluir transação?" });
+  await expect(confirm).toBeVisible();
+  await expect(page.getByTestId("transaction-row")).toHaveCount(1);
+  await confirm.getByRole("button", { name: "Excluir" }).click();
+
+  await expect(page.getByTestId("transaction-row")).toHaveCount(0);
+  await expect(page.getByText("Nenhuma transação neste mês", { exact: true })).toBeVisible();
+});
+
+test("a month without transactions shows the empty message", async ({ page }) => {
+  await seedTransaction({ kind: "income", amountCents: 500000, date: "2026-09-05", description: "Salário" });
+
+  await login(page);
+  await page.goto("/?mes=2026-08");
+
+  await expect(page.getByText("Nenhuma transação neste mês", { exact: true })).toBeVisible();
+  await expect(page.getByTestId("transaction-row")).toHaveCount(0);
+});
