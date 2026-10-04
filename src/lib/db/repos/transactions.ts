@@ -14,7 +14,10 @@ export type TransactionData = {
   description?: string | null;
 };
 
-export type Transaction = Omit<typeof transaction.$inferSelect, "userId">;
+export type Transaction = Omit<
+  typeof transaction.$inferSelect,
+  "userId" | "recurring" | "recurrenceDay" | "recurrenceEnd" | "seriesId"
+>;
 
 const columns = {
   id: transaction.id,

@@ -1,6 +1,7 @@
 import { sql } from "drizzle-orm";
 import {
   bigint,
+  boolean,
   check,
   date,
   foreignKey,
@@ -9,6 +10,7 @@ import {
   pgEnum,
   pgTable,
   serial,
+  smallint,
   text,
   timestamp,
   unique,
@@ -78,6 +80,14 @@ export const transaction = pgTable(
     categoryId: uuid("category_id").references(() => category.id, { onDelete: "restrict" }),
     subcategoryId: uuid("subcategory_id"),
     description: varchar("description", { length: 120 }),
+    /** A recurring row is a segment of a series: it applies from the month of `date` on. */
+    recurring: boolean("recurring").notNull().default(false),
+    /** Intended day of each occurrence (31 even when `date` is 28/02). */
+    recurrenceDay: smallint("recurrence_day"),
+    /** First day of the final month (inclusive); null = no end. */
+    recurrenceEnd: date("recurrence_end", { mode: "string" }),
+    /** Groups the segments of a series: the id of its first segment. */
+    seriesId: uuid("series_id"),
     createdAt: timestamp("created_at", { withTimezone: true })
       .notNull()
       .default(sql`clock_timestamp()`),
@@ -102,7 +112,17 @@ export const transaction = pgTable(
       "transaction_subcategory_needs_category",
       sql`${t.subcategoryId} IS NULL OR ${t.categoryId} IS NOT NULL`,
     ),
+    check(
+      "transaction_recurring_fields",
+      sql`${t.recurring} = (${t.recurrenceDay} IS NOT NULL) AND ${t.recurring} = (${t.seriesId} IS NOT NULL)`,
+    ),
+    check("transaction_recurrence_day_range", sql`${t.recurrenceDay} BETWEEN 1 AND 31`),
+    check(
+      "transaction_recurrence_end",
+      sql`${t.recurrenceEnd} IS NULL OR (${t.recurring} AND ${t.recurrenceEnd} >= date_trunc('month', ${t.date})::date)`,
+    ),
     index("transaction_user_date_idx").on(t.userId, t.date),
+    index("transaction_user_recurring_idx").on(t.userId, t.date).where(sql`${t.recurring}`),
   ],
 );
 

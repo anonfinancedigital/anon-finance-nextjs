@@ -29,6 +29,13 @@
       "when": 1791145885549,
       "tag": "0003_subcategory",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1791152675408,
+      "tag": "0004_recurrence",
+      "breakpoints": true
     }
   ]
 }

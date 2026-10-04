@@ -224,12 +224,12 @@ T13 → T15
 
 **Done when**:
 
-- [ ] Migração aplica limpa sobre a última e as linhas existentes ficam `recurring = false` com os demais campos `NULL`
-- [ ] `schema.int.test.ts`: `recurring = true` sem `recurrence_day` ou sem `series_id` é rejeitado; `recurring = false` com qualquer um deles é rejeitado
-- [ ] `schema.int.test.ts`: `recurrence_day` 0 e 32 são rejeitados; 1 e 31 são aceitos
-- [ ] `schema.int.test.ts`: `recurrence_end` anterior ao mês da `date` é rejeitado; igual ao mês da `date` é aceito; `recurrence_end` com `recurring = false` é rejeitado
-- [ ] `schema.int.test.ts`: ganho recorrente (`category_id` `NULL`) é aceito
-- [ ] Gate full passa; ≥ 7 testes novos
+- [x] Migração aplica limpa sobre a última e as linhas existentes ficam `recurring = false` com os demais campos `NULL`
+- [x] `schema.int.test.ts`: `recurring = true` sem `recurrence_day` ou sem `series_id` é rejeitado; `recurring = false` com qualquer um deles é rejeitado
+- [x] `schema.int.test.ts`: `recurrence_day` 0 e 32 são rejeitados; 1 e 31 são aceitos
+- [x] `schema.int.test.ts`: `recurrence_end` anterior ao mês da `date` é rejeitado; igual ao mês da `date` é aceito; `recurrence_end` com `recurring = false` é rejeitado
+- [x] `schema.int.test.ts`: ganho recorrente (`category_id` `NULL`) é aceito
+- [x] Gate full passa; ≥ 7 testes novos
 
 **Tests**: integration
 **Gate**: full

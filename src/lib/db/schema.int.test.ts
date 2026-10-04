@@ -278,3 +278,98 @@ describe("subcategory constraints", () => {
     expect(row.subcategoryId).toBeNull();
   });
 });
+
+describe("transaction recurrence constraints", () => {
+  /** A recurring expense of 15/10/2026 (series = its own id). */
+  async function recurringExpense(overrides: Partial<typeof transaction.$inferInsert> = {}) {
+    const userId = await createUser();
+    const cat = await createCategory(userId);
+    const row = expense(userId, cat.id);
+    return db.insert(transaction).values({
+      ...row,
+      date: "2026-10-15",
+      recurring: true,
+      recurrenceDay: 15,
+      seriesId: row.id,
+      ...overrides,
+    });
+  }
+
+  it("leaves rows without recurrence as not recurring, with the other fields null", async () => {
+    const userId = await createUser();
+    const cat = await createCategory(userId);
+    await db.insert(transaction).values(expense(userId, cat.id));
+    const [row] = await db.select().from(transaction);
+    expect(row).toMatchObject({
+      recurring: false,
+      recurrenceDay: null,
+      recurrenceEnd: null,
+      seriesId: null,
+    });
+  });
+
+  it("accepts a recurring expense with day and series", async () => {
+    await recurringExpense();
+    const [row] = await db.select().from(transaction);
+    expect(row).toMatchObject({ recurring: true, recurrenceDay: 15, recurrenceEnd: null });
+  });
+
+  it.each([
+    ["recurring without recurrence_day", { recurrenceDay: null }],
+    ["recurring without series_id", { seriesId: null }],
+    ["not recurring with recurrence_day", { recurring: false, seriesId: null }],
+    ["not recurring with series_id", { recurring: false, recurrenceDay: null }],
+  ])("rejects %s", async (_label, overrides) => {
+    expect(await pgErrorCode(recurringExpense(overrides))).toBe(CHECK_VIOLATION);
+    expect(await db.$count(transaction)).toBe(0);
+  });
+
+  it.each([[0], [32]])("rejects recurrence_day %i", async (recurrenceDay) => {
+    expect(await pgErrorCode(recurringExpense({ recurrenceDay }))).toBe(CHECK_VIOLATION);
+  });
+
+  it("accepts recurrence_day 1 and 31", async () => {
+    await recurringExpense({ recurrenceDay: 1 });
+    await recurringExpense({ recurrenceDay: 31 });
+    const days = (await db.select().from(transaction)).map((r) => r.recurrenceDay);
+    expect(days.sort((a, b) => a! - b!)).toEqual([1, 31]);
+  });
+
+  it("rejects recurrence_end before the month of the date", async () => {
+    const query = recurringExpense({ recurrenceEnd: "2026-09-01" });
+    expect(await pgErrorCode(query)).toBe(CHECK_VIOLATION);
+  });
+
+  it("accepts recurrence_end equal to the month of the date", async () => {
+    await recurringExpense({ recurrenceEnd: "2026-10-01" });
+    const [row] = await db.select().from(transaction);
+    expect(row.recurrenceEnd).toBe("2026-10-01");
+  });
+
+  it("rejects recurrence_end on a row that is not recurring", async () => {
+    const query = recurringExpense({
+      recurring: false,
+      recurrenceDay: null,
+      seriesId: null,
+      recurrenceEnd: "2026-12-01",
+    });
+    expect(await pgErrorCode(query)).toBe(CHECK_VIOLATION);
+  });
+
+  it("accepts a recurring income (no category)", async () => {
+    const userId = await createUser();
+    const id = randomUUID();
+    await db.insert(transaction).values({
+      id,
+      userId,
+      kind: "income",
+      amountCents: 500000,
+      date: "2026-10-05",
+      recurring: true,
+      recurrenceDay: 5,
+      seriesId: id,
+    });
+    const [row] = await db.select().from(transaction);
+    expect(row).toMatchObject({ kind: "income", categoryId: null, recurring: true, seriesId: id });
+  });
+});
