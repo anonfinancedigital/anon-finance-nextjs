@@ -154,6 +154,96 @@ describe("transactionsRepo.listByMonth", () => {
   });
 });
 
+describe("transactionsRepo.listByMonth recurrence", () => {
+  const month = (year: number, m: number) => monthRange({ year, month: m });
+  const recurringExpense = (date: string, amountCents: number, recurrenceEndMonth?: string) => ({
+    ...expense(date, amountCents),
+    description: "Aluguel",
+    recurrence: recurrenceEndMonth ? ("until" as const) : ("forever" as const),
+    recurrenceEndMonth: recurrenceEndMonth ?? null,
+  });
+
+  it("lists in November the occurrence of a 'forever' expense of 15/10 on 15/11", async () => {
+    const tx = recurringExpense("2026-10-15", 10000);
+    await transactionsRepo.create(userId, tx);
+
+    expect(await transactionsRepo.listByMonth(userId, month(2026, 11))).toEqual([
+      expect.objectContaining({
+        id: tx.id,
+        kind: "expense",
+        date: "2026-11-15",
+        amountCents: 10000,
+        categoryId: conforto,
+        description: "Aluguel",
+        recurring: true,
+        recurrenceEnd: null,
+        month: "2026-11",
+      }),
+    ]);
+  });
+
+  it("lists an expense of day 31 on 28/02/2026 in February", async () => {
+    await transactionsRepo.create(userId, recurringExpense("2026-01-31", 5000));
+
+    const [occurrence] = await transactionsRepo.listByMonth(userId, month(2026, 2));
+    expect(occurrence.date).toBe("2026-02-28");
+  });
+
+  it("lists the occurrence only between the month of the date and the final month", async () => {
+    const tx = recurringExpense("2026-10-15", 10000, "2026-12");
+    await transactionsRepo.create(userId, tx);
+
+    const ids = async (y: number, m: number) =>
+      (await transactionsRepo.listByMonth(userId, month(y, m))).map((t) => t.id);
+    expect(await ids(2026, 9)).toEqual([]);
+    expect(await ids(2026, 10)).toEqual([tx.id]);
+    expect(await ids(2026, 12)).toEqual([tx.id]);
+    expect(await ids(2027, 1)).toEqual([]);
+  });
+
+  it("marks recurring occurrences with their final month and single rows as not recurring", async () => {
+    const recurring = recurringExpense("2026-10-15", 10000, "2027-03");
+    const single = expense("2026-11-02");
+    await transactionsRepo.create(userId, recurring);
+    await transactionsRepo.create(userId, single);
+
+    const listed = await transactionsRepo.listByMonth(userId, month(2026, 11));
+    expect(listed.map((t) => [t.id, t.recurring, t.recurrenceEnd, t.month])).toEqual([
+      [recurring.id, true, "2027-03-01", "2026-11"],
+      [single.id, false, null, "2026-11"],
+    ]);
+  });
+
+  it("mixes single and recurring rows by projected date desc, ties by most recently created", async () => {
+    const recurring = recurringExpense("2026-10-15", 10000);
+    const nov03 = expense("2026-11-03");
+    const nov15 = expense("2026-11-15");
+    const nov20 = expense("2026-11-20");
+    for (const tx of [recurring, nov03, nov15, nov20]) await transactionsRepo.create(userId, tx);
+
+    const listed = await transactionsRepo.listByMonth(userId, month(2026, 11));
+    expect(listed.map((t) => t.id)).toEqual([nov20.id, nov15.id, recurring.id, nov03.id]);
+  });
+
+  it("lists the same expense total as monthTotals for the month (AD-004)", async () => {
+    await transactionsRepo.create(userId, recurringExpense("2026-10-15", 10000));
+    await transactionsRepo.create(userId, recurringExpense("2026-09-30", 3300, "2026-11"));
+    await transactionsRepo.create(userId, recurringExpense("2026-08-01", 4400, "2026-10"));
+    await transactionsRepo.create(userId, { ...expense("2026-11-02", 2500), categoryId: lazer });
+    await transactionsRepo.create(userId, expense("2026-12-01", 99900));
+
+    const range = month(2026, 11);
+    const listed = await transactionsRepo.listByMonth(userId, range);
+    const listedSpent = listed
+      .filter((t) => t.kind === "expense")
+      .reduce((sum, t) => sum + t.amountCents, 0);
+    const totals = await transactionsRepo.monthTotals(userId, range);
+    const totalSpent = [...totals.spentByCategory.values()].reduce((a, b) => a + b, 0);
+    expect(listedSpent).toBe(15800);
+    expect(totalSpent).toBe(listedSpent);
+  });
+});
+
 describe("transactionsRepo.update", () => {
   it("changes date, amount, category and description", async () => {
     const tx = expense("2026-10-04");

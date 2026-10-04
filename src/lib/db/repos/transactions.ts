@@ -1,4 +1,5 @@
 import { and, desc, eq, gte, isNull, lt, not, or, sql } from "drizzle-orm";
+import { monthKey, occurrenceDate } from "@/lib/domain/recurrence";
 import { db } from "../client";
 import { transaction } from "../schema";
 
@@ -23,6 +24,15 @@ export type Transaction = Omit<
   "userId" | "recurring" | "recurrenceDay" | "recurrenceEnd" | "seriesId"
 >;
 
+/** A transaction as shown in a month: recurring rows carry the occurrence's projected date. */
+export type Occurrence = Transaction & {
+  recurring: boolean;
+  /** First day of the final month; null = no end (or not recurring). */
+  recurrenceEnd: string | null;
+  /** AAAA-MM of the month the occurrence belongs to. */
+  month: string;
+};
+
 const columns = {
   id: transaction.id,
   kind: transaction.kind,
@@ -46,13 +56,6 @@ const fields = (tx: TransactionData) => ({
 
 const ownedBy = (userId: string, id: string) =>
   and(eq(transaction.id, id), eq(transaction.userId, userId));
-
-const inMonth = (userId: string, range: MonthRange) =>
-  and(
-    eq(transaction.userId, userId),
-    gte(transaction.date, range.start),
-    lt(transaction.date, range.endExclusive),
-  );
 
 /**
  * Rows with an occurrence in the month: single rows dated in it, and recurring segments that
@@ -114,13 +117,30 @@ async function remove(userId: string, id: string): Promise<boolean> {
   return rows.length > 0;
 }
 
-/** The month's transactions, latest date first (ties: most recently created first). */
-async function listByMonth(userId: string, range: MonthRange): Promise<Transaction[]> {
-  return db
-    .select(columns)
+/** The month's occurrences, latest projected date first (ties: most recently created first). */
+async function listByMonth(userId: string, range: MonthRange): Promise<Occurrence[]> {
+  const rows = await db
+    .select({
+      ...columns,
+      recurring: transaction.recurring,
+      recurrenceDay: transaction.recurrenceDay,
+      recurrenceEnd: transaction.recurrenceEnd,
+    })
     .from(transaction)
-    .where(inMonth(userId, range))
-    .orderBy(desc(transaction.date), desc(transaction.createdAt));
+    .where(applicableInMonth(userId, range))
+    // Ties keep this order (stable sort below): createdAt at full database precision.
+    .orderBy(desc(transaction.createdAt));
+  const month = monthKey(range.start);
+  return rows
+    .map(({ recurrenceDay, ...row }) => ({
+      ...row,
+      date: occurrenceDate(
+        { id: row.id, seriesId: null, date: row.date, recurringDay: recurrenceDay, endMonth: null },
+        month,
+      ),
+      month,
+    }))
+    .sort((a, b) => b.date.localeCompare(a.date));
 }
 
 export type MonthTotals = {

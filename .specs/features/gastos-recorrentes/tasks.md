@@ -311,13 +311,13 @@ T13 → T15
 
 **Done when**:
 
-- [ ] `transactions.int.test.ts`: lista de novembro traz a ocorrência de gasto "Sempre" com a data 15/11, o mesmo valor, categoria e descrição (AC 5)
-- [ ] `transactions.int.test.ts`: lista de fevereiro traz um gasto de dia 31 em 28/02/2026 (AC 11)
-- [ ] `transactions.int.test.ts`: lista fora do intervalo (antes do início, depois do mês final) não traz a ocorrência (AC 7 e 8)
-- [ ] `transactions.int.test.ts`: a lista mistura avulsas e recorrentes ordenadas por data projetada desc, desempate por `createdAt` desc
-- [ ] `transactions.int.test.ts` (invariante AD-004): para o mesmo mês, a soma dos gastos da lista é igual à soma de `monthTotals`
-- [ ] Os testes antigos de `listByMonth` continuam passando
-- [ ] Gate full passa; ≥ 6 testes novos
+- [x] `transactions.int.test.ts`: lista de novembro traz a ocorrência de gasto "Sempre" com a data 15/11, o mesmo valor, categoria e descrição (AC 5)
+- [x] `transactions.int.test.ts`: lista de fevereiro traz um gasto de dia 31 em 28/02/2026 (AC 11)
+- [x] `transactions.int.test.ts`: lista fora do intervalo (antes do início, depois do mês final) não traz a ocorrência (AC 7 e 8)
+- [x] `transactions.int.test.ts`: a lista mistura avulsas e recorrentes ordenadas por data projetada desc, desempate por `createdAt` desc
+- [x] `transactions.int.test.ts` (invariante AD-004): para o mesmo mês, a soma dos gastos da lista é igual à soma de `monthTotals`
+- [x] Os testes antigos de `listByMonth` continuam passando
+- [x] Gate full passa; ≥ 6 testes novos
 
 **Tests**: integration
 **Gate**: full
