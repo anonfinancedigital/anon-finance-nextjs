@@ -2,12 +2,14 @@
 
 **Date**: 2026-10-04
 **Spec**: `.specs/features/liberdade-financeira/spec.md`
-**Diff range**: `3782d40^..39bcefd`, somente os 11 commits da feature: 3782d40 (T1), 80cb13d (T2), 4b311a7 (T3), 25b1741 (T4), 3f2ffda (T5), ebe3b1b (T6), 3130943 (T7), 7c42ca5 (T8), 10a5f24 (T9), 8ba60f3 (T10), 39bcefd (T11). Os demais commits do intervalo (3f51c8e, caeb183, 60e542f, 31e69da, c65d2d7) são de outras features e foram ignorados. Os arquivos da feature não mudaram entre 39bcefd e o HEAD atual (`git diff 39bcefd HEAD` vazio para eles).
+**Diff range**: `3782d40^..39bcefd` (+ correção de testes `aafc341`, re-verificação 1 de 3), somente os 11 commits da feature: 3782d40 (T1), 80cb13d (T2), 4b311a7 (T3), 25b1741 (T4), 3f2ffda (T5), ebe3b1b (T6), 3130943 (T7), 7c42ca5 (T8), 10a5f24 (T9), 8ba60f3 (T10), 39bcefd (T11). Os demais commits do intervalo (3f51c8e, caeb183, 60e542f, 31e69da, c65d2d7) são de outras features e foram ignorados. Os arquivos da feature não mudaram entre 39bcefd e o HEAD atual (`git diff 39bcefd HEAD` vazio para eles).
 **Verifier**: independent sub-agent (author ≠ verifier)
 
-## Validation: Liberdade Financeira - FAIL
+## Validation: Liberdade Financeira - PASS
 
-**Result**: FAIL (2 mutantes comportamentais sobreviveram e 2 lacunas de precisão da spec; o código está correto em todos os ACs, o que falha é a discriminação dos testes)
+**Result**: PASS (iteração 2: os mutantes reais V9 e V10 foram mortos pelos testes de `aafc341`; restam só equivalentes ou cosméticos aceitos e 2 lacunas de precisão da spec registradas)
+
+Histórico: iteração 1 foi FAIL por V9 ("60.5"/"1e2") e V10 (fuso São Paulo) sobreviventes; corrigidos em `aafc341`.
 
 Verificação de UI (T8-T11) é por **leitura de código** (matriz: `none`, e2e suspenso por AD-005). O que é **testado** está marcado como tal. Fluxo manual de UI não foi reexecutado pelo Verifier.
 
@@ -64,8 +66,8 @@ Legenda: `FT` = `src/lib/domain/freedom.test.ts`; `GT` = `src/lib/validation/goa
 | -- | -------------------- | ----------------------- | ------ | ------ |
 | 1 renda inválida | rejeita vazio, não numérico, < 0,01 e > 1.000.000,00, mensagem no campo | `GT:37-39` `.monthlyIncome?.length > 0` para "", "0", "0,00", "1.000.000,01", "abc"; `GT:41-43` `toBe("A renda máxima é R$ 1.000.000,00")`; aceita limites `GT:45-50` (1 e 100_000_000) | teste | ✅ PASS (texto não definido pela spec: ⚠️ ver lacuna 3) |
 | 2 guardado inválido | rejeita vazio, negativo, > 999.999.999,99; aceita 0 | `GT:54-56` `.saved?.length > 0` para "", "-1", "1.000.000.000,00", "abc"; `GT:58-63` 0 e 99_999_999_999; `MT:7-9` `toEqual({ ok: true, value: 0 })`; `MT:15-19`; `MT:21-24` | teste | ✅ PASS |
-| 3 nascimento inválido | rejeita vazio, inválido, futuro, idade > 120 | `GT:67-69` "", "1990-02-31", "15/06/1990"; `GT:71-73` `toBe("A data de nascimento não pode ser futura")`; `GT:75-77` `toBe("A idade atual deve ser de no máximo 120 anos")`; limites `GT:79-81` (120 aceita), `GT:83-86` (hoje aceito) | teste | ✅ PASS |
-| 4 idade de aposentadoria | rejeita não inteiro, fora de 1..120 e ≤ atual | `GT:90-92` "", "60,5", "abc", "-3", "0", "121"; `GT:94-101` `toBe("A idade de aposentadoria deve ser maior que a idade atual (36)")` para 36 e 30; `GT:103-108` 37 e 120 aceitas; `GT:110-114` antes do aniversário | teste | ⚠️ PASS com lacuna: não inteiro só é exercitado com vírgula ("60,5"); "60.5" e "1e2" não (sobrevivente V9) |
+| 3 nascimento inválido | rejeita vazio, inválido, futuro, idade > 120 | `GT:67-69` "", "1990-02-31", "15/06/1990"; `GT:71-73` `toBe("A data de nascimento não pode ser futura")`; `GT:75-77` `toBe("A idade atual deve ser de no máximo 120 anos")`; limites `GT:79-81` (120 aceita), `GT:83-87` (fuso SP) e `GT:89-92` (hoje aceito) | teste | ✅ PASS |
+| 4 idade de aposentadoria | rejeita não inteiro, fora de 1..120 e ≤ atual | `GT:96-98` "", "60,5", "60.5", "1e2", "abc", "-3", "0", "121"; `GT:100-107` `toBe("A idade de aposentadoria deve ser maior que a idade atual (36)")` para 36 e 30; `GT:109-114` 37 e 120 aceitas; `GT:116-120` antes do aniversário | teste | ✅ PASS (re-verificação): `GT:96` `it.each` inclui "60,5", "60.5" e "1e2" no campo `retirementAge`; V9 morto |
 | 5 falha de salvamento | mensagem de erro, objetivo anterior intacto | `AT:95-107` `toEqual({ ok: false, error: "Não foi possível salvar. Tente novamente" })` e `expect(await goalsRepo.get(userId)).toEqual(SAVED)`; UI `GF:106-110` `role="alert"` com `result.error` | teste + leitura | ✅ PASS |
 | 6 sem sessão recusa leitura e gravação | gravação: `UNAUTHORIZED`, nada gravado | `AT:85-93` `toEqual({ ok: false, error: "UNAUTHORIZED" })`, `upsert` não chamado, `goalsRepo.get` `toBeNull()`; leitura: `PG:15` `requireSessionForPage()` antes de `goalsRepo.get` (`PG:16`) | teste (gravação) + leitura (leitura/página) | ✅ PASS |
 | 7 lê e grava só o do usuário da sessão | isolamento | `RT:31-41` `expect(await goalsRepo.get(otherId)).toBeNull()` e `toEqual(GOAL)`; `RT:55-63`; `AT:109-115` `expect(await goalsRepo.get(other.userId)).toBeNull()`; código `src/actions/goals.ts:19` usa `session.userId`, `src/lib/db/repos/goals.ts:17` filtra por `userId` | teste | ✅ PASS |
@@ -92,7 +94,7 @@ Legenda: `FT` = `src/lib/domain/freedom.test.ts`; `GT` = `src/lib/validation/goa
 
 ### Lacunas de precisão da spec (⚠️)
 
-1. LIB-08/LIB-09 (Validar AC 1-4): "exibir mensagem no campo" não define o texto. Vários testes asserem só `length > 0` (`GT:37-39`, `GT:54-56`, `GT:67-69`, `GT:90-92`).
+1. LIB-08/LIB-09 (Validar AC 1-4): "exibir mensagem no campo" não define o texto. Vários testes asserem só `length > 0` (`GT:37-39`, `GT:54-56`, `GT:67-69`, `GT:96-98`).
 2. LIB-10 (Validar AC 5): "mensagem de erro" sem texto; o teste fixa o texto de `SAVE_FAILED` existente (`AT:95-107`), que a spec não define.
 3. Fuso horário: o design adota São Paulo para "hoje" (`src/lib/validation/goal.ts:9-14`), mas a spec não define o dia de referência perto da meia-noite, e não há teste (sobrevivente V10).
 
@@ -126,8 +128,8 @@ Escopo: git worktree temporária em HEAD (`git worktree add --detach`), `node_mo
 | V6 | `goal.ts:6` | teto da renda +1 centavo | ✅ Killed (2) |
 | V7 | `goal.ts:51` | remove `allowZero` do guardado | ✅ Killed (1) |
 | V8 | `goal.ts:73` | `age < 1` → `age < 0` | ❌ Survived (equivalente de comportamento: 0 ≤ idade atual rejeita do mesmo jeito, muda só a mensagem) |
-| V9 | `goal.ts:70` | regex de inteiro `^\d+$` → `Number.isNaN(Number(...))` | ❌ Survived (aceitaria "60.5", "1e2") |
-| V10 | `goal.ts:10` | fuso `America/Sao_Paulo` → `UTC` | ❌ Survived (testes usam 12:00 SP) |
+| V9 | `goal.ts:70` | regex de inteiro `^\d+$` → `Number.isNaN(Number(...))` | ✅ Killed na re-verificação (`rejeita "60.5"`, 2 falhas) |
+| V10 | `goal.ts:10` | fuso `America/Sao_Paulo` → `UTC` | ✅ Killed na re-verificação (`usa o dia de São Paulo como hoje`, `GT:83-87`) |
 | V11 | `money.ts:26` | teto `MAX_CENTS` +1 | ✅ Killed (3) |
 | V12 | `goal.ts:56` | remove o ramo "nascimento vazio" | ❌ Survived (equivalente: vazio cai em `isValidCalendarDate`) |
 | M1 | `money.ts:25` | `allowZero` ignorado (zero sempre aceito) | ✅ Killed (3) |
@@ -139,8 +141,8 @@ Escopo: git worktree temporária em HEAD (`git worktree add --detach`), `node_mo
 | A3 | `actions/goals.ts:13` | remove a checagem de sessão | ✅ Killed (1) |
 | A4 | `actions/goals.ts:25` | remove `revalidatePath("/liberdade")` | ✅ Killed (1) |
 
-**Sensor depth**: P0-full (manual, 34 mutações)
-**Result**: 28/34 killed. 6 sobreviventes: 2 equivalentes (V8, V12), 1 quase equivalente (U3: só difere com gap exatamente 0, inalcançável com n > 0), 3 reais de teste fraco (V9, V10, U13). **FAIL** por V9 e V10.
+**Sensor depth**: P0-full (manual, 34 mutações; re-verificação: 12 re-executadas)
+**Result**: 30/34 killed após a re-verificação (V9 e V10 mortos; amostra de 12 mutações das 28 originais, incluindo U1, U2, U4, U6, U12, V1, V4, V5, V7, M1, continuou 100% morta). 4 sobreviventes aceitos: V8 e V12 equivalentes de comportamento, U3 quase equivalente (só difere com gap exatamente 0, inalcançável com n > 0), U13 cosmético (tolerância de ponto flutuante `1e-6` sem caso de PMT exato). **PASS ✅**.
 
 Isolamento: `git worktree list` mostra só a árvore real; `git status --porcelain` da árvore real **não** foi alterado pelo sensor (nenhum caminho escrito fora do scratch). Observação: outros agentes alteraram a árvore real durante a execução (arquivos de outras features: migração 0006, categorias, transações); as diferenças entre o baseline e o estado final são desse trabalho concorrente, não do sensor.
 
@@ -155,7 +157,7 @@ Isolamento: `git worktree list` mostra só a árvore real; `git status --porcela
 | No scope creep | ✅ |
 | Matches patterns (categories repo/action, `ctx.addIssue`, `useTransition`) | ✅ |
 | Spec-anchored outcome check (valores asseridos batem com a spec) | ✅ (3 lacunas de precisão/cobertura acima) |
-| Per-layer Coverage Expectation (domínio 1:1 com ACs; validação com limites; repo e action com sucesso, inválido, sem sessão, falha) | ⚠️ falta "60.5" no não-inteiro e o caso do fuso |
+| Per-layer Coverage Expectation (domínio 1:1 com ACs; validação com limites; repo e action com sucesso, inválido, sem sessão, falha) | ✅ "60.5"/"1e2" e o caso do fuso cobertos em `aafc341` |
 | Todo teste mapeia a um AC, Edge Case ou Done-when | ✅ |
 | Guidelines documentadas | `AGENTS.md`, `vitest.config.ts`; sem guideline de cobertura, defaults fortes aplicados |
 
@@ -165,8 +167,8 @@ Isolamento: `git worktree list` mostra só a árvore real; `git status --porcela
 
 - **Gate command**: `PATH=<node 20> npm run typecheck && npm run lint && npm run test:unit && npm run test:int` (sem `next build` na árvore real, por instrução)
 - **typecheck**: exit 0; **lint**: exit 0
-- **Unit**: 312 passed, 0 failed (12 arquivos)
-- **Integration**: 234 passed, 0 failed (11 arquivos), na terceira execução. As duas primeiras tiveram falhas de FK em `account`/`session`/`category`/`transaction`, `deadlock detected` e `transaction_kind_category`, todas por outro processo `vitest` concorrente no banco compartilhado `orcamento_test` (processos de outros agentes visíveis em `ps`). Rodada limpa sem falhas confirmada.
+- **Unit**: 315 passed, 0 failed (12 arquivos; +3 testes de `aafc341`)
+- **Integration**: 234 passed, 0 failed (11 arquivos). Re-verificação: limpo na primeira execução. Na verificação inicial foram necessárias 3 execuções: As duas primeiras tiveram falhas de FK em `account`/`session`/`category`/`transaction`, `deadlock detected` e `transaction_kind_category`, todas por outro processo `vitest` concorrente no banco compartilhado `orcamento_test` (processos de outros agentes visíveis em `ps`). Rodada limpa sem falhas confirmada.
 - **Test count antes da feature**: não medido isoladamente; os arquivos de teste tocados só receberam inserções (`money.test.ts` +21/-0)
 - **Delta**: nenhum teste removido nem enfraquecido
 - **Skipped tests**: nenhum
@@ -174,21 +176,21 @@ Isolamento: `git worktree list` mostra só a árvore real; `git status --porcela
 
 ---
 
-## Fix Plans
+## Fix Plans (resolvidos na iteração 1 de 3)
 
-### Fix 1 (Major): teste de "idade não inteira" não cobre ponto decimal (V9)
+### Fix 1 (Major, ✅ resolvido em aafc341): teste de "idade não inteira" não cobre ponto decimal (V9)
 
 - **Root cause**: `GT:90-92` só usa "60,5" (que `Number()` já recusa). Uma regressão para `Number(...)` aceitaria "60.5" e "1e2" e passaria nos testes.
 - **Fix task**: adicionar a `GT:90` os casos "60.5", "1e2" e " 6 0" (rejeitados no campo `retirementAge`).
 - **Priority**: Major
 
-### Fix 2 (Minor): fuso horário do "hoje" sem teste (V10)
+### Fix 2 (Minor, ✅ resolvido em aafc341): fuso horário do "hoje" sem teste (V10)
 
 - **Root cause**: todos os testes de validação usam 12:00 em São Paulo, quando UTC e São Paulo caem no mesmo dia.
 - **Fix task**: teste com `now = 2026-06-16T02:00:00Z` (23:00 de 15/06 em SP): nascimento "2026-06-16" é futuro (rejeita) e a idade atual usa 15/06. Opcional: fixar na spec o fuso de "hoje".
 - **Priority**: Minor
 
-### Fix 3 (Cosmetic): tolerância `1e-6` e `gap == 0` sem teste (U13, U3)
+### Fix 3 (Cosmetic, aceito sem correção): tolerância `1e-6` e `gap == 0` sem teste (U13, U3)
 
 - **Fix task**: caso com PMT exato em inteiro (por exemplo n=12 e valores montados para PMT inteiro) que falharia sem a tolerância; opcional.
 - **Priority**: Cosmetic
@@ -197,24 +199,22 @@ Isolamento: `git worktree list` mostra só a árvore real; `git status --porcela
 
 ## Requirement Traceability Update
 
-A tabela de `spec.md` está desatualizada (vários "Implementing", "Coverage: 0 mapped"). Esta validação não a altera; sugestão para o orquestrador após os fixes:
+`spec.md` atualizada neste commit: todas as LIB marcadas Verified.
 
 | Requirement | Previous Status | New Status |
 | ----------- | --------------- | ---------- |
-| LIB-01, 02, 04, 05, 07, 10 | Implemented | ✅ Verified |
-| LIB-03, 06, 11 | Implementing | ✅ Verified |
-| LIB-08, LIB-09 | Implementing | ⚠️ Verified com lacuna (Fix 1, Fix 2) |
+| LIB-01 a LIB-11 | Implemented/Implementing | ✅ Verified |
 
 ---
 
 ## Summary
 
-**Overall**: ❌ Not Ready (por fix tasks de testes; nenhum defeito de comportamento do produto encontrado)
+**Overall**: ✅ Ready
 
-**Spec-anchored check**: 20/20 ACs e Edge Cases com evidência `file:line` batendo com a spec; 3 lacunas de precisão/cobertura
-**Sensor**: 28/34 mutações mortas; 3 sobreviventes reais (V9, V10, U13), 3 equivalentes (V8, V12, U3)
-**Gate**: typecheck, lint, 312 unit e 234 integration passando (integração após repetir por concorrência no banco)
+**Spec-anchored check**: 20/20 ACs e Edge Cases com evidência `file:line` batendo com a spec; 2 lacunas de precisão da spec registradas (mensagens sem texto, fuso do "hoje"), sem lacuna de cobertura
+**Sensor**: 30/34 mutações mortas; 4 sobreviventes aceitos (V8, V12, U3 equivalentes; U13 cosmético)
+**Gate**: typecheck, lint, 315 unit e 234 integration passando
 
 **What works**: cálculo (alvo, prazo, PMT 263.621, ramos de n = 0 e guardado ≥ alvo), validação com limites, repositório com isolamento por usuário, action (sessão, validação, `SAVE_FAILED`, revalidação), UI conforme a spec por leitura.
 
-**Next steps**: aplicar Fix 1 e Fix 2 (testes apenas) e re-verificar.
+**Next steps**: nenhum.
