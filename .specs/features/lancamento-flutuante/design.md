@@ -44,7 +44,7 @@ graph TD
 
 | System | Integration Method |
 | ------ | ------------------ |
-| Resumo (`page.tsx`) | Remove a `<section>` "Nova transação", renderiza `<NewTransactionButton categories defaultDate />` e dá `pb-24` ao contêiner para o botão não cobrir o fim da lista |
+| Resumo (`page.tsx`) | Remove a `<section>` "Nova transação", renderiza `<NewTransactionButton categories defaultDate />` e dá `pb-32` ao contêiner para o botão não cobrir o fim da lista |
 | `revalidatePath("/")` | Já chamado pelas actions; atualiza lista, totais e gráficos ao salvar (LANC-03 AC 5) |
 
 ---
@@ -60,7 +60,7 @@ graph TD
 - **Dependencies**: `Dialog*`, `Button`, `TransactionForm`, estado local `open`.
 - **Reuses**: `TransactionForm` (`onSaved={() => setOpen(false)}`), padrão de `Dialog` controlado de `transaction-list.tsx`.
 - **Detalhes**:
-  - Botão: `fixed bottom-4 right-4 z-40 size-12 rounded-full shadow-lg` (48px, acima do mínimo de 44px), `aria-label="Nova transação"`, ícone `PlusIcon`.
+  - Botão: `fixed bottom-4 right-4 z-40 size-[60px] rounded-full shadow-lg`, e `md:bottom-6 md:right-6 md:size-[78px]` no desktop (60px no mobile, 78px no desktop, a pedido do usuário), `aria-label="Nova transação"`, ícone `PlusIcon`.
   - Modal: `DialogTitle` "Nova transação". O formulário mantém `aria-label="Nova transação"` no `<form>`.
   - O corpo do `DialogContent` rola em telas baixas (`max-h-[calc(100dvh-2rem)] overflow-y-auto`), porque o formulário com categoria e subcategoria é alto.
 
@@ -104,7 +104,7 @@ Sem mudança. `transaction.description varchar(120)` continua anulável (`src/li
 | Specs e2e existentes usam o formulário inline e o rótulo "Descrição (opcional)" | `e2e/transaction-form.spec.ts:6,17,67`, `e2e/summary.spec.ts:56`, `e2e/month-picker.spec.ts:64,69` | Quebram ao remover o formulário da página; AD-005 suspende e2e novo, não consertar os existentes | Task final ajusta os seletores desses specs para abrir o modal antes (barato: um helper `openNewTransaction(page)`); se o usuário mantiver e2e suspenso, registrar como dívida no handoff |
 | Testes de unidade e de integração com descrição opcional | `src/lib/validation/transaction.test.ts`, `src/actions/transactions.int.test.ts`, `src/lib/db/repos/transactions.int.test.ts` | Casos que criam sem descrição passam a falhar | Atualizar esses casos na task do schema: fixtures ganham descrição e entram casos novos de vazio e só espaços |
 | Linhas antigas com `description` nula não podem ser editadas sem preencher | `transaction-list.tsx:84` | Atrito ao editar uma transação antiga | Comportamento aceito e confirmado na spec; o campo vem vazio e o erro aponta o que falta |
-| Botão fixo pode cobrir o fim da lista em telas pequenas | `page.tsx` (contêiner) | Última linha e botões Editar/Excluir ficam sob o "+" | `pb-24` no contêiner do Resumo |
+| Botão fixo pode cobrir o fim da lista em telas pequenas | `page.tsx` (contêiner) | Última linha e botões Editar/Excluir ficam sob o "+" | `pb-32` no contêiner do Resumo |
 
 ---
 

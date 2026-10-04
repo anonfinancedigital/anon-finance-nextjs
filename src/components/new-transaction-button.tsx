@@ -28,9 +28,9 @@ export function NewTransactionButton({ categories, defaultDate }: Props) {
         <Button
           size="icon-lg"
           aria-label="Nova transação"
-          className="fixed right-4 bottom-4 z-40 size-12 rounded-full shadow-lg"
+          className="fixed right-4 bottom-4 z-40 size-[60px] rounded-full shadow-lg md:right-6 md:bottom-6 md:size-[78px]"
         >
-          <PlusIcon className="size-6" />
+          <PlusIcon className="size-8 md:size-10" />
         </Button>
       </DialogTrigger>
       <DialogContent className="max-h-[calc(100dvh-2rem)] overflow-y-auto">

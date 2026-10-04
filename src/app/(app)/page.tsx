@@ -51,7 +51,7 @@ export default async function SummaryPage({ searchParams }: PageProps<"/">) {
   ];
 
   return (
-    <div className="space-y-8 pb-24">
+    <div className="space-y-8 pb-32">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <h1 className="text-2xl font-semibold">Resumo</h1>
         <MonthPicker month={month} />
