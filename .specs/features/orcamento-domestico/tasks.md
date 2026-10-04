@@ -255,11 +255,11 @@ T25 → T26 → T27 → T28 → T29 → T30 → T31
 
 **Done when**:
 
-- [ ] Conjunto 30/30/10/10/20 aceito
-- [ ] Conjunto 30/30/10/10/20/5 rejeitado com "A soma dos percentuais deve ser 100% (atual: 105%)"
-- [ ] Conjunto vazio rejeitado com "(atual: 0%)"
-- [ ] Nome vazio, nome com 41 caracteres e "Lazer"/"lazer" duplicados rejeitados com erro no campo
-- [ ] Gate quick passa; ≥ 7 testes
+- [x] Conjunto 30/30/10/10/20 aceito
+- [x] Conjunto 30/30/10/10/20/5 rejeitado com "A soma dos percentuais deve ser 100% (atual: 105%)"
+- [x] Conjunto vazio rejeitado com "(atual: 0%)"
+- [x] Nome vazio, nome com 41 caracteres e "Lazer"/"lazer" duplicados rejeitados com erro no campo
+- [x] Gate quick passa; ≥ 7 testes
 
 **Tests**: unit
 **Gate**: quick
