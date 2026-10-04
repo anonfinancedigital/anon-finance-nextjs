@@ -270,11 +270,11 @@ T15 → T16 → T17
 
 **Done when**:
 
-- [ ] Sem parâmetros → "Todas" (lista completa, com ganhos)
-- [ ] Categoria → só gastos dela, sem ganhos (SUB-09 AC 3)
-- [ ] Subcategoria → só gastos dela (AC 4); `"nenhuma"` → só gastos da categoria sem subcategoria (AC 5)
-- [ ] Categoria ou subcategoria inexistente → ignorado como "Todas" (SUB-10 AC 9); subcategoria de outra categoria ou sem categoria → ignorada
-- [ ] Gate quick passa; ≥ 8 testes em `transaction-filter.test.ts`
+- [x] Sem parâmetros → "Todas" (lista completa, com ganhos)
+- [x] Categoria → só gastos dela, sem ganhos (SUB-09 AC 3)
+- [x] Subcategoria → só gastos dela (AC 4); `"nenhuma"` → só gastos da categoria sem subcategoria (AC 5)
+- [x] Categoria ou subcategoria inexistente → ignorado como "Todas" (SUB-10 AC 9); subcategoria de outra categoria ou sem categoria → ignorada
+- [x] Gate quick passa; ≥ 8 testes em `transaction-filter.test.ts`
 
 **Tests**: unit
 **Gate**: quick
