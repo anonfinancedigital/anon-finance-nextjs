@@ -213,11 +213,11 @@ T5 → T6 → T7
 
 **Done when**:
 
-- [ ] `floating` mantém o botão atual (aria-label "Nova transação", fixo no canto) sem mudança visual e sem restrição de largura
-- [ ] `header` renderiza `Button` com `hidden md:inline-flex`, `PlusIcon` e o texto visível "Nova transação"
-- [ ] As duas variantes abrem o mesmo modal "Registrar Lançamento", com formulário em branco, e fecham ao salvar ou cancelar
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
-- [ ] Contagem de testes unit e int igual à de antes
+- [x] `floating` mantém o botão atual (aria-label "Nova transação", fixo no canto) sem mudança visual e sem restrição de largura
+- [x] `header` renderiza `Button` com `hidden md:inline-flex`, `PlusIcon` e o texto visível "Nova transação"
+- [x] As duas variantes abrem o mesmo modal "Registrar Lançamento", com formulário em branco, e fecham ao salvar ou cancelar
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
+- [x] Contagem de testes unit e int igual à de antes
 
 **Tests**: none
 **Gate**: build
