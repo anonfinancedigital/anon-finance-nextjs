@@ -7,18 +7,21 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import type { ActionResult } from "@/lib/action-result";
+import { maskDateInput } from "@/lib/domain/date-br";
 
 export type GoalFormValues = {
   /** pt-BR text, e.g. "10.000,00". */
   monthlyIncome: string;
   /** pt-BR text, e.g. "150.000,00". */
   saved: string;
-  /** AAAA-MM-DD. */
+  /** DD/MM/AAAA. */
   birthDate: string;
   retirementAge: string;
+  /** "6", "8" or "10" (% ao ano). */
+  annualRate: string;
 };
 
-const blank: GoalFormValues = { monthlyIncome: "", saved: "", birthDate: "", retirementAge: "" };
+const blank: GoalFormValues = { monthlyIncome: "", saved: "", birthDate: "", retirementAge: "", annualRate: "8" };
 
 /**
  * Form of the financial freedom goal. Without a saved goal it shows empty; with one it stays
@@ -99,10 +102,11 @@ export function GoalForm({ initial }: { initial?: GoalFormValues }) {
           <Label htmlFor={field("birthDate")}>Data de nascimento</Label>
           <Input
             id={field("birthDate")}
-            type="date"
+            inputMode="numeric"
+            placeholder="DD/MM/AAAA"
             value={values.birthDate}
             aria-invalid={!!fieldErrors.birthDate}
-            onChange={(e) => set("birthDate", e.target.value)}
+            onChange={(e) => set("birthDate", maskDateInput(e.target.value))}
           />
           {fieldErrors.birthDate && (
             <p className="text-sm text-destructive">{fieldErrors.birthDate}</p>

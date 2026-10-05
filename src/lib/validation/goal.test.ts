@@ -6,8 +6,9 @@ const now = new Date("2026-06-15T15:00:00Z");
 const valid = {
   monthlyIncome: "10.000,00",
   saved: "150.000,00",
-  birthDate: "1990-06-15",
+  birthDate: "15/06/1990",
   retirementAge: "60",
+  annualRate: "8",
 };
 
 const parse = (override: Partial<typeof valid>) => goalSchema(now).safeParse({ ...valid, ...override });
@@ -29,6 +30,7 @@ describe("goalSchema", () => {
         savedCents: 15_000_000,
         birthDate: "1990-06-15",
         retirementAge: 60,
+        annualRateBp: 800,
       });
     }
   });
@@ -64,31 +66,62 @@ describe("goalSchema", () => {
   });
 
   describe("data de nascimento", () => {
-    it.each([[""], ["1990-02-31"], ["15/06/1990"]])("rejeita %j no campo birthDate", (birthDate) => {
-      expect(errors({ birthDate }).birthDate?.length).toBeGreaterThan(0);
+    it("vazio pede a data de nascimento", () => {
+      expect(errors({ birthDate: "" }).birthDate).toBe("Informe a data de nascimento");
+    });
+
+    it.each([["31/02/1990"], ["1990-06-15"], ["15/06/90"], ["15-06-1990"], ["abc"]])(
+      "rejeita %j como data de nascimento inválida",
+      (birthDate) => {
+        expect(errors({ birthDate }).birthDate).toBe("Data de nascimento inválida");
+      },
+    );
+
+    it("grava a data em AAAA-MM-DD a partir de DD/MM/AAAA", () => {
+      const result = parse({ birthDate: "15/06/1990" });
+      expect(result.success && result.data.birthDate).toBe("1990-06-15");
     });
 
     it("rejeita data futura", () => {
-      expect(errors({ birthDate: "2026-06-16" }).birthDate).toBe("A data de nascimento não pode ser futura");
+      expect(errors({ birthDate: "16/06/2026" }).birthDate).toBe("A data de nascimento não pode ser futura");
     });
 
     it("rejeita idade atual acima de 120 anos", () => {
-      expect(errors({ birthDate: "1905-06-15" }).birthDate).toBe("A idade atual deve ser de no máximo 120 anos");
+      expect(errors({ birthDate: "15/06/1905" }).birthDate).toBe("A idade atual deve ser de no máximo 120 anos");
     });
 
     it("aceita idade atual de exatamente 120 anos (sem erro de nascimento)", () => {
-      expect(errors({ birthDate: "1906-06-15", retirementAge: "120" }).birthDate).toBeUndefined();
+      expect(errors({ birthDate: "15/06/1906", retirementAge: "120" }).birthDate).toBeUndefined();
     });
 
     it("usa o dia de São Paulo como hoje (23:00 de 15/06 em SP já é 16/06 em UTC)", () => {
       const lateNow = new Date("2026-06-16T02:00:00Z");
-      const result = goalSchema(lateNow).safeParse({ ...valid, birthDate: "1990-06-16", retirementAge: "36" });
+      const result = goalSchema(lateNow).safeParse({ ...valid, birthDate: "16/06/1990", retirementAge: "36" });
       expect(result.success).toBe(true);
     });
 
     it("aceita nascimento hoje", () => {
-      const result = parse({ birthDate: "2026-06-15", retirementAge: "1" });
+      const result = parse({ birthDate: "15/06/2026", retirementAge: "1" });
       expect(result.success).toBe(true);
+    });
+  });
+
+  describe("taxa anual", () => {
+    it.each([
+      ["6", 600],
+      ["8", 800],
+      ["10", 1000],
+    ])("taxa %j vira %d pontos-base", (annualRate, expected) => {
+      const result = parse({ annualRate });
+      expect(result.success && result.data.annualRateBp).toBe(expected);
+    });
+
+    it.each([["7"], [""], ["abc"], ["12"], ["8,0"]])("rejeita %j no campo annualRate", (annualRate) => {
+      expect(errors({ annualRate }).annualRate).toBe("Escolha uma taxa de 6%, 8% ou 10% ao ano");
+    });
+
+    it("rejeita taxa ausente", () => {
+      expect(errors({ annualRate: undefined }).annualRate).toBe("Escolha uma taxa de 6%, 8% ou 10% ao ano");
     });
   });
 
@@ -115,13 +148,13 @@ describe("goalSchema", () => {
 
     it("antes do aniversário a idade atual ainda é a anterior", () => {
       // nasceu em 1990-06-16: tem 35 anos em 2026-06-15, então 36 é válido
-      const result = parse({ birthDate: "1990-06-16", retirementAge: "36" });
+      const result = parse({ birthDate: "16/06/1990", retirementAge: "36" });
       expect(result.success).toBe(true);
     });
   });
 
   it("reporta erro em cada campo inválido ao mesmo tempo", () => {
-    const all = errors({ monthlyIncome: "", saved: "", birthDate: "", retirementAge: "" });
-    expect(Object.keys(all).sort()).toEqual(["birthDate", "monthlyIncome", "retirementAge", "saved"]);
+    const all = errors({ monthlyIncome: "", saved: "", birthDate: "", retirementAge: "", annualRate: "" });
+    expect(Object.keys(all).sort()).toEqual(["annualRate", "birthDate", "monthlyIncome", "retirementAge", "saved"]);
   });
 });

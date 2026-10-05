@@ -215,14 +215,14 @@ T16 → T17 → T18 → T19
 
 **Done when**:
 
-- [ ] Entrada válida (`birthDate: "15/06/1990"`, `annualRate: "8"`) devolve `birthDate: "1990-06-15"` e `annualRateBp: 800`; `"6"` → 600, `"10"` → 1000
-- [ ] `annualRate` `"7"`, `""`, `"abc"` ou ausente rejeita no campo `annualRate` com a mensagem exata "Escolha uma taxa de 6%, 8% ou 10% ao ano"
-- [ ] `"1990-06-15"`, `"31/02/1990"` e `"15/06/90"` rejeitam no campo `birthDate` com "Data de nascimento inválida"; vazio mantém "Informe a data de nascimento"
-- [ ] Data futura, idade atual > 120 e idade de aposentadoria ≤ idade atual seguem rejeitadas com as mensagens atuais (testes existentes migrados para DD/MM/AAAA, valores esperados inalterados)
-- [ ] `saveGoal` grava a taxa escolhida e a data em ISO (teste de integração atualizado); entrada fora do formato não grava
-- [ ] `goal-form.tsx` e `page.tsx` compilam: o formulário envia `annualRate: "8"` e a data em DD/MM/AAAA; a página exibe a data salva com `isoToBR`
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
-- [ ] Test count: testes de taxa e de data novos passam, nenhum existente removido (só migrados de formato)
+- [x] Entrada válida (`birthDate: "15/06/1990"`, `annualRate: "8"`) devolve `birthDate: "1990-06-15"` e `annualRateBp: 800`; `"6"` → 600, `"10"` → 1000
+- [x] `annualRate` `"7"`, `""`, `"abc"` ou ausente rejeita no campo `annualRate` com a mensagem exata "Escolha uma taxa de 6%, 8% ou 10% ao ano"
+- [x] `"1990-06-15"`, `"31/02/1990"` e `"15/06/90"` rejeitam no campo `birthDate` com "Data de nascimento inválida"; vazio mantém "Informe a data de nascimento"
+- [x] Data futura, idade atual > 120 e idade de aposentadoria ≤ idade atual seguem rejeitadas com as mensagens atuais (testes existentes migrados para DD/MM/AAAA, valores esperados inalterados)
+- [x] `saveGoal` grava a taxa escolhida e a data em ISO (teste de integração atualizado); entrada fora do formato não grava
+- [x] `goal-form.tsx` e `page.tsx` compilam: o formulário envia `annualRate: "8"` e a data em DD/MM/AAAA; a página exibe a data salva com `isoToBR`
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
+- [x] Test count: testes de taxa e de data novos passam, nenhum existente removido (só migrados de formato)
 
 **Tests**: unit
 **Gate**: full

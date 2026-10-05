@@ -3,6 +3,7 @@ import { GoalForm } from "@/components/goal-form";
 import { GoalSummary } from "@/components/goal-summary";
 import { PageHeader } from "@/components/page-header";
 import { requireSessionForPage } from "@/lib/auth-guard";
+import { isoToBR } from "@/lib/domain/date-br";
 import { goalsRepo } from "@/lib/db/repos/goals";
 import { summarize } from "@/lib/domain/freedom";
 import { formatBRL } from "@/lib/domain/money";
@@ -30,8 +31,9 @@ export default async function FreedomPage() {
             ? {
                 monthlyIncome: moneyText(goal.monthlyIncomeCents),
                 saved: moneyText(goal.savedCents),
-                birthDate: goal.birthDate,
+                birthDate: isoToBR(goal.birthDate),
                 retirementAge: String(goal.retirementAge),
+                annualRate: "8",
               }
             : undefined
         }

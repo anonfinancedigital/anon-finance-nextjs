@@ -1,10 +1,11 @@
 import { z } from "zod";
-import { ageOn, type YearMonthDay } from "@/lib/domain/freedom";
+import { brToIso } from "@/lib/domain/date-br";
+import { ageOn, ANNUAL_RATES, type YearMonthDay } from "@/lib/domain/freedom";
 import { parseBRL } from "@/lib/domain/money";
-import { isValidCalendarDate } from "@/lib/domain/month";
 
 const MAX_INCOME_CENTS = 100_000_000;
 const MAX_AGE = 120;
+const RATE_MESSAGE = "Escolha uma taxa de 6%, 8% ou 10% ao ano";
 
 const saoPauloDate = new Intl.DateTimeFormat("en-US", {
   timeZone: "America/Sao_Paulo",
@@ -34,6 +35,7 @@ export function goalSchema(now: Date) {
       saved: z.string({ error: "Informe o valor já guardado" }),
       birthDate: z.string({ error: "Informe a data de nascimento" }),
       retirementAge: z.string({ error: "Informe a idade de aposentadoria" }),
+      annualRate: z.string({ error: RATE_MESSAGE }),
     })
     .transform((input, ctx) => {
       const fail = (path: string, message: string) => {
@@ -51,10 +53,11 @@ export function goalSchema(now: Date) {
       const saved = parseBRL(input.saved, { allowZero: true });
       const savedCents = saved.ok ? saved.value : fail("saved", saved.error);
 
-      const birthDate = input.birthDate.trim();
+      const birthText = input.birthDate.trim();
+      const birthDate = brToIso(birthText);
       let currentAge: number | null = null;
-      if (birthDate === "") fail("birthDate", "Informe a data de nascimento");
-      else if (!isValidCalendarDate(birthDate)) fail("birthDate", "Data de nascimento inválida");
+      if (birthText === "") fail("birthDate", "Informe a data de nascimento");
+      else if (birthDate === null) fail("birthDate", "Data de nascimento inválida");
       else if (birthDate > isoOf(todayDate)) fail("birthDate", "A data de nascimento não pode ser futura");
       else {
         currentAge = ageOn(birthDate, todayDate);
@@ -77,10 +80,20 @@ export function goalSchema(now: Date) {
         } else retirementAge = age;
       }
 
-      if (monthlyIncomeCents === null || savedCents === null || currentAge === null || retirementAge === null) {
+      const annualRateBp = ANNUAL_RATES.find((rate) => String(rate / 100) === input.annualRate.trim()) ?? null;
+      if (annualRateBp === null) fail("annualRate", RATE_MESSAGE);
+
+      if (
+        monthlyIncomeCents === null ||
+        savedCents === null ||
+        birthDate === null ||
+        currentAge === null ||
+        retirementAge === null ||
+        annualRateBp === null
+      ) {
         return z.NEVER;
       }
-      return { monthlyIncomeCents, savedCents, birthDate, retirementAge };
+      return { monthlyIncomeCents, savedCents, birthDate, retirementAge, annualRateBp };
     });
 }
 

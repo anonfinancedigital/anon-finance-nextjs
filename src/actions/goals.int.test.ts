@@ -1,5 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { db } from "@/lib/db/client";
 import { goalsRepo } from "@/lib/db/repos/goals";
+import { financialGoal } from "@/lib/db/schema";
 import { createSignedInUser } from "@/test/auth";
 import { setupTestDb } from "@/test/db";
 import { saveGoal } from "./goals";
@@ -16,8 +18,9 @@ setupTestDb();
 const INPUT = {
   monthlyIncome: "10.000,00",
   saved: "150.000,00",
-  birthDate: "1990-06-15",
+  birthDate: "15/06/1990",
   retirementAge: "90",
+  annualRate: "8",
 };
 
 const SAVED = {
@@ -55,6 +58,20 @@ describe("saveGoal", () => {
     expect(await goalsRepo.get(userId)).toEqual({ ...SAVED, savedCents: 0, retirementAge: 95 });
   });
 
+  it("stores the chosen rate and the birth date as AAAA-MM-DD", async () => {
+    expect(await saveGoal({ ...INPUT, annualRate: "6" })).toEqual({ ok: true });
+
+    const [row] = await db.select().from(financialGoal);
+    expect(row).toMatchObject({ userId, annualRateBp: 600, birthDate: "1990-06-15" });
+  });
+
+  it("rejects a birth date in AAAA-MM-DD and writes nothing", async () => {
+    const result = await saveGoal({ ...INPUT, birthDate: "1990-06-15" });
+
+    expect(result).toMatchObject({ ok: false, fieldErrors: { birthDate: "Data de nascimento inválida" } });
+    expect(await goalsRepo.get(userId)).toBeNull();
+  });
+
   it("accepts a zero saved amount", async () => {
     expect(await saveGoal({ ...INPUT, saved: "0" })).toEqual({ ok: true });
     expect((await goalsRepo.get(userId))?.savedCents).toBe(0);
@@ -63,7 +80,8 @@ describe("saveGoal", () => {
   it.each([
     ["monthlyIncome", "0,00"],
     ["saved", "-1"],
-    ["birthDate", "1990-02-31"],
+    ["birthDate", "31/02/1990"],
+    ["annualRate", "7"],
     ["retirementAge", "10"],
   ])("rejects invalid %s with a field error and writes nothing", async (field, value) => {
     const result = await saveGoal({ ...INPUT, [field]: value });
