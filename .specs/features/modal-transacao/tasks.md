@@ -320,12 +320,13 @@ T7 → T8 → T9 → T10 → T11
 
 **Done when**:
 
-- [ ] "Cancelar" fecha o modal sem salvar
-- [ ] O modal não passa de `100dvh - 2rem` e o rodapé fica visível com conteúdo longo
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] "Cancelar" fecha o modal sem salvar
+- [x] O modal não passa de `100dvh - 2rem` e o rodapé fica visível com conteúdo longo
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
 
 **Tests**: none
 **Gate**: build
+**Status**: ✅ Complete
 
 **Commit**: `feat(transactions): wire cancel and layout into new-transaction modal`
 
