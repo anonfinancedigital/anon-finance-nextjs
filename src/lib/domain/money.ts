@@ -6,6 +6,13 @@ export const MAX_CENTS = 99_999_999_999;
 const BRL_PATTERN = /^(\d+|\d{1,3}(?:\.\d{3})+)(?:,(\d{1,2}))?$/;
 
 const brl = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" });
+const compactBrl = new Intl.NumberFormat("pt-BR", {
+  style: "currency",
+  currency: "BRL",
+  notation: "compact",
+  minimumFractionDigits: 0,
+  maximumFractionDigits: 1,
+});
 
 /**
  * Parses a pt-BR amount ("1.234,56", "1234,5", "1234") into integer cents.
@@ -36,6 +43,11 @@ export function parseBRL(input: string, { allowZero = false }: { allowZero?: boo
 /** Formats integer cents as BRL, e.g. 123456 → "R$ 1.234,56". */
 export function formatBRL(cents: number): string {
   return brl.format(cents / 100);
+}
+
+/** Formats integer cents as compact BRL, e.g. 112500000 → "R$ 1,1 mi", 37500000 → "R$ 375 mil". */
+export function formatCompactBRL(cents: number): string {
+  return compactBrl.format(cents / 100);
 }
 
 /** Text for the reference-income field from month income: "5.000,00", or "" when there is none or it exceeds the field limit. */

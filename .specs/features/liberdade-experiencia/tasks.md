@@ -131,10 +131,10 @@ T16 → T17 → T18 → T19
 
 **Done when**:
 
-- [ ] `formatCompactBRL(37_500_000)` contém `375 mil`; `formatCompactBRL(112_500_000)` contém `1,1 mi`; `formatCompactBRL(150_000_000)` contém `1,5 mi` (todos com o símbolo `R$`)
-- [ ] `formatBRL` e `maskBRLInput` seguem idênticos (testes existentes passam sem edição)
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
-- [ ] Test count: 3 testes novos passam, nenhum existente removido
+- [x] `formatCompactBRL(37_500_000)` contém `375 mil`; `formatCompactBRL(112_500_000)` contém `1,1 mi`; `formatCompactBRL(150_000_000)` contém `1,5 mi` (todos com o símbolo `R$`)
+- [x] `formatBRL` e `maskBRLInput` seguem idênticos (testes existentes passam sem edição)
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Test count: 3 testes novos passam, nenhum existente removido
 
 **Tests**: unit
 **Gate**: quick

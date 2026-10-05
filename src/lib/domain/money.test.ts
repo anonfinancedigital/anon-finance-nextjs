@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { formatBRL, maskBRLInput, parseBRL, referenceIncomeText } from "./money";
+import { formatBRL, formatCompactBRL, maskBRLInput, parseBRL, referenceIncomeText } from "./money";
 
 const normalize = (s: string) => s.replace(/\s/g, " ");
 
@@ -108,5 +108,15 @@ describe("referenceIncomeText", () => {
 
   it.each([[0], [-100], [100_000_000_000]])("devolve vazio para %d", (cents) => {
     expect(referenceIncomeText(cents)).toBe(""); // REFINC-03, REFINC-04
+  });
+});
+
+describe("formatCompactBRL", () => {
+  it.each([
+    [37_500_000, "R$ 375 mil"],
+    [112_500_000, "R$ 1,1 mi"],
+    [150_000_000, "R$ 1,5 mi"],
+  ])("%d centavos viram %j", (cents, expected) => {
+    expect(normalize(formatCompactBRL(cents))).toBe(expected);
   });
 });
