@@ -294,6 +294,7 @@ T9 → T10 → T11
 **Depends on**: None
 **Reuses**: `buildMonthlySummary`, `transactionsRepo.monthTotals`, `monthRange`
 **Requirement**: HIST-02, HIST-04, HIST-05
+**Status**: Done
 
 **Tools**:
 
@@ -302,11 +303,11 @@ T9 → T10 → T11
 
 **Done when**:
 
-- [ ] `page.tsx` troca `categoriesRepo.list(userId)` por `categoriesRepo.listForMonth(userId, month)`; filtro de transações recebe as mesmas categorias
-- [ ] Teste de integração: com ganhos e gastos em um mês passado e no corrente, após `replaceSet` alterando percentuais, `buildMonthlySummary` do mês passado devolve metas idênticas às de antes da edição e o do mês corrente usa os novos; mês futuro usa os do corrente
-- [ ] Teste: gasto em mês anterior à criação da categoria aparece com 0% e meta 0; mês anterior sem gasto omite a categoria; soma das metas dos meses passados mantém 100% do conjunto de então
-- [ ] Gráficos e tabela não precisam de mudança (consomem o resumo); build passa
-- [ ] Gate check passes: `npm run build && npm run lint && npm run test:unit && npm run test:int`
+- [x] `page.tsx` troca `categoriesRepo.list(userId)` por `categoriesRepo.listForMonth(userId, month)`; filtro de transações recebe as mesmas categorias
+- [x] Teste de integração: com ganhos e gastos em um mês passado e no corrente, após `replaceSet` alterando percentuais, `buildMonthlySummary` do mês passado devolve metas idênticas às de antes da edição e o do mês corrente usa os novos; mês futuro usa os do corrente
+- [x] Teste: gasto em mês anterior à criação da categoria aparece com 0% e meta 0; mês anterior sem gasto omite a categoria; soma das metas dos meses passados mantém 100% do conjunto de então
+- [x] Gráficos e tabela não precisam de mudança (consomem o resumo); build passa
+- [x] Gate check passes: `npm run build && npm run lint && npm run test:unit && npm run test:int`
 
 **Tests**: integration
 **Gate**: build

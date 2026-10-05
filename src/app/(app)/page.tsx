@@ -31,7 +31,7 @@ export default async function SummaryPage({ searchParams }: PageProps<"/">) {
   const range = monthRange(month);
 
   const [categories, transactions, totals] = await Promise.all([
-    categoriesRepo.list(userId),
+    categoriesRepo.listForMonth(userId, month),
     transactionsRepo.listByMonth(userId, range),
     transactionsRepo.monthTotals(userId, range),
   ]);
