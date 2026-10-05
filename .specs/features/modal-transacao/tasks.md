@@ -292,13 +292,14 @@ T7 → T8 → T9 → T10 → T11
 
 **Done when**:
 
-- [ ] "Excluir" na edição abre a confirmação existente com o mesmo título e descrição da lista
-- [ ] Confirmar chama `deleteTransaction(id, month)` e fecha os dois diálogos; erro mantém a confirmação aberta com `role="alert"`
-- [ ] Cancelar na confirmação volta à edição com os dados preservados; Esc fecha só a camada de cima
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] "Excluir" na edição abre a confirmação existente com o mesmo título e descrição da lista
+- [x] Confirmar chama `deleteTransaction(id, month)` e fecha os dois diálogos; erro mantém a confirmação aberta com `role="alert"`
+- [x] Cancelar na confirmação volta à edição com os dados preservados; Esc fecha só a camada de cima
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
 
 **Tests**: none
 **Gate**: build
+**Status**: ✅ Complete
 
 **Commit**: `feat(transactions): delete from the edit dialog`
 

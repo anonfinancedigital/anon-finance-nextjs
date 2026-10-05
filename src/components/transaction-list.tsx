@@ -1,5 +1,6 @@
 "use client";
 
+import { ArrowDownLeftIcon, ArrowUpRightIcon } from "lucide-react";
 import { useState, useTransition } from "react";
 import { deleteTransaction } from "@/actions/transactions";
 import { TransactionForm } from "@/components/transaction-form";
@@ -47,7 +48,7 @@ export function TransactionList({ transactions, categories, filtered = false, se
 
   if (transactions.length === 0) {
     return (
-      <p className="text-sm text-muted-foreground">
+      <p className="px-6 pb-6 text-sm text-muted-foreground">
         {searching
           ? "Nenhuma transação encontrada para esta busca"
           : filtered
@@ -62,14 +63,17 @@ export function TransactionList({ transactions, categories, filtered = false, se
     const { id, month } = deleting;
     startTransition(async () => {
       const res = await deleteTransaction(id, month);
-      if (res.ok) setDeleting(null);
+      if (res.ok) {
+        setDeleting(null);
+        setEditing(null);
+      }
       else setDeleteError(res.error);
     });
   }
 
   return (
     <>
-      <ul data-testid="transaction-list" className="divide-y rounded-lg border">
+      <ul data-testid="transaction-list" className="divide-y divide-white/[0.06] border-t border-white/[0.06]">
         {transactions.map((t) => {
           const category = t.categoryId ? categoryById.get(t.categoryId) : undefined;
           const subcategory = category?.subcategories.find((s) => s.id === t.subcategoryId);
@@ -77,31 +81,54 @@ export function TransactionList({ transactions, categories, filtered = false, se
             <li
               key={t.id}
               data-testid="transaction-row"
-              className="flex flex-wrap items-center gap-x-3 gap-y-1 px-3 py-2 text-sm"
+              className="flex flex-wrap items-center gap-x-4 gap-y-1 px-6 py-3.5 text-sm"
             >
-              <span className="w-20 tabular-nums text-muted-foreground">{formatDate(t.date)}</span>
-              <span className="min-w-0 flex-1">
-                {t.description ?? (t.kind === "income" ? "Ganho" : "Gasto")}
-                {t.recurring && (
-                  <span
-                    data-testid="recurring-badge"
-                    className="ml-2 rounded-sm bg-muted px-1.5 py-0.5 text-xs text-muted-foreground"
-                  >
-                    Recorrente
-                  </span>
-                )}
-                {category && (
-                  <span className="ml-2 inline-flex items-center gap-1.5 text-muted-foreground">
-                    <span
-                      aria-hidden
-                      className="inline-block size-2.5 shrink-0 rounded-sm"
-                      style={{ background: colorVar(category.color) }}
-                    />
-                    {subcategory ? `${category.name} › ${subcategory.name}` : category.name}
-                  </span>
-                )}
+              <span
+                aria-hidden
+                className={`flex size-9 shrink-0 items-center justify-center rounded-xl ${
+                  t.kind === "income" ? "bg-income/15 text-income" : "bg-white/[0.06] text-muted-foreground"
+                }`}
+              >
+                {t.kind === "income" ? <ArrowDownLeftIcon className="size-4" /> : <ArrowUpRightIcon className="size-4" />}
               </span>
-              <span className="tabular-nums font-medium">
+              <span className="min-w-0 flex-1">
+                <span className="flex flex-wrap items-center gap-2 font-semibold">
+                  {t.description ?? (t.kind === "income" ? "Ganho" : "Gasto")}
+                  {t.recurring && (
+                    <span
+                      data-testid="recurring-badge"
+                      className="rounded-md bg-white/[0.08] px-1.5 py-0.5 text-[10px] font-semibold tracking-wide text-muted-foreground uppercase"
+                    >
+                      Recorrente
+                    </span>
+                  )}
+                </span>
+                <span className="flex flex-wrap items-center gap-1.5 text-xs text-muted-foreground">
+                  <span className="tabular-nums">{formatDate(t.date)}</span>
+                  {category ? (
+                    <>
+                      <span aria-hidden>·</span>
+                      <span
+                        aria-hidden
+                        className="inline-block size-1.5 shrink-0 rounded-full"
+                        style={{ background: colorVar(category.color) }}
+                      />
+                      {subcategory ? `${category.name} › ${subcategory.name}` : category.name}
+                    </>
+                  ) : (
+                    t.kind === "income" && (
+                      <>
+                        <span aria-hidden>·</span>
+                        <span aria-hidden className="inline-block size-1.5 shrink-0 rounded-full bg-income" />
+                        Receita
+                      </>
+                    )
+                  )}
+                </span>
+              </span>
+              <span
+                className={`font-display font-bold tabular-nums ${t.kind === "income" ? "text-income" : "text-foreground"}`}
+              >
                 {t.kind === "income" ? "+" : "−"} {formatBRL(t.amountCents)}
               </span>
               <span className="flex gap-1">
@@ -125,7 +152,7 @@ export function TransactionList({ transactions, categories, filtered = false, se
       </ul>
 
       <Dialog open={editing !== null} onOpenChange={(open) => !open && setEditing(null)}>
-        <DialogContent>
+        <DialogContent className="flex max-h-[calc(100dvh-2rem)] flex-col sm:max-w-md">
           <DialogHeader>
             <DialogTitle>Editar transação</DialogTitle>
           </DialogHeader>
@@ -150,6 +177,11 @@ export function TransactionList({ transactions, categories, filtered = false, se
                 recurrenceEnd: editing.recurrenceEnd ? monthKey(editing.recurrenceEnd) : "",
               }}
               onSaved={() => setEditing(null)}
+              onCancel={() => setEditing(null)}
+              onDelete={() => {
+                setDeleteError(null);
+                setDeleting(editing);
+              }}
             />
           )}
         </DialogContent>
