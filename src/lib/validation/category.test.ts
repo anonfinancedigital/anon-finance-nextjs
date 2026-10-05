@@ -14,16 +14,32 @@ function issues(input: unknown) {
   return result.error.issues.map((issue) => ({ path: issue.path.join("."), message: issue.message }));
 }
 
+describe("categorySetSchema isInvestment", () => {
+  const one = (extra: Record<string, unknown>) => [{ name: "Tudo", percent: "100", color: 1, ...extra }];
+
+  it("defaults to false when the field is missing", () => {
+    expect(categorySetSchema.parse(one({}))[0].isInvestment).toBe(false);
+  });
+
+  it.each([[true], [false]])("keeps %s in the output", (value) => {
+    expect(categorySetSchema.parse(one({ isInvestment: value }))[0].isInvestment).toBe(value);
+  });
+
+  it("rejects a non-boolean value", () => {
+    expect(categorySetSchema.safeParse(one({ isInvestment: "sim" })).success).toBe(false);
+  });
+});
+
 describe("categorySetSchema", () => {
   it("converts a valid set into { name, percentMicro }[], keeping an existing id", () => {
     const input = set("30", "30", "10", "10", "20");
     input[0] = { ...input[0], id: ID } as (typeof input)[0];
     expect(categorySetSchema.parse(input)).toEqual([
-      { id: ID, name: "Cat 1", percentMicro: 30000000, color: 1, subcategories: [] },
-      { name: "Cat 2", percentMicro: 30000000, color: 2, subcategories: [] },
-      { name: "Cat 3", percentMicro: 10000000, color: 3, subcategories: [] },
-      { name: "Cat 4", percentMicro: 10000000, color: 4, subcategories: [] },
-      { name: "Cat 5", percentMicro: 20000000, color: 5, subcategories: [] },
+      { id: ID, name: "Cat 1", percentMicro: 30000000, color: 1, isInvestment: false, subcategories: [] },
+      { name: "Cat 2", percentMicro: 30000000, color: 2, isInvestment: false, subcategories: [] },
+      { name: "Cat 3", percentMicro: 10000000, color: 3, isInvestment: false, subcategories: [] },
+      { name: "Cat 4", percentMicro: 10000000, color: 4, isInvestment: false, subcategories: [] },
+      { name: "Cat 5", percentMicro: 20000000, color: 5, isInvestment: false, subcategories: [] },
     ]);
   });
 

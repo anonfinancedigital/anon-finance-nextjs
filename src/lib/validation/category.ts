@@ -35,6 +35,7 @@ const item = z
     name: z.string({ error: "Informe o nome da categoria" }).trim(),
     percent,
     color,
+    isInvestment: z.boolean().default(false),
     subcategories: z.array(subcategory).default([]),
   })
   .transform(({ percent, ...rest }) => ({ ...rest, percentMicro: percent }));

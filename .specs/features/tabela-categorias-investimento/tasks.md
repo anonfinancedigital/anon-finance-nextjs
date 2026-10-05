@@ -190,12 +190,12 @@ T6 → T7
 
 **Done when**:
 
-- [ ] Item sem o campo resulta em `isInvestment` false
-- [ ] `true` e `false` passam e chegam à saída
-- [ ] Valor não booleano (ex.: "sim") é rejeitado
-- [ ] Teste de integração da action confirma gravação ponta a ponta (`src/actions/categories.int.test.ts`)
-- [ ] Gate check passes: `npm run test:unit && npm run test:int`
-- [ ] Test count: testes existentes + os novos passam (sem remoções)
+- [x] Item sem o campo resulta em `isInvestment` false
+- [x] `true` e `false` passam e chegam à saída
+- [x] Valor não booleano (ex.: "sim") é rejeitado
+- [x] Teste de integração da action confirma gravação ponta a ponta (`src/actions/categories.int.test.ts`)
+- [x] Gate check passes: `npm run test:unit && npm run test:int`
+- [x] Test count: testes existentes + os novos passam (sem remoções)
 
 **Tests**: unit
 **Gate**: full

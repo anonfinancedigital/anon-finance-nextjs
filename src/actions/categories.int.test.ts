@@ -54,6 +54,19 @@ describe("saveCategories", () => {
     expect(revalidatePath).toHaveBeenCalledWith("/");
   });
 
+  it("persists the investment flag end to end", async () => {
+    const input = FIVE.map((c, i) => (i === 4 ? { ...c, isInvestment: true } : c));
+
+    expect(await saveCategories(input)).toEqual({ ok: true });
+    expect((await categoriesRepo.list(userId)).map((c) => [c.name, c.isInvestment])).toEqual([
+      ["Custos fixos", false],
+      ["Conforto", false],
+      ["Metas", false],
+      ["Prazeres", false],
+      ["Liberdade financeira", true],
+    ]);
+  });
+
   it("rejects a set whose sum is not 100% and persists nothing", async () => {
     const input = FIVE.map((c, i) => (i === 1 ? { ...c, percent: "25" } : c));
 
