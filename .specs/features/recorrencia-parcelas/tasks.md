@@ -284,12 +284,12 @@ T5 → T8
 
 **Done when**:
 
-- [ ] Ocorrência com `installment` mostra `N/T` ao lado da descrição e não mostra "Recorrente"
-- [ ] Série "sem data final" mostra "Recorrente"; avulso não mostra selo
-- [ ] Edição preenche Mês inicial com `seriesStart` (ou o mês da data se avulso) e trava quando `seriesStart` ≠ mês da ocorrência
-- [ ] Verificação manual no app (`npm run dev`): série 05/2026–12/2026 mostra 1/8 … 8/8 ao navegar; editar o mês inicial move o início
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
-- [ ] Test count: contagem de testes igual à da task anterior
+- [x] Ocorrência com `installment` mostra `N/T` ao lado da descrição e não mostra "Recorrente"
+- [x] Série "sem data final" mostra "Recorrente"; avulso não mostra selo
+- [x] Edição preenche Mês inicial com `seriesStart` (ou o mês da data se avulso) e trava quando `seriesStart` ≠ mês da ocorrência
+- [ ] Verificação manual no app (pendente: não executada nesta sessão; fica para o usuário) (`npm run dev`): série 05/2026–12/2026 mostra 1/8 … 8/8 ao navegar; editar o mês inicial move o início
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
+- [x] Test count: contagem de testes igual à da task anterior
 
 **Tests**: none
 **Gate**: build

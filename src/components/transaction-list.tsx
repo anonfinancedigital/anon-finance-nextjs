@@ -95,13 +95,22 @@ export function TransactionList({ transactions, categories, filtered = false, se
               <span className="min-w-0 flex-1">
                 <span className="flex flex-wrap items-center gap-2 font-semibold">
                   {t.description ?? (t.kind === "income" ? "Ganho" : "Gasto")}
-                  {t.recurring && (
+                  {t.installment ? (
                     <span
-                      data-testid="recurring-badge"
-                      className="rounded-md bg-subtle px-1.5 py-0.5 text-[10px] font-semibold tracking-wide text-muted-foreground uppercase"
+                      data-testid="installment-badge"
+                      className="rounded-md bg-subtle px-1.5 py-0.5 text-[10px] font-semibold tracking-wide text-muted-foreground tabular-nums"
                     >
-                      Recorrente
+                      {t.installment.number}/{t.installment.total}
                     </span>
+                  ) : (
+                    t.recurring && (
+                      <span
+                        data-testid="recurring-badge"
+                        className="rounded-md bg-subtle px-1.5 py-0.5 text-[10px] font-semibold tracking-wide text-muted-foreground uppercase"
+                      >
+                        Recorrente
+                      </span>
+                    )
                   )}
                 </span>
                 <span className="flex flex-wrap items-center gap-1.5 text-xs text-muted-foreground">
@@ -154,6 +163,7 @@ export function TransactionList({ transactions, categories, filtered = false, se
               categories={categories}
               defaultDate={editing.date}
               month={editing.month}
+              startLocked={editing.seriesStart !== null && editing.seriesStart !== editing.month}
               transaction={{
                 id: editing.id,
                 kind: editing.kind,
@@ -167,6 +177,7 @@ export function TransactionList({ transactions, categories, filtered = false, se
                   : editing.recurrenceEnd === null
                     ? "forever"
                     : "until",
+                recurrenceStart: editing.seriesStart ?? monthKey(editing.date),
                 recurrenceEnd: editing.recurrenceEnd ? monthKey(editing.recurrenceEnd) : "",
               }}
               onSaved={() => setEditing(null)}
