@@ -868,3 +868,103 @@ describe("transactionsRepo subcategory", () => {
     );
   });
 });
+
+describe("transactionsRepo start month of an 'until' series", () => {
+  const month = (key: string) =>
+    monthRange({ year: Number(key.slice(0, 4)), month: Number(key.slice(5, 7)) });
+  const listIn = (key: string) => transactionsRepo.listByMonth(userId, month(key));
+  const stored = async (id: string) =>
+    (await db.select().from(transaction)).find((r) => r.id === id)!;
+  const until = (date: string, start: string, end: string) => ({
+    ...expense(date, 4000),
+    recurrence: "until" as const,
+    recurrenceStartMonth: start,
+    recurrenceEndMonth: end,
+  });
+
+  it("creates the first occurrence on the day of the date in the start month", async () => {
+    const tx = until("2026-04-10", "2026-05", "2026-12");
+    await transactionsRepo.create(userId, tx);
+
+    expect(await stored(tx.id)).toMatchObject({
+      date: "2026-05-10",
+      recurrenceDay: 10,
+      recurrenceEnd: "2026-12-01",
+    });
+    expect(await listIn("2026-04")).toEqual([]);
+    expect((await listIn("2026-05")).map((t) => t.date)).toEqual(["2026-05-10"]);
+    expect((await listIn("2026-12")).map((t) => t.date)).toEqual(["2026-12-10"]);
+  });
+
+  it("clamps day 31 to the last day of a 30-day start month and keeps day 31 as the intended day", async () => {
+    const tx = until("2026-01-31", "2026-04", "2026-06");
+    await transactionsRepo.create(userId, tx);
+
+    expect(await stored(tx.id)).toMatchObject({ date: "2026-04-30", recurrenceDay: 31 });
+    expect((await listIn("2026-05")).map((t) => t.date)).toEqual(["2026-05-31"]);
+  });
+
+  it("ignores the start month for 'forever' and non-recurring rows", async () => {
+    const forever = { ...expense("2026-04-10"), recurrence: "forever" as const, recurrenceStartMonth: "2026-08" };
+    const none = { ...expense("2026-04-12"), recurrence: "none" as const, recurrenceStartMonth: "2026-08" };
+    await transactionsRepo.create(userId, forever);
+    await transactionsRepo.create(userId, none);
+
+    expect((await stored(forever.id)).date).toBe("2026-04-10");
+    expect((await stored(none.id)).date).toBe("2026-04-12");
+  });
+
+  it("moves the start when editing the first month of the series", async () => {
+    const tx = until("2026-04-10", "2026-04", "2026-12");
+    await transactionsRepo.create(userId, tx);
+
+    expect(
+      await transactionsRepo.updateFrom(userId, tx.id, "2026-04", {
+        ...tx,
+        recurrenceStartMonth: "2026-06",
+      }),
+    ).toBe(true);
+
+    expect(await db.$count(transaction)).toBe(1);
+    expect(await stored(tx.id)).toMatchObject({ date: "2026-06-10", recurrenceEnd: "2026-12-01" });
+    expect(await listIn("2026-04")).toEqual([]);
+    expect(await listIn("2026-05")).toEqual([]);
+    expect((await listIn("2026-06")).map((t) => t.date)).toEqual(["2026-06-10"]);
+  });
+
+  it("ignores the start month sent when editing a month in the middle of the series", async () => {
+    const tx = until("2026-04-10", "2026-04", "2026-12");
+    await transactionsRepo.create(userId, tx);
+
+    await transactionsRepo.updateFrom(userId, tx.id, "2026-08", {
+      ...tx,
+      date: "2026-08-10",
+      amountCents: 5000,
+      recurrenceStartMonth: "2026-02",
+    });
+
+    const rows = await db.select().from(transaction);
+    expect(rows.map((r) => [r.date, r.recurrenceEnd, r.amountCents]).sort()).toEqual([
+      ["2026-04-10", "2026-07-01", 4000],
+      ["2026-08-10", "2026-12-01", 5000],
+    ]);
+  });
+
+  it("starts at the chosen month when a single row becomes an 'until' series", async () => {
+    const single = expense("2026-04-10", 4000);
+    await transactionsRepo.create(userId, single);
+
+    await transactionsRepo.updateFrom(userId, single.id, "2026-04", {
+      ...single,
+      recurrence: "until",
+      recurrenceStartMonth: "2026-05",
+      recurrenceEndMonth: "2026-07",
+    });
+
+    expect(await stored(single.id)).toMatchObject({
+      date: "2026-05-10",
+      recurring: true,
+      recurrenceEnd: "2026-07-01",
+    });
+  });
+});

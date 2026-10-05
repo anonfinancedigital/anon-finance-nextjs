@@ -23,6 +23,8 @@ export type TransactionData = {
   description?: string | null;
   /** Omitted = "none". */
   recurrence?: "none" | "forever" | "until";
+  /** AAAA-MM first month of the series; read only when `recurrence` is "until". */
+  recurrenceStartMonth?: string | null;
   /** AAAA-MM, inclusive; read only when `recurrence` is "until". */
   recurrenceEndMonth?: string | null;
 };
@@ -86,12 +88,20 @@ const applicableInMonth = (userId: string, range: MonthRange) =>
     ),
   );
 
-/** Recurrence columns of a new series starting at `tx.date`, whose id is `id`. */
+const NEW_SERIES = { id: "", seriesId: null, date: "", endMonth: null };
+
+/**
+ * Recurrence columns of a new series, whose id is `id`. It starts at `tx.date`, or, for "until",
+ * on the day of `tx.date` in `recurrenceStartMonth`.
+ */
 const recurrenceFields = (id: string, tx: TransactionData) => {
   const recurring = (tx.recurrence ?? "none") !== "none";
+  const day = Number(tx.date.slice(8, 10));
+  const start = tx.recurrence === "until" ? tx.recurrenceStartMonth : null;
   return {
     recurring,
-    recurrenceDay: recurring ? Number(tx.date.slice(8, 10)) : null,
+    date: start ? occurrenceDate({ ...NEW_SERIES, recurringDay: day }, start) : tx.date,
+    recurrenceDay: recurring ? day : null,
     recurrenceEnd:
       tx.recurrence === "until" && tx.recurrenceEndMonth ? `${tx.recurrenceEndMonth}-01` : null,
     seriesId: recurring ? id : null,
@@ -186,6 +196,7 @@ async function updateFrom(
         date: data.date,
         recurring,
         endMonth: data.recurrence === "until" ? (data.recurrenceEndMonth ?? null) : null,
+        startMonth: data.recurrence === "until" ? (data.recurrenceStartMonth ?? null) : null,
       },
     });
     const now = sql`clock_timestamp()`;

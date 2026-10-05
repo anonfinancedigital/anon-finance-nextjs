@@ -173,12 +173,12 @@ T5 → T8
 
 **Done when**:
 
-- [ ] `TransactionData.recurrenceStartMonth` opcional; `create` "until" grava `date` = dia da Data no mês inicial (dia 31 em mês de 30 dias → 30) e `recurrenceDay` = dia da Data
-- [ ] `create` "none"/"forever" segue usando a Data como está
-- [ ] `listByMonth` não mostra a série em mês anterior ao inicial e mostra a 1ª ocorrência no mês inicial
-- [ ] `updateFrom` no primeiro mês move o início; no meio da série ignora o início enviado; avulso → "until" usa o início
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
-- [ ] Test count: ≥ 5 testes de integração novos, nenhum removido
+- [x] `TransactionData.recurrenceStartMonth` opcional; `create` "until" grava `date` = dia da Data no mês inicial (dia 31 em mês de 30 dias → 30) e `recurrenceDay` = dia da Data
+- [x] `create` "none"/"forever" segue usando a Data como está
+- [x] `listByMonth` não mostra a série em mês anterior ao inicial e mostra a 1ª ocorrência no mês inicial
+- [x] `updateFrom` no primeiro mês move o início; no meio da série ignora o início enviado; avulso → "until" usa o início
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
+- [x] Test count: ≥ 5 testes de integração novos, nenhum removido
 
 **Tests**: integration
 **Gate**: full
