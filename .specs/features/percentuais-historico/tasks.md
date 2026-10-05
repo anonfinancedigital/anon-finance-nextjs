@@ -144,6 +144,7 @@ T9 → T10 → T11
 **Depends on**: None
 **Reuses**: `drizzle/0006_percent_micro.sql` (migração com SQL de dados editado à mão), `src/lib/db/schema.int.test.ts`
 **Requirement**: HIST-06, HIST-08
+**Status**: Done
 
 **Tools**:
 
@@ -152,11 +153,11 @@ T9 → T10 → T11
 
 **Done when**:
 
-- [ ] Migração gerada com `drizzle-kit` e editada: cria tabela (PK `(category_id, from_month)`, checks de faixa 1..100000000 e dia 1), `INSERT INTO category_percent SELECT id, '0001-01-01', percent_micro FROM category`, adiciona `deleted_from date`, recria `category_user_lower_name_unique` como parcial `WHERE deleted_from IS NULL`, `percent_micro DROP NOT NULL`
-- [ ] Teste de migração: aplica `0000`..`0006` em um schema Postgres de teste isolado, insere categorias, aplica a `0007` e confirma uma vigência `0001-01-01` por categoria com o mesmo percentual
-- [ ] Testes de constraint: percentual fora de 1..100000000 e `from_month` fora do dia 1 rejeitados; segunda linha com mesma `(category_id, from_month)` rejeitada; apagar categoria apaga as vigências; nome de categoria com `deleted_from` preenchido pode ser reutilizado, nome ativo duplicado continua rejeitado
-- [ ] Gate check passes: `npm run build && npm run lint && npm run test:unit && npm run test:int`
-- [ ] Test count: testes de integração existentes seguem verdes (nenhum removido)
+- [x] Migração gerada com `drizzle-kit` e editada: cria tabela (PK `(category_id, from_month)`, checks de faixa 1..100000000 e dia 1), `INSERT INTO category_percent SELECT id, '0001-01-01', percent_micro FROM category`, adiciona `deleted_from date`, recria `category_user_lower_name_unique` como parcial `WHERE deleted_from IS NULL`, `percent_micro DROP NOT NULL`
+- [x] Teste de migração: aplica `0000`..`0006` em um schema Postgres de teste isolado, insere categorias, aplica a `0007` e confirma uma vigência `0001-01-01` por categoria com o mesmo percentual
+- [x] Testes de constraint: percentual fora de 1..100000000 e `from_month` fora do dia 1 rejeitados; segunda linha com mesma `(category_id, from_month)` rejeitada; apagar categoria apaga as vigências; nome de categoria com `deleted_from` preenchido pode ser reutilizado, nome ativo duplicado continua rejeitado
+- [x] Gate check passes: `npm run build && npm run lint && npm run test:unit && npm run test:int`
+- [x] Test count: testes de integração existentes seguem verdes (nenhum removido)
 
 **Tests**: integration
 **Gate**: build

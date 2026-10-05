@@ -5,7 +5,7 @@ import { describe, expect, it } from "vitest";
 import { setupTestDb } from "@/test/db";
 import { db, pool } from "./client";
 import { user } from "./auth-schema";
-import { category, subcategory, transaction } from "./schema";
+import { category, categoryPercent, subcategory, transaction } from "./schema";
 
 setupTestDb();
 
@@ -51,7 +51,7 @@ describe("category constraints", () => {
     await createCategory(userId, "Mínimo", 1);
     await createCategory(userId, "Máximo", 100000000);
     const rows = await db.select().from(category).where(eq(category.userId, userId));
-    expect(rows.map((r) => r.percentMicro).sort((a, b) => a - b)).toEqual([1, 100000000]);
+    expect(rows.map((r) => r.percentMicro).sort((a, b) => a! - b!)).toEqual([1, 100000000]);
   });
 
   it("rejects percent_micro 0", async () => {
@@ -371,5 +371,74 @@ describe("transaction recurrence constraints", () => {
     });
     const [row] = await db.select().from(transaction);
     expect(row).toMatchObject({ kind: "income", categoryId: null, recurring: true, seriesId: id });
+  });
+});
+
+describe("category_percent constraints", () => {
+  const insertVersion = (categoryId: string, fromMonth: string, percentMicro: number) =>
+    db.insert(categoryPercent).values({ categoryId, fromMonth, percentMicro });
+
+  it("accepts percent_micro at the bounds 1 and 100000000", async () => {
+    const a = await createCategory(await createUser(), "Mínimo");
+    const b = await createCategory(await createUser(), "Máximo");
+    await insertVersion(a.id, "2026-10-01", 1);
+    await insertVersion(b.id, "2026-10-01", 100000000);
+    expect(await db.$count(categoryPercent)).toBe(2);
+  });
+
+  it("rejects percent_micro 0 and 100000001", async () => {
+    const { id } = await createCategory(await createUser());
+    expect(await pgErrorCode(insertVersion(id, "2026-10-01", 0))).toBe(CHECK_VIOLATION);
+    expect(await pgErrorCode(insertVersion(id, "2026-10-01", 100000001))).toBe(CHECK_VIOLATION);
+  });
+
+  it("accepts the 0001-01-01 sentinel and rejects a from_month that is not day 1", async () => {
+    const { id } = await createCategory(await createUser());
+    await insertVersion(id, "0001-01-01", 10000000);
+    expect(await pgErrorCode(insertVersion(id, "2026-10-15", 10000000))).toBe(CHECK_VIOLATION);
+  });
+
+  it("rejects a second row with the same (category_id, from_month)", async () => {
+    const { id } = await createCategory(await createUser());
+    await insertVersion(id, "2026-10-01", 10000000);
+    expect(await pgErrorCode(insertVersion(id, "2026-10-01", 20000000))).toBe(UNIQUE_VIOLATION);
+    await insertVersion(id, "2026-11-01", 20000000);
+  });
+
+  it("rejects a version for a category that does not exist", async () => {
+    expect(await pgErrorCode(insertVersion(randomUUID(), "2026-10-01", 10000000))).toBe(FK_VIOLATION);
+  });
+
+  it("deleting the category deletes its versions", async () => {
+    const { id } = await createCategory(await createUser());
+    await insertVersion(id, "2026-10-01", 10000000);
+    await insertVersion(id, "2026-11-01", 20000000);
+    await db.delete(category).where(eq(category.id, id));
+    expect(await db.$count(categoryPercent)).toBe(0);
+  });
+});
+
+describe("category soft delete name reuse", () => {
+  it("allows a name already used by a category with deleted_from set", async () => {
+    const userId = await createUser();
+    const old = await createCategory(userId, "Lazer");
+    await db.update(category).set({ deletedFrom: "2026-10-01" }).where(eq(category.id, old.id));
+    await createCategory(userId, "lazer");
+    expect(await db.$count(category, eq(category.userId, userId))).toBe(2);
+  });
+
+  it("still rejects a duplicate name between active categories", async () => {
+    const userId = await createUser();
+    await createCategory(userId, "Lazer");
+    expect(await pgErrorCode(createCategory(userId, "LAZER"))).toBe(UNIQUE_VIOLATION);
+  });
+
+  it("allows deleting two categories with the same name over time", async () => {
+    const userId = await createUser();
+    const first = await createCategory(userId, "Lazer");
+    await db.update(category).set({ deletedFrom: "2026-09-01" }).where(eq(category.id, first.id));
+    const second = await createCategory(userId, "Lazer");
+    await db.update(category).set({ deletedFrom: "2026-10-01" }).where(eq(category.id, second.id));
+    expect(await db.$count(category, eq(category.userId, userId))).toBe(2);
   });
 });

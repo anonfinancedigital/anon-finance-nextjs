@@ -9,6 +9,7 @@ import {
   integer,
   pgEnum,
   pgTable,
+  primaryKey,
   serial,
   smallint,
   text,
@@ -28,7 +29,10 @@ export const category = pgTable(
       .notNull()
       .references(() => user.id, { onDelete: "cascade" }),
     name: varchar("name", { length: 40 }).notNull(),
-    percentMicro: integer("percent_micro").notNull(),
+    /** Legacy: the percent now lives in `category_percent`; the column is dropped in 0008. */
+    percentMicro: integer("percent_micro"),
+    /** First day of the month the category was deleted (AAAA-MM-01); null = active. */
+    deletedFrom: date("deleted_from", { mode: "string" }),
     /** Index 1..8 of the category color palette (`--viz-1` … `--viz-8`). */
     color: integer("color").notNull(),
     // clock_timestamp() (not now()) so rows inserted in the same DB transaction keep their creation order.
@@ -39,7 +43,27 @@ export const category = pgTable(
   (t) => [
     check("category_percent_micro_range", sql`${t.percentMicro} BETWEEN 1 AND 100000000`),
     check("category_color_range", sql`${t.color} BETWEEN 1 AND 8`),
-    uniqueIndex("category_user_lower_name_unique").on(t.userId, sql`lower(${t.name})`),
+    uniqueIndex("category_user_lower_name_unique")
+      .on(t.userId, sql`lower(${t.name})`)
+      .where(sql`${t.deletedFrom} IS NULL`),
+  ],
+);
+
+/** One row per percent change; in force for month M = the row with the greatest from_month <= M. */
+export const categoryPercent = pgTable(
+  "category_percent",
+  {
+    categoryId: uuid("category_id")
+      .notNull()
+      .references(() => category.id, { onDelete: "cascade" }),
+    /** First day of the month (AAAA-MM-01); 0001-01-01 = since ever. */
+    fromMonth: date("from_month", { mode: "string" }).notNull(),
+    percentMicro: integer("percent_micro").notNull(),
+  },
+  (t) => [
+    primaryKey({ columns: [t.categoryId, t.fromMonth] }),
+    check("category_percent_micro_range", sql`${t.percentMicro} BETWEEN 1 AND 100000000`),
+    check("category_percent_month_start", sql`EXTRACT(DAY FROM ${t.fromMonth}) = 1`),
   ],
 );
 

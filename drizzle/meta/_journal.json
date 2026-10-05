@@ -50,6 +50,13 @@
       "when": 1791160000000,
       "tag": "0006_percent_micro",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1791202869507,
+      "tag": "0007_category_percent_history",
+      "breakpoints": true
     }
   ]
 }

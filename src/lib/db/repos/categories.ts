@@ -1,4 +1,4 @@
-import { and, asc, count, eq, inArray } from "drizzle-orm";
+import { and, asc, count, eq, inArray, sql } from "drizzle-orm";
 import {
   type Category,
   type CategorySetResult,
@@ -20,7 +20,7 @@ export type CategoryItem = {
 const columns = {
   id: category.id,
   name: category.name,
-  percentMicro: category.percentMicro,
+  percentMicro: sql<number>`coalesce(${category.percentMicro}, 0)`.mapWith(Number),
   color: category.color,
 };
 
