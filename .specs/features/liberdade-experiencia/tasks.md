@@ -597,13 +597,13 @@ T16 → T17 → T18 → T19
 
 **Done when**:
 
-- [ ] `GoalExperience({ saved, initial, nowIso })` com `"use client"`; `summary` inicial é `summarize(saved, new Date(nowIso))` ou `null`
-- [ ] Rascunho válido recalcula o resumo na hora; rascunho inválido mantém o último resultado válido
-- [ ] Cancelar volta o resumo ao objetivo salvo, ou a `null` sem objetivo salvo
-- [ ] Sem objetivo salvo e sem rascunho válido, só o formulário aparece
-- [ ] Nenhum import de servidor no arquivo nem nos módulos que ele usa no cliente (AD-008): `npm run build` passa
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
-- [ ] Test count: nenhum teste novo (UI = none); contagem anterior mantida
+- [x] `GoalExperience({ saved, initial, nowIso })` com `"use client"`; `summary` inicial é `summarize(saved, new Date(nowIso))` ou `null`
+- [x] Rascunho válido recalcula o resumo na hora; rascunho inválido mantém o último resultado válido
+- [x] Cancelar volta o resumo ao objetivo salvo, ou a `null` sem objetivo salvo
+- [x] Sem objetivo salvo e sem rascunho válido, só o formulário aparece
+- [x] Nenhum import de servidor no arquivo nem nos módulos que ele usa no cliente (AD-008): `npm run build` passa
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
+- [x] Test count: nenhum teste novo (UI = none); contagem anterior mantida
 
 **Tests**: none
 **Gate**: build
