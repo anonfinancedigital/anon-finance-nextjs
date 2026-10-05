@@ -3,7 +3,7 @@
   "promote_threshold": 2,
   "window_days": 45,
   "quarantine_threshold": 2,
-  "next_id": 8,
+  "next_id": 12,
   "lessons": [
     {
       "id": "L-001",
@@ -132,6 +132,78 @@
       ],
       "created": "2026-10-04T23:22:57Z",
       "last_seen": "2026-10-04T23:22:57Z"
+    },
+    {
+      "id": "L-008",
+      "key": "ac_gap::when a select falls back to its placeholder for an unknown stored id submit the placeholder value instead of the stale id",
+      "text": "When a select falls back to its placeholder for an unknown stored id, submit the placeholder value instead of the stale id",
+      "signal": "ac_gap",
+      "scope": "ui",
+      "status": "candidate",
+      "features": [
+        "modal-transacao"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "MODT-02 edge categoria removida; src/components/transaction-form.tsx:108 (ui)"
+      ],
+      "created": "2026-10-05T11:59:39Z",
+      "last_seen": "2026-10-05T11:59:39Z"
+    },
+    {
+      "id": "L-009",
+      "key": "spec_precision_gap::when a spec positions a control at an opposite edge state its placement in the stacked mobile layout too",
+      "text": "When a spec positions a control at an opposite edge, state its placement in the stacked mobile layout too",
+      "signal": "spec_precision_gap",
+      "scope": "ui",
+      "status": "candidate",
+      "features": [
+        "modal-transacao"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "MODT-08 AC8; src/components/transaction-form.tsx:342 (ui)"
+      ],
+      "created": "2026-10-05T11:59:39Z",
+      "last_seen": "2026-10-05T11:59:39Z"
+    },
+    {
+      "id": "L-010",
+      "key": "spec_precision_gap::when a goal is a relative size reduction record the baseline measurement in the spec",
+      "text": "When a goal is a relative size reduction, record the baseline measurement in the spec",
+      "signal": "spec_precision_gap",
+      "scope": "ui",
+      "status": "candidate",
+      "features": [
+        "modal-transacao"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "Goals altura; .specs/features/modal-transacao/tasks.md:606 (ui)"
+      ],
+      "created": "2026-10-05T11:59:39Z",
+      "last_seen": "2026-10-05T11:59:39Z"
+    },
+    {
+      "id": "L-011",
+      "key": "spec_precision_gap::when a spec disables controls while an action is pending name which component owns that pending state",
+      "text": "When a spec disables controls while an action is pending, name which component owns that pending state",
+      "signal": "spec_precision_gap",
+      "scope": "ui",
+      "status": "candidate",
+      "features": [
+        "modal-transacao"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "MODT-07 AC7; src/components/transaction-list.tsx:212 (ui)"
+      ],
+      "created": "2026-10-05T11:59:39Z",
+      "last_seen": "2026-10-05T11:59:39Z"
     }
   ]
 }

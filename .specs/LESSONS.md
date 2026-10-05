@@ -54,6 +54,30 @@ Seen once or not yet corroborated. Tracked, not trusted.
 - evidence: mutant V10; src/lib/validation/goal.ts:10 (validation)
 - last seen: 2026-10-04T23:22:57Z
 
+### L-008 - When a select falls back to its placeholder for an unknown stored id, submit the placeholder value instead of the stale id
+- signal: `ac_gap` · recurrence: 1 feature(s) · scope: `ui` · harmful: 0
+- features: modal-transacao
+- evidence: MODT-02 edge categoria removida; src/components/transaction-form.tsx:108 (ui)
+- last seen: 2026-10-05T11:59:39Z
+
+### L-009 - When a spec positions a control at an opposite edge, state its placement in the stacked mobile layout too
+- signal: `spec_precision_gap` · recurrence: 1 feature(s) · scope: `ui` · harmful: 0
+- features: modal-transacao
+- evidence: MODT-08 AC8; src/components/transaction-form.tsx:342 (ui)
+- last seen: 2026-10-05T11:59:39Z
+
+### L-010 - When a goal is a relative size reduction, record the baseline measurement in the spec
+- signal: `spec_precision_gap` · recurrence: 1 feature(s) · scope: `ui` · harmful: 0
+- features: modal-transacao
+- evidence: Goals altura; .specs/features/modal-transacao/tasks.md:606 (ui)
+- last seen: 2026-10-05T11:59:39Z
+
+### L-011 - When a spec disables controls while an action is pending, name which component owns that pending state
+- signal: `spec_precision_gap` · recurrence: 1 feature(s) · scope: `ui` · harmful: 0
+- features: modal-transacao
+- evidence: MODT-07 AC7; src/components/transaction-list.tsx:212 (ui)
+- last seen: 2026-10-05T11:59:39Z
+
 ## Quarantined (failed when applied - ignore)
 
 A confirmed lesson that recurred alongside failure. Kept for the maintainer to review.
