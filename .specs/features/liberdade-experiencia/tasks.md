@@ -304,14 +304,14 @@ T16 → T17 → T18 → T19
 
 **Done when**:
 
-- [ ] Renda R$ 10.000,00, guardado 0, 8%, 240 meses, aposentadoria aos 60: último ponto com `totalCents` 150_000_104, `investedCents` 63_269_040 e `interestCents` 86_731_064; `interestSharePct` = 58
-- [ ] Pontos em m = 0, 12, … 228 e 240 (21 pontos); com prazo de 18 meses, pontos em 0, 12 e 18; com prazo de 12 meses, pontos em 0 e 12 (sem duplicar)
-- [ ] `investedCents = guardado + aporte × m` e `interestCents = totalCents − investedCents` em todo ponto, sempre ≥ 0
-- [ ] `ageYears` = aposentadoria − ⌈(prazo − m) ÷ 12⌉ (ponto final = idade de aposentadoria) e `age` = aposentadoria − (prazo − m) ÷ 12
-- [ ] Prazo 0: `timeline` vazia e `interestSharePct` nulo
-- [ ] Aporte 0 (guardado ≥ alvo): investido constante em todo ponto, todo o crescimento em rendimentos
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
-- [ ] Test count: um teste por AC e Edge Case acima, todos passam
+- [x] Renda R$ 10.000,00, guardado 0, 8%, 240 meses, aposentadoria aos 60: último ponto com `totalCents` 150_000_104, `investedCents` 63_269_040 e `interestCents` 86_731_064; `interestSharePct` = 58
+- [x] Pontos em m = 0, 12, … 228 e 240 (21 pontos); com prazo de 18 meses, pontos em 0, 12 e 18; com prazo de 12 meses, pontos em 0 e 12 (sem duplicar)
+- [x] `investedCents = guardado + aporte × m` e `interestCents = totalCents − investedCents` em todo ponto, sempre ≥ 0
+- [x] `ageYears` = aposentadoria − ⌈(prazo − m) ÷ 12⌉ (ponto final = idade de aposentadoria) e `age` = aposentadoria − (prazo − m) ÷ 12
+- [x] Prazo 0: `timeline` vazia e `interestSharePct` nulo
+- [x] Aporte 0 (guardado ≥ alvo): investido constante em todo ponto, todo o crescimento em rendimentos
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Test count: um teste por AC e Edge Case acima, todos passam
 
 **Tests**: unit
 **Gate**: quick

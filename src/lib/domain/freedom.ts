@@ -118,6 +118,66 @@ export function projectMilestones(input: {
   });
 }
 
+export type TimelinePoint = {
+  /** Meses a partir de hoje. */
+  months: number;
+  /** Idade fracionária (eixo do gráfico). */
+  age: number;
+  /** Idade em anos completos. */
+  ageYears: number;
+  investedCents: number;
+  interestCents: number;
+  totalCents: number;
+};
+
+/** Patrimônio projetado em `m` meses: guardado × (1+i)^m + aporte × ((1+i)^m − 1) ÷ i, ao centavo. */
+export function projectedCents(
+  input: { savedCents: number; monthlyCents: number; annualRateBp: number },
+  m: number,
+): number {
+  const rate = monthlyRate(input.annualRateBp);
+  const growth = (1 + rate) ** m;
+  return Math.round(input.savedCents * growth + (input.monthlyCents * (growth - 1)) / rate);
+}
+
+/**
+ * Evolução do patrimônio pagando o aporte necessário: um ponto por ano completo a partir de hoje
+ * (meses 0, 12, 24 …) e um ponto final no prazo. Vazia sem prazo ou sem aporte definido.
+ */
+export function projectTimeline(input: {
+  savedCents: number;
+  months: number;
+  monthlyCents: number | null;
+  retirementAge: number;
+  annualRateBp: number;
+}): TimelinePoint[] {
+  const { savedCents, months, monthlyCents, retirementAge, annualRateBp } = input;
+  if (monthlyCents === null || months === 0) return [];
+
+  const marks: number[] = [];
+  for (let m = 0; m < months; m += 12) marks.push(m);
+  marks.push(months);
+
+  return marks.map((m) => {
+    const totalCents = projectedCents({ savedCents, monthlyCents, annualRateBp }, m);
+    const investedCents = savedCents + monthlyCents * m;
+    return {
+      months: m,
+      age: retirementAge - (months - m) / 12,
+      ageYears: retirementAge - Math.ceil((months - m) / 12),
+      investedCents,
+      interestCents: totalCents - investedCents,
+      totalCents,
+    };
+  });
+}
+
+/** Participação dos rendimentos no patrimônio do último ponto, em % inteiro; `null` sem pontos. */
+export function interestSharePct(timeline: TimelinePoint[]): number | null {
+  const last = timeline.at(-1);
+  return last ? Math.round((last.interestCents * 100) / last.totalCents) : null;
+}
+
 export type GoalSummary = {
   monthlyIncomeCents: number;
   annualRateBp: AnnualRateBp;
@@ -129,6 +189,8 @@ export type GoalSummary = {
   /** `null` quando o prazo acabou e o guardado ainda não alcança o alvo ("Prazo encerrado"). */
   monthlyCents: number | null;
   milestones: Milestone[];
+  timeline: TimelinePoint[];
+  interestSharePct: number | null;
 };
 
 /** Resumo calculado na leitura a partir do objetivo salvo e de `now`. */
@@ -148,6 +210,14 @@ export function summarize(goal: Goal, now: Date): GoalSummary {
     });
   }
 
+  const timeline = projectTimeline({
+    savedCents: goal.savedCents,
+    months,
+    monthlyCents,
+    retirementAge: goal.retirementAge,
+    annualRateBp: goal.annualRateBp,
+  });
+
   return {
     monthlyIncomeCents: goal.monthlyIncomeCents,
     annualRateBp: goal.annualRateBp,
@@ -165,5 +235,7 @@ export function summarize(goal: Goal, now: Date): GoalSummary {
       retirementAge: goal.retirementAge,
       annualRateBp: goal.annualRateBp,
     }),
+    timeline,
+    interestSharePct: interestSharePct(timeline),
   };
 }

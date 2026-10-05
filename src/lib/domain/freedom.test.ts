@@ -3,7 +3,9 @@ import {
   ageOn,
   ANNUAL_RATES,
   DEFAULT_ANNUAL_RATE_BP,
+  interestSharePct,
   monthlyRate,
+  projectTimeline,
   monthsUntilRetirement,
   projectMilestones,
   progressBp,
@@ -307,5 +309,105 @@ describe("summarize por taxa", () => {
     const summary = summarize({ ...goal, monthlyIncomeCents: 2_000_000, annualRateBp: 1000 }, now);
     expect(summary.monthlyIncomeCents).toBe(2_000_000);
     expect(summary.annualRateBp).toBe(1000);
+  });
+});
+
+describe("projectTimeline", () => {
+  // renda R$ 10.000,00, guardado 0, 8%, 240 meses, aposentadoria aos 60
+  const base = { savedCents: 0, months: 240, monthlyCents: 263_621, retirementAge: 60, annualRateBp: 800 };
+
+  it("último ponto: total R$ 1.500.001,04, investido R$ 632.690,40 e rendimentos R$ 867.310,64", () => {
+    const last = projectTimeline(base).at(-1);
+    expect(last).toMatchObject({
+      months: 240,
+      totalCents: 150_000_104,
+      investedCents: 63_269_040,
+      interestCents: 86_731_064,
+    });
+  });
+
+  it("participação dos rendimentos no último ponto é 58%", () => {
+    expect(interestSharePct(projectTimeline(base))).toBe(58);
+  });
+
+  it("pontos a cada 12 meses a partir de hoje, mais o ponto final (21 pontos em 240 meses)", () => {
+    const months = projectTimeline(base).map((p) => p.months);
+    expect(months).toHaveLength(21);
+    expect(months.slice(0, 3)).toEqual([0, 12, 24]);
+    expect(months.slice(-2)).toEqual([228, 240]);
+  });
+
+  it("prazo de 18 meses: pontos em 0, 12 e 18", () => {
+    expect(projectTimeline({ ...base, months: 18 }).map((p) => p.months)).toEqual([0, 12, 18]);
+  });
+
+  it("prazo de 12 meses: pontos em 0 e 12, sem duplicar", () => {
+    expect(projectTimeline({ ...base, months: 12 }).map((p) => p.months)).toEqual([0, 12]);
+  });
+
+  it("prazo menor que 12 meses: só o ponto inicial e o final", () => {
+    expect(projectTimeline({ ...base, months: 5 }).map((p) => p.months)).toEqual([0, 5]);
+  });
+
+  it("investido = guardado + aporte × meses e rendimentos = total − investido, nunca negativo", () => {
+    const points = projectTimeline({ ...base, savedCents: 15_000_000 });
+    for (const point of points) {
+      expect(point.investedCents).toBe(15_000_000 + 263_621 * point.months);
+      expect(point.interestCents).toBe(point.totalCents - point.investedCents);
+      expect(point.interestCents).toBeGreaterThanOrEqual(0);
+    }
+  });
+
+  it("idade em anos completos = aposentadoria − ⌈(prazo − meses) ÷ 12⌉; o ponto final é a idade de aposentadoria", () => {
+    const points = projectTimeline(base);
+    expect(points[0].ageYears).toBe(40);
+    expect(points.at(-1)?.ageYears).toBe(60);
+    const short = projectTimeline({ ...base, months: 18 });
+    expect(short.map((p) => p.ageYears)).toEqual([58, 59, 60]);
+  });
+
+  it("idade do eixo = aposentadoria − (prazo − meses) ÷ 12", () => {
+    const short = projectTimeline({ ...base, months: 18 });
+    expect(short.map((p) => p.age)).toEqual([58.5, 59.5, 60]);
+  });
+
+  it("prazo 0: linha do tempo vazia e participação nula", () => {
+    const empty = projectTimeline({ ...base, months: 0, monthlyCents: null });
+    expect(empty).toEqual([]);
+    expect(interestSharePct(empty)).toBeNull();
+  });
+
+  it("aporte 0: investido constante e todo o crescimento em rendimentos", () => {
+    const points = projectTimeline({ ...base, savedCents: 200_000_000, monthlyCents: 0, months: 36 });
+    expect(points.every((p) => p.investedCents === 200_000_000)).toBe(true);
+    expect(points.at(-1)?.interestCents).toBe(points.at(-1)!.totalCents - 200_000_000);
+    expect(points.at(-1)!.interestCents).toBeGreaterThan(0);
+  });
+
+  it("summarize inclui a linha do tempo e a participação dos rendimentos", () => {
+    const goal = {
+      monthlyIncomeCents: 1_000_000,
+      savedCents: 0,
+      birthDate: "1986-06-15",
+      retirementAge: 60,
+      annualRateBp: 800 as const,
+    };
+    const summary = summarize(goal, new Date("2026-06-15T15:00:00Z"));
+    expect(summary.timeline).toHaveLength(21);
+    expect(summary.timeline.at(-1)?.totalCents).toBe(150_000_104);
+    expect(summary.interestSharePct).toBe(58);
+  });
+
+  it("summarize sem prazo: linha do tempo vazia", () => {
+    const goal = {
+      monthlyIncomeCents: 1_000_000,
+      savedCents: 15_000_000,
+      birthDate: "1966-06-20",
+      retirementAge: 60,
+      annualRateBp: 800 as const,
+    };
+    const summary = summarize(goal, new Date("2026-06-15T15:00:00Z"));
+    expect(summary.timeline).toEqual([]);
+    expect(summary.interestSharePct).toBeNull();
   });
 });
