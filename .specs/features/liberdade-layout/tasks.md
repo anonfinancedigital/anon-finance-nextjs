@@ -117,12 +117,12 @@ T5 → T6 → T7 → T8
 
 **Done when**:
 
-- [ ] Nenhum percentual de progresso em texto visível no componente (o `aria-label` da barra mantém "Progresso do objetivo: {percentual}")
-- [ ] Cada checkpoint em duas linhas: ícone com valor compacto, e o estado em texto ("Atingido", "Previsão: aos N anos" ou "Sem previsão")
-- [ ] Barra `--income` com brilho e marcas nas posições 25, 50, 75 e 100% inalteradas
-- [ ] Grade `grid-cols-2 @xl:grid-cols-4`
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
-- [ ] Test count: nenhum teste novo (UI = none); contagem anterior mantida
+- [x] Nenhum percentual de progresso em texto visível no componente (o `aria-label` da barra mantém "Progresso do objetivo: {percentual}")
+- [x] Cada checkpoint em duas linhas: ícone com valor compacto, e o estado em texto ("Atingido", "Previsão: aos N anos" ou "Sem previsão")
+- [x] Barra `--income` com brilho e marcas nas posições 25, 50, 75 e 100% inalteradas
+- [x] Grade `grid-cols-2 @xl:grid-cols-4`
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
+- [x] Test count: nenhum teste novo (UI = none); contagem anterior mantida
 
 **Tests**: none
 **Gate**: build
