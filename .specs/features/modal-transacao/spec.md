@@ -45,6 +45,10 @@ Explicitamente excluído para evitar crescimento de escopo.
 | Rótulo do botão primário | "Salvar" na criação e "Salvar alterações" na edição | Pedido | n |
 | Erros de campo | Mantêm as mensagens e o posicionamento atuais, por campo | Sem mudança de validação | n |
 | Ganho | Esconde Categoria e Subcategoria (como hoje) | Ganho não tem categoria (schema) | n |
+| Posição do "Excluir" | Abaixo de 640px empilha por último na ordem visual, sem alinhamento especial; a partir de 640px fica na borda esquerda do rodapé (`mr-auto`) | O pedido de afastamento vale para a linha única | n |
+| Quem desabilita "Excluir" | Durante o salvar, o "Excluir" do form fica desabilitado; durante a exclusão, só o "Excluir" da confirmação (a confirmação cobre o form) | A confirmação é modal sobre a edição | n |
+| Baseline da meta de altura | "Menos da metade da altura atual" é conferido pelo critério P3 (sem rolagem em 390×844) e pela medição da T11; não há baseline numérico | A meta é qualitativa | n |
+| Digitar além de 11 dígitos no meio do texto | Mantém os 11 primeiros dígitos | Regra simples e previsível | n |
 | Sem categorias cadastradas (gasto) | Mantém o link "Crie suas categorias primeiro" e o botão primário desabilitado | Comportamento atual preservado | n |
 
 **Open questions:** none - all resolved or logged above.

@@ -105,8 +105,14 @@ export function TransactionForm({
   function submit(event: React.FormEvent) {
     event.preventDefault();
     if (pending) return;
-    const { id, kind, amount, date, categoryId, subcategoryId, description } =
-      values;
+    const { id, kind, amount, date, description } = values;
+    // What the selects show is what is sent: an id missing from the list counts as unselected.
+    const categoryId = selectedCategory ? values.categoryId : "";
+    const subcategoryId = selectedCategory?.subcategories.some(
+      (s) => s.id === values.subcategoryId,
+    )
+      ? values.subcategoryId
+      : "";
     const recurrence = {
       recurrence: values.recurrence ?? "none",
       recurrenceEnd: values.recurrenceEnd ?? "",
