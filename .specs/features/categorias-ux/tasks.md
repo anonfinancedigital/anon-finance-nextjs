@@ -154,12 +154,14 @@ T10 → T11
 
 **Done when**:
 
-- [ ] Aceita `prefix` ou `suffix` e renderiza o texto com `aria-hidden` e `pointer-events-none`
-- [ ] O filho recebe espaço interno via padding para o símbolo não cobrir o texto
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
+- [x] Aceita `prefix` ou `suffix` e renderiza o texto com `aria-hidden` e `pointer-events-none`
+- [x] O filho recebe espaço interno via padding para o símbolo não cobrir o texto
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
 
 **Tests**: none
 **Gate**: build
+
+**Status**: ✅ Complete
 
 **Commit**: `feat(categories): add input affix component`
 
