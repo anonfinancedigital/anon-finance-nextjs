@@ -30,6 +30,8 @@ export function CategoryCard({
   count,
   open,
   onToggle,
+  controls,
+  trailing,
   children,
 }: {
   /** Id of the panel; the header button points at it with aria-controls. */
@@ -39,24 +41,55 @@ export function CategoryCard({
   count: number;
   open: boolean;
   onToggle: () => void;
+  /**
+   * Editable fields shown in the header line, replacing the square and the name. Without them the
+   * whole header is the toggle button; with them only the count and chevron are (an input cannot
+   * live inside a button).
+   */
+  controls?: ReactNode;
+  /** Shown after the toggle, only together with `controls`. */
+  trailing?: ReactNode;
   children: ReactNode;
 }) {
   const Chevron = open ? ChevronUpIcon : ChevronDownIcon;
 
+  const countAndChevron = (
+    <>
+      <span className="shrink-0 text-xs text-muted-foreground">{subcategoryCountLabel(count)}</span>
+      <Chevron aria-hidden className="size-4 shrink-0 text-muted-foreground" />
+    </>
+  );
+
   return (
     <div>
-      <button
-        type="button"
-        aria-expanded={open}
-        aria-controls={id}
-        onClick={onToggle}
-        className="flex w-full cursor-pointer items-center gap-3 rounded-lg py-1 text-left"
-      >
-        <CategorySquare name={name} color={color} />
-        <span className="min-w-0 flex-1 truncate">{categoryDisplayName(name)}</span>
-        <span className="shrink-0 text-xs text-muted-foreground">{subcategoryCountLabel(count)}</span>
-        <Chevron aria-hidden className="size-4 shrink-0 text-muted-foreground" />
-      </button>
+      {controls ? (
+        <div className="flex flex-wrap items-start gap-x-3 gap-y-2 py-1">
+          {controls}
+          <button
+            type="button"
+            aria-expanded={open}
+            aria-controls={id}
+            aria-label={`${subcategoryCountLabel(count)} de ${categoryDisplayName(name)}`}
+            onClick={onToggle}
+            className="flex h-8 cursor-pointer items-center gap-2 rounded-lg"
+          >
+            {countAndChevron}
+          </button>
+          {trailing}
+        </div>
+      ) : (
+        <button
+          type="button"
+          aria-expanded={open}
+          aria-controls={id}
+          onClick={onToggle}
+          className="flex w-full cursor-pointer items-center gap-3 rounded-lg py-1 text-left"
+        >
+          <CategorySquare name={name} color={color} />
+          <span className="min-w-0 flex-1 truncate">{categoryDisplayName(name)}</span>
+          {countAndChevron}
+        </button>
+      )}
       <div id={id}>{open && children}</div>
     </div>
   );

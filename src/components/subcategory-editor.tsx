@@ -1,7 +1,7 @@
 "use client";
 
 import { PlusIcon } from "lucide-react";
-import { useRef, useState } from "react";
+import { type ReactNode, useRef, useState } from "react";
 import { CategoryCard } from "@/components/category-card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -22,6 +22,8 @@ export function SubcategoryEditor({
   color,
   items,
   errors,
+  controls,
+  trailing,
   onChange,
 }: {
   index: number;
@@ -29,6 +31,9 @@ export function SubcategoryEditor({
   color: number;
   items: SubcategoryRow[];
   errors: Record<string, string>;
+  /** See `CategoryCard`: editable fields for the header line. */
+  controls?: ReactNode;
+  trailing?: ReactNode;
   onChange: (items: SubcategoryRow[]) => void;
 }) {
   const [expanded, setExpanded] = useState(false);
@@ -54,6 +59,8 @@ export function SubcategoryEditor({
       count={items.length}
       open={open}
       onToggle={() => setExpanded(!open)}
+      controls={controls}
+      trailing={trailing}
     >
       <div className="mt-2 space-y-1 pl-12">
         {items.map((item, j) => {

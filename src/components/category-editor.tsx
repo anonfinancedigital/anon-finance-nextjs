@@ -1,8 +1,9 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { Fragment, useState, useTransition } from "react";
+import { useState, useTransition } from "react";
 import { saveCategories } from "@/actions/categories";
+import { CategorySquare } from "@/components/category-card";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -14,15 +15,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { SubcategoryEditor, type SubcategoryRow } from "@/components/subcategory-editor";
 import { Label } from "@/components/ui/label";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableFooter,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import type { ActionResult } from "@/lib/action-result";
 import { allocateCents, type Category } from "@/lib/domain/budget";
 import { CATEGORY_COLORS, colorVar, nextFreeColor } from "@/lib/domain/color";
@@ -55,12 +47,15 @@ const toRow = (c: Category): Row => ({
 /** Shows only the chosen color; clicking it opens a dialog with the whole palette. */
 function ColorPicker({
   label,
+  name,
   groupName,
   value,
   errorId,
   onChange,
 }: {
   label: string;
+  /** Category name, for the initial shown in the square. */
+  name: string;
   groupName: string;
   value: number;
   /** Id of the row's color error message, when there is one. */
@@ -78,12 +73,9 @@ function ColorPicker({
         title={current?.name}
         aria-describedby={errorId}
         onClick={() => setOpen(true)}
-        className="flex h-9 cursor-pointer items-center"
+        className="cursor-pointer rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-ring"
       >
-        <span
-          style={{ backgroundColor: colorVar(value) }}
-          className="size-6 rounded-full ring-2 ring-foreground ring-offset-2 ring-offset-background"
-        />
+        <CategorySquare name={name} color={value} />
       </button>
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="sm:max-w-xs">
@@ -219,79 +211,80 @@ export function CategoryEditor({ categories }: { categories: Category[] }) {
         )}
       </div>
 
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Nome</TableHead>
-            <TableHead>Cor</TableHead>
-            <TableHead className="w-40">Percentual (%)</TableHead>
-            <TableHead className="w-40">Valor (R$)</TableHead>
-            <TableHead className="w-24">
-              <span className="sr-only">Ações</span>
-            </TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {rows.map((row, i) => {
-            const nameError = fieldErrors[`${i}.name`];
-            const colorError = fieldErrors[`${i}.color`];
-            const live = parsed[i];
-            const typed = row.amountText !== undefined && incomeCents !== null ? parseBRL(row.amountText) : null;
-            const typedMicro = typed?.ok && incomeCents !== null ? microFromCents(typed.value, incomeCents) : typed;
-            const amountError = typedMicro && !typedMicro.ok ? typedMicro.error : undefined;
-            const percentError = fieldErrors[`${i}.percent`] ?? (live && !live.ok ? live.error : undefined);
-            return (
-              <Fragment key={row.key}>
-              <TableRow>
-                <TableCell className="align-top">
-                  <Input
-                    aria-label={`Nome da categoria ${i + 1}`}
-                    value={row.name}
-                    maxLength={60}
-                    aria-invalid={!!nameError}
-                    onChange={(e) => update(i, { name: e.target.value })}
-                  />
-                  {nameError && <p className="mt-1 text-sm text-destructive">{nameError}</p>}
-                </TableCell>
-                <TableCell className="align-top">
-                  <ColorPicker
-                    label={`Cor da categoria ${i + 1}`}
-                    groupName={`color-${row.key}`}
-                    value={row.color}
-                    errorId={colorError ? `color-error-${row.key}` : undefined}
-                    onChange={(color) => update(i, { color })}
-                  />
-                  {colorError && (
-                    <p id={`color-error-${row.key}`} className="mt-1 text-sm text-destructive">
-                      {colorError}
-                    </p>
-                  )}
-                </TableCell>
-                <TableCell className="align-top">
-                  <Input
-                    aria-label={`Percentual da categoria ${i + 1}`}
-                    inputMode="decimal"
-                    value={row.percent}
-                    aria-invalid={!!percentError}
-                    onChange={(e) => update(i, { percent: e.target.value, amountText: undefined })}
-                  />
-                  {percentError && <p className="mt-1 text-sm text-destructive">{percentError}</p>}
-                </TableCell>
-                <TableCell className="align-top">
-                  <Input
-                    aria-label={`Valor da categoria ${i + 1}`}
-                    data-testid={`category-amount-${i + 1}`}
-                    inputMode="decimal"
-                    disabled={incomeCents === null}
-                    title={incomeCents === null ? "Informe a receita de referência" : undefined}
-                    value={row.amountText ?? (amounts[i] === null ? "" : amountField(amounts[i]))}
-                    aria-invalid={!!amountError}
-                    onChange={(e) => changeAmount(i, e.target.value)}
-                    onBlur={() => update(i, { amountText: undefined })}
-                  />
-                  {amountError && <p className="mt-1 text-sm text-destructive">{amountError}</p>}
-                </TableCell>
-                <TableCell className="align-top">
+      <div className="divide-y rounded-lg border px-3">
+        {rows.map((row, i) => {
+          const nameError = fieldErrors[`${i}.name`];
+          const colorError = fieldErrors[`${i}.color`];
+          const live = parsed[i];
+          const typed = row.amountText !== undefined && incomeCents !== null ? parseBRL(row.amountText) : null;
+          const typedMicro = typed?.ok && incomeCents !== null ? microFromCents(typed.value, incomeCents) : typed;
+          const amountError = typedMicro && !typedMicro.ok ? typedMicro.error : undefined;
+          const percentError = fieldErrors[`${i}.percent`] ?? (live && !live.ok ? live.error : undefined);
+          return (
+            <div key={row.key} className="py-2">
+              <SubcategoryEditor
+                index={i}
+                name={row.name}
+                color={row.color}
+                items={row.subcategories}
+                errors={fieldErrors}
+                onChange={(subcategories) => update(i, { subcategories })}
+                controls={
+                  <>
+                    <div>
+                      <ColorPicker
+                        label={`Cor da categoria ${i + 1}`}
+                        name={row.name}
+                        groupName={`color-${row.key}`}
+                        value={row.color}
+                        errorId={colorError ? `color-error-${row.key}` : undefined}
+                        onChange={(color) => update(i, { color })}
+                      />
+                      {colorError && (
+                        <p id={`color-error-${row.key}`} className="mt-1 text-sm text-destructive">
+                          {colorError}
+                        </p>
+                      )}
+                    </div>
+                    <div className="min-w-40 flex-1">
+                      <Input
+                        aria-label={`Nome da categoria ${i + 1}`}
+                        value={row.name}
+                        maxLength={60}
+                        aria-invalid={!!nameError}
+                        onChange={(e) => update(i, { name: e.target.value })}
+                      />
+                      {nameError && <p className="mt-1 text-sm text-destructive">{nameError}</p>}
+                    </div>
+                    <div className="w-24">
+                      <Input
+                        aria-label={`Percentual da categoria ${i + 1}`}
+                        inputMode="decimal"
+                        placeholder="%"
+                        value={row.percent}
+                        aria-invalid={!!percentError}
+                        onChange={(e) => update(i, { percent: e.target.value, amountText: undefined })}
+                      />
+                      {percentError && <p className="mt-1 text-sm text-destructive">{percentError}</p>}
+                    </div>
+                    <div className="w-32">
+                      <Input
+                        aria-label={`Valor da categoria ${i + 1}`}
+                        data-testid={`category-amount-${i + 1}`}
+                        inputMode="decimal"
+                        placeholder="R$"
+                        disabled={incomeCents === null}
+                        title={incomeCents === null ? "Informe a receita de referência" : undefined}
+                        value={row.amountText ?? (amounts[i] === null ? "" : amountField(amounts[i]))}
+                        aria-invalid={!!amountError}
+                        onChange={(e) => changeAmount(i, e.target.value)}
+                        onBlur={() => update(i, { amountText: undefined })}
+                      />
+                      {amountError && <p className="mt-1 text-sm text-destructive">{amountError}</p>}
+                    </div>
+                  </>
+                }
+                trailing={
                   <Button
                     type="button"
                     variant="ghost"
@@ -301,36 +294,19 @@ export function CategoryEditor({ categories }: { categories: Category[] }) {
                   >
                     Remover
                   </Button>
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell colSpan={5} className="pt-0">
-                  <SubcategoryEditor
-                    index={i}
-                    name={row.name}
-                    color={row.color}
-                    items={row.subcategories}
-                    errors={fieldErrors}
-                    onChange={(subcategories) => update(i, { subcategories })}
-                  />
-                </TableCell>
-              </TableRow>
-              </Fragment>
-            );
-          })}
-        </TableBody>
-        <TableFooter>
-          <TableRow>
-            <TableCell>Soma</TableCell>
-            <TableCell />
-            <TableCell data-testid="category-sum">{formatPercent(sumMicro)}</TableCell>
-            <TableCell data-testid="category-amount-sum">
-              {incomeCents === null ? "—" : formatBRL(amountSum)}
-            </TableCell>
-            <TableCell />
-          </TableRow>
-        </TableFooter>
-      </Table>
+                }
+              />
+            </div>
+          );
+        })}
+        <div className="flex flex-wrap items-center justify-end gap-x-6 py-2 text-sm font-medium">
+          <span>Soma</span>
+          <span data-testid="category-sum">{formatPercent(sumMicro)}</span>
+          <span data-testid="category-amount-sum">
+            {incomeCents === null ? "—" : formatBRL(amountSum)}
+          </span>
+        </div>
+      </div>
 
       {!sumOk && (
         <p className="text-sm text-destructive">
