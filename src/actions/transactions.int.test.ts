@@ -231,6 +231,52 @@ describe("createTransaction recurrence", () => {
   });
 });
 
+describe("createTransaction start month", () => {
+  const range = (key: string) => {
+    const [y, m] = key.split("-").map(Number);
+    return { start: `${key}-01`, endExclusive: `${y}-${String(m + 1).padStart(2, "0")}-01` };
+  };
+
+  it("stores the series from the start month, on the day of the date, and revalidates /", async () => {
+    const input = expense({
+      date: "2026-04-10",
+      recurrence: "until",
+      recurrenceStart: "2026-05",
+      recurrenceEnd: "2026-12",
+    });
+
+    expect(await createTransaction(input)).toEqual({ ok: true });
+
+    expect(await db.select().from(transaction)).toMatchObject([
+      { id: input.id, date: "2026-05-10", recurrenceDay: 10, recurrenceEnd: "2026-12-01" },
+    ]);
+    expect(await transactionsRepo.listByMonth(userId, range("2026-04"))).toEqual([]);
+    expect(
+      (await transactionsRepo.listByMonth(userId, range("2026-05"))).map((o) => o.installment),
+    ).toEqual([{ number: 1, total: 8 }]);
+    expect(revalidatePath).toHaveBeenCalledWith("/");
+  });
+
+  it.each([
+    ["is missing", { recurrenceStart: undefined }, "recurrenceStart", "Informe o mês inicial"],
+    ["is invalid", { recurrenceStart: "2026-13" }, "recurrenceStart", "Mês inicial inválido"],
+    [
+      "is after the end month",
+      { recurrenceStart: "2027-01" },
+      "recurrenceEnd",
+      "O mês final deve ser igual ou posterior ao mês inicial",
+    ],
+  ])("rejects 'Até mês/ano' when the start month %s and saves nothing", async (_, overrides, field, message) => {
+    const result = await createTransaction(
+      expense({ recurrence: "until", recurrenceEnd: "2026-12", ...overrides }),
+    );
+
+    expect(result).toMatchObject({ ok: false, fieldErrors: { [field]: message } });
+    expect(await db.$count(transaction)).toBe(0);
+    expect(revalidatePath).not.toHaveBeenCalled();
+  });
+});
+
 describe("updateTransaction", () => {
   it("updates date, amount, category and description and revalidates /", async () => {
     const original = expense();
@@ -471,6 +517,100 @@ describe("updateTransaction from a month", () => {
       await updateTransaction({ ...original, categoryId: otherCategory, date: "2026-12-15" }, "2026-12"),
     ).toMatchObject({ ok: false, fieldErrors: { categoryId: "Categoria não encontrada" } });
     expect(await amountIn("2026-12")).toEqual([10000]);
+  });
+});
+
+describe("updateTransaction start month and end month", () => {
+  const range = (key: string) => {
+    const [y, m] = key.split("-").map(Number);
+    return { start: `${key}-01`, endExclusive: `${y}-${String(m + 1).padStart(2, "0")}-01` };
+  };
+  const created = async () => {
+    const original = expense({
+      date: "2026-04-10",
+      amount: "100,00",
+      recurrence: "until",
+      recurrenceStart: "2026-04",
+      recurrenceEnd: "2026-12",
+    });
+    await createTransaction(original);
+    return original;
+  };
+
+  it("moves the start when editing the first month of the series", async () => {
+    const original = await created();
+
+    const result = await updateTransaction({ ...original, recurrenceStart: "2026-06" }, "2026-04");
+
+    expect(result).toEqual({ ok: true });
+    expect(await transactionsRepo.listByMonth(userId, range("2026-05"))).toEqual([]);
+    expect(
+      (await transactionsRepo.listByMonth(userId, range("2026-06"))).map((o) => o.date),
+    ).toEqual(["2026-06-10"]);
+  });
+
+  it("rejects a final month before the start month and changes nothing", async () => {
+    const original = await created();
+    vi.mocked(revalidatePath).mockClear();
+
+    const result = await updateTransaction(
+      { ...original, recurrenceStart: "2026-06", recurrenceEnd: "2026-05" },
+      "2026-04",
+    );
+
+    expect(result).toMatchObject({
+      ok: false,
+      fieldErrors: { recurrenceEnd: "O mês final deve ser igual ou posterior ao mês inicial" },
+    });
+    expect(await db.select().from(transaction)).toMatchObject([
+      { date: "2026-04-10", recurrenceEnd: "2026-12-01" },
+    ]);
+    expect(revalidatePath).not.toHaveBeenCalled();
+  });
+
+  it("rejects a final month before the edited month when editing in the middle of the series", async () => {
+    const original = await created();
+    vi.mocked(revalidatePath).mockClear();
+
+    const result = await updateTransaction(
+      { ...original, date: "2026-08-10", recurrenceStart: "2026-04", recurrenceEnd: "2026-07" },
+      "2026-08",
+    );
+
+    expect(result).toMatchObject({
+      ok: false,
+      fieldErrors: { recurrenceEnd: "O mês final deve ser igual ou posterior ao mês inicial" },
+    });
+    expect(await db.$count(transaction)).toBe(1);
+    expect(revalidatePath).not.toHaveBeenCalled();
+  });
+
+  it("accepts a final month equal to the edited month in the middle and ignores the start sent", async () => {
+    const original = await created();
+
+    const result = await updateTransaction(
+      { ...original, date: "2026-08-10", recurrenceStart: "2026-02", recurrenceEnd: "2026-08" },
+      "2026-08",
+    );
+
+    expect(result).toEqual({ ok: true });
+    expect(
+      (await db.select().from(transaction)).map((r) => [r.date, r.recurrenceEnd]).sort(),
+    ).toEqual([
+      ["2026-04-10", "2026-07-01"],
+      ["2026-08-10", "2026-08-01"],
+    ]);
+  });
+
+  it("keeps rejecting a date outside the occurrence month", async () => {
+    const original = await created();
+
+    const result = await updateTransaction({ ...original, date: "2026-09-10" }, "2026-08");
+
+    expect(result).toMatchObject({
+      ok: false,
+      fieldErrors: { date: "A data deve estar no mês da ocorrência" },
+    });
   });
 });
 

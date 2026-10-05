@@ -230,12 +230,12 @@ T5 → T8
 
 **Done when**:
 
-- [ ] `createTransaction` com Mês inicial grava a série no mês inicial e rejeita início ausente/inválido e fim anterior (mensagens da spec)
-- [ ] `updateTransaction` do primeiro mês com novo início aplica o início; do meio da série com fim anterior ao mês da ocorrência → "O mês final deve ser igual ou posterior ao mês inicial" em `recurrenceEnd`
-- [ ] "A data deve estar no mês da ocorrência" continua valendo
-- [ ] `revalidatePath("/")` chamado em sucesso, não chamado nos erros
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
-- [ ] Test count: ≥ 5 testes novos; testes que citavam a mensagem antiga atualizados
+- [x] `createTransaction` com Mês inicial grava a série no mês inicial e rejeita início ausente/inválido e fim anterior (mensagens da spec)
+- [x] `updateTransaction` do primeiro mês com novo início aplica o início; do meio da série com fim anterior ao mês da ocorrência → "O mês final deve ser igual ou posterior ao mês inicial" em `recurrenceEnd`
+- [x] "A data deve estar no mês da ocorrência" continua valendo
+- [x] `revalidatePath("/")` chamado em sucesso, não chamado nos erros
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
+- [x] Test count: ≥ 5 testes novos; testes que citavam a mensagem antiga atualizados
 
 **Tests**: integration
 **Gate**: full

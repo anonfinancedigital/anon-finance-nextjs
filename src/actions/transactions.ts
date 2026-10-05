@@ -66,6 +66,7 @@ const isMonthKey = (value: string) => /^\d{4}-(0[1-9]|1[0-2])$/.test(value);
 const transactionNotFound: ActionResult = { ok: false, error: TRANSACTION_NOT_FOUND };
 
 const DATE_OUTSIDE_MONTH = "A data deve estar no mês da ocorrência";
+const END_BEFORE_START = "O mês final deve ser igual ou posterior ao mês inicial";
 
 /**
  * Replaces date, amount, kind, category, subcategory, description and recurrence of the user's
@@ -91,6 +92,19 @@ export async function updateTransaction(
     const occurrenceMonth = month ?? monthKey(stored.date);
     if (stored.recurring && monthKey(data.date) !== occurrenceMonth) {
       return { ok: false, error: DATE_OUTSIDE_MONTH, fieldErrors: { date: DATE_OUTSIDE_MONTH } };
+    }
+    // The start month only applies when editing the series' first month; later, the edit starts
+    // a new segment in the occurrence's month.
+    const startMonth =
+      stored.seriesStart === null || stored.seriesStart === occurrenceMonth
+        ? data.recurrenceStartMonth
+        : occurrenceMonth;
+    if (data.recurrenceEndMonth && startMonth && data.recurrenceEndMonth < startMonth) {
+      return {
+        ok: false,
+        error: END_BEFORE_START,
+        fieldErrors: { recurrenceEnd: END_BEFORE_START },
+      };
     }
     if (!(await transactionsRepo.updateFrom(session.userId, id, occurrenceMonth, data))) {
       return transactionNotFound;
