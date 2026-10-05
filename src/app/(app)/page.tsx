@@ -117,6 +117,7 @@ export default async function SummaryPage({ searchParams }: PageProps<"/">) {
       <ContentCard
         title="Transações do mês"
         note={`${shown.length} lançamentos`}
+        action={<NewTransactionButton variant="header" categories={activeCategories} defaultDate={todayInSaoPaulo()} />}
         bodyClassName="space-y-4"
       >
         <div className="px-6">

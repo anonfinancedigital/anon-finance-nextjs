@@ -9,7 +9,7 @@ Implement these tasks with the `tlc-spec-driven` skill: **activate it by name an
 ---
 
 **Design**: `.specs/features/lista-transacoes-ux/design.md`
-**Status**: Draft
+**Status**: Done
 
 **Dívida registrada (AD-005):** `e2e/transaction-list.spec.ts:37,45` clica "Editar" e "Excluir" direto na linha e vai quebrar com o menu "⋯". Como o e2e está suspenso, o spec não é ajustado aqui (mesmo tratamento de `lancamento-flutuante`). Reativar o e2e exige abrir o menu "Ações do lançamento" antes de cada ação e escopar "Nova transação" (cabeçalho do bloco × `.fixed`).
 
@@ -241,13 +241,13 @@ T5 → T6 → T7
 
 **Done when**:
 
-- [ ] `ContentCard` "Transações do mês" recebe `action={<NewTransactionButton variant="header" categories={activeCategories} defaultDate={todayInSaoPaulo()} />}`; o botão flutuante segue no fim da página
-- [ ] A 1280px: busca, categoria e subcategoria na mesma linha; "Nova transação" no cabeçalho do bloco e "+" flutuante visíveis; os dois abrem o mesmo modal
-- [ ] A 390px: filtros empilhados; só o "+" flutuante aparece
-- [ ] Menu "⋯": abre com Editar e Excluir; Editar abre "Editar Lançamento"; Excluir abre a confirmação sem apagar; Esc fecha o menu; a página segue clicável depois de fechar cada diálogo; o menu da última linha fica dentro da tela
-- [ ] Lista vazia a 1280px ainda mostra o botão "Nova transação" do cabeçalho
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
-- [ ] Contagem de testes unit e int igual à de antes
+- [x] `ContentCard` "Transações do mês" recebe `action={<NewTransactionButton variant="header" categories={activeCategories} defaultDate={todayInSaoPaulo()} />}`; o botão flutuante segue no fim da página
+- [x] A 1280px: busca, categoria e subcategoria na mesma linha; "Nova transação" no cabeçalho do bloco e "+" flutuante visíveis; os dois abrem o mesmo modal
+- [x] A 390px: filtros empilhados; só o "+" flutuante aparece
+- [x] Menu "⋯": abre com Editar e Excluir; Editar abre "Editar Lançamento"; Excluir abre a confirmação sem apagar; Esc fecha o menu; a página segue clicável depois de fechar cada diálogo; o menu da última linha fica dentro da tela
+- [x] Lista vazia a 1280px ainda mostra o botão "Nova transação" do cabeçalho
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
+- [x] Contagem de testes unit e int igual à de antes
 
 **Tests**: none
 **Gate**: build
