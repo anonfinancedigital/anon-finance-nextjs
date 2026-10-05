@@ -58,4 +58,12 @@
 - **Date**: 2026-10-05
 - **Status**: active
 
+### AD-008
+- **Decision**: A prévia do simulador de Liberdade roda no cliente: `goalSchema(now).safeParse` e `summarize` (módulos puros, sem import de servidor) rodam a cada alteração do formulário, com `now` vindo do servidor como string ISO. O domínio de `freedom.ts` e a validação do objetivo devem permanecer isomórficos.
+- **Reason**: Pedido do usuário de ver o resultado ao arrastar sliders, sem ida ao servidor, com a mesma validação do salvar.
+- **Trade-off**: Qualquer import de servidor em `freedom.ts` ou `validation/goal.ts` quebra o bundle do cliente; a UI da prévia não tem teste automático (AD-005, sem teste de componente).
+- **Scope**: `src/lib/domain/freedom.ts`, `src/lib/validation/goal.ts`, `GoalExperience` e `GoalForm`
+- **Date**: 2026-10-05
+- **Status**: active
+
 ## Handoff
