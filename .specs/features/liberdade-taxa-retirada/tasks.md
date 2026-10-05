@@ -256,11 +256,13 @@ T8 → T9
 
 **Done when**:
 
-- [ ] Radiogroup tem nome acessível "Rentabilidade real esperada"; opções e visual inalterados (RET-11)
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] Radiogroup tem nome acessível "Rentabilidade real esperada"; opções e visual inalterados (RET-11)
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
 
 **Tests**: none
 **Gate**: build
+
+**Status**: ✅ Done
 
 **Commit**: `feat(liberdade): name the scenario selector as the expected real return`
 

@@ -2,6 +2,7 @@
 
 import { RadioGroup as RadioGroupPrimitive } from "radix-ui";
 import { RadioGroup } from "@/components/ui/radio-group";
+import { RATE_TITLE } from "@/lib/domain/freedom-copy";
 import { cn } from "cn";
 
 export type RateValue = "6" | "8" | "10";
@@ -12,11 +13,11 @@ const options = [
   { value: "10", label: "Agressivo · 10%" },
 ] as const;
 
-/** Full-width segmented control for the expected annual rate (radiogroup "Taxa esperada"). */
+/** Full-width segmented control for the expected real return (radiogroup named by RATE_TITLE). */
 export function RateToggle({ value, onChange }: { value: RateValue; onChange: (rate: RateValue) => void }) {
   return (
     <RadioGroup
-      aria-label="Taxa esperada"
+      aria-label={RATE_TITLE}
       value={value}
       onValueChange={(next) => onChange(next as RateValue)}
       className="grid-cols-3 gap-1 rounded-xl border border-input bg-field p-1"
