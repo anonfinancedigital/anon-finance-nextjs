@@ -696,12 +696,12 @@ T22 → T23 → T24 → T25 → T26 → T27 → T28
 
 **Done when**:
 
-- [ ] `aria-label` do formulário conforme o modo
-- [ ] "Excluir lançamento" só quando há `onDelete`, em destrutivo
-- [ ] "Cancelar" visível em criação e edição
-- [ ] Gate build passa
-- [ ] Gate build: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
-- [ ] Contagem de testes unit/int igual à anterior (nenhum teste removido)
+- [x] `aria-label` do formulário conforme o modo
+- [x] "Excluir lançamento" só quando há `onDelete`, em destrutivo
+- [x] "Cancelar" visível em criação e edição
+- [x] Gate build passa
+- [x] Gate build: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
+- [x] Contagem de testes unit/int igual à anterior (nenhum teste removido)
 
 **Tests**: none
 **Gate**: build

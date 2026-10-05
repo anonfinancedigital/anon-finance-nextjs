@@ -54,7 +54,7 @@ type Props = {
   onSaved?: () => void;
   /** Shows "Cancelar" in the footer. */
   onCancel?: () => void;
-  /** Shows "Excluir" in the footer (edit only). */
+  /** Shows "Excluir lançamento" in the footer (edit only). */
   onDelete?: () => void;
 };
 
@@ -146,7 +146,7 @@ export function TransactionForm({
     <form
       onSubmit={submit}
       className="flex min-h-0 flex-1 flex-col"
-      aria-label={transaction ? "Editar transação" : "Nova transação"}
+      aria-label={transaction ? "Editar Lançamento" : "Registrar Lançamento"}
     >
       <div className="-mx-1 min-h-0 flex-1 space-y-3 overflow-y-auto px-1 pb-1">
         <KindToggle
@@ -349,7 +349,7 @@ export function TransactionForm({
               onClick={onDelete}
               className="sm:mr-auto"
             >
-              Excluir
+              Excluir lançamento
             </Button>
           )}
           {onCancel && (
