@@ -186,7 +186,7 @@ Implicit-requirement dimensions: input validation & bounds (taxa personalizada f
 | AJL-06 | P1: Eixo do gráfico | Execute | Implementing |
 | AJL-07 | P1: Eixo do gráfico | Execute | Implementing |
 | AJL-08 | P1: Eixo do gráfico | Execute | Implementing |
-| AJL-09 | P1: Prefixo R$ | - | Pending |
+| AJL-09 | P1: Prefixo R$ | Execute | Implementing |
 | AJL-17 | P1: Prefixo R$ | - | Pending |
 | AJL-24 | P1: Seletor de perfil | - | Pending |
 | AJL-25 | P1: Seletor de perfil | - | Pending |
