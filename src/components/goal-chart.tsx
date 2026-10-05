@@ -77,11 +77,11 @@ export function GoalChart({ summary }: { summary: GoalSummary }) {
   return (
     <figure
       data-testid="goal-chart"
-      aria-label={`Evolução do patrimônio: alvo ${formatBRL(summary.targetCents)} aos ${last.ageYears} anos. ${summaryText}`}
+      aria-label={`Trajetória dos Juros Compostos: alvo ${formatBRL(summary.targetCents)} aos ${last.ageYears} anos. ${summaryText}`}
       className="space-y-3 rounded-2xl border border-border bg-card p-6 shadow-lg"
     >
       <figcaption className="flex flex-wrap items-center justify-between gap-2">
-        <span className="text-sm font-medium">Evolução do patrimônio</span>
+        <span className="text-sm font-medium">Trajetória dos Juros Compostos</span>
         <ul className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
           <li className="flex items-center gap-1.5">
             <Swatch color={INVESTED} /> Total investido

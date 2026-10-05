@@ -558,10 +558,10 @@ T22 → T23 → T24 → T25 → T26 → T27 → T28
 
 **Done when**:
 
-- [ ] Título visível e `aria-label` usam "Trajetória dos Juros Compostos"
-- [ ] Dados e série do gráfico inalterados
-- [ ] Gate quick: `npm run typecheck && npm run lint && npm run test:unit`
-- [ ] Contagem de testes unit/int igual à anterior (nenhum teste removido)
+- [x] Título visível e `aria-label` usam "Trajetória dos Juros Compostos"
+- [x] Dados e série do gráfico inalterados
+- [x] Gate quick: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Contagem de testes unit/int igual à anterior (nenhum teste removido)
 
 **Tests**: none
 **Gate**: quick
