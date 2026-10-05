@@ -373,15 +373,27 @@ T7 → T8 → T9 → T10 → T11
 
 **Done when**:
 
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
-- [ ] Em 390×844, gasto simples (sem categoria e sem recorrência) cabe sem rolar o conteúdo do modal
-- [ ] Foco inicial cai no campo Valor ao abrir criação e edição (senão aplicar o plano B do design)
-- [ ] Criar, editar, cancelar e excluir funcionam no Resumo; resultado anotado abaixo desta task
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
+- [x] Em 390×844, gasto simples (sem categoria e sem recorrência) cabe sem rolar o conteúdo do modal
+- [x] Foco inicial cai no campo Valor ao abrir criação e edição (senão aplicar o plano B do design)
+- [x] Criar, editar, cancelar e excluir funcionam no Resumo; resultado anotado abaixo desta task
 
 **Tests**: none
 **Gate**: full
+**Status**: ✅ Complete
 
 **Commit**: `docs(specs): record modal-transacao manual verification`
+
+**Resultado da verificação (2026-10-05)**:
+
+- Gate full: typecheck, lint, build, `test:unit` (343) e `test:int` (235) passaram.
+- Manual real: `next start` (build de produção, banco de teste semeado) + Chromium headless via `playwright-core`, em 390×844 e 1280×800. Script temporário fora do repo.
+- Gasto simples com categoria (formulário de criação): nenhum elemento com rolagem interna (`scrollHeight <= clientHeight`); modal com 557px (390×844) e 509px (1280×800), dentro de `100dvh - 2rem`.
+- Foco inicial: `input` Valor (`inputmode=numeric`) ao abrir criação e edição, nas duas larguras. Plano B não foi necessário.
+- Criar, editar (salvar alterações), cancelar (criação e edição) e excluir pela edição funcionam no Resumo; a exclusão fecha confirmação e edição e remove a linha.
+- Confirmação reaproveita o título "Excluir transação?" e a descrição existente. Esc com a confirmação aberta fecha só a confirmação (edição segue aberta, dados preservados); Cancelar na confirmação volta à edição com os dados.
+- Não verificado: conteúdo longo forçando rolagem do corpo com rodapé visível (categoria com subcategorias + recorrência + erro) e leitor de tela; cobertos só pelo layout (`min-h-0 flex-1` + `max-h`), sem medição.
+
 
 ---
 
