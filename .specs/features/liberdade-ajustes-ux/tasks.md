@@ -143,9 +143,9 @@ T9 → T10 → T11 → T12 → T13 → T14
 
 **Done when**:
 
-- [ ] Testes em `freedom-copy.test.ts`: atingido → "Atingido" também no último (AJL-02); `ageYears` 38 → "Aos 38 anos", sem a palavra "Previsão" (AJL-01); último com 45 → "Aos 45 anos (Meta)" (AJL-04); `ageYears` nulo → "Sem previsão" (AJL-03)
-- [ ] Gate quick passa
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Testes em `freedom-copy.test.ts`: atingido → "Atingido" também no último (AJL-02); `ageYears` 38 → "Aos 38 anos", sem a palavra "Previsão" (AJL-01); último com 45 → "Aos 45 anos (Meta)" (AJL-04); `ageYears` nulo → "Sem previsão" (AJL-03)
+- [x] Gate quick passa
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
 
 **Tests**: unit
 **Gate**: quick

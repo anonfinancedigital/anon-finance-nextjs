@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { summarize } from "./freedom";
-import { heroFacts, HOW_WE_CALCULATE, RATE_HINT, RATE_TITLE } from "./freedom-copy";
+import { summarize, type Checkpoint } from "./freedom";
+import { checkpointLabel, heroFacts, HOW_WE_CALCULATE, RATE_HINT, RATE_TITLE } from "./freedom-copy";
 
 const normalize = (s: string) => s.replace(/\s/g, " ");
 
@@ -61,5 +61,34 @@ describe("sem promessa de renda ou retorno", () => {
 
   it.each(FORBIDDEN)("nenhum texto contém \"%s\"", (root) => {
     for (const t of texts) expect(t.toLowerCase()).not.toContain(root);
+  });
+});
+
+describe("checkpointLabel", () => {
+  const cp = (over: Partial<Checkpoint>): Checkpoint => ({
+    fractionBp: 5000,
+    valueCents: 100_000_000,
+    reached: false,
+    months: 60,
+    ageYears: 38,
+    positionBp: 5000,
+    ...over,
+  });
+
+  it("marco atingido mostra Atingido, também no último", () => {
+    expect(checkpointLabel(cp({ reached: true, months: null, ageYears: null }), false)).toBe("Atingido");
+    expect(checkpointLabel(cp({ reached: true, months: null, ageYears: null }), true)).toBe("Atingido");
+  });
+
+  it("marco com previsão mostra Aos N anos, sem a palavra Previsão", () => {
+    expect(checkpointLabel(cp({ ageYears: 38 }), false)).toBe("Aos 38 anos");
+  });
+
+  it("último marco com previsão mostra Aos N anos (Meta)", () => {
+    expect(checkpointLabel(cp({ ageYears: 45 }), true)).toBe("Aos 45 anos (Meta)");
+  });
+
+  it("marco sem previsão mostra Sem previsão", () => {
+    expect(checkpointLabel(cp({ months: null, ageYears: null }), false)).toBe("Sem previsão");
   });
 });

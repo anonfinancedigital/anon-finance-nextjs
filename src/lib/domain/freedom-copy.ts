@@ -1,4 +1,4 @@
-import type { GoalSummary } from "./freedom";
+import type { Checkpoint, GoalSummary } from "./freedom";
 import { formatBRL } from "./money";
 
 /** Título do seletor de cenários e nome acessível do radiogroup. */
@@ -24,4 +24,11 @@ export function heroFacts(summary: GoalSummary): { label: string; value: string 
     { label: "Renda desejada", value: `${formatBRL(summary.monthlyIncomeCents)}/mês` },
     { label: "Patrimônio necessário", value: formatBRL(summary.targetCents) },
   ];
+}
+
+/** Rótulo curto do marco: "Atingido", "Sem previsão", "Aos N anos" e, no último, "Aos N anos (Meta)". */
+export function checkpointLabel(checkpoint: Checkpoint, isLast: boolean): string {
+  if (checkpoint.reached) return "Atingido";
+  if (checkpoint.ageYears === null) return "Sem previsão";
+  return isLast ? `Aos ${checkpoint.ageYears} anos (Meta)` : `Aos ${checkpoint.ageYears} anos`;
 }
