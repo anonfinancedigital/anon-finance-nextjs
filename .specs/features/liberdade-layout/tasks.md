@@ -206,10 +206,10 @@ T5 → T6 → T7 → T8
 
 **Done when**:
 
-- [ ] `GoalSummary({ summary })` mantém a assinatura e renderiza só `GoalHero` e `GoalChart`
-- [ ] Nenhuma seção de progresso entre o gráfico e o resto da página; os checkpoints aparecem uma vez, dentro do Hero
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
-- [ ] Test count: nenhum teste novo (UI = none); contagem anterior mantida
+- [x] `GoalSummary({ summary })` mantém a assinatura e renderiza só `GoalHero` e `GoalChart`
+- [x] Nenhuma seção de progresso entre o gráfico e o resto da página; os checkpoints aparecem uma vez, dentro do Hero
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
+- [x] Test count: nenhum teste novo (UI = none); contagem anterior mantida
 
 **Tests**: none
 **Gate**: build
