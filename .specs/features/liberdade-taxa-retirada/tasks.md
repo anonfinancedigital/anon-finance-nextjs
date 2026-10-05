@@ -196,15 +196,17 @@ T8 → T9
 
 **Done when**:
 
-- [ ] `RATE_TITLE = "Rentabilidade real esperada"` e `RATE_HINT = "Taxa real estimada (descontada a inflação)"` (RET-11)
-- [ ] `heroFacts` devolve, para 6%, 8% e 10% com R$ 20.000/mês: "Rentabilidade real 6% a.a." / "Taxa de retirada 4% a.a.", 8%/6%, 10%/7%, "Renda desejada R$ 20.000,00/mês" e "Patrimônio necessário" = R$ 6.000.000,00, R$ 4.000.000,00 e R$ 3.428.571,43 (RET-12)
-- [ ] `HOW_WE_CALCULATE` contém o texto exato do pedido, a frase de que a taxa de retirada varia com o cenário e a de que são premissas de simulação sem garantia (RET-13)
-- [ ] Teste: nenhum texto exportado contém "perpétu", "garantid" nem "vitalíc" (RET-14 AC4), exceto negações explícitas como "não garantem"; o teste usa a lista exata de padrões da spec e a negação fica fora dela
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
-- [ ] Test count: testes novos entram
+- [x] `RATE_TITLE = "Rentabilidade real esperada"` e `RATE_HINT = "Taxa real estimada (descontada a inflação)"` (RET-11)
+- [x] `heroFacts` devolve, para 6%, 8% e 10% com R$ 20.000/mês: "Rentabilidade real 6% a.a." / "Taxa de retirada 4% a.a.", 8%/6%, 10%/7%, "Renda desejada R$ 20.000,00/mês" e "Patrimônio necessário" = R$ 6.000.000,00, R$ 4.000.000,00 e R$ 3.428.571,43 (RET-12)
+- [x] `HOW_WE_CALCULATE` contém o texto exato do pedido, a frase de que a taxa de retirada varia com o cenário e a de que são premissas de simulação sem garantia (RET-13)
+- [x] Teste: nenhum texto exportado contém "perpétu", "garantid" nem "vitalíc" (RET-14 AC4), exceto negações explícitas como "não garantem"; o teste usa a lista exata de padrões da spec e a negação fica fora dela
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Test count: testes novos entram
 
 **Tests**: unit
 **Gate**: quick
+
+**Status**: ✅ Done
 
 **Commit**: `feat(freedom): add the copy for return, withdrawal rate and the calculation note`
 
