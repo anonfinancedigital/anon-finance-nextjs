@@ -9,7 +9,7 @@ Implement these tasks with the `tlc-spec-driven` skill: **activate it by name an
 ---
 
 **Design**: `.specs/features/categorias-ux/design.md`
-**Status**: In Progress
+**Status**: Done
 
 ---
 
@@ -392,13 +392,15 @@ T10 → T11
 
 **Done when**:
 
-- [ ] Nenhuma referência ao texto antigo "A soma dos percentuais deve ser 100% (atual: ...)" nem ao botão "Ajustar"
-- [ ] Testes que preenchem a receita passam pelo "Editar base" quando o card está visível
-- [ ] Remover categoria com subcategorias confirma no diálogo
-- [ ] `npm run typecheck` passa e `npx playwright test --list` lista os testes sem erro de sintaxe
+- [x] Nenhuma referência ao texto antigo "A soma dos percentuais deve ser 100% (atual: ...)" nem ao botão "Ajustar"
+- [x] Testes que preenchem a receita passam pelo "Editar base" quando o card está visível
+- [x] Remover categoria com subcategorias confirma no diálogo
+- [x] `npm run typecheck` passa e `npx playwright test --list` lista os testes sem erro de sintaxe
 
 **Tests**: none
 **Gate**: build
+
+**Status**: ✅ Complete
 
 **Commit**: `test(e2e): update categories spec for the new editor flow`
 

@@ -1,5 +1,5 @@
 import { expect, type Page, test } from "@playwright/test";
-import { login, resetDatabase, seedCategories, seedTransaction } from "./helpers";
+import { chooseOption, login, resetDatabase, seedCategories, seedTransaction } from "./helpers";
 
 test.beforeEach(resetDatabase);
 
@@ -34,7 +34,7 @@ test("categories summing 100% are saved and listed after reload", async ({ page 
   await page.reload();
   for (const [i, [catName, catPercent]] of BUDGET.entries()) {
     await expect(name(page, i + 1)).toHaveValue(catName);
-    await expect(percent(page, i + 1)).toHaveValue(catPercent);
+    await expect(percent(page, i + 1)).toHaveValue(`${catPercent},00`);
   }
   await expect(name(page, BUDGET.length + 1)).toHaveCount(0);
 });
@@ -45,7 +45,7 @@ test("a sum of 105% shows the sum message and disables saving", async ({ page })
   await addCategories(page, [...BUDGET, ["Extra", "5"]]);
 
   await expect(
-    page.getByText("A soma dos percentuais deve ser 100% (atual: 105%)", { exact: true }),
+    page.getByText("A soma deve ser 100%. Atual: 105,00%", { exact: true }),
   ).toBeVisible();
   await expect(page.getByRole("button", { name: "Salvar" })).toBeDisabled();
 });
@@ -75,6 +75,12 @@ test("removing a category that has expenses is blocked with the expense count", 
 });
 
 const income = (page: Page) => page.getByLabel("Receita de referência (R$)", { exact: true });
+/** Types the reference income, passing through "Editar base" when the card is shown instead of the field. */
+async function setIncome(page: Page, text: string) {
+  const edit = page.getByRole("button", { name: "Editar base", exact: true });
+  if (await edit.isVisible()) await edit.click();
+  await income(page).fill(text);
+}
 const amount = (page: Page, n: number) => page.getByTestId(`category-amount-${n}`);
 const amountSum = (page: Page) => page.getByTestId("category-amount-sum");
 
@@ -93,11 +99,11 @@ test("a reference income shows the amount of each category and their sum", async
   await page.goto("/categorias");
 
   await expect(income(page)).toHaveValue("");
-  const headers = await page.getByRole("columnheader").allTextContents();
-  const valueAt = headers.indexOf("Valor (R$)");
-  expect(headers.slice(valueAt - 1, valueAt + 2)).toEqual(["Percentual (%)", "Valor (R$)", "Ações"]);
+  for (const header of ["CATEGORIA", "% DO TOTAL", "VALOR ESTIMADO", "SUBCATEGORIAS", "AÇÕES"]) {
+    await expect(page.getByText(header, { exact: true })).toBeVisible();
+  }
 
-  await income(page).fill("5000");
+  await setIncome(page, "5000");
   const expected = ["1.500,00", "1.500,00", "1.250,00", "375,00", "125,00", "250,00"];
   for (const [i, value] of expected.entries()) await expect(amount(page, i + 1)).toHaveValue(value);
   await expect(amountSum(page)).toHaveText("R$ 5.000,00");
@@ -109,7 +115,7 @@ test("a reference income shows the amount of each category and their sum", async
   await expect(page.getByText("Categorias salvas", { exact: true })).toHaveCount(0);
 
   // Changing the income updates every amount.
-  await income(page).fill("1.000,00");
+  await setIncome(page, "1.000,00");
   await expect(amount(page, 1)).toHaveValue("300,00");
   await expect(amountSum(page)).toHaveText("R$ 1.025,00");
 });
@@ -120,14 +126,14 @@ test("editing an amount adjusts the percent, and editing the percent adjusts the
   await page.goto("/categorias");
 
   await expect(amount(page, 1)).toBeDisabled();
-  await income(page).fill("5000");
+  await setIncome(page, "5000");
 
   await amount(page, 4).fill("500,00");
-  await expect(percent(page, 4)).toHaveValue("10");
+  await expect(percent(page, 4)).toHaveValue("10,00");
   await expect(amountSum(page)).toHaveText("R$ 5.125,00");
 
   await amount(page, 4).fill("333,33");
-  await expect(percent(page, 4)).toHaveValue("6,6666");
+  await expect(percent(page, 4)).toHaveValue("6,67");
   await expect(amount(page, 4)).toHaveValue("333,33");
 
   await amount(page, 4).fill("0");
@@ -143,9 +149,9 @@ test("an empty reference income shows a dash in every amount cell and the sum", 
   await login(page);
   await page.goto("/categorias");
 
-  await income(page).fill("5000");
+  await setIncome(page, "5000");
   await expect(amountSum(page)).toHaveText("R$ 5.000,00");
-  await income(page).fill("");
+  await setIncome(page, "");
   for (let n = 1; n <= IMAGE_BUDGET.length; n++) await expect(amount(page, n)).toHaveValue("");
   await expect(amountSum(page)).toHaveText("—");
 });
@@ -173,7 +179,7 @@ test("a row without a valid percentage shows a dash; removing a row recalculates
   await seedCategories(IMAGE_BUDGET);
   await login(page);
   await page.goto("/categorias");
-  await income(page).fill("5000");
+  await setIncome(page, "5000");
 
   await page.getByRole("button", { name: "Adicionar categoria" }).click();
   await expect(amount(page, 7)).toHaveValue("");
@@ -191,7 +197,7 @@ test("saving keeps the reference income, does not send it, and a reload clears i
   await seedCategories(IMAGE_BUDGET);
   await login(page);
   await page.goto("/categorias");
-  await income(page).fill("4321,09");
+  await setIncome(page, "4321,09");
 
   const bodies: string[] = [];
   page.on("request", (request) => {
@@ -206,7 +212,8 @@ test("saving keeps the reference income, does not send it, and a reload clears i
   expect(bodies[0]).toContain("Custos fixos");
   expect(bodies[0]).not.toContain("4321");
 
-  await expect(income(page)).toHaveValue("4321,09");
+  await expect(page.getByText(/Base de cálculo mensal:\s*R\$\s*4\.321,09/)).toBeVisible();
+  await expect(income(page)).toHaveCount(0);
   await expect(amount(page, 1)).toHaveValue("1.296,33");
 
   await page.reload();
@@ -307,31 +314,41 @@ test("two categories with the same color save normally", async ({ page }) => {
   }
 });
 
-test("adjusting a category closes the sum at 100% and enables saving", async ({ page }) => {
+const adjustSelect = (page: Page, direction: "Descontar" | "Acrescentar") =>
+  page.getByLabel(`${direction} a diferença em`, { exact: true });
+const apply = (page: Page) => page.getByRole("button", { name: "Aplicar", exact: true });
+
+test("the sum bar closes the sum at 100% on the chosen category and enables saving", async ({ page }) => {
   await login(page);
   await page.goto("/categorias");
   await addCategories(page, [["A", "50"], ["B", "30,5"], ["C", "10"]]);
-  await expect(page.getByTestId("category-sum")).toHaveText("90,5%");
+  await expect(page.getByTestId("category-sum")).toHaveText("90,50%");
+  await expect(page.getByText("A soma deve ser 100%. Atual: 90,50%", { exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Salvar" })).toBeDisabled();
 
-  await page.getByRole("button", { name: "Ajustar categoria 3 para fechar 100%" }).click();
+  // The select starts on the largest category.
+  await expect(adjustSelect(page, "Acrescentar")).toHaveText("A");
+  await chooseOption(adjustSelect(page, "Acrescentar"), "C");
+  await apply(page).click();
 
-  await expect(percent(page, 3)).toHaveValue("19,5");
-  await expect(percent(page, 1)).toHaveValue("50");
-  await expect(percent(page, 2)).toHaveValue("30,5");
-  await expect(page.getByTestId("category-sum")).toHaveText("100%");
-  await expect(page.getByRole("button", { name: /Ajustar categoria/ })).toHaveCount(0);
+  await expect(percent(page, 3)).toHaveValue("19,50");
+  await expect(percent(page, 1)).toHaveValue("50,00");
+  await expect(percent(page, 2)).toHaveValue("30,50");
+  await expect(page.getByTestId("category-sum")).toHaveText("100,00%");
+  await expect(apply(page)).toHaveCount(0);
   await expect(page.getByRole("button", { name: "Salvar" })).toBeEnabled();
 });
 
-test("adjusting down lowers the chosen category by the excess", async ({ page }) => {
+test("applying with a sum above 100% lowers the chosen category by the excess", async ({ page }) => {
   await login(page);
   await page.goto("/categorias");
   await addCategories(page, [["A", "50"], ["B", "40"], ["C", "10,297973"]]);
 
-  await page.getByRole("button", { name: "Ajustar categoria 3 para fechar 100%" }).click();
+  await chooseOption(adjustSelect(page, "Descontar"), "C");
+  await apply(page).click();
 
-  await expect(percent(page, 3)).toHaveValue("10");
-  await expect(page.getByTestId("category-sum")).toHaveText("100%");
+  await expect(percent(page, 3)).toHaveValue("10,00");
+  await expect(page.getByTestId("category-sum")).toHaveText("100,00%");
 });
 
 test("an adjustment that would leave the range shows the message and changes nothing", async ({
@@ -341,7 +358,8 @@ test("an adjustment that would leave the range shows the message and changes not
   await page.goto("/categorias");
   await addCategories(page, [["A", "60"], ["B", "40,297973"], ["C", "0,2"]]);
 
-  await page.getByRole("button", { name: "Ajustar categoria 3 para fechar 100%" }).click();
+  await chooseOption(adjustSelect(page, "Descontar"), "C");
+  await apply(page).click();
 
   await expect(
     page.getByText(
@@ -349,9 +367,33 @@ test("an adjustment that would leave the range shows the message and changes not
       { exact: true },
     ),
   ).toBeVisible();
-  await expect(percent(page, 3)).toHaveValue("0,2");
-  await expect(page.getByTestId("category-sum")).toHaveText("100,497973%");
+  await expect(percent(page, 3)).toHaveValue("0,20");
+  await expect(page.getByTestId("category-sum")).toHaveText("100,50%");
 
   await percent(page, 3).fill("0,1");
   await expect(page.getByText(/Não é possível ajustar esta categoria/)).toHaveCount(0);
+});
+
+test("removing a category with subcategories asks for confirmation", async ({ page }) => {
+  await login(page);
+  await page.goto("/categorias");
+  await addCategories(page, [["Custos fixos", "100"]]);
+  await page.getByRole("button", { name: "0 subcategorias de Custos fixos" }).click();
+  await page.getByRole("button", { name: "Nova subcategoria em Custos fixos" }).click();
+
+  const dialog = page.getByRole("dialog", { name: "Remover categoria?" });
+  const remove = page.getByRole("button", { name: "Remover categoria 1" });
+
+  await remove.click();
+  await expect(
+    dialog.getByText('"Custos fixos" e sua 1 subcategoria serão removidas ao salvar.', { exact: true }),
+  ).toBeVisible();
+  await dialog.getByRole("button", { name: "Cancelar" }).click();
+  await expect(dialog).toBeHidden();
+  await expect(name(page, 1)).toHaveValue("Custos fixos");
+
+  await remove.click();
+  await dialog.getByRole("button", { name: "Remover", exact: true }).click();
+  await expect(dialog).toBeHidden();
+  await expect(name(page, 1)).toHaveCount(0);
 });
