@@ -215,17 +215,18 @@ T6 → T7 → T8
 
 **Done when**:
 
-- [ ] Nenhum traço vertical separado; cada marco é um elemento sobre o trilho em 25/50/75/100% (RFN-01 AC1)
-- [ ] Com o Hero a partir de 576 px, cada label fica centrado no seu marco (label do 100% na borda direita); abaixo disso, grade 2×2 com marcos no trilho (RFN-01 AC1 e AC2)
-- [ ] Marco atingido: círculo `--income` com check e "Atingido" em texto; pendente: círculo vazio com borda e "Previsão: aos N anos" ou "Sem previsão" (RFN-02 AC3 e AC4)
-- [ ] Valor guardado ≥ alvo: 4 marcos atingidos (edge case)
-- [ ] Brilho da barra, nome acessível "Progresso do objetivo: …" e percentual único inalterados
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] Nenhum traço vertical separado; cada marco é um elemento sobre o trilho em 25/50/75/100% (RFN-01 AC1)
+- [x] Com o Hero a partir de 576 px, cada label fica centrado no seu marco (label do 100% na borda direita); abaixo disso, grade 2×2 com marcos no trilho (RFN-01 AC1 e AC2)
+- [x] Marco atingido: círculo `--income` com check e "Atingido" em texto; pendente: círculo vazio com borda e "Previsão: aos N anos" ou "Sem previsão" (RFN-02 AC3 e AC4)
+- [x] Valor guardado ≥ alvo: 4 marcos atingidos (edge case)
+- [x] Brilho da barra, nome acessível "Progresso do objetivo: …" e percentual único inalterados
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
 
 **Tests**: none
 **Gate**: build
 
 **Commit**: `feat(liberdade): put the milestones on the progress rail`
+**Status**: ✅ Done
 
 ---
 
