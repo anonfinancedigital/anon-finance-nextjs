@@ -193,7 +193,7 @@ Implicit-requirement dimensions: input validation & bounds (taxa personalizada f
 | AJL-26 | P1: Seletor de perfil | - | Pending |
 | AJL-27 | P1: Seletor de perfil | - | Pending |
 | AJL-28 | P1: Card de Meta | Execute | Implementing |
-| AJL-29 | P1: Card de Meta | - | Pending |
+| AJL-29 | P1: Card de Meta | Execute | Implementing |
 | AJL-30 | P1: Card de Meta | Execute | Implementing |
 | AJL-31 | P1: Card de Meta | Execute | Implementing |
 | AJL-10 | P2: Taxa personalizada | - | Pending |

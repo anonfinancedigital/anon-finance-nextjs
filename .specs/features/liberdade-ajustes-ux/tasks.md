@@ -275,9 +275,9 @@ T9 → T10 → T11 → T12 → T13 → T14
 
 **Done when**:
 
-- [ ] O card fechado não mostra Rentabilidade real, Taxa de retirada, Renda desejada nem Patrimônio necessário (AJL-29)
-- [ ] Gate build passa
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] O card fechado não mostra Rentabilidade real, Taxa de retirada, Renda desejada nem Patrimônio necessário (AJL-29)
+- [x] Gate build passa
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
 
 **Tests**: none
 **Gate**: build

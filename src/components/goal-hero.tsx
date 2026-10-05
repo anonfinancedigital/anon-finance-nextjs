@@ -1,6 +1,6 @@
 import { GoalCheckpoints } from "@/components/goal-checkpoints";
 import type { GoalSummary } from "@/lib/domain/freedom";
-import { HOW_WE_CALCULATE, heroFacts } from "@/lib/domain/freedom-copy";
+import { HOW_WE_CALCULATE, heroFacts, heroPill } from "@/lib/domain/freedom-copy";
 import { formatBRL } from "@/lib/domain/money";
 import { formatShare } from "@/lib/domain/percent";
 
@@ -39,14 +39,7 @@ export function GoalHero({ summary }: { summary: GoalSummary }) {
           <p className="font-display text-3xl font-bold tracking-tight @xl:text-2xl @3xl:text-3xl">
             {formatBRL(summary.targetCents)}
           </p>
-          <dl className="space-y-0.5 text-sm">
-            {heroFacts(summary).map((fact) => (
-              <div key={fact.label} className="flex flex-wrap gap-x-2">
-                <dt className="text-muted-foreground">{fact.label}:</dt>
-                <dd className="font-medium">{fact.value}</dd>
-              </div>
-            ))}
-          </dl>
+          <p className="w-fit rounded-full bg-income/15 px-3 py-1 text-sm text-income">{heroPill(summary)}</p>
           <p className="text-sm text-muted-foreground">
             {formatBRL(summary.savedCents)} acumulados ({formatShare(summary.progressBp)} do alvo)
           </p>
@@ -55,6 +48,14 @@ export function GoalHero({ summary }: { summary: GoalSummary }) {
               Como calculamos?
             </summary>
             <div className="mt-2 space-y-2">
+              <dl className="space-y-0.5">
+                {heroFacts(summary).map((fact) => (
+                  <div key={fact.label} className="flex flex-wrap gap-x-2">
+                    <dt>{fact.label}:</dt>
+                    <dd className="font-medium text-foreground">{fact.value}</dd>
+                  </div>
+                ))}
+              </dl>
               {HOW_WE_CALCULATE.map((paragraph) => (
                 <p key={paragraph}>{paragraph}</p>
               ))}
