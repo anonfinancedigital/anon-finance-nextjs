@@ -26,7 +26,7 @@ Na tela de Categorias o salvamento exige soma exatamente 100%. Quando a soma fic
 
 | Assumption / decision | Chosen default | Rationale | Confirmed? |
 | --------------------- | -------------- | --------- | ---------- |
-| Como o usuário escolhe a categoria | Botão por linha, com o texto "Ajustar para 100%" e `aria-label` "Ajustar categoria N para fechar 100%", ao lado de Remover | "Selecionar uma categoria" no pedido; um botão por linha é a menor interação e segue o padrão de Remover | n |
+| Como o usuário escolhe a categoria | Botão por linha, com o texto "Ajustar" e `aria-label` "Ajustar categoria N para fechar 100%", ao lado de Remover | "Selecionar uma categoria" no pedido; um botão por linha é a menor interação e segue o padrão de Remover | n |
 | Quando o botão aparece | Só enquanto a soma difere de 100% | Com soma 100% não há o que ajustar | n |
 | Cálculo | novo percentual da linha = percentual atual da linha + (100.000.000 − soma), em micro-percentual inteiro; soma exata, sem arredondamento | Micro-percentual é inteiro, então a soma fecha exatamente | n |
 | Valor atual da linha vazio ou inválido | Conta como 0 na soma (igual ao cálculo atual da soma) e o ajuste coloca o valor que falta | Mantém consistência com a soma exibida | n |
@@ -50,17 +50,17 @@ Na tela de Categorias o salvamento exige soma exatamente 100%. Quando a soma fic
 
 **Acceptance Criteria**:
 
-1. WHILE a soma dos percentuais for diferente de 100%, the system SHALL exibir em cada linha de categoria um botão "Ajustar para 100%".  <!-- state-driven -->
-2. WHILE a soma dos percentuais for exatamente 100%, the system SHALL ocultar os botões "Ajustar para 100%".  <!-- state-driven -->
-3. WHEN o usuário clica em "Ajustar para 100%" em uma linha cuja soma está abaixo de 100%, the system SHALL aumentar o percentual dessa linha em 100% menos a soma, deixando a soma em exatamente 100%.  <!-- event-driven -->
-4. WHEN o usuário clica em "Ajustar para 100%" em uma linha cuja soma está acima de 100%, the system SHALL reduzir o percentual dessa linha na quantidade excedente, deixando a soma em exatamente 100%.  <!-- event-driven -->
+1. WHILE a soma dos percentuais for diferente de 100%, the system SHALL exibir em cada linha de categoria um botão "Ajustar".  <!-- state-driven -->
+2. WHILE a soma dos percentuais for exatamente 100%, the system SHALL ocultar os botões "Ajustar".  <!-- state-driven -->
+3. WHEN o usuário clica em "Ajustar" em uma linha cuja soma está abaixo de 100%, the system SHALL aumentar o percentual dessa linha em 100% menos a soma, deixando a soma em exatamente 100%.  <!-- event-driven -->
+4. WHEN o usuário clica em "Ajustar" em uma linha cuja soma está acima de 100%, the system SHALL reduzir o percentual dessa linha na quantidade excedente, deixando a soma em exatamente 100%.  <!-- event-driven -->
 5. WHEN o ajuste fecha a soma em 100% e nenhuma linha tem erro de validação, the system SHALL habilitar o botão Salvar.  <!-- event-driven -->
 6. WHEN o ajuste é aplicado, the system SHALL exibir o novo percentual da linha no formato dos campos atuais, com vírgula decimal e sem zeros à direita (exemplo: 6,297973 reduzido em 0,297973 mostra 6).  <!-- event-driven -->
 7. WHEN o ajuste é aplicado e a receita de referência está preenchida, the system SHALL atualizar o valor em R$ da linha para o valor correspondente ao novo percentual.  <!-- event-driven -->
 8. IF o percentual resultante da linha seria menor que 0,000001% ou maior que 100%, THEN the system SHALL manter todos os percentuais inalterados e exibir a mensagem "Não é possível ajustar esta categoria: o percentual ficaria fora do intervalo de 0,000001% a 100%".  <!-- unwanted-behavior -->
 9. The system SHALL alterar apenas o percentual da linha escolhida e nenhum outro campo ou linha ao aplicar o ajuste.  <!-- ubiquitous -->
 
-**Independent Test**: Com categorias somando 99,047973%, clicar em "Ajustar para 100%" na linha Torrar (6,297973) e ver 7,25; a soma mostra 100% e o Salvar fica habilitado.
+**Independent Test**: Com categorias somando 99,047973%, clicar em "Ajustar" na linha Torrar (6,297973) e ver 7,25; a soma mostra 100% e o Salvar fica habilitado.
 
 ---
 

@@ -110,14 +110,21 @@ function ColorPicker({
 
 /**
  * Editable category set with a live sum; saving is blocked until the sum is exactly 100%.
- * A reference income (local state only, never saved) previews each category's amount in R$.
+ * A reference income (starts from `initialIncome`; local state only, never saved) previews each category's amount in R$.
  */
-export function CategoryEditor({ categories }: { categories: Category[] }) {
+export function CategoryEditor({
+  categories,
+  initialIncome = "",
+}: {
+  categories: Category[];
+  /** Starting text of the reference income, e.g. the month income. */
+  initialIncome?: string;
+}) {
   const router = useRouter();
   const [rows, setRows] = useState<Row[]>(() => categories.map(toRow));
   const [result, setResult] = useState<ActionResult | null>(null);
   // Kept apart from the rows so it survives the reset after a save.
-  const [income, setIncome] = useState("");
+  const [income, setIncome] = useState(initialIncome);
   const [adjustError, setAdjustError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
 
@@ -309,7 +316,7 @@ export function CategoryEditor({ categories }: { categories: Category[] }) {
                         aria-label={`Ajustar categoria ${i + 1} para fechar 100%`}
                         onClick={() => adjust(i)}
                       >
-                        Ajustar para 100%
+                        Ajustar
                       </Button>
                     )}
                     <Button
