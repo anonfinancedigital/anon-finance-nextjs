@@ -167,12 +167,12 @@ T22 → T23 → T24 → T25 → T26 → T27 → T28
 
 **Done when**:
 
-- [ ] Componente exporta `Logo` com prop `className` opcional
-- [ ] Squircle e gradiente fixos; texto usa tokens `foreground` e `muted-foreground`
-- [ ] Nome acessível "Vértice" lido uma vez
-- [ ] `npm run typecheck && npm run lint` passam
-- [ ] Gate quick: `npm run typecheck && npm run lint && npm run test:unit`
-- [ ] Contagem de testes unit/int igual à anterior (nenhum teste removido)
+- [x] Componente exporta `Logo` com prop `className` opcional
+- [x] Squircle e gradiente fixos; texto usa tokens `foreground` e `muted-foreground`
+- [x] Nome acessível "Vértice" lido uma vez
+- [x] `npm run typecheck && npm run lint` passam
+- [x] Gate quick: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Contagem de testes unit/int igual à anterior (nenhum teste removido)
 
 **Tests**: none
 **Gate**: quick
