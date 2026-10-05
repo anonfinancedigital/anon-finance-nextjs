@@ -30,7 +30,7 @@ export function CategoryOverview({ rows }: { rows: CategorySummary[] }) {
     <Tabs value={view} onValueChange={(next) => setView(next as View)} className="gap-0">
       <ContentCard
         title="Gastos por categoria"
-        note={`${rows.length} categorias`}
+        note={<span className="hidden sm:inline">{rows.length} categorias</span>}
         action={
           <TabsList aria-label="Visão das categorias">
             {views.map(({ value, label }) => (
