@@ -42,8 +42,37 @@ export function GoalSummary({ summary }: { summary: Summary }) {
           <span className="text-muted-foreground">Progresso</span>
           <span className="font-medium">{share}</span>
         </div>
-        <Progress className="h-3" value={barValue} aria-label={`Progresso do objetivo: ${share}`} />
+        <div className="relative">
+          <Progress className="h-3" value={barValue} aria-label={`Progresso do objetivo: ${share}`} />
+          {summary.milestones.map((m) => (
+            <span
+              key={m.months}
+              aria-hidden
+              className="absolute top-1/2 h-5 w-0.5 -translate-x-1/2 -translate-y-1/2 rounded bg-foreground/60"
+              style={{ left: `${m.positionBp / 100}%` }}
+            />
+          ))}
+        </div>
       </div>
+
+      {summary.milestones.length > 0 && (
+        <div className="space-y-2">
+          <h2 className="text-sm font-medium">Projeção</h2>
+          <ol className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+            {summary.milestones.map((m) => (
+              <li key={m.months} className="rounded-md border px-3 py-2 text-sm">
+                <span className="block text-muted-foreground">
+                  {formatTerm(m.months)} · aos {m.ageYears} anos
+                </span>
+                <span className="font-semibold">{formatBRL(m.valueCents)}</span>
+              </li>
+            ))}
+          </ol>
+          <p className="text-xs text-muted-foreground">
+            Projeção com 8% ao ano fixos e o aporte mensal necessário investido todos os meses.
+          </p>
+        </div>
+      )}
 
       <dl className="grid gap-4 sm:grid-cols-2">
         <div>

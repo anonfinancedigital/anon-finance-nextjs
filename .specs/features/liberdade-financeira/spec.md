@@ -158,10 +158,10 @@ Implicit-requirement dimensions: input validation (LIB-02, LIB-03), failure stat
 | LIB-09 | P1: Validar (AC 3, 4: nascimento e idade de aposentadoria) | Specify | Verified |
 | LIB-10 | P1: Validar (AC 5: falha de salvamento) | Specify | Verified |
 | LIB-11 | P1: Validar (AC 6, 7: sessão e isolamento por usuário) | Specify | Verified |
-| LIB-12 | P2: Projeção (AC 1, 2, 3, 4, 6: marcas, valores, idade, omissão) | Specify | Pending |
-| LIB-13 | P2: Projeção (AC 5, 7: posição na barra e aviso) | Specify | Pending |
+| LIB-12 | P2: Projeção (AC 1, 2, 3, 4, 6: marcas, valores, idade, omissão) | Specify | Implemented |
+| LIB-13 | P2: Projeção (AC 5, 7: posição na barra e aviso) | Specify | Implemented |
 
-**Coverage:** 13 total, 11 mapped to tasks, 2 unmapped ⚠️
+**Coverage:** 13 total, 13 mapped to tasks, 0 unmapped
 
 ---
 
