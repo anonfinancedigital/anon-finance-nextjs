@@ -452,13 +452,12 @@ T16 → T17 → T18 → T19
 
 **Done when**:
 
-- [ ] Barra com `indicatorClassName="bg-income"` e brilho, largura limitada a 100% e o percentual real no texto (120,0% quando passa do alvo)
-- [ ] 4 checkpoints posicionados em `positionBp` com o valor compacto (alvo R$ 1.500.000,00 → "R$ 375 mil", "R$ 750 mil", "R$ 1,1 mi", "R$ 1,5 mi")
-- [ ] Estado em texto: "Atingido" (com ícone de check), "Previsão: aos N anos" ou "Sem previsão"
-- [ ] No celular os rótulos vão para uma lista abaixo da barra, sem sobreposição
-- [ ] O brilho não é cortado pelo `overflow` do trilho (conferir no navegador; ajustar só nesta tela se cortar)
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
-- [ ] Test count: nenhum teste novo (UI = none); contagem anterior mantida
+- [x] Barra com `indicatorClassName="bg-income"` e brilho (elemento decorativo à parte, porque o `overflow` do `Progress` corta sombras), largura limitada a 100% e o percentual real no texto (120,0% quando passa do alvo)
+- [x] 4 marcas na barra em `positionBp` e, numa lista abaixo da barra, cada checkpoint com o valor compacto (alvo R$ 1.500.000,00 → "R$ 375 mil", "R$ 750 mil", "R$ 1,1 mi", "R$ 1,5 mi")
+- [x] Estado em texto: "Atingido" (com ícone de check), "Previsão: aos N anos" ou "Sem previsão"
+- [x] A lista usa 2 colunas no celular e 4 em telas maiores, sem sobreposição de rótulos
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
+- [x] Test count: nenhum teste novo (UI = none); contagem anterior mantida
 
 **Tests**: none
 **Gate**: build
