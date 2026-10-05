@@ -1,5 +1,5 @@
 import { expect, type Page, test } from "@playwright/test";
-import { login, resetDatabase, seedCategories, seedTransaction } from "./helpers";
+import { login, resetDatabase, seedCategories, seedTransaction, chooseOption } from "./helpers";
 
 test.beforeEach(resetDatabase);
 
@@ -27,7 +27,7 @@ test("income 5.000 and Conforto at 30% with 1.600 spent: target 1.500 and oversp
     "R$ 1.500,00",
     "R$ 1.600,00",
     "-R$ 100,00",
-    "Estourou R$ 100,00",
+    "107%Estourou R$ 100,00",
   ]);
 
   const withinTarget = summaryRow(page, "Custos fixos");
@@ -57,7 +57,7 @@ test("the summary updates after adding an expense, without a manual reload", asy
   await form.getByLabel("Gasto", { exact: true }).check();
   await form.getByLabel("Valor (R$)").fill("750,00");
   await form.getByLabel("Data").fill("2026-09-15");
-  await form.getByLabel("Categoria").selectOption({ label: "Conforto" });
+  await chooseOption(form.getByLabel("Categoria"), "Conforto");
   await form.getByRole("button", { name: "Salvar" }).click();
 
   await expect(page.getByTestId("total-spent")).toHaveText("R$ 750,00");

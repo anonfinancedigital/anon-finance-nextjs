@@ -7,7 +7,7 @@ import { KindToggle } from "@/components/kind-toggle";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { NativeSelect } from "@/components/ui/native-select";
+import { SelectField } from "@/components/ui/select-field";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Switch } from "@/components/ui/switch";
 import type { ActionResult } from "@/lib/action-result";
@@ -204,24 +204,19 @@ export function TransactionForm({
             ) : (
               <>
                 <Label htmlFor={field("category")}>Categoria</Label>
-                <NativeSelect
+                <SelectField
                   id={field("category")}
                   value={selectedCategory ? values.categoryId : ""}
-                  aria-invalid={!!fieldErrors.categoryId}
-                  onChange={(e) =>
-                    setValues((v) => ({
-                      ...v,
-                      ...pickSelection(e.target.value),
-                    }))
+                  invalid={!!fieldErrors.categoryId}
+                  onValueChange={(v) =>
+                    setValues((prev) => ({ ...prev, ...pickSelection(v) }))
                   }
-                >
-                  <option value="">Selecione uma categoria</option>
-                  {categories.map((c) => (
-                    <option key={c.id} value={c.id}>
-                      {categoryDisplayName(c.name)}
-                    </option>
-                  ))}
-                </NativeSelect>
+                  placeholder="Selecione uma categoria"
+                  options={[
+                    { value: "", label: "Selecione uma categoria" },
+                    ...categories.map((c) => ({ value: c.id, label: categoryDisplayName(c.name) })),
+                  ]}
+                />
                 {fieldErrors.categoryId && (
                   <p className="text-sm text-destructive">
                     {fieldErrors.categoryId}
@@ -231,7 +226,7 @@ export function TransactionForm({
                   selectedCategory.subcategories.length > 0 && (
                     <div className="space-y-1 pt-2">
                       <Label htmlFor={field("subcategory")}>Subcategoria</Label>
-                      <NativeSelect
+                      <SelectField
                         id={field("subcategory")}
                         value={
                           selectedCategory.subcategories.some(
@@ -240,16 +235,16 @@ export function TransactionForm({
                             ? values.subcategoryId
                             : ""
                         }
-                        aria-invalid={!!fieldErrors.subcategoryId}
-                        onChange={(e) => set("subcategoryId", e.target.value)}
-                      >
-                        <option value="">Sem subcategoria</option>
-                        {selectedCategory.subcategories.map((s) => (
-                          <option key={s.id} value={s.id}>
-                            {categoryDisplayName(s.name)}
-                          </option>
-                        ))}
-                      </NativeSelect>
+                        invalid={!!fieldErrors.subcategoryId}
+                        onValueChange={(v) => set("subcategoryId", v)}
+                        options={[
+                          { value: "", label: "Sem subcategoria" },
+                          ...selectedCategory.subcategories.map((s) => ({
+                            value: s.id,
+                            label: categoryDisplayName(s.name),
+                          })),
+                        ]}
+                      />
                     </div>
                   )}
                 {fieldErrors.subcategoryId && (
@@ -338,7 +333,7 @@ export function TransactionForm({
         )}
       </div>
 
-      <div className="shrink-0 space-y-2 border-t border-white/10 pt-3">
+      <div className="shrink-0 space-y-2 border-t border-input pt-3">
         {result && !result.ok && !Object.keys(fieldErrors).length && (
           <p role="alert" className="text-sm text-destructive">
             {result.error}

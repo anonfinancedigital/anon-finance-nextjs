@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { login, resetDatabase, seedCategories, seedTransaction } from "./helpers";
+import { login, resetDatabase, seedCategories, seedTransaction, chooseOption } from "./helpers";
 
 test.beforeEach(resetDatabase);
 
@@ -100,7 +100,7 @@ test("searching by description narrows the list, combines with the category filt
   await expect(rows).toHaveCount(2);
   await expect(page).toHaveURL(/busca=CAFE/);
 
-  await page.getByLabel("Filtrar por categoria").selectOption({ label: "Lazer" });
+  await chooseOption(page.getByLabel("Filtrar por categoria"), "Lazer");
   await expect(rows).toHaveCount(1);
   await expect(rows.first()).toContainText("Café com amigos");
   await expect(page.getByLabel("Buscar por descrição")).toHaveValue("CAFE");

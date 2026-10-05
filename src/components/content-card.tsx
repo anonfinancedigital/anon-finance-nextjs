@@ -1,0 +1,27 @@
+import type { ReactNode } from "react";
+import { cn } from "@/lib/utils";
+
+/** Standard section container: titled header (optional note on the right) over a bordered card. */
+export function ContentCard({
+  title,
+  note,
+  children,
+  className,
+  bodyClassName,
+}: {
+  title: string;
+  note?: ReactNode;
+  children: ReactNode;
+  className?: string;
+  bodyClassName?: string;
+}) {
+  return (
+    <section className={cn("overflow-hidden rounded-2xl border border-border bg-card shadow-lg", className)}>
+      <header className="flex items-center justify-between gap-2 px-6 py-5">
+        <h2 className="font-display text-base font-semibold md:text-lg">{title}</h2>
+        {note && <p className="text-xs text-muted-foreground">{note}</p>}
+      </header>
+      <div className={bodyClassName}>{children}</div>
+    </section>
+  );
+}

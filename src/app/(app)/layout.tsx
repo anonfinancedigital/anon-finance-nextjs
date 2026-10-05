@@ -1,36 +1,40 @@
-import Link from "next/link";
+import { LogOutIcon, WalletIcon } from "lucide-react";
 import { signOutAction } from "@/actions/auth";
+import { AppNav } from "@/components/app-nav";
+import { ThemeToggle } from "@/components/theme-toggle";
 import { Button } from "@/components/ui/button";
 import { requireSessionForPage } from "@/lib/auth-guard";
 
-/** Shell of the signed-in area: navigation and sign-out. Pages still guard their own data. */
+/** Shell of the signed-in area: sidebar (top bar on mobile) with navigation and sign-out. Pages still guard their own data. */
 export default async function AppLayout({ children }: LayoutProps<"/">) {
   await requireSessionForPage();
 
   return (
-    <div className="flex flex-1 flex-col">
-      <header className="border-b">
-        <div className="mx-auto flex w-full max-w-5xl items-center gap-4 px-4 py-3">
-          <span className="font-semibold">Orçamento</span>
-          <nav aria-label="Principal" className="flex gap-1">
-            <Button variant="ghost" size="sm" asChild>
-              <Link href="/">Resumo</Link>
-            </Button>
-            <Button variant="ghost" size="sm" asChild>
-              <Link href="/categorias">Categorias</Link>
-            </Button>
-            <Button variant="ghost" size="sm" asChild>
-              <Link href="/liberdade">Liberdade</Link>
-            </Button>
-          </nav>
-          <form action={signOutAction} className="ml-auto">
-            <Button type="submit" variant="outline" size="sm">
+    <div className="flex flex-1 flex-col md:flex-row">
+      <aside className="sticky top-0 z-30 flex items-center gap-3 border-b border-border bg-background/95 px-4 py-3 md:fixed md:inset-y-0 md:left-0 md:w-[218px] md:flex-col md:items-stretch md:gap-6 md:border-r md:border-b-0 md:bg-sidebar md:p-3">
+        <div className="flex items-center gap-3 md:px-1 md:pt-2">
+          <div className="flex size-10 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-[0_0_16px_oklch(0.57_0.21_293/0.35)]">
+            <WalletIcon aria-hidden className="size-5" />
+          </div>
+          <div className="leading-tight">
+            <p className="font-display font-bold">Orçamento</p>
+            <p className="hidden text-xs text-muted-foreground md:block">Visão da família</p>
+          </div>
+        </div>
+        <AppNav />
+        <div className="ml-auto flex items-center gap-1 md:mt-auto md:ml-0 md:flex-col md:items-stretch">
+          <ThemeToggle className="md:w-full md:justify-start" />
+          <form action={signOutAction}>
+            <Button type="submit" variant="ghost" size="sm" className="md:w-full md:justify-start">
+              <LogOutIcon aria-hidden />
               Sair
             </Button>
           </form>
         </div>
-      </header>
-      <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-6">{children}</main>
+      </aside>
+      <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-6 pb-24 sm:px-6 md:ml-[218px] md:max-w-none md:px-8 md:pb-8 lg:px-12">
+        <div className="mx-auto w-full max-w-5xl">{children}</div>
+      </main>
     </div>
   );
 }

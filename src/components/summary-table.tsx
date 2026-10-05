@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { Fragment, useState } from "react";
+import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import {
   Table,
@@ -42,12 +43,12 @@ export function SummaryTable({ rows }: { rows: CategorySummary[] }) {
     <Table>
       <TableHeader>
         <TableRow>
-          <TableHead>Categoria</TableHead>
+          <TableHead className="px-6">Categoria</TableHead>
           <TableHead className="text-right">Percentual</TableHead>
           <TableHead className="text-right">Meta</TableHead>
           <TableHead className="text-right">Gasto</TableHead>
           <TableHead className="text-right">Restante</TableHead>
-          <TableHead className="w-48">Consumo</TableHead>
+          <TableHead className="w-48 text-right">Consumo</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -61,50 +62,52 @@ export function SummaryTable({ rows }: { rows: CategorySummary[] }) {
             data-overspent={row.overspent}
             className={row.overspent ? "bg-destructive/5" : undefined}
           >
-            <TableCell className="font-medium">
+            <TableCell className="px-6 font-medium">
               <span className="flex items-center gap-2">
                 <span
                   aria-hidden
-                  className="inline-block size-2.5 shrink-0 rounded-sm"
+                  className="inline-block size-2 shrink-0 rounded-full"
                   style={{ background: colorVar(row.color) }}
                 />
                 {row.name}
                 {detailed && (
-                  <button
+                  <Button
                     type="button"
+                    variant="ghost"
+                    size="icon-xs"
                     aria-expanded={open}
                     aria-controls={`summary-detail-${row.id}`}
                     aria-label={`Detalhar ${row.name} por subcategoria`}
                     onClick={() => toggle(row.id)}
-                    className="cursor-pointer text-xs text-muted-foreground"
+                    className="text-muted-foreground"
                   >
                     {open ? "▾" : "▸"}
-                  </button>
+                  </Button>
                 )}
               </span>
             </TableCell>
-            <TableCell className="text-right tabular-nums">{formatPercent(row.percentMicro)}</TableCell>
+            <TableCell className="text-right text-muted-foreground tabular-nums">{formatPercent(row.percentMicro)}</TableCell>
             <TableCell className="text-right tabular-nums">{formatBRL(row.targetCents)}</TableCell>
-            <TableCell className="text-right tabular-nums">{formatBRL(row.spentCents)}</TableCell>
+            <TableCell className="text-right font-semibold tabular-nums">{formatBRL(row.spentCents)}</TableCell>
             <TableCell
-              className={`text-right tabular-nums ${row.overspent ? "text-destructive" : ""}`}
+              className={`text-right tabular-nums ${row.overspent ? "text-destructive" : "text-income"}`}
             >
               {formatBRL(row.remainingCents)}
             </TableCell>
-            <TableCell>
-              {row.overspent ? (
-                <span className="inline-flex items-center rounded-md bg-destructive/10 px-2 py-0.5 text-xs font-semibold text-destructive">
+            <TableCell className="pr-6">
+              <div className="flex items-center justify-end gap-2">
+                <Progress
+                  value={Math.min(row.consumedPct, 100)}
+                  aria-label={`Consumo da meta de ${row.name}`}
+                  className="h-1.5 w-24"
+                  indicatorClassName={row.overspent ? "bg-destructive" : "bg-income"}
+                />
+                <span className="w-10 text-right text-xs font-semibold tabular-nums">{row.consumedPct}%</span>
+              </div>
+              {row.overspent && (
+                <p className="mt-1 text-right text-[11px] font-semibold text-destructive">
                   Estourou {formatBRL(row.overspentCents)}
-                </span>
-              ) : (
-                <div className="flex items-center gap-2">
-                  <Progress
-                    value={row.consumedPct}
-                    aria-label={`Consumo da meta de ${row.name}`}
-                    className="h-2"
-                  />
-                  <span className="w-10 text-right text-xs tabular-nums">{row.consumedPct}%</span>
-                </div>
+                </p>
               )}
             </TableCell>
           </TableRow>
@@ -116,7 +119,7 @@ export function SummaryTable({ rows }: { rows: CategorySummary[] }) {
                 data-testid="summary-subrow"
                 className="text-muted-foreground"
               >
-                <TableCell className="pl-9">{line.name}</TableCell>
+                <TableCell className="pl-12">{line.name}</TableCell>
                 <TableCell className="text-right tabular-nums">{formatShare(line.shareBp)}</TableCell>
                 <TableCell />
                 <TableCell className="text-right tabular-nums">{formatBRL(line.spentCents)}</TableCell>

@@ -1,5 +1,5 @@
 import { expect, type Page, test } from "@playwright/test";
-import { login, resetDatabase, seedCategories } from "./helpers";
+import { login, resetDatabase, seedCategories, chooseOption } from "./helpers";
 
 test.beforeEach(resetDatabase);
 
@@ -13,7 +13,7 @@ async function fillTransaction(
   await f.getByLabel(tx.kind, { exact: true }).check();
   await f.getByLabel("Valor (R$)").fill(tx.amount);
   await f.getByLabel("Data").fill(tx.date);
-  if (tx.category) await f.getByLabel("Categoria").selectOption({ label: tx.category });
+  if (tx.category) await chooseOption(f.getByLabel("Categoria"), tx.category);
   if (tx.description) await f.getByLabel("Descrição (opcional)").fill(tx.description);
 }
 

@@ -233,7 +233,7 @@ export function CategoryEditor({
         )}
       </div>
 
-      <div className="divide-y divide-white/[0.06] rounded-2xl border border-white/[0.09] bg-card px-4 shadow-lg">
+      <div className="divide-y divide-border rounded-2xl border border-border bg-card px-4 shadow-lg">
         {rows.map((row, i) => {
           const nameError = fieldErrors[`${i}.name`];
           const colorError = fieldErrors[`${i}.color`];

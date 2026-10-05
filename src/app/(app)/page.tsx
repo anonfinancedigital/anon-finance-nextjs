@@ -1,6 +1,9 @@
+import { ArrowDownLeftIcon, ArrowUpRightIcon, WalletIcon } from "lucide-react";
 import { BudgetCharts } from "@/components/budget-charts";
+import { ContentCard } from "@/components/content-card";
 import { MonthPicker } from "@/components/month-picker";
 import { NewTransactionButton } from "@/components/new-transaction-button";
+import { PageHeader } from "@/components/page-header";
 import { SummaryTable } from "@/components/summary-table";
 import { TransactionFilter } from "@/components/transaction-filter";
 import { TransactionList } from "@/components/transaction-list";
@@ -43,50 +46,84 @@ export default async function SummaryPage({ searchParams }: PageProps<"/">) {
   );
 
   const search = parseSearch(typeof busca === "string" ? busca : undefined);
+  const shown = searchTransactions(filterTransactions(transactions, filter), search);
 
   const cards = [
-    { label: "Receita", testId: "total-income", cents: summary.incomeCents },
-    { label: "Gasto", testId: "total-spent", cents: summary.spentCents },
-    { label: "Saldo", testId: "total-balance", cents: summary.balanceCents },
+    {
+      label: "Receita",
+      testId: "total-income",
+      cents: summary.incomeCents,
+      icon: ArrowDownLeftIcon,
+      tone: "text-income",
+      iconTone: "bg-income/15 text-income",
+    },
+    {
+      label: "Gasto",
+      testId: "total-spent",
+      cents: summary.spentCents,
+      icon: ArrowUpRightIcon,
+      tone: "text-destructive",
+      iconTone: "bg-destructive/15 text-destructive",
+    },
+    {
+      label: "Saldo",
+      testId: "total-balance",
+      cents: summary.balanceCents,
+      icon: WalletIcon,
+      tone: summary.balanceCents < 0 ? "text-destructive" : "text-link",
+      iconTone: "bg-primary/15 text-link",
+    },
   ];
 
   return (
-    <div className="space-y-8 pb-32">
-      <div className="flex flex-wrap items-center justify-between gap-4">
-        <h1 className="text-2xl font-semibold">Resumo</h1>
+    <div className="space-y-6 pb-32">
+      <PageHeader eyebrow="Visão geral" title="Resumo">
         <MonthPicker month={month} />
-      </div>
+      </PageHeader>
 
-      <dl className="grid gap-3 sm:grid-cols-3">
-        {cards.map((card) => (
-          <div key={card.testId} className="rounded-lg border p-4">
-            <dt className="text-sm text-muted-foreground">{card.label}</dt>
+      <dl className="grid gap-4 sm:grid-cols-3">
+        {cards.map(({ label, testId, cents, icon: Icon, tone, iconTone }) => (
+          <div
+            key={testId}
+            className="relative overflow-hidden rounded-2xl border border-border bg-card p-6 shadow-lg"
+          >
+            <div className="flex items-center justify-between pb-4">
+              <dt className="text-sm text-muted-foreground">{label}</dt>
+              <span className={`flex size-9 items-center justify-center rounded-xl ${iconTone}`}>
+                <Icon aria-hidden className="size-4" />
+              </span>
+            </div>
             <dd
-              data-testid={card.testId}
-              className={`text-2xl font-semibold tabular-nums ${card.cents < 0 ? "text-destructive" : ""}`}
+              data-testid={testId}
+              className={`font-display text-3xl font-bold tracking-tight tabular-nums ${tone}`}
             >
-              {formatBRL(card.cents)}
+              {formatBRL(cents)}
             </dd>
           </div>
         ))}
       </dl>
 
-      <section className="space-y-3">
-        <h2 className="text-lg font-semibold">Gastos por categoria</h2>
+      <ContentCard title="Gastos por categoria" note={`${summary.rows.length} categorias`}>
         <SummaryTable rows={summary.rows} />
-        <BudgetCharts rows={summary.rows} spentCents={summary.spentCents} />
-      </section>
+      </ContentCard>
 
-      <section className="space-y-3">
-        <h2 className="text-lg font-semibold">Transações do mês</h2>
-        <TransactionFilter categories={categories} filter={filter} search={search} />
+      <BudgetCharts rows={summary.rows} spentCents={summary.spentCents} />
+
+      <ContentCard
+        title="Transações do mês"
+        note={`${shown.length} lançamentos`}
+        bodyClassName="space-y-4"
+      >
+        <div className="px-6">
+          <TransactionFilter categories={categories} filter={filter} search={search} />
+        </div>
         <TransactionList
-          transactions={searchTransactions(filterTransactions(transactions, filter), search)}
+          transactions={shown}
           categories={categories}
           filtered={filter.categoryId !== null}
           searching={search !== ""}
         />
-      </section>
+      </ContentCard>
 
       <NewTransactionButton categories={categories} defaultDate={todayInSaoPaulo()} />
     </div>

@@ -13,6 +13,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import { ContentCard } from "@/components/content-card";
 import type { CategorySummary } from "@/lib/domain/budget";
 import { colorVar } from "@/lib/domain/color";
 import { formatBRL } from "@/lib/domain/money";
@@ -32,12 +33,12 @@ const tooltipStyle = {
   background: "var(--popover)",
   color: "var(--popover-foreground)",
   border: "1px solid var(--border)",
-  borderRadius: 8,
+  borderRadius: 12,
   fontSize: 12,
 };
 
 function Swatch({ color }: { color: string }) {
-  return <span aria-hidden className="inline-block size-2.5 shrink-0 rounded-sm" style={{ background: color }} />;
+  return <span aria-hidden className="inline-block size-2 shrink-0 rounded-full" style={{ background: color }} />;
 }
 
 /** Bars: spent × target per category (overspent bar in a distinct color plus a text label). */
@@ -51,8 +52,7 @@ function SpentVsTarget({ rows }: { rows: Row[] }) {
   }));
 
   return (
-    <figure data-testid="bar-chart" className="space-y-2">
-      <figcaption className="text-sm font-medium">Gasto × meta por categoria</figcaption>
+    <figure data-testid="bar-chart" className="space-y-2 px-6 pb-6">
       <ul className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
         <li className="flex items-center gap-1.5">
           <Swatch color="var(--viz-target)" /> Meta
@@ -70,6 +70,7 @@ function SpentVsTarget({ rows }: { rows: Row[] }) {
             <CartesianGrid horizontal={false} stroke="var(--viz-grid)" />
             <XAxis
               type="number"
+              tickCount={3}
               tick={tick}
               tickFormatter={(v: number) => compactBRL.format(v)}
               axisLine={false}
@@ -102,10 +103,9 @@ function SpendingShare({ rows, spentCents }: { rows: Row[]; spentCents: number }
     .filter((s) => s.cents > 0);
 
   return (
-    <figure data-testid="pie-chart" className="space-y-2">
-      <figcaption className="text-sm font-medium">Participação no gasto do mês</figcaption>
-      <div className="flex flex-wrap items-center gap-4">
-        <div className="size-48">
+    <figure data-testid="pie-chart" className="px-6 pb-6">
+      <div className="flex flex-wrap items-center gap-6">
+        <div className="relative size-48">
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <Pie
@@ -114,7 +114,7 @@ function SpendingShare({ rows, spentCents }: { rows: Row[]; spentCents: number }
                 nameKey="name"
                 innerRadius="55%"
                 outerRadius="100%"
-                stroke="var(--background)"
+                stroke="var(--card)"
                 strokeWidth={2}
                 isAnimationActive={false}
               >
@@ -128,13 +128,17 @@ function SpendingShare({ rows, spentCents }: { rows: Row[]; spentCents: number }
               />
             </PieChart>
           </ResponsiveContainer>
+          <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center text-center">
+            <span className="text-xs text-muted-foreground">Total gasto</span>
+            <span className="font-display text-sm font-bold">{formatBRL(spentCents)}</span>
+          </div>
         </div>
-        <ul className="space-y-1 text-sm">
+        <ul className="min-w-44 flex-1 space-y-2 text-sm">
           {data.map((d) => (
             <li key={d.name} className="flex items-center gap-2">
               <Swatch color={d.color} />
-              <span>{d.name}</span>
-              <span className="tabular-nums text-muted-foreground">{share.format(d.cents / spentCents)}</span>
+              <span className="text-muted-foreground">{d.name}</span>
+              <span className="ml-auto font-semibold tabular-nums">{share.format(d.cents / spentCents)}</span>
             </li>
           ))}
         </ul>
@@ -148,13 +152,17 @@ export function BudgetCharts({ rows, spentCents }: { rows: Row[]; spentCents: nu
   if (rows.length === 0) return null;
 
   return (
-    <div data-testid="budget-charts" className="grid gap-8 lg:grid-cols-2">
-      <SpentVsTarget rows={rows} />
-      {spentCents > 0 ? (
-        <SpendingShare rows={rows} spentCents={spentCents} />
-      ) : (
-        <p className="text-sm text-muted-foreground">Sem gastos no mês</p>
-      )}
+    <div data-testid="budget-charts" className="grid gap-6 lg:grid-cols-2">
+      <ContentCard title="Gasto × meta por categoria">
+        <SpentVsTarget rows={rows} />
+      </ContentCard>
+      <ContentCard title="Participação no gasto do mês">
+        {spentCents > 0 ? (
+          <SpendingShare rows={rows} spentCents={spentCents} />
+        ) : (
+          <p className="px-6 pb-6 text-sm text-muted-foreground">Sem gastos no mês</p>
+        )}
+      </ContentCard>
     </div>
   );
 }

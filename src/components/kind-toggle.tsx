@@ -18,7 +18,7 @@ export function KindToggle({ value, onChange }: { value: Kind; onChange: (kind: 
       aria-label="Tipo"
       value={value}
       onValueChange={(next) => onChange(next as Kind)}
-      className="grid-cols-2 gap-1 rounded-xl border border-white/10 bg-white/[0.04] p-1"
+      className="grid-cols-2 gap-1 rounded-xl border border-input bg-field p-1"
     >
       {options.map(({ kind, label, checked }) => (
         <RadioGroupPrimitive.Item

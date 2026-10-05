@@ -1,15 +1,13 @@
 "use client";
 
+import { SearchIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { SelectField } from "@/components/ui/select-field";
 import type { Category } from "@/lib/domain/budget";
 import { NO_SUBCATEGORY_PARAM, type TransactionFilter as Filter } from "@/lib/domain/transaction-filter";
-
-// Native selects, same choice as the transaction form (see SPEC_DEVIATION there).
-const selectClass =
-  "h-8 w-full rounded-lg border border-input bg-transparent px-2.5 text-base md:text-sm dark:bg-input/30";
 
 const SEARCH_DELAY_MS = 300;
 
@@ -48,11 +46,13 @@ export function TransactionFilter({
 
   return (
     <div className="grid gap-3 sm:grid-cols-2">
-      <div className="space-y-1 sm:col-span-2">
+      <div className="relative space-y-1 sm:col-span-2">
         <Label htmlFor="filter-search">Buscar por descrição</Label>
+        <SearchIcon aria-hidden className="pointer-events-none absolute bottom-3 left-3.5 size-4 text-muted-foreground" />
         <Input
           id="filter-search"
           type="search"
+          className="pl-10"
           maxLength={120}
           value={text}
           onChange={(e) => onSearch(e.target.value)}
@@ -60,37 +60,26 @@ export function TransactionFilter({
       </div>
       <div className="space-y-1">
         <Label htmlFor="filter-category">Filtrar por categoria</Label>
-        <select
+        <SelectField
           id="filter-category"
-          className={selectClass}
           value={filter.categoryId ?? ""}
-          onChange={(e) => apply({ categoria: e.target.value, subcategoria: "" })}
-        >
-          <option value="">Todas</option>
-          {categories.map((c) => (
-            <option key={c.id} value={c.id}>
-              {c.name}
-            </option>
-          ))}
-        </select>
+          onValueChange={(v) => apply({ categoria: v, subcategoria: "" })}
+          options={[{ value: "", label: "Todas" }, ...categories.map((c) => ({ value: c.id, label: c.name }))]}
+        />
       </div>
       <div className="space-y-1">
         <Label htmlFor="filter-subcategory">Filtrar por subcategoria</Label>
-        <select
+        <SelectField
           id="filter-subcategory"
-          className={selectClass}
           disabled={!category}
           value={filter.subcategoryId === "none" ? NO_SUBCATEGORY_PARAM : (filter.subcategoryId ?? "")}
-          onChange={(e) => apply({ subcategoria: e.target.value })}
-        >
-          <option value="">Todas</option>
-          <option value={NO_SUBCATEGORY_PARAM}>Sem subcategoria</option>
-          {category?.subcategories.map((s) => (
-            <option key={s.id} value={s.id}>
-              {s.name}
-            </option>
-          ))}
-        </select>
+          onValueChange={(v) => apply({ subcategoria: v })}
+          options={[
+            { value: "", label: "Todas" },
+            { value: NO_SUBCATEGORY_PARAM, label: "Sem subcategoria" },
+            ...(category?.subcategories ?? []).map((s) => ({ value: s.id, label: s.name })),
+          ]}
+        />
       </div>
     </div>
   );

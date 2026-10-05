@@ -73,7 +73,7 @@ export function TransactionList({ transactions, categories, filtered = false, se
 
   return (
     <>
-      <ul data-testid="transaction-list" className="divide-y divide-white/[0.06] border-t border-white/[0.06]">
+      <ul data-testid="transaction-list" className="divide-y divide-border border-t border-border">
         {transactions.map((t) => {
           const category = t.categoryId ? categoryById.get(t.categoryId) : undefined;
           const subcategory = category?.subcategories.find((s) => s.id === t.subcategoryId);
@@ -86,7 +86,7 @@ export function TransactionList({ transactions, categories, filtered = false, se
               <span
                 aria-hidden
                 className={`flex size-9 shrink-0 items-center justify-center rounded-xl ${
-                  t.kind === "income" ? "bg-income/15 text-income" : "bg-white/[0.06] text-muted-foreground"
+                  t.kind === "income" ? "bg-income/15 text-income" : "bg-subtle text-muted-foreground"
                 }`}
               >
                 {t.kind === "income" ? <ArrowDownLeftIcon className="size-4" /> : <ArrowUpRightIcon className="size-4" />}
@@ -97,7 +97,7 @@ export function TransactionList({ transactions, categories, filtered = false, se
                   {t.recurring && (
                     <span
                       data-testid="recurring-badge"
-                      className="rounded-md bg-white/[0.08] px-1.5 py-0.5 text-[10px] font-semibold tracking-wide text-muted-foreground uppercase"
+                      className="rounded-md bg-subtle px-1.5 py-0.5 text-[10px] font-semibold tracking-wide text-muted-foreground uppercase"
                     >
                       Recorrente
                     </span>

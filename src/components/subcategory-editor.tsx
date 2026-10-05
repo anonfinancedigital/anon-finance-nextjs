@@ -103,15 +103,16 @@ export function SubcategoryEditor({
           );
         })}
         {listError && <p className="text-sm text-destructive">{listError}</p>}
-        <button
+        <Button
           type="button"
+          variant="ghost"
           disabled={items.length >= MAX_SUBCATEGORIES}
           onClick={add}
-          className="flex w-full cursor-pointer items-center justify-between py-2 text-sm font-medium text-primary disabled:cursor-not-allowed disabled:opacity-50"
+          className="w-full justify-between text-link"
         >
           {addSubcategoryLabel(name)}
-          <PlusIcon aria-hidden className="size-4" />
-        </button>
+          <PlusIcon aria-hidden />
+        </Button>
       </div>
     </CategoryCard>
   );

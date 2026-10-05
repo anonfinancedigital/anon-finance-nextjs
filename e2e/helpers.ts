@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { expect, type Page } from "@playwright/test";
+import { expect, type Locator, type Page } from "@playwright/test";
 import { eq } from "drizzle-orm";
 import { db } from "../src/lib/db/client";
 import { user } from "../src/lib/db/auth-schema";
@@ -61,4 +61,10 @@ export async function seedTransaction(tx: {
   description?: string;
 }) {
   await transactionsRepo.create(await adminUserId(), { id: randomUUID(), ...tx });
+}
+
+/** Chooses an option of a `SelectField` (a Radix dropdown, not a native select). */
+export async function chooseOption(trigger: Locator, label: string) {
+  await trigger.click();
+  await trigger.page().getByRole("option", { name: label, exact: true }).click();
 }

@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 import { currentMonth } from "../src/lib/domain/month";
-import { login, resetDatabase, seedCategories, seedTransaction } from "./helpers";
+import { login, resetDatabase, seedCategories, seedTransaction, chooseOption } from "./helpers";
 
 test.beforeEach(resetDatabase);
 
@@ -65,7 +65,7 @@ test("an expense dated in another month goes to that month, not the displayed on
   await form.getByLabel("Gasto", { exact: true }).check();
   await form.getByLabel("Valor (R$)").fill("80,00");
   await form.getByLabel("Data").fill("2026-09-15");
-  await form.getByLabel("Categoria").selectOption({ label: "Conforto" });
+  await chooseOption(form.getByLabel("Categoria"), "Conforto");
   await form.getByLabel("Descrição (opcional)").fill("Farmácia");
   await form.getByRole("button", { name: "Salvar" }).click();
   await expect(form.getByText("Transação salva", { exact: true })).toBeVisible();

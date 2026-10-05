@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { GoalForm } from "@/components/goal-form";
 import { GoalSummary } from "@/components/goal-summary";
+import { PageHeader } from "@/components/page-header";
 import { requireSessionForPage } from "@/lib/auth-guard";
 import { goalsRepo } from "@/lib/db/repos/goals";
 import { summarize } from "@/lib/domain/freedom";
@@ -17,7 +18,7 @@ export default async function FreedomPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-semibold">Liberdade</h1>
+      <PageHeader eyebrow="Objetivo" title="Liberdade" />
       <p className="text-sm text-muted-foreground">
         Informe a renda mensal que quer ter, o que já guardou e quando quer se aposentar. O alvo é o
         patrimônio que rende essa renda a 8% ao ano sem consumir o principal.
