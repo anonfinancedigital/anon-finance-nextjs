@@ -215,9 +215,9 @@ T5 → T6 → T7 → T8
 
 **Done when**:
 
-- [ ] `BudgetCharts` aceita `pace` e renderiza "Ritmo de gastos" e "Participação no gasto do mês"
-- [ ] Nenhum card "Gasto × meta por categoria" resta no componente
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
+- [x] `BudgetCharts` aceita `pace` e renderiza "Ritmo de gastos" e "Participação no gasto do mês"
+- [x] Nenhum card "Gasto × meta por categoria" resta no componente
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
 
 **Tests**: none
 **Gate**: build
@@ -227,6 +227,8 @@ T5 → T6 → T7 → T8
 ---
 
 ### T7: Calcular e passar o ritmo na página
+
+> Desvio: executada no mesmo commit da T6. O `pace` obrigatório em `BudgetCharts` quebra o typecheck da página até a T7, e todo commit precisa passar no gate.
 
 **What**: Calcular `buildSpendingPace` na página com as ocorrências do mês, a meta total e "hoje", e passá-lo a `BudgetCharts`.
 **Where**: `src/app/(app)/page.tsx` (modify)
@@ -241,9 +243,9 @@ T5 → T6 → T7 → T8
 
 **Done when**:
 
-- [ ] `totalTargetCents` é a soma de `targetCents` de `summary.rows`
-- [ ] A página compila e renderiza o card com dados reais
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
+- [x] `totalTargetCents` é a soma de `targetCents` de `summary.rows`
+- [x] A página compila e renderiza o card com dados reais
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
 
 **Tests**: none
 **Gate**: build

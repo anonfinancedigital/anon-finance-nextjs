@@ -14,9 +14,11 @@ import {
   YAxis,
 } from "recharts";
 import { ContentCard } from "@/components/content-card";
+import { SpendingPaceChart } from "@/components/spending-pace-chart";
 import type { CategorySummary } from "@/lib/domain/budget";
 import { colorVar } from "@/lib/domain/color";
 import { formatBRL } from "@/lib/domain/money";
+import type { SpendingPace } from "@/lib/domain/spending-pace";
 
 export type Row = Pick<CategorySummary, "id" | "name" | "color" | "targetCents" | "spentCents" | "overspent" | "overspentCents">;
 
@@ -147,15 +149,13 @@ function SpendingShare({ rows, spentCents }: { rows: Row[]; spentCents: number }
   );
 }
 
-/** Charts of the monthly summary; the summary table is their table view. */
-export function BudgetCharts({ rows, spentCents }: { rows: Row[]; spentCents: number }) {
+/** Charts of the monthly summary; the summary table and its bars view live in the category card. */
+export function BudgetCharts({ rows, spentCents, pace }: { rows: Row[]; spentCents: number; pace: SpendingPace }) {
   if (rows.length === 0) return null;
 
   return (
     <div data-testid="budget-charts" className="grid gap-6 lg:grid-cols-2">
-      <ContentCard title="Gasto × meta por categoria">
-        <SpentVsTarget rows={rows} />
-      </ContentCard>
+      <SpendingPaceChart pace={pace} />
       <ContentCard title="Participação no gasto do mês">
         {spentCents > 0 ? (
           <SpendingShare rows={rows} spentCents={spentCents} />
