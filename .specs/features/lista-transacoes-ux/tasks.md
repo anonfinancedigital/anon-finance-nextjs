@@ -105,10 +105,10 @@ T5 → T6 → T7
 
 **Done when**:
 
-- [ ] O gatilho tem `aria-label="Ações do lançamento"` e mostra o ícone "⋯"
-- [ ] O menu tem exatamente dois itens: "Editar" (chama `onEdit`) e "Excluir" (chama `onDelete`, tom destrutivo)
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
-- [ ] Contagem de testes unit e int igual à de antes
+- [x] O gatilho tem `aria-label="Ações do lançamento"` e mostra o ícone "⋯"
+- [x] O menu tem exatamente dois itens: "Editar" (chama `onEdit`) e "Excluir" (chama `onDelete`, tom destrutivo)
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
+- [x] Contagem de testes unit e int igual à de antes
 
 **Tests**: none
 **Gate**: build
