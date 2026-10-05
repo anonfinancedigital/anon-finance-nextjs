@@ -17,6 +17,7 @@ Explicitamente excluído para evitar scope creep.
 | Feature | Reason |
 | ------- | ------ |
 | Inflação ou correção da renda desejada | Decidido: valores em termos reais, taxa fixa de 8% a.a. |
+| Intervalo da projeção configurável ou aporte escolhido pelo usuário | Decidido: intervalo fixo de 4 anos e aporte necessário. |
 | Taxa de juros ou taxa de retirada configurável | Decidido: 8% a.a. fixo, patrimônio-alvo por perpetuidade. |
 | Vários objetivos por usuário | Decidido: um objetivo por usuário. |
 | Integrar o valor guardado às transações do orçamento | O valor guardado é informado manualmente. |
@@ -113,6 +114,26 @@ Implicit-requirement dimensions: input validation (LIB-02, LIB-03), failure stat
 
 ---
 
+### P2: Ver a projeção a cada 4 anos
+
+**User Story**: As a usuário, I want ver quanto terei a cada 4 anos so that eu acompanhe o caminho até o alvo.
+
+**Why P2**: Dá forma ao aporte necessário; o resumo já funciona sem ela.
+
+**Acceptance Criteria**:
+
+1. WHEN o aporte mensal necessário for maior que R$ 0,00 e o prazo maior que 0 THEN the system SHALL exibir marcas de projeção nos meses 48, 96, 144 … menores que o prazo, mais uma marca final no prazo.  <!-- event-driven -->
+2. The system SHALL calcular o valor de cada marca em m meses como guardado × (1+i)^m + aporte × ((1+i)^m − 1) ÷ i, com o aporte mensal necessário e i = 1,08^(1/12) − 1 (ex.: guardado R$ 0,00, aporte R$ 2.636,21, m = 48 → valor da fórmula arredondado ao centavo).  <!-- ubiquitous -->
+3. The system SHALL exibir a marca final com o valor do patrimônio-alvo.  <!-- ubiquitous -->
+4. The system SHALL exibir em cada marca a idade em anos completos (idade de aposentadoria − ⌈meses restantes após a marca ÷ 12⌉) e o valor projetado.  <!-- ubiquitous -->
+5. The system SHALL posicionar cada marca sobre a barra de progresso em valor ÷ alvo, limitado a 100%.  <!-- ubiquitous -->
+6. IF o aporte mensal necessário for R$ 0,00 ou o prazo estiver encerrado THEN the system SHALL omitir as marcas de projeção.  <!-- unwanted-behavior -->
+7. The system SHALL exibir junto das marcas o aviso de que a projeção assume 8% ao ano fixos e aportes todo mês.  <!-- ubiquitous -->
+
+**Independent Test**: Com renda R$ 10.000,00, guardado R$ 0,00 e 20 anos de prazo, ver marcas em 4, 8, 12, 16 e 20 anos, a última com R$ 1.500.000,00.
+
+---
+
 ## Edge Cases
 
 - WHEN o usuário faz aniversário e o prazo n diminui THEN the system SHALL recalcular o resumo na próxima leitura, sem novo envio.
@@ -137,8 +158,10 @@ Implicit-requirement dimensions: input validation (LIB-02, LIB-03), failure stat
 | LIB-09 | P1: Validar (AC 3, 4: nascimento e idade de aposentadoria) | Specify | Verified |
 | LIB-10 | P1: Validar (AC 5: falha de salvamento) | Specify | Verified |
 | LIB-11 | P1: Validar (AC 6, 7: sessão e isolamento por usuário) | Specify | Verified |
+| LIB-12 | P2: Projeção (AC 1, 2, 3, 4, 6: marcas, valores, idade, omissão) | Specify | Pending |
+| LIB-13 | P2: Projeção (AC 5, 7: posição na barra e aviso) | Specify | Pending |
 
-**Coverage:** 11 total, 11 mapped to tasks, 0 unmapped
+**Coverage:** 13 total, 11 mapped to tasks, 2 unmapped ⚠️
 
 ---
 

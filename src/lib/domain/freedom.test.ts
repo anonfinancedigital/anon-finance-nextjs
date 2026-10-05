@@ -3,6 +3,7 @@ import {
   ageOn,
   ANNUAL_RATE_BP,
   monthsUntilRetirement,
+  projectMilestones,
   progressBp,
   requiredMonthlyCents,
   summarize,
@@ -182,5 +183,63 @@ describe("summarize", () => {
   it("recalcula o prazo só com o passar do tempo (mês seguinte, 1 mês a menos)", () => {
     const goal = { monthlyIncomeCents: 1_000_000, savedCents: 0, birthDate: "1986-06-15", retirementAge: 60 };
     expect(summarize(goal, new Date("2026-07-15T15:00:00Z")).months).toBe(239);
+  });
+});
+
+describe("projectMilestones", () => {
+  const base = { targetCents: 150_000_000, savedCents: 0, months: 240, monthlyCents: 263_621, retirementAge: 60 };
+
+  it("marca nos meses 48, 96, 144, 192 e uma final no prazo (20 anos)", () => {
+    expect(projectMilestones(base).map((m) => m.months)).toEqual([48, 96, 144, 192, 240]);
+  });
+
+  it("valor da marca: aporte × ((1+i)^m − 1) ÷ i com guardado 0", () => {
+    const marks = projectMilestones(base);
+    expect(marks[0].valueCents).toBe(14_770_285);
+    expect(marks[1].valueCents).toBe(34_865_095);
+    expect(marks[3].valueCents).toBe(99_397_953);
+  });
+
+  it("valor da marca inclui o guardado capitalizado", () => {
+    const marks = projectMilestones({ ...base, savedCents: 15_000_000 });
+    // 150.000,00 × 1,08^4 + aporte acumulado de 48 meses
+    expect(marks[0].valueCents).toBe(Math.round(15_000_000 * 1.08 ** 4 + 263_621 * (((1.08 ** 4) - 1) / (1.08 ** (1 / 12) - 1))));
+  });
+
+  it("a marca final mostra o patrimônio-alvo", () => {
+    const marks = projectMilestones(base);
+    expect(marks.at(-1)?.valueCents).toBe(150_000_000);
+    expect(marks.at(-1)?.months).toBe(240);
+  });
+
+  it("idade da marca = aposentadoria − ⌈meses restantes ÷ 12⌉", () => {
+    expect(projectMilestones(base).map((m) => m.ageYears)).toEqual([44, 48, 52, 56, 60]);
+    // 231 meses: marca em 48 deixa 183 meses (15,25 anos → ⌈⌉ 16) → 44
+    expect(projectMilestones({ ...base, months: 231 })[0].ageYears).toBe(44);
+  });
+
+  it("posição na barra = valor ÷ alvo em pontos-base, limitada a 10000", () => {
+    const marks = projectMilestones(base);
+    expect(marks[0].positionBp).toBe(985);
+    expect(marks.at(-1)?.positionBp).toBe(10_000);
+    const over = projectMilestones({ ...base, savedCents: 140_000_000, monthlyCents: 1 });
+    expect(over[0].positionBp).toBe(10_000);
+  });
+
+  it("prazo menor ou igual a 48 meses: só a marca final", () => {
+    expect(projectMilestones({ ...base, months: 30 }).map((m) => m.months)).toEqual([30]);
+    expect(projectMilestones({ ...base, months: 48 }).map((m) => m.months)).toEqual([48]);
+  });
+
+  it("sem marcas quando o aporte é 0, nulo ou o prazo acabou", () => {
+    expect(projectMilestones({ ...base, monthlyCents: 0 })).toEqual([]);
+    expect(projectMilestones({ ...base, monthlyCents: null })).toEqual([]);
+    expect(projectMilestones({ ...base, months: 0 })).toEqual([]);
+  });
+
+  it("summarize inclui as marcas (renda 10.000, 20 anos)", () => {
+    const goal = { monthlyIncomeCents: 1_000_000, savedCents: 0, birthDate: "1986-06-15", retirementAge: 60 };
+    const summary = summarize(goal, new Date("2026-06-15T15:00:00Z"));
+    expect(summary.milestones.map((m) => m.months)).toEqual([48, 96, 144, 192, 240]);
   });
 });
