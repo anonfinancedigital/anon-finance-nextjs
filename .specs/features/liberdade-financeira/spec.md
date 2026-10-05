@@ -62,11 +62,14 @@ Implicit-requirement dimensions: input validation (LIB-02, LIB-03), failure stat
 2. WHEN o usuário envia o formulário com renda mensal desejada, valor guardado, data de nascimento e idade de aposentadoria válidos THEN the system SHALL salvar o objetivo e exibir o resumo.  <!-- event-driven -->
 3. WHILE o usuário não tem objetivo salvo the system SHALL exibir o formulário vazio e nenhum resumo.  <!-- state-driven -->
 4. WHEN o usuário envia o formulário e já tem objetivo salvo THEN the system SHALL substituir os valores do objetivo existente, sem criar um segundo.  <!-- event-driven -->
-5. WHILE o usuário tem objetivo salvo the system SHALL exibir o formulário preenchido com os valores salvos.  <!-- state-driven -->
-6. The system SHALL calcular o patrimônio-alvo como renda mensal desejada × 12 ÷ 8%, arredondado para o centavo mais próximo (ex.: R$ 10.000,00 de renda → alvo de R$ 1.500.000,00).  <!-- ubiquitous -->
-7. The system SHALL exibir no resumo o valor guardado, o patrimônio-alvo e o valor que falta, igual a max(0, alvo − guardado).  <!-- ubiquitous -->
-8. The system SHALL exibir uma barra de progresso e o percentual atingido, igual a guardado ÷ alvo, com uma casa decimal (ex.: R$ 150.000,00 de R$ 1.500.000,00 → 10,0%).  <!-- ubiquitous -->
-9. IF o valor guardado for maior ou igual ao alvo THEN the system SHALL limitar a barra a 100% e exibir o percentual real (ex.: 120,0%).  <!-- unwanted-behavior -->
+5. WHILE o usuário tem objetivo salvo the system SHALL exibir o resumo e o botão "Editar objetivo", sem o formulário aberto.  <!-- state-driven -->
+6. WHEN o usuário aciona "Editar objetivo" THEN the system SHALL abrir o formulário preenchido com os valores salvos e os botões Salvar e Cancelar.  <!-- event-driven -->
+7. WHEN o usuário salva a edição com sucesso THEN the system SHALL fechar o formulário e atualizar o resumo.  <!-- event-driven -->
+8. WHEN o usuário aciona Cancelar THEN the system SHALL fechar o formulário e descartar o que foi digitado.  <!-- event-driven -->
+9. The system SHALL calcular o patrimônio-alvo como renda mensal desejada × 12 ÷ 8%, arredondado para o centavo mais próximo (ex.: R$ 10.000,00 de renda → alvo de R$ 1.500.000,00).  <!-- ubiquitous -->
+10. The system SHALL exibir no resumo o valor guardado, o patrimônio-alvo e o valor que falta, igual a max(0, alvo − guardado).  <!-- ubiquitous -->
+11. The system SHALL exibir uma barra de progresso e o percentual atingido, igual a guardado ÷ alvo, com uma casa decimal (ex.: R$ 150.000,00 de R$ 1.500.000,00 → 10,0%).  <!-- ubiquitous -->
+12. IF o valor guardado for maior ou igual ao alvo THEN the system SHALL limitar a barra a 100% e exibir o percentual real (ex.: 120,0%).  <!-- unwanted-behavior -->
 
 **Independent Test**: Abrir `/liberdade`, salvar renda R$ 10.000,00 e guardado R$ 150.000,00, e ver alvo R$ 1.500.000,00, falta R$ 1.350.000,00 e 10,0% na barra.
 
@@ -124,9 +127,9 @@ Implicit-requirement dimensions: input validation (LIB-02, LIB-03), failure stat
 | Requirement ID | Story | Phase | Status |
 | -------------- | ----- | ----- | ------ |
 | LIB-01 | P1: Cadastrar e resumo (AC 1: link na navegação) | Specify | Verified |
-| LIB-02 | P1: Cadastrar e resumo (AC 2, 3, 4, 5: salvar, estado vazio, substituir, preencher) | Specify | Verified |
-| LIB-03 | P1: Cadastrar e resumo (AC 6: patrimônio-alvo) | Specify | Verified |
-| LIB-04 | P1: Cadastrar e resumo (AC 7, 8, 9: falta, percentual, barra, limite 100%) | Specify | Verified |
+| LIB-02 | P1: Cadastrar e resumo (AC 2, 3, 4, 5, 6, 7, 8: salvar, estado vazio, substituir, resumo com botão Editar, abrir preenchido, salvar e cancelar a edição) | Specify | Verified |
+| LIB-03 | P1: Cadastrar e resumo (AC 9: patrimônio-alvo) | Specify | Verified |
+| LIB-04 | P1: Cadastrar e resumo (AC 10, 11, 12: falta, percentual, barra, limite 100%) | Specify | Verified |
 | LIB-05 | P1: Aporte mensal (AC 1: prazo n) e Edge Cases de data | Specify | Verified |
 | LIB-06 | P1: Aporte mensal (AC 2, 4: fórmula, arredondamento, aporte zero) | Specify | Verified |
 | LIB-07 | P1: Aporte mensal (AC 3, 5: exibição e prazo encerrado) | Specify | Verified |

@@ -20,13 +20,17 @@ export type GoalFormValues = {
 
 const blank: GoalFormValues = { monthlyIncome: "", saved: "", birthDate: "", retirementAge: "" };
 
-/** Form of the financial freedom goal: empty without a saved goal, filled with it otherwise. */
+/**
+ * Form of the financial freedom goal. Without a saved goal it shows empty; with one it stays
+ * collapsed behind an "Editar objetivo" button and opens filled with the saved values.
+ */
 export function GoalForm({ initial }: { initial?: GoalFormValues }) {
   const uid = useId();
   const router = useRouter();
   const [values, setValues] = useState<GoalFormValues>(initial ?? blank);
   const [result, setResult] = useState<ActionResult | null>(null);
   const [pending, startTransition] = useTransition();
+  const [editing, setEditing] = useState(!initial);
 
   const fieldErrors = result && !result.ok ? (result.fieldErrors ?? {}) : {};
   const field = (name: string) => `${uid}-${name}`;
@@ -41,8 +45,25 @@ export function GoalForm({ initial }: { initial?: GoalFormValues }) {
     startTransition(async () => {
       const res = await saveGoal(values);
       setResult(res);
-      if (res.ok) router.refresh();
+      if (res.ok) {
+        setEditing(false);
+        router.refresh();
+      }
     });
+  }
+
+  function cancel() {
+    setValues(initial ?? blank);
+    setResult(null);
+    setEditing(false);
+  }
+
+  if (!editing) {
+    return (
+      <Button type="button" variant="outline" onClick={() => setEditing(true)}>
+        Editar objetivo
+      </Button>
+    );
   }
 
   return (
@@ -108,15 +129,17 @@ export function GoalForm({ initial }: { initial?: GoalFormValues }) {
           {result.error}
         </p>
       )}
-      {result?.ok && (
-        <p role="status" className="text-sm text-muted-foreground">
-          Objetivo salvo
-        </p>
-      )}
 
-      <Button type="submit" disabled={pending}>
-        Salvar
-      </Button>
+      <div className="flex gap-2">
+        <Button type="submit" disabled={pending}>
+          Salvar
+        </Button>
+        {initial && (
+          <Button type="button" variant="outline" onClick={cancel} disabled={pending}>
+            Cancelar
+          </Button>
+        )}
+      </div>
     </form>
   );
 }
