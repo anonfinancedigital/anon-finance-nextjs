@@ -71,53 +71,6 @@ export type Goal = {
   annualRateBp: AnnualRateBp;
 };
 
-export type Milestone = {
-  /** Meses a partir de hoje. */
-  months: number;
-  /** Idade em anos completos na marca. */
-  ageYears: number;
-  valueCents: number;
-  /** Valor ÷ alvo em pontos-base, limitado a 10000 (posição na barra). */
-  positionBp: number;
-};
-
-/** Intervalo fixo entre as marcas de projeção, em meses (4 anos). */
-const MILESTONE_INTERVAL_MONTHS = 48;
-
-/**
- * Patrimônio projetado a cada 4 anos pagando o aporte necessário, mais uma marca final no prazo
- * (que mostra o alvo). Vazio sem aporte a fazer: aporte 0, nulo ou prazo encerrado.
- */
-export function projectMilestones(input: {
-  targetCents: number;
-  savedCents: number;
-  months: number;
-  monthlyCents: number | null;
-  retirementAge: number;
-  annualRateBp: number;
-}): Milestone[] {
-  const { targetCents: target, savedCents, months, monthlyCents, retirementAge } = input;
-  const rate = monthlyRate(input.annualRateBp);
-  if (monthlyCents === null || monthlyCents === 0 || months === 0) return [];
-
-  const marks: number[] = [];
-  for (let m = MILESTONE_INTERVAL_MONTHS; m < months; m += MILESTONE_INTERVAL_MONTHS) marks.push(m);
-  marks.push(months);
-
-  return marks.map((m) => {
-    const isFinal = m === months;
-    const growth = (1 + rate) ** m;
-    const projected = savedCents * growth + (monthlyCents * (growth - 1)) / rate;
-    const valueCents = isFinal ? target : Math.round(projected);
-    return {
-      months: m,
-      ageYears: retirementAge - Math.ceil((months - m) / 12),
-      valueCents,
-      positionBp: Math.min(10_000, Math.round((valueCents * 10_000) / target)),
-    };
-  });
-}
-
 export type TimelinePoint = {
   /** Meses a partir de hoje. */
   months: number;
@@ -244,7 +197,6 @@ export type GoalSummary = {
   months: number;
   /** `null` quando o prazo acabou e o guardado ainda não alcança o alvo ("Prazo encerrado"). */
   monthlyCents: number | null;
-  milestones: Milestone[];
   timeline: TimelinePoint[];
   interestSharePct: number | null;
   checkpoints: Checkpoint[];
@@ -284,14 +236,6 @@ export function summarize(goal: Goal, now: Date): GoalSummary {
     progressBp: progressBp(goal.savedCents, target),
     months,
     monthlyCents,
-    milestones: projectMilestones({
-      targetCents: target,
-      savedCents: goal.savedCents,
-      months,
-      monthlyCents,
-      retirementAge: goal.retirementAge,
-      annualRateBp: goal.annualRateBp,
-    }),
     timeline,
     interestSharePct: interestSharePct(timeline),
     checkpoints: buildCheckpoints({

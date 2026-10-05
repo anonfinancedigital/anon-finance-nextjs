@@ -540,10 +540,10 @@ T16 → T17 → T18 → T19
 
 **Done when**:
 
-- [ ] Nenhum símbolo `projectMilestones`, `Milestone` ou `milestones` resta em `src` (busca vazia)
-- [ ] Os testes de `projectMilestones` saem junto com a função (substituída pelos testes de timeline e checkpoints das T8 e T9); os demais testes passam sem edição
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
-- [ ] Test count: contagem anterior menos só os testes de `projectMilestones` removidos
+- [x] Nenhum símbolo `projectMilestones`, `Milestone` ou `milestones` resta em `src` (busca vazia)
+- [x] Os testes de `projectMilestones` saem junto com a função (substituída pelos testes de timeline e checkpoints das T8 e T9); os demais testes passam sem edição
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Test count: contagem anterior menos só os testes de `projectMilestones` removidos
 
 **Tests**: unit
 **Gate**: quick
