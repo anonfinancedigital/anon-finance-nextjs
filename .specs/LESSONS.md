@@ -90,6 +90,18 @@ Seen once or not yet corroborated. Tracked, not trusted.
 - evidence: validation.md M6; src/lib/db/repos/categories.ts:48 (repo-layer)
 - last seen: 2026-10-05T12:48:13Z
 
+### L-014 - Key UI selections that outlive their list by a stable row key, not by array index, so removing a row cannot silently retarget the choice.
+- signal: `ac_gap` · recurrence: 1 feature(s) · scope: `ui` · harmful: 0
+- features: categorias-ux
+- evidence: spec.md Edge Cases; adjust-sum-bar.tsx:150 (ui)
+- last seen: 2026-10-05T13:52:37Z
+
+### L-015 - When a state style must win over a variant of a shared component (hover on ghost button), add the same variant explicitly instead of relying on a group variant of equal specificity.
+- signal: `ac_gap` · recurrence: 1 feature(s) · scope: `ui` · harmful: 0
+- features: categorias-ux
+- evidence: P2 AC2; category-editor.tsx:345 (ui)
+- last seen: 2026-10-05T13:52:37Z
+
 ## Quarantined (failed when applied - ignore)
 
 A confirmed lesson that recurred alongside failure. Kept for the maintainer to review.

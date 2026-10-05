@@ -136,13 +136,13 @@ Na tela de Categorias, editar um valor em R$ (ex.: Mesada de R$ 1.200 para R$ 1.
 
 | Requirement ID | Story | Phase | Status |
 | -------------- | ----- | ----- | ------ |
-| CATUX-01 | P1: Soma acionável (exibição 2 casas, ACs 1-6) | - | Implemented |
-| CATUX-02 | P1: Soma acionável (aviso, ACs 7-8) | - | Implemented |
-| CATUX-03 | P1: Soma acionável (select e Aplicar, ACs 9-14) | - | Implemented |
-| CATUX-04 | P2: Remoção segura (lixeira e confirmação, ACs 1-7) | - | Implemented |
-| CATUX-05 | P2: Salvar bloqueado (AC 8) | - | Implemented |
-| CATUX-06 | P3: Cabeçalhos e unidades (ACs 1-3) | - | Implemented |
-| CATUX-07 | P3: Card da base de cálculo (ACs 4-8) | - | Implemented |
+| CATUX-01 | P1: Soma acionável (exibição 2 casas, ACs 1-6) | - | Verified |
+| CATUX-02 | P1: Soma acionável (aviso, ACs 7-8) | - | Verified |
+| CATUX-03 | P1: Soma acionável (select e Aplicar, ACs 9-14) | - | Verified |
+| CATUX-04 | P2: Remoção segura (lixeira e confirmação, ACs 1-7) | - | Verified |
+| CATUX-05 | P2: Salvar bloqueado (AC 8) | - | Verified |
+| CATUX-06 | P3: Cabeçalhos e unidades (ACs 1-3) | - | Verified |
+| CATUX-07 | P3: Card da base de cálculo (ACs 4-8) | - | Verified |
 
 **Coverage:** 7 total, 0 mapped to tasks, 7 unmapped ⚠️
 

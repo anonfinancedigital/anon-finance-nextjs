@@ -3,7 +3,7 @@
   "promote_threshold": 2,
   "window_days": 45,
   "quarantine_threshold": 2,
-  "next_id": 14,
+  "next_id": 16,
   "lessons": [
     {
       "id": "L-001",
@@ -240,6 +240,42 @@
       ],
       "created": "2026-10-05T12:48:13Z",
       "last_seen": "2026-10-05T12:48:13Z"
+    },
+    {
+      "id": "L-014",
+      "key": "ac_gap::key ui selections that outlive their list by a stable row key not by array index so removing a row cannot silently retarget the choice",
+      "text": "Key UI selections that outlive their list by a stable row key, not by array index, so removing a row cannot silently retarget the choice.",
+      "signal": "ac_gap",
+      "scope": "ui",
+      "status": "candidate",
+      "features": [
+        "categorias-ux"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "spec.md Edge Cases; adjust-sum-bar.tsx:150 (ui)"
+      ],
+      "created": "2026-10-05T13:52:37Z",
+      "last_seen": "2026-10-05T13:52:37Z"
+    },
+    {
+      "id": "L-015",
+      "key": "ac_gap::when a state style must win over a variant of a shared component hover on ghost button add the same variant explicitly instead of relying on a group variant of equal specificity",
+      "text": "When a state style must win over a variant of a shared component (hover on ghost button), add the same variant explicitly instead of relying on a group variant of equal specificity.",
+      "signal": "ac_gap",
+      "scope": "ui",
+      "status": "candidate",
+      "features": [
+        "categorias-ux"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "P2 AC2; category-editor.tsx:345 (ui)"
+      ],
+      "created": "2026-10-05T13:52:37Z",
+      "last_seen": "2026-10-05T13:52:37Z"
     }
   ]
 }
