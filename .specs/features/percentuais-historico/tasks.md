@@ -173,6 +173,7 @@ T9 → T10 → T11
 **Depends on**: None
 **Reuses**: `insertTestUser` e o padrão de `setupTestDb`
 **Requirement**: HIST-06
+**Status**: Done
 
 **Tools**:
 
@@ -181,10 +182,10 @@ T9 → T10 → T11
 
 **Done when**:
 
-- [ ] `insertCategory(userId, { name, percentMicro, color, fromMonth? })` retorna a linha de `category` e grava a vigência (`fromMonth` padrão `0001-01-01`)
-- [ ] Não escreve em `category.percent_micro`
-- [ ] Typecheck do build passa; usado pelos testes de T5
-- [ ] Gate check passes: `npm run build && npm run lint`
+- [x] `insertCategory(userId, { name, percentMicro, color, fromMonth? })` retorna a linha de `category` e grava a vigência (`fromMonth` padrão `0001-01-01`)
+- [x] Não escreve em `category.percent_micro`
+- [x] Typecheck do build passa; usado pelos testes de T5
+- [x] Gate check passes: `npm run build && npm run lint`
 
 **Tests**: none
 **Gate**: build
