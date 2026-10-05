@@ -33,6 +33,8 @@ export const category = pgTable(
     deletedFrom: date("deleted_from", { mode: "string" }),
     /** Index 1..8 of the category color palette (`--viz-1` … `--viz-8`). */
     color: integer("color").notNull(),
+    /** Investment/contribution category: exceeding its target is not an overspend. */
+    isInvestment: boolean("is_investment").notNull().default(false),
     // clock_timestamp() (not now()) so rows inserted in the same DB transaction keep their creation order.
     createdAt: timestamp("created_at", { withTimezone: true })
       .notNull()

@@ -135,10 +135,10 @@ T6 → T7
 
 **Done when**:
 
-- [ ] `drizzle/0010_*.sql`, `meta/0010_snapshot.json` e `_journal.json` gerados com `npx drizzle-kit generate`
-- [ ] Teste de integração: categoria inserida sem a flag lê `isInvestment` false
-- [ ] Gate check passes: `npm run test:unit && npm run test:int`
-- [ ] Test count: testes existentes + o novo passam (sem remoções)
+- [x] `drizzle/0010_*.sql`, `meta/0010_snapshot.json` e `_journal.json` gerados com `npx drizzle-kit generate`
+- [x] Teste de integração: categoria inserida sem a flag lê `isInvestment` false
+- [x] Gate check passes: `npm run test:unit && npm run test:int`
+- [x] Test count: testes existentes + o novo passam (sem remoções)
 
 **Tests**: integration
 **Gate**: full

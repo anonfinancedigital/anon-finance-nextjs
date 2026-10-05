@@ -83,6 +83,15 @@ describe("category constraints", () => {
   });
 });
 
+describe("category is_investment", () => {
+  it("defaults to false when the column is omitted", async () => {
+    const userId = await createUser();
+    await pool.query(`INSERT INTO "category" ("user_id", "name", "color") VALUES ($1, 'Lazer', 1)`, [userId]);
+    const [row] = await db.select().from(category).where(eq(category.userId, userId));
+    expect(row.isInvestment).toBe(false);
+  });
+});
+
 describe("category color", () => {
   it("accepts color at the bounds 1 and 8", async () => {
     const userId = await createUser();
