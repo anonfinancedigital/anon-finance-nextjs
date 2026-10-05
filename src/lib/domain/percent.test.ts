@@ -3,6 +3,7 @@ import {
   adjustToTotal,
   defaultAdjustIndex,
   formatPercent,
+  formatPercentCompact,
   formatPercentFixed,
   formatShare,
   microFromCents,
@@ -42,6 +43,26 @@ describe("formatPercent", () => {
     [1, "0,000001%"],
   ])("formats %i micro-percent as %s", (micro, text) => {
     expect(formatPercent(micro)).toBe(text);
+  });
+});
+
+describe("formatPercent keeps 6 decimals for the editor", () => {
+  it("does not round 31_931_878", () => {
+    expect(formatPercent(31_931_878)).toBe("31,931878%");
+  });
+});
+
+describe("formatPercentCompact", () => {
+  it.each([
+    [31_931_878, "31,9%"],
+    [30_000_000, "30%"],
+    [12_500_000, "12,5%"],
+    [100_000_000, "100%"],
+    [12_250_000, "12,3%"],
+    [49_999, "0%"],
+    [50_000, "0,1%"],
+  ])("formats %i micro-percent as %s", (micro, text) => {
+    expect(formatPercentCompact(micro)).toBe(text);
   });
 });
 

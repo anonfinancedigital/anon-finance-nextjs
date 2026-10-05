@@ -8,6 +8,7 @@ const PERCENT_PATTERN = /^(\d+)(?:,(\d{1,6}))?$/;
 
 const percent = new Intl.NumberFormat("pt-BR", { maximumFractionDigits: 6 });
 const fixed = new Intl.NumberFormat("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const compact = new Intl.NumberFormat("pt-BR", { maximumFractionDigits: 1 });
 const share = new Intl.NumberFormat("pt-BR", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
 
 const ADJUST_OUT_OF_RANGE =
@@ -52,6 +53,11 @@ export function adjustToTotal(rowMicro: number, sumMicro: number): Result<number
 /** Formats micro-percent as a percentage, e.g. 12_500_000 → "12,5%". */
 export function formatPercent(micro: number): string {
   return `${percent.format(micro / MICRO_PER_PERCENT)}%`;
+}
+
+/** Formats micro-percent with at most one decimal, rounding half up and dropping a trailing ",0", e.g. 31_931_878 → "31,9%", 30_000_000 → "30%". */
+export function formatPercentCompact(micro: number): string {
+  return `${compact.format(Math.floor((micro + 50_000) / 100_000) / 10)}%`;
 }
 
 /** Formats basis points (spending shares, not category percentages) with exactly one decimal, e.g. 6250 → "62,5%", 0 → "0,0%". */
