@@ -463,3 +463,202 @@ describe("categoriesRepo.listForMonth", () => {
     expect(result[0].subcategories.map((s) => s.name)).toEqual(["Sub"]);
   });
 });
+
+describe("categoriesRepo.replaceSet percent versions", () => {
+  // 31 Oct 2026 23:30 and 1 Nov 2026 00:30 in America/Sao_Paulo (UTC-3).
+  const OCT_NOW = new Date("2026-10-31T23:30:00-03:00");
+  const NOV_NOW = new Date("2026-11-01T00:30:00-03:00");
+  const SEP = { year: 2026, month: 9 };
+  const OCT = { year: 2026, month: 10 };
+  const NOV = { year: 2026, month: 11 };
+  const TWO = [
+    { name: "A", percentMicro: 50000000, color: 1 },
+    { name: "B", percentMicro: 50000000, color: 2 },
+  ];
+
+  const versionsOf = async (userId: string) =>
+    (
+      await db
+        .select({
+          name: category.name,
+          fromMonth: categoryPercent.fromMonth,
+          percentMicro: categoryPercent.percentMicro,
+        })
+        .from(categoryPercent)
+        .innerJoin(category, eq(category.id, categoryPercent.categoryId))
+        .where(eq(category.userId, userId))
+    ).sort((x, y) => x.name.localeCompare(y.name) || x.fromMonth.localeCompare(y.fromMonth));
+
+  /** Seeds A/B at 50/50 "since ever" and returns them as editable items. */
+  async function seed(userId: string) {
+    const a = await insertCategory(userId, { ...TWO[0] });
+    const b = await insertCategory(userId, { ...TWO[1] });
+    return [
+      { ...TWO[0], id: a.id },
+      { ...TWO[1], id: b.id },
+    ];
+  }
+
+  it("editing percents adds a version in the month of now and keeps the past months", async () => {
+    const userId = await insertTestUser();
+    const [a, b] = await seed(userId);
+    const result = await categoriesRepo.replaceSet(
+      userId,
+      [
+        { ...a, percentMicro: 40000000 },
+        { ...b, percentMicro: 60000000 },
+      ],
+      OCT_NOW,
+    );
+    expect(result).toEqual({ ok: true });
+
+    expect(await versionsOf(userId)).toEqual([
+      { name: "A", fromMonth: "0001-01-01", percentMicro: 50000000 },
+      { name: "A", fromMonth: "2026-10-01", percentMicro: 40000000 },
+      { name: "B", fromMonth: "0001-01-01", percentMicro: 50000000 },
+      { name: "B", fromMonth: "2026-10-01", percentMicro: 60000000 },
+    ]);
+    const past = await categoriesRepo.listForMonth(userId, SEP, OCT_NOW);
+    expect(past.map((c) => c.percentMicro)).toEqual([50000000, 50000000]);
+    const current = await categoriesRepo.listForMonth(userId, OCT, OCT_NOW);
+    expect(current.map((c) => c.percentMicro)).toEqual([40000000, 60000000]);
+  });
+
+  it("only writes a version for the category whose percent changed", async () => {
+    const userId = await insertTestUser();
+    const [a, b] = await seed(userId);
+    const three = [
+      { ...a, percentMicro: 30000000 },
+      { ...b, percentMicro: 50000000 },
+      { name: "C", percentMicro: 20000000, color: 3 },
+    ];
+    await categoriesRepo.replaceSet(userId, three, OCT_NOW);
+    const rows = await versionsOf(userId);
+    expect(rows.filter((r) => r.name === "B")).toEqual([
+      { name: "B", fromMonth: "0001-01-01", percentMicro: 50000000 },
+    ]);
+    expect(rows.filter((r) => r.name === "A")).toHaveLength(2);
+  });
+
+  it("renaming, recoloring and changing subcategories write no version", async () => {
+    const userId = await insertTestUser();
+    const [a, b] = await seed(userId);
+    const before = await versionsOf(userId);
+    const result = await categoriesRepo.replaceSet(
+      userId,
+      [
+        { ...a, name: "Casa", color: 5, subcategories: [{ name: "Aluguel" }] },
+        { ...b, color: 6 },
+      ],
+      OCT_NOW,
+    );
+    expect(result).toEqual({ ok: true });
+    expect(await db.$count(subcategory)).toBe(1);
+    expect((await versionsOf(userId)).map(({ fromMonth, percentMicro }) => [fromMonth, percentMicro])).toEqual(
+      before.map(({ fromMonth, percentMicro }) => [fromMonth, percentMicro]),
+    );
+    expect(await db.$count(categoryPercent)).toBe(2);
+  });
+
+  it("saving twice in the same month keeps one row per category with the last value", async () => {
+    const userId = await insertTestUser();
+    const [a, b] = await seed(userId);
+    await categoriesRepo.replaceSet(userId, [{ ...a, percentMicro: 40000000 }, { ...b, percentMicro: 60000000 }], OCT_NOW);
+    await categoriesRepo.replaceSet(userId, [{ ...a, percentMicro: 70000000 }, { ...b, percentMicro: 30000000 }], OCT_NOW);
+
+    const octRows = (await versionsOf(userId)).filter((r) => r.fromMonth === "2026-10-01");
+    expect(octRows.map((r) => [r.name, r.percentMicro])).toEqual([
+      ["A", 70000000],
+      ["B", 30000000],
+    ]);
+  });
+
+  it("going back to the value before this month's edit keeps the row of the month with that value", async () => {
+    const userId = await insertTestUser();
+    const [a, b] = await seed(userId);
+    await categoriesRepo.replaceSet(userId, [{ ...a, percentMicro: 40000000 }, { ...b, percentMicro: 60000000 }], OCT_NOW);
+    await categoriesRepo.replaceSet(userId, [{ ...a, percentMicro: 50000000 }, { ...b, percentMicro: 50000000 }], OCT_NOW);
+
+    const octRows = (await versionsOf(userId)).filter((r) => r.fromMonth === "2026-10-01");
+    expect(octRows.map((r) => [r.name, r.percentMicro])).toEqual([
+      ["A", 50000000],
+      ["B", 50000000],
+    ]);
+  });
+
+  it("resending the same percents writes nothing", async () => {
+    const userId = await insertTestUser();
+    const items = await seed(userId);
+    await categoriesRepo.replaceSet(userId, items, OCT_NOW);
+    expect(await db.$count(categoryPercent)).toBe(2);
+  });
+
+  it("a new category gets a version at the current month and is hasPercent false before it", async () => {
+    const userId = await insertTestUser();
+    const [a, b] = await seed(userId);
+    await categoriesRepo.replaceSet(
+      userId,
+      [
+        { ...a, percentMicro: 40000000 },
+        { ...b, percentMicro: 40000000 },
+        { name: "C", percentMicro: 20000000, color: 3 },
+      ],
+      OCT_NOW,
+    );
+    const c = (await versionsOf(userId)).filter((r) => r.name === "C");
+    expect(c).toEqual([{ name: "C", fromMonth: "2026-10-01", percentMicro: 20000000 }]);
+
+    const sep = await categoriesRepo.listForMonth(userId, SEP, OCT_NOW);
+    expect(sep.find((x) => x.name === "C")).toMatchObject({ percentMicro: 0, hasPercent: false });
+    const oct = await categoriesRepo.listForMonth(userId, OCT, OCT_NOW);
+    expect(oct.find((x) => x.name === "C")).toMatchObject({ percentMicro: 20000000, hasPercent: true });
+  });
+
+  it("uses the month of now at the month turn", async () => {
+    const userId = await insertTestUser();
+    const [a, b] = await seed(userId);
+    await categoriesRepo.replaceSet(userId, [{ ...a, percentMicro: 40000000 }, { ...b, percentMicro: 60000000 }], OCT_NOW);
+    await categoriesRepo.replaceSet(userId, [{ ...a, percentMicro: 10000000 }, { ...b, percentMicro: 90000000 }], NOV_NOW);
+
+    expect((await versionsOf(userId)).filter((r) => r.name === "A").map((r) => [r.fromMonth, r.percentMicro])).toEqual([
+      ["0001-01-01", 50000000],
+      ["2026-10-01", 40000000],
+      ["2026-11-01", 10000000],
+    ]);
+    expect((await categoriesRepo.listForMonth(userId, OCT, NOV_NOW))[0].percentMicro).toBe(40000000);
+    expect((await categoriesRepo.listForMonth(userId, NOV, NOV_NOW))[0].percentMicro).toBe(10000000);
+  });
+
+  it("a sum different from 100% is rejected without writing a version", async () => {
+    const userId = await insertTestUser();
+    const [a, b] = await seed(userId);
+    const result = await categoriesRepo.replaceSet(
+      userId,
+      [{ ...a, percentMicro: 40000000 }, { ...b, percentMicro: 40000000 }],
+      OCT_NOW,
+    );
+    expect(result).toMatchObject({ ok: false, error: "A soma dos percentuais deve ser 100% (atual: 80%)" });
+    expect(await db.$count(categoryPercent)).toBe(2);
+  });
+
+  it("rolls back versions, categories and subcategories when a write fails midway", async () => {
+    const userId = await insertTestUser();
+    const [a, b] = await seed(userId);
+    // The last item's color (99) violates category_color_range after the earlier items were written.
+    await expect(
+      categoriesRepo.replaceSet(
+        userId,
+        [
+          { ...a, percentMicro: 40000000, subcategories: [{ name: "Aluguel" }] },
+          { name: "C", percentMicro: 20000000, color: 3 },
+          { ...b, percentMicro: 40000000, color: 99 },
+        ],
+        OCT_NOW,
+      ),
+    ).rejects.toThrow();
+
+    expect(await db.$count(categoryPercent)).toBe(2);
+    expect(await db.$count(category)).toBe(2);
+    expect(await db.$count(subcategory)).toBe(0);
+  });
+});

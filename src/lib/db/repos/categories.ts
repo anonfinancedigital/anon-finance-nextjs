@@ -103,7 +103,12 @@ const minMonth = (a: YearMonth, b: YearMonth): YearMonth =>
  * created and categories left out are deleted; the same goes for each category's subcategories.
  * Removing a category or subcategory that has expenses aborts the whole replacement.
  */
-async function replaceSet(userId: string, cats: CategoryItem[]): Promise<CategorySetResult> {
+async function replaceSet(
+  userId: string,
+  cats: CategoryItem[],
+  now: Date = new Date(),
+): Promise<CategorySetResult> {
+  const fromMonth = monthStartOf(currentMonth(now));
   const items = cats.map((c) => ({ ...c, subcategories: c.subcategories ?? [] }));
   const valid = validateCategorySet(
     items.map((c) => ({ name: c.name, micro: c.percentMicro, subcategories: c.subcategories })),
@@ -131,6 +136,20 @@ async function replaceSet(userId: string, cats: CategoryItem[]): Promise<Categor
       c.subcategories.every((s) => !s.id || (c.id && parentOf.get(s.id) === c.id)),
     );
     if (!subOwnedByItem) return { ok: false, error: "Subcategoria não encontrada" };
+
+    const versions = await tx
+      .select({
+        categoryId: categoryPercent.categoryId,
+        fromMonth: categoryPercent.fromMonth,
+        percentMicro: categoryPercent.percentMicro,
+      })
+      .from(categoryPercent)
+      .innerJoin(category, eq(category.id, categoryPercent.categoryId))
+      .where(eq(category.userId, userId));
+    const versionsOf = new Map<string, PercentVersion[]>();
+    for (const { categoryId, ...version } of versions) {
+      versionsOf.set(categoryId, [...(versionsOf.get(categoryId) ?? []), version]);
+    }
 
     const removedIds = [...existingIds].filter((id) => !keptIds.has(id));
     if (removedIds.length > 0) {
@@ -188,23 +207,26 @@ async function replaceSet(userId: string, cats: CategoryItem[]): Promise<Categor
       if (categoryId) {
         await tx
           .update(category)
-          .set({ name, percentMicro, color })
+          .set({ name, color })
           .where(and(eq(category.id, categoryId), eq(category.userId, userId)));
       } else {
         [{ id: categoryId }] = await tx
           .insert(category)
-          .values({ userId, name, percentMicro, color })
+          .values({ userId, name, color })
           .returning({ id: category.id });
       }
 
-      // Transitional (T5): keeps the single "since ever" version in sync until T6 stores monthly versions.
-      await tx
-        .insert(categoryPercent)
-        .values({ categoryId: categoryId!, fromMonth: "0001-01-01", percentMicro })
-        .onConflictDoUpdate({
-          target: [categoryPercent.categoryId, categoryPercent.fromMonth],
-          set: { percentMicro },
-        });
+      // A version is stored only when the percent differs from the one in force this month.
+      const inForce = id ? resolvePercent(versionsOf.get(id) ?? [], fromMonth) : null;
+      if (inForce !== percentMicro) {
+        await tx
+          .insert(categoryPercent)
+          .values({ categoryId, fromMonth, percentMicro })
+          .onConflictDoUpdate({
+            target: [categoryPercent.categoryId, categoryPercent.fromMonth],
+            set: { percentMicro },
+          });
+      }
 
       for (const sub of subcategories) {
         if (sub.id) {

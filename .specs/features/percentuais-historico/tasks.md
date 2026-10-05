@@ -231,6 +231,7 @@ T9 → T10 → T11
 **Depends on**: T5
 **Reuses**: transação e validação atuais de `replaceSet`; upsert do Drizzle (`onConflictDoUpdate`)
 **Requirement**: HIST-01, HIST-03, HIST-07
+**Status**: Done
 
 **Tools**:
 
@@ -239,12 +240,12 @@ T9 → T10 → T11
 
 **Done when**:
 
-- [ ] `replaceSet(userId, cats, now)` calcula o mês corrente de `now` e compara o percentual enviado com `resolvePercent(vigências, mês)`; só difere → upsert em `(categoria, mês)`
-- [ ] Testes: editar percentuais cria vigência no mês de `now` e `listForMonth` de mês anterior devolve os percentuais antigos; renomear/recolorir/mudar subcategorias não cria nem altera vigência; salvar duas vezes no mesmo mês deixa uma linha por categoria com o último valor; reenviar o mesmo percentual não grava; categoria nova recebe vigência com `fromMonth` = mês corrente e aparece `hasPercent: false` em mês anterior
-- [ ] Teste de rollback: falha forçada no meio do salvamento não deixa vigência, categoria nem subcategoria gravadas
-- [ ] Teste: `now` na virada de mês (31/out 23:30 vs 01/nov 00:30 em America/Sao_Paulo) grava no mês correspondente
-- [ ] Soma ≠ 100% continua rejeitada sem gravar vigência (mensagem existente)
-- [ ] Gate check passes: `npm run test:unit && npm run test:int`
+- [x] `replaceSet(userId, cats, now)` calcula o mês corrente de `now` e compara o percentual enviado com `resolvePercent(vigências, mês)`; só difere → upsert em `(categoria, mês)`
+- [x] Testes: editar percentuais cria vigência no mês de `now` e `listForMonth` de mês anterior devolve os percentuais antigos; renomear/recolorir/mudar subcategorias não cria nem altera vigência; salvar duas vezes no mesmo mês deixa uma linha por categoria com o último valor; reenviar o mesmo percentual não grava; categoria nova recebe vigência com `fromMonth` = mês corrente e aparece `hasPercent: false` em mês anterior
+- [x] Teste de rollback: falha forçada no meio do salvamento não deixa vigência, categoria nem subcategoria gravadas
+- [x] Teste: `now` na virada de mês (31/out 23:30 vs 01/nov 00:30 em America/Sao_Paulo) grava no mês correspondente
+- [x] Soma ≠ 100% continua rejeitada sem gravar vigência (mensagem existente)
+- [x] Gate check passes: `npm run test:unit && npm run test:int`
 
 **Tests**: integration
 **Gate**: full
