@@ -347,11 +347,12 @@ T7 → T8 → T9 → T10 → T11
 
 **Done when**:
 
-- [ ] `grep -rn "category-picker" src e2e` não encontra nenhum import
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] `grep -rn "category-picker" src e2e` não encontra nenhum import
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
 
 **Tests**: none
 **Gate**: build
+**Status**: ✅ Complete
 
 **Commit**: `refactor(transactions): remove unused CategoryPicker`
 
