@@ -1,7 +1,7 @@
 # Lista de Transações: Filtros e Ações Design
 
 **Spec**: `.specs/features/lista-transacoes-ux/spec.md`
-**Status**: Draft
+**Status**: Approved
 
 ---
 

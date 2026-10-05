@@ -114,15 +114,15 @@ Implicit-requirement dimensions: state-transition integrity (cobertas em LISTA-0
 
 | Requirement ID | Story | Phase | Status |
 | -------------- | ----- | ----- | ------ |
-| LISTA-01 | P1: Filtros em uma linha (AC 1-3) | Implementing | Pending |
-| LISTA-02 | P1: Filtros em uma linha (AC 4) | Implementing | Pending |
-| LISTA-03 | P1: Menu de ações (AC 1-2) | Implementing | Pending |
-| LISTA-04 | P1: Menu de ações (AC 3-4, 6-7) | Implementing | Pending |
-| LISTA-05 | P1: Menu de ações (AC 5) | Implementing | Pending |
-| LISTA-06 | P1: Botão no cabeçalho (AC 1-2, 5) | Implementing | Pending |
-| LISTA-07 | P1: Botão no cabeçalho (AC 3-4) | Implementing | Pending |
+| LISTA-01 | P1: Filtros em uma linha (AC 1-3) | Implementing | Verified |
+| LISTA-02 | P1: Filtros em uma linha (AC 4) | Implementing | Verified |
+| LISTA-03 | P1: Menu de ações (AC 1-2) | Implementing | Verified |
+| LISTA-04 | P1: Menu de ações (AC 3-4, 6-7) | Implementing | Verified |
+| LISTA-05 | P1: Menu de ações (AC 5) | Implementing | Verified |
+| LISTA-06 | P1: Botão no cabeçalho (AC 1-2, 5) | Implementing | Verified |
+| LISTA-07 | P1: Botão no cabeçalho (AC 3-4) | Implementing | Verified |
 
-**Coverage:** 7 total, 0 mapped to tasks, 7 unmapped ⚠️
+**Coverage:** 7 total, 7 mapped to tasks, 0 unmapped
 
 ---
 
