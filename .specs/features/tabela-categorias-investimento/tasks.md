@@ -105,13 +105,13 @@ T6 → T7
 
 **Done when**:
 
-- [ ] Despesa com gasto > meta: `overspent` true, `overspentCents` = gasto − meta, `exceeded` false
-- [ ] Investimento com gasto > meta: `overspent` false, `overspentCents` 0, `exceeded` true, `exceededCents` = gasto − meta
-- [ ] Investimento com gasto = meta e abaixo da meta: `exceeded` false, `exceededCents` 0
-- [ ] Investimento com meta 0 e gasto 5000: `exceeded` true, `exceededCents` 5000
-- [ ] `isInvestment` omitido equivale a despesa
-- [ ] Gate check passes: `npm run test:unit`
-- [ ] Test count: testes existentes de `budget.test.ts` + os novos passam (sem remoções)
+- [x] Despesa com gasto > meta: `overspent` true, `overspentCents` = gasto − meta, `exceeded` false
+- [x] Investimento com gasto > meta: `overspent` false, `overspentCents` 0, `exceeded` true, `exceededCents` = gasto − meta
+- [x] Investimento com gasto = meta e abaixo da meta: `exceeded` false, `exceededCents` 0
+- [x] Investimento com meta 0 e gasto 5000: `exceeded` true, `exceededCents` 5000
+- [x] `isInvestment` omitido equivale a despesa
+- [x] Gate check passes: `npm run test:unit`
+- [x] Test count: testes existentes de `budget.test.ts` + os novos passam (sem remoções)
 
 **Tests**: unit
 **Gate**: quick

@@ -424,3 +424,56 @@ describe("buildMonthlySummary without percent in force", () => {
     expect(summary.balanceCents).toBe(499000);
   });
 });
+
+describe("buildMonthlySummary with investment categories", () => {
+  const base = { id: "c1", name: "Liberdade Financeira", percentMicro: 30000000, color: 1, subcategories: [] };
+  const summarize = (spentCents: number, isInvestment?: boolean, incomeCents = 500000) =>
+    buildMonthlySummary({
+      categories: [{ ...base, isInvestment }],
+      incomeCents,
+      spentByCategory: new Map([["c1", spentCents]]),
+    }).rows[0];
+
+  it("an expense above the target is overspent and not exceeded", () => {
+    expect(summarize(160000, false)).toMatchObject({
+      overspent: true,
+      overspentCents: 10000,
+      exceeded: false,
+      exceededCents: 0,
+    });
+  });
+
+  it("an investment above the target is exceeded and not overspent", () => {
+    expect(summarize(160000, true)).toMatchObject({
+      overspent: false,
+      overspentCents: 0,
+      exceeded: true,
+      exceededCents: 10000,
+    });
+  });
+
+  it.each([
+    ["equal to", 150000],
+    ["below", 100000],
+  ])("an investment with spending %s the target is neither overspent nor exceeded", (_, spent) => {
+    expect(summarize(spent, true)).toMatchObject({
+      overspent: false,
+      overspentCents: 0,
+      exceeded: false,
+      exceededCents: 0,
+    });
+  });
+
+  it("an investment with target 0 and spending 5000 is exceeded by 5000", () => {
+    expect(summarize(5000, true, 0)).toMatchObject({
+      targetCents: 0,
+      overspent: false,
+      exceeded: true,
+      exceededCents: 5000,
+    });
+  });
+
+  it("an omitted isInvestment behaves as an expense", () => {
+    expect(summarize(160000)).toMatchObject({ overspent: true, exceeded: false });
+  });
+});

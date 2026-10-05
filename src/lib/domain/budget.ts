@@ -80,6 +80,8 @@ export type Category = {
   subcategories: Subcategory[];
   /** False when no percent version covers the month; omitted means true. */
   hasPercent?: boolean;
+  /** Investment/contribution category: going above the target is good news, not an overspend. Omitted means false. */
+  isInvestment?: boolean;
 };
 
 export type SubcategorySpend = {
@@ -102,8 +104,12 @@ export type CategorySummary = Category & {
   targetCents: number;
   spentCents: number;
   remainingCents: number;
+  /** Expense above its target; always false for an investment category. */
   overspent: boolean;
   overspentCents: number;
+  /** Investment above its target; always false for an expense category. */
+  exceeded: boolean;
+  exceededCents: number;
   /** Share of the target already spent, in whole percent (may exceed 100). */
   consumedPct: number;
   /**
@@ -140,7 +146,7 @@ function buildBreakdown(
   return lines.sort((a, b) => b.spentCents - a.spentCents);
 }
 
-/** Target per category = round(income × micro / TOTAL_MICRO); overspent when spent > target. */
+/** Target per category = round(income × micro / TOTAL_MICRO); overspent when an expense's spent > target (an investment is `exceeded` instead). */
 export function buildMonthlySummary(input: {
   categories: Category[];
   incomeCents: number;
@@ -157,13 +163,17 @@ export function buildMonthlySummary(input: {
     const spentCents = spentByCategory.get(cat.id) ?? 0;
     const consumedPct =
       targetCents > 0 ? Math.round((spentCents * 100) / targetCents) : spentCents > 0 ? 100 : 0;
+    const over = spentCents > targetCents;
+    const investment = cat.isInvestment === true;
     return {
       ...cat,
       targetCents,
       spentCents,
       remainingCents: targetCents - spentCents,
-      overspent: spentCents > targetCents,
-      overspentCents: Math.max(0, spentCents - targetCents),
+      overspent: over && !investment,
+      overspentCents: over && !investment ? spentCents - targetCents : 0,
+      exceeded: over && investment,
+      exceededCents: over && investment ? spentCents - targetCents : 0,
       consumedPct,
       breakdown: buildBreakdown(cat, spentCents, spentBySubcategory?.get(cat.id)),
     };
