@@ -213,13 +213,15 @@ T10 → T11
 
 **Done when**:
 
-- [ ] Mostra o texto de `sumWarning` e, abaixo ou ao lado, o rótulo "Descontar a diferença em" (soma acima de 100%) ou "Acrescentar a diferença em" (abaixo), o select e "Aplicar"
-- [ ] O select lista todas as categorias (nome ou "Categoria N") e abre no maior percentual válido; escolha para linha que sumiu cai no padrão
-- [ ] "Aplicar" chama `onApply(índice)`; `error` aparece com `role="alert"`
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
+- [x] Mostra o texto de `sumWarning` e, abaixo ou ao lado, o rótulo "Descontar a diferença em" (soma acima de 100%) ou "Acrescentar a diferença em" (abaixo), o select e "Aplicar"
+- [x] O select lista todas as categorias (nome ou "Categoria N") e abre no maior percentual válido; escolha para linha que sumiu cai no padrão
+- [x] "Aplicar" chama `onApply(índice)`; `error` aparece com `role="alert"`
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
 
 **Tests**: none
 **Gate**: build
+
+**Status**: ✅ Complete
 
 **Commit**: `feat(categories): add adjust sum bar`
 
