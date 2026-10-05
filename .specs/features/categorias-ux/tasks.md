@@ -242,15 +242,17 @@ T10 → T11
 
 **Done when**:
 
-- [ ] Campo sem foco mostra "6,30"; com foco mostra o texto completo; sair do foco não altera `row.percent`
-- [ ] Texto inválido ou vazio aparece como digitado
-- [ ] "%" fixo no campo de percentual e "R$" fixo no campo de valor, sem placeholders "%" e "R$"; `aria-label` iguais aos atuais
-- [ ] Rodapé "Soma" mostra `sumLabel(sumMicro)`
-- [ ] Valor enviado a `saveCategories` continua com o texto completo da linha
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
+- [x] Campo sem foco mostra "6,30"; com foco mostra o texto completo; sair do foco não altera `row.percent`
+- [x] Texto inválido ou vazio aparece como digitado
+- [x] "%" fixo no campo de percentual e "R$" fixo no campo de valor, sem placeholders "%" e "R$"; `aria-label` iguais aos atuais
+- [x] Rodapé "Soma" mostra `sumLabel(sumMicro)`
+- [x] Valor enviado a `saveCategories` continua com o texto completo da linha
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
 
 **Tests**: none
 **Gate**: build
+
+**Status**: ✅ Complete
 
 **Commit**: `feat(categories): show percentages with two decimals and unit affixes`
 

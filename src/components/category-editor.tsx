@@ -12,6 +12,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { InputAffix } from "@/components/input-affix";
 import { Input } from "@/components/ui/input";
 import { SubcategoryEditor, type SubcategoryRow } from "@/components/subcategory-editor";
 import { Label } from "@/components/ui/label";
@@ -19,7 +20,15 @@ import type { ActionResult } from "@/lib/action-result";
 import { allocateCents, type Category } from "@/lib/domain/budget";
 import { CATEGORY_COLORS, colorVar, nextFreeColor } from "@/lib/domain/color";
 import { formatBRL, parseBRL } from "@/lib/domain/money";
-import { adjustToTotal, formatPercent, microFromCents, parsePercent, TOTAL_MICRO } from "@/lib/domain/percent";
+import {
+  adjustToTotal,
+  formatPercent,
+  microFromCents,
+  parsePercent,
+  percentFieldText,
+  sumLabel,
+  TOTAL_MICRO,
+} from "@/lib/domain/percent";
 
 type Row = {
   key: string;
@@ -126,6 +135,8 @@ export function CategoryEditor({
   // Kept apart from the rows so it survives the reset after a save.
   const [income, setIncome] = useState(initialIncome);
   const [adjustError, setAdjustError] = useState<string | null>(null);
+  // Row whose percent field has focus: it shows the full text, the others show 2 decimals.
+  const [focusedRow, setFocusedRow] = useState<number | null>(null);
   const [pending, startTransition] = useTransition();
 
   // After a save the server sends the set again (with ids of new categories): start from it.
@@ -278,30 +289,34 @@ export function CategoryEditor({
                       />
                       {nameError && <p className="mt-1 text-sm text-destructive">{nameError}</p>}
                     </div>
-                    <div className="w-24">
-                      <Input
-                        aria-label={`Percentual da categoria ${i + 1}`}
-                        inputMode="decimal"
-                        placeholder="%"
-                        value={row.percent}
-                        aria-invalid={!!percentError}
-                        onChange={(e) => update(i, { percent: e.target.value, amountText: undefined })}
-                      />
+                    <div className="w-28">
+                      <InputAffix suffix="%">
+                        <Input
+                          aria-label={`Percentual da categoria ${i + 1}`}
+                          inputMode="decimal"
+                          value={percentFieldText(row.percent, focusedRow === i)}
+                          aria-invalid={!!percentError}
+                          onFocus={() => setFocusedRow(i)}
+                          onBlur={() => setFocusedRow((current) => (current === i ? null : current))}
+                          onChange={(e) => update(i, { percent: e.target.value, amountText: undefined })}
+                        />
+                      </InputAffix>
                       {percentError && <p className="mt-1 text-sm text-destructive">{percentError}</p>}
                     </div>
                     <div className="w-32">
-                      <Input
-                        aria-label={`Valor da categoria ${i + 1}`}
-                        data-testid={`category-amount-${i + 1}`}
-                        inputMode="decimal"
-                        placeholder="R$"
-                        disabled={incomeCents === null}
-                        title={incomeCents === null ? "Informe a receita de referência" : undefined}
-                        value={row.amountText ?? (amounts[i] === null ? "" : amountField(amounts[i]))}
-                        aria-invalid={!!amountError}
-                        onChange={(e) => changeAmount(i, e.target.value)}
-                        onBlur={() => update(i, { amountText: undefined })}
-                      />
+                      <InputAffix prefix="R$">
+                        <Input
+                          aria-label={`Valor da categoria ${i + 1}`}
+                          data-testid={`category-amount-${i + 1}`}
+                          inputMode="decimal"
+                          disabled={incomeCents === null}
+                          title={incomeCents === null ? "Informe a receita de referência" : undefined}
+                          value={row.amountText ?? (amounts[i] === null ? "" : amountField(amounts[i]))}
+                          aria-invalid={!!amountError}
+                          onChange={(e) => changeAmount(i, e.target.value)}
+                          onBlur={() => update(i, { amountText: undefined })}
+                        />
+                      </InputAffix>
                       {amountError && <p className="mt-1 text-sm text-destructive">{amountError}</p>}
                     </div>
                   </>
@@ -336,7 +351,7 @@ export function CategoryEditor({
         })}
         <div className="flex flex-wrap items-center justify-end gap-x-6 py-2 text-sm font-medium">
           <span>Soma</span>
-          <span data-testid="category-sum">{formatPercent(sumMicro)}</span>
+          <span data-testid="category-sum">{sumLabel(sumMicro)}</span>
           <span data-testid="category-amount-sum">
             {incomeCents === null ? "—" : formatBRL(amountSum)}
           </span>
