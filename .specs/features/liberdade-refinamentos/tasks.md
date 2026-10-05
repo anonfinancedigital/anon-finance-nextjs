@@ -245,16 +245,17 @@ T6 → T7 → T8
 
 **Done when**:
 
-- [ ] Guardado R$ 570.000,00 e alvo R$ 3.000.000,00 → pino em 19% com nome acessível "Você está aqui: 19,0% do alvo" (RFN-03 AC5)
-- [ ] Nenhum texto de percentual novo visível: "19,0%" continua uma vez na tela (RFN-03 AC6)
-- [ ] Progresso 0% → pino na borda esquerda; progresso ≥ 100% → borda direita (RFN-03 AC7 e edge case)
-- [ ] Pino acima do marco quando coincidem, sem esconder "Atingido" (RFN-03 AC8)
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] Guardado R$ 570.000,00 e alvo R$ 3.000.000,00 → pino em 19% com nome acessível "Você está aqui: 19,0% do alvo" (RFN-03 AC5)
+- [x] Nenhum texto de percentual novo visível: "19,0%" continua uma vez na tela (RFN-03 AC6)
+- [x] Progresso 0% → pino na borda esquerda; progresso ≥ 100% → borda direita (RFN-03 AC7 e edge case)
+- [x] Pino acima do marco quando coincidem, sem esconder "Atingido" (RFN-03 AC8)
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
 
 **Tests**: none
 **Gate**: build
 
 **Commit**: `feat(liberdade): mark the current progress on the rail`
+**Status**: ✅ Done
 
 ---
 

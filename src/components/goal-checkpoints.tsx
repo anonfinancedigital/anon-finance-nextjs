@@ -50,6 +50,12 @@ export function GoalCheckpoints({ summary }: { summary: GoalSummary }) {
             {c.reached && <Check className="size-3" strokeWidth={3} />}
           </span>
         ))}
+        <span
+          role="img"
+          aria-label={`Você está aqui: ${share} do alvo`}
+          className="absolute top-1/2 z-10 h-7 w-1.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-foreground ring-2 ring-card"
+          style={{ left: `${barValue}%` }}
+        />
       </div>
 
       <ol className="grid grid-cols-2 gap-3 @xl:relative @xl:block @xl:h-10">
