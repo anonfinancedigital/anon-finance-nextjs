@@ -188,10 +188,10 @@ T16 → T17 → T18 → T19
 
 **Done when**:
 
-- [ ] `drizzle/0009_*.sql` contém só o `ALTER TABLE "financial_goal" ADD COLUMN "annual_rate_bp" smallint DEFAULT 800 NOT NULL` e o `ADD CONSTRAINT … CHECK`
-- [ ] `npm run db:migrate` aplica no banco de teste sem erro e as linhas existentes ficam com 800
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
-- [ ] Test count: nenhum teste novo (camada schema = none); contagem anterior mantida
+- [x] `drizzle/0009_*.sql` contém só o `ALTER TABLE "financial_goal" ADD COLUMN "annual_rate_bp" smallint DEFAULT 800 NOT NULL` e o `ADD CONSTRAINT … CHECK`
+- [x] `npm run db:migrate` aplica no banco de teste sem erro e as linhas existentes ficam com 800
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
+- [x] Test count: nenhum teste novo (camada schema = none); contagem anterior mantida
 
 **Tests**: none
 **Gate**: build

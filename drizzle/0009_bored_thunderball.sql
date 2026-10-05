@@ -1,0 +1,2 @@
+ALTER TABLE "financial_goal" ADD COLUMN "annual_rate_bp" smallint DEFAULT 800 NOT NULL;--> statement-breakpoint
+ALTER TABLE "financial_goal" ADD CONSTRAINT "financial_goal_annual_rate" CHECK ("financial_goal"."annual_rate_bp" IN (600, 800, 1000));
