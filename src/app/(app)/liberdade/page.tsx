@@ -6,7 +6,7 @@ import { isoToBR } from "@/lib/domain/date-br";
 import { goalsRepo } from "@/lib/db/repos/goals";
 import { formatBRL } from "@/lib/domain/money";
 
-export const metadata: Metadata = { title: "Liberdade · Orçamento" };
+export const metadata: Metadata = { title: "Ápice" };
 
 /** Money as pt-BR text for the form fields, without the currency symbol. */
 const moneyText = (cents: number) => formatBRL(cents).replace(/^R\$\s*/, "");
@@ -17,10 +17,11 @@ export default async function FreedomPage() {
 
   return (
     <div className="space-y-6">
-      <PageHeader eyebrow="Objetivo" title="Liberdade" />
+      <PageHeader eyebrow="Independência financeira" title="Ápice" />
       <p className="text-sm text-muted-foreground">
-        Informe a renda mensal que quer ter, o que já guardou, quando quer se aposentar e a taxa
-        esperada. O alvo é o patrimônio que rende essa renda à taxa escolhida sem consumir o principal.
+        Defina a renda mensal que quer ter, o patrimônio acumulado e a idade do seu ápice patrimonial.
+        A meta é o patrimônio que gera essa renda, sem consumir o principal, na taxa esperada
+        escolhida: a base da sua independência financeira.
       </p>
       <GoalExperience
         saved={goal}
