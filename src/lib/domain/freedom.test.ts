@@ -445,8 +445,8 @@ describe("chartYMax", () => {
     expect(chartYMax(300_000_000, 100_000_000)).toBe(321_000_000);
   });
 
-  it("devolve centavos inteiros (R$ 0,05 × 107% = R$ 0,05)", () => {
+  it("devolve centavos inteiros, arredondando (R$ 3.012.345,67 × 107% = R$ 3.223.209,87)", () => {
     expect(chartYMax(5, 0)).toBe(5);
-    expect(Number.isInteger(chartYMax(301_234_567, 0))).toBe(true);
+    expect(chartYMax(301_234_567, 0)).toBe(322_320_987);
   });
 });
