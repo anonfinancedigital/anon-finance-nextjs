@@ -149,7 +149,7 @@ Implicit-requirement dimensions: input validation & bounds (rentabilidade fora d
 | RET-08 | P1: Aporte, projeção e gráfico (resumo único e recálculo por entrada) | Execute | Implementing |
 | RET-09 | P1: Aporte, projeção e gráfico (linha do tempo termina na meta, aporte 0, prazo encerrado) | Execute | Implementing |
 | RET-10 | P1: Aporte, projeção e gráfico (linha "Meta" do gráfico) | Execute | Implementing |
-| RET-11 | P1: Tela explica (seletor "Rentabilidade real esperada") | Execute | Implementing |
+| RET-11 | P1: Tela explica (seletor "Rentabilidade real esperada") | Execute | Verified |
 | RET-12 | P1: Tela explica (Hero com rentabilidade, retirada, renda, patrimônio) | Execute | Verified |
 | RET-13 | P1: Tela explica ("Como calculamos?") | Execute | Verified |
 | RET-14 | P1: Tela explica (sem promessa de renda ou retorno; prévia atualiza retirada) | Execute | Implementing |

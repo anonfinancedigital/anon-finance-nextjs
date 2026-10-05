@@ -10,7 +10,8 @@ import { RateToggle, type RateValue } from "@/components/rate-toggle";
 import { Slider } from "@/components/ui/slider";
 import type { ActionResult } from "@/lib/action-result";
 import { brToIso, maskDateInput } from "@/lib/domain/date-br";
-import { ageOn } from "@/lib/domain/freedom";
+import { ageOn, getWithdrawalRate } from "@/lib/domain/freedom";
+import { RATE_HINT, RATE_TITLE } from "@/lib/domain/freedom-copy";
 import { today } from "@/lib/validation/goal";
 
 export type GoalFormValues = {
@@ -63,6 +64,10 @@ export function GoalForm({
   const sliderDisabled = currentAge === null || sliderMin > MAX_SLIDER_AGE;
   const typedAge = Number(values.retirementAge);
   const sliderValue = Math.min(MAX_SLIDER_AGE, Math.max(sliderMin, Number.isFinite(typedAge) ? typedAge : sliderMin));
+
+  // Same fallback the selector shows; the withdrawal rate is read for that scenario, in basis points.
+  const rate: RateValue = values.annualRate === "6" || values.annualRate === "10" ? values.annualRate : "8";
+  const withdrawalRate = getWithdrawalRate(Number(rate) * 100) / 100;
 
   function set<K extends keyof GoalFormValues>(key: K, value: GoalFormValues[K]) {
     const next = { ...values, [key]: value };
@@ -156,12 +161,10 @@ export function GoalForm({
       </div>
 
       <div className="space-y-1">
-        <p className="text-sm font-medium">Taxa esperada ao ano</p>
-        <p className="text-xs text-muted-foreground">Taxa real estimada (descontada a inflação)</p>
-        <RateToggle
-          value={values.annualRate === "6" || values.annualRate === "10" ? (values.annualRate as RateValue) : "8"}
-          onChange={(rate) => set("annualRate", rate)}
-        />
+        <p className="text-sm font-medium">{RATE_TITLE}</p>
+        <p className="text-xs text-muted-foreground">{RATE_HINT}</p>
+        <RateToggle value={rate} onChange={(next) => set("annualRate", next)} />
+        <p className="text-xs text-muted-foreground">Taxa de retirada {withdrawalRate}% a.a.</p>
         {fieldErrors.annualRate && <p className="text-sm text-destructive">{fieldErrors.annualRate}</p>}
       </div>
 

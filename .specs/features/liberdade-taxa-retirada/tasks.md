@@ -283,13 +283,15 @@ T8 → T9
 
 **Done when**:
 
-- [ ] Título "Rentabilidade real esperada" e legenda "Taxa real estimada (descontada a inflação)" (RET-11)
-- [ ] Ao trocar o cenário, a taxa de retirada exibida passa a 4%, 6% ou 7% sem recarregar, junto com a meta e o aporte da prévia (RET-14 AC5)
-- [ ] Nenhum valor 4, 6 ou 7 de retirada escrito no componente; tudo vem de `getWithdrawalRate`
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] Título "Rentabilidade real esperada" e legenda "Taxa real estimada (descontada a inflação)" (RET-11)
+- [x] Ao trocar o cenário, a taxa de retirada exibida passa a 4%, 6% ou 7% sem recarregar, junto com a meta e o aporte da prévia (RET-14 AC5)
+- [x] Nenhum valor 4, 6 ou 7 de retirada escrito no componente; tudo vem de `getWithdrawalRate`
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
 
 **Tests**: none
 **Gate**: build
+
+**Status**: ✅ Done
 
 **Commit**: `feat(liberdade): show the withdrawal rate of the chosen scenario in the form`
 
