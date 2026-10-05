@@ -25,7 +25,7 @@ Nunca use `white/…` ou `black/…` fixos em componentes: use `border-border`, 
 - Cards: `rounded-2xl border border-white/[0.09] bg-card`; campos `rounded-xl border-white/10 bg-white/[0.04]`.
 - Receita = `--income` (verde, também `--success`); gasto/estouro = `--destructive`; destaque = `--primary` (roxo).
 - Cores de categoria 1..8 e de gráfico: `--viz-*` (nomes em `lib/domain/color.ts`).
-- Estrutura: `ContentCard` (seção com título e nota), `PageHeader` (eyebrow + título), `AppNav` + sidebar em `(app)/layout.tsx` (barra inferior no mobile).
+- Estrutura: `ContentCard` (seção com título e nota), `PageHeader` (título), `AppNav` + sidebar em `(app)/layout.tsx` (barra inferior no mobile).
 
 ## Acessibilidade
 - Todo campo com `Label`; botões só-ícone com `aria-label`.

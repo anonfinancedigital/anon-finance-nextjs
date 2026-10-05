@@ -70,7 +70,7 @@ export function GoalExperience({
   return (
     <Sheet open={open} onOpenChange={handleOpenChange} modal={false}>
       <div className={cn("space-y-6 transition-[padding] duration-200", open && "lg:pr-96")}>
-        <PageHeader eyebrow="Independência financeira" title="Ápice">
+        <PageHeader title="Ápice">
           {saved && (
             <SheetTrigger asChild>
               <Button type="button" variant="outline">

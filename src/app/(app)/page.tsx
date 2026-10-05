@@ -89,7 +89,7 @@ export default async function SummaryPage({ searchParams }: PageProps<"/">) {
 
   return (
     <div className="space-y-6 pb-32">
-      <PageHeader eyebrow="Visão geral" title="Visão Geral">
+      <PageHeader title="Visão Geral">
         <MonthPicker month={month} />
       </PageHeader>
 

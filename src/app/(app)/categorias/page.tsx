@@ -18,7 +18,7 @@ export default async function CategoriesPage() {
 
   return (
     <div className="space-y-4">
-      <PageHeader eyebrow="Planejamento" title="Alocação" />
+      <PageHeader title="Alocação" />
       <p className="text-sm text-muted-foreground">Alocação total obrigatória: 100% da receita</p>
       <p className="text-sm text-muted-foreground">
         Defina quanto da receita do mês vai para cada categoria. A soma deve ser 100%.
