@@ -502,11 +502,11 @@ T22 → T23 → T24 → T25 → T26 → T27 → T28
 
 **Done when**:
 
-- [ ] Botão é só ícone, `aria-label` existente preservado
-- [ ] Hover e focus em tom destrutivo
-- [ ] Nenhum texto "Remover" visível na linha da subcategoria
-- [ ] Gate build: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
-- [ ] Contagem de testes unit/int igual à anterior (nenhum teste removido)
+- [x] Botão é só ícone, `aria-label` existente preservado
+- [x] Hover e focus em tom destrutivo
+- [x] Nenhum texto "Remover" visível na linha da subcategoria
+- [x] Gate build: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
+- [x] Contagem de testes unit/int igual à anterior (nenhum teste removido)
 
 **Tests**: none
 **Gate**: build

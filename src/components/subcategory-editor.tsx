@@ -1,6 +1,6 @@
 "use client";
 
-import { PlusIcon } from "lucide-react";
+import { PlusIcon, Trash2Icon } from "lucide-react";
 import { type ReactNode, useRef, useState } from "react";
 import { CategoryCard } from "@/components/category-card";
 import { Button } from "@/components/ui/button";
@@ -91,11 +91,12 @@ export function SubcategoryEditor({
                 <Button
                   type="button"
                   variant="ghost"
-                  size="sm"
+                  size="icon-sm"
                   aria-label={`Remover subcategoria ${j + 1} da ${label}`}
                   onClick={() => onChange(items.filter((_, k) => k !== j))}
+                  className="size-8 opacity-40 hover:text-destructive hover:opacity-100 focus-visible:text-destructive focus-visible:opacity-100"
                 >
-                  Remover
+                  <Trash2Icon aria-hidden className="size-4" />
                 </Button>
               </div>
               {nameError && <p className="mt-1 pl-5 text-sm text-destructive">{nameError}</p>}
