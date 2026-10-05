@@ -7,6 +7,7 @@ import { saveCategories } from "@/actions/categories";
 import { AdjustSumBar } from "@/components/adjust-sum-bar";
 import { CategorySquare } from "@/components/category-card";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Dialog,
   DialogContent,
@@ -42,12 +43,14 @@ type Row = {
   /** Text typed in the amount field; shown as is until the percent changes or the field loses focus. */
   amountText?: string;
   color: number;
+  isInvestment: boolean;
   subcategories: SubcategoryRow[];
 };
 
 /** Column widths shared by the header row and the category rows so they line up. */
 const COL_PERCENT = "w-28";
 const COL_AMOUNT = "w-36";
+const COL_INVESTMENT = "w-24";
 /** Same width as the subcategory toggle in `CategoryCard` (w-32). */
 const COL_COUNT = "w-32";
 /** The trash button is `size-8`, the same width. */
@@ -62,6 +65,7 @@ const toRow = (c: Category): Row => ({
   name: c.name,
   percent: percentText(c.percentMicro),
   color: c.color,
+  isInvestment: c.isInvestment ?? false,
   subcategories: c.subcategories.map((s) => ({ key: s.id, id: s.id, name: s.name })),
 });
 
@@ -215,6 +219,7 @@ export function CategoryEditor({
         name: "",
         percent: "",
         color: nextFreeColor(current.map((r) => r.color)),
+        isInvestment: false,
         subcategories: [],
       },
     ]);
@@ -225,11 +230,12 @@ export function CategoryEditor({
   function save() {
     startTransition(async () => {
       const res = await saveCategories(
-        rows.map(({ id, name, percent, color, subcategories }) => ({
+        rows.map(({ id, name, percent, color, isInvestment, subcategories }) => ({
           id,
           name,
           percent,
           color,
+          isInvestment,
           subcategories: subcategories.map((s) => ({ id: s.id, name: s.name })),
         })),
       );
@@ -257,6 +263,7 @@ export function CategoryEditor({
           <span className="min-w-40 flex-1">CATEGORIA</span>
           <span className={COL_PERCENT}>ALOCAÇÃO (%)</span>
           <span className={COL_AMOUNT}>VALOR PREVISTO (R$)</span>
+          <span className={COL_INVESTMENT}>INVESTIMENTO</span>
           <span className={COL_COUNT}>SUBCATEGORIAS</span>
           <span className={`${COL_ACTION} shrink-0 whitespace-nowrap text-center text-[10px] tracking-normal`}>AÇÕES</span>
         </div>
@@ -334,6 +341,17 @@ export function CategoryEditor({
                       </InputAffix>
                       {amountError && <p className="mt-1 text-sm text-destructive">{amountError}</p>}
                     </div>
+                    <label
+                      className={`${COL_INVESTMENT} flex items-center gap-2 text-sm`}
+                      title="Passar da meta de um investimento não é estouro"
+                    >
+                      <Checkbox
+                        aria-label={`Investimento / aporte da categoria ${i + 1}`}
+                        checked={row.isInvestment}
+                        onCheckedChange={(checked) => update(i, { isInvestment: checked === true })}
+                      />
+                      <span className="sm:hidden">Investimento</span>
+                    </label>
                   </>
                 }
                 trailing={

@@ -219,9 +219,9 @@ T6 → T7
 
 **Done when**:
 
-- [ ] Categoria nova começa desmarcada; categoria salva como investimento reabre marcada
-- [ ] Marcar e salvar persiste a flag
-- [ ] Gate check passes: `npm run build && npm run lint && npm run test:unit && npm run test:int`
+- [x] Categoria nova começa desmarcada; categoria salva como investimento reabre marcada
+- [x] Marcar e salvar persiste a flag
+- [x] Gate check passes: `npm run build && npm run lint && npm run test:unit && npm run test:int`
 
 **Tests**: none
 **Gate**: build
