@@ -52,7 +52,7 @@ export function RateToggle({
           >
             <span className="text-sm font-medium">{option.title}</span>
             <span>{option.rate}</span>
-            <span>{option.withdrawal}</span>
+            <span className="whitespace-nowrap text-[11px]">{option.withdrawal}</span>
           </RadioGroupPrimitive.Item>
         ))}
       </RadioGroup>
