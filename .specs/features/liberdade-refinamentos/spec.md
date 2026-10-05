@@ -123,15 +123,15 @@ Implicit-requirement dimensions: state-transition integrity (marco pendente → 
 
 | Requirement ID | Story | Phase | Status |
 | -------------- | ----- | ----- | ------ |
-| RFN-01 | P1: Marcos (AC 1, 2: alinhamento marco x label, grade estreita) | Specify | Pending |
-| RFN-02 | P1: Marcos (AC 3, 4: marco atingido e pendente) | Specify | Pending |
-| RFN-03 | P1: Marcos (AC 5, 6, 7, 8: pino "você está aqui", sem texto, 0%, coincidência) | Specify | Pending |
-| RFN-04 | P1: Gráfico (AC 1, 6, 7: linha da meta e itens mantidos) | Specify | Pending |
-| RFN-05 | P1: Gráfico (AC 2: teto do eixo Y) | Specify | Pending |
-| RFN-06 | P1: Gráfico (AC 3, 4, 5: tooltip com percentuais) | Specify | Pending |
-| RFN-07 | P2: Gaveta (AC 1: legenda de taxa real) | Specify | Pending |
-| RFN-08 | P2: Gaveta (AC 2, 3: introdução enxuta e estado vazio) | Specify | Pending |
-| RFN-09 | P2: Gaveta (AC 4, 5: prévia em tempo real) | Specify | Pending |
+| RFN-01 | P1: Marcos (AC 1, 2: alinhamento marco x label, grade estreita) | Execute | Implementing |
+| RFN-02 | P1: Marcos (AC 3, 4: marco atingido e pendente) | Execute | Implementing |
+| RFN-03 | P1: Marcos (AC 5, 6, 7, 8: pino "você está aqui", sem texto, 0%, coincidência) | Execute | Implementing |
+| RFN-04 | P1: Gráfico (AC 1, 6, 7: linha da meta e itens mantidos) | Execute | Implementing |
+| RFN-05 | P1: Gráfico (AC 2: teto do eixo Y) | Execute | Implementing |
+| RFN-06 | P1: Gráfico (AC 3, 4, 5: tooltip com percentuais) | Execute | Implementing |
+| RFN-07 | P2: Gaveta (AC 1: legenda de taxa real) | Execute | Implementing |
+| RFN-08 | P2: Gaveta (AC 2, 3: introdução enxuta e estado vazio) | Execute | Implementing |
+| RFN-09 | P2: Gaveta (AC 4, 5: prévia em tempo real) | Execute | Implementing |
 
 **Coverage:** 9 total, 0 mapped to tasks, 9 unmapped ⚠️
 

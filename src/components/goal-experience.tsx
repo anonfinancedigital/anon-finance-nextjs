@@ -11,6 +11,8 @@ import { formatBRL } from "@/lib/domain/money";
 import { cn } from "@/lib/utils";
 import { goalSchema } from "@/lib/validation/goal";
 
+const DRAWER_INTRO = "Simule o ápice: renda, patrimônio e idade.";
+
 const INTRO =
   "Defina a renda mensal que quer ter, o patrimônio acumulado e a idade do seu ápice patrimonial. A meta é o patrimônio que gera essa renda, sem consumir o principal, na taxa esperada escolhida: a base da sua independência financeira.";
 
@@ -93,7 +95,7 @@ export function GoalExperience({
       <SheetContent onInteractOutside={(event) => event.preventDefault()}>
         <div className="space-y-2 pr-8">
           <SheetTitle>Calibrar Parâmetros</SheetTitle>
-          <SheetDescription>{INTRO}</SheetDescription>
+          <SheetDescription>{DRAWER_INTRO}</SheetDescription>
         </div>
         <DrawerSummary summary={summary} />
         <GoalForm

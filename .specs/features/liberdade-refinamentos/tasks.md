@@ -10,7 +10,7 @@ Implement these tasks with the `tlc-spec-driven` skill: **activate it by name an
 
 **Design**: nenhum (escopo médio, sem decisão de arquitetura; o desenho está nas tarefas)
 **Spec**: `.specs/features/liberdade-refinamentos/spec.md`
-**Status**: In Progress
+**Status**: Done
 
 **Estratégia de ordem:** a regra que dá para testar sem tela (participação percentual e teto do eixo Y) vira função pura em `freedom.ts` com teste unitário, e a UI só a consome (AD-005 e AD-008: UI sem teste automático). Cada tarefa deixa `typecheck`, `lint`, `build` e os testes verdes e vira um commit.
 
@@ -302,15 +302,16 @@ T6 → T7 → T8
 
 **Done when**:
 
-- [ ] `SheetDescription` mostra o texto curto em uma linha a 384 px (RFN-08 AC2)
-- [ ] Sem objetivo salvo, o cartão de estado vazio mostra o `INTRO` completo sem mudança (RFN-08 AC3)
-- [ ] `DrawerSummary` e `handleDraft` inalterados: arrastar o slider ou trocar a taxa atualiza Meta e Aporte antes de "Salvar"; prévia inválida mantém os últimos valores (RFN-09 AC4 e AC5)
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] `SheetDescription` mostra o texto curto em uma linha a 384 px (RFN-08 AC2)
+- [x] Sem objetivo salvo, o cartão de estado vazio mostra o `INTRO` completo sem mudança (RFN-08 AC3)
+- [x] `DrawerSummary` e `handleDraft` inalterados: arrastar o slider ou trocar a taxa atualiza Meta e Aporte antes de "Salvar"; prévia inválida mantém os últimos valores (RFN-09 AC4 e AC5)
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
 
 **Tests**: none
 **Gate**: build
 
 **Commit**: `feat(liberdade): shorten the drawer description`
+**Status**: ✅ Done
 
 ---
 
