@@ -82,7 +82,7 @@ Implicit-requirement dimensions: input validation & bounds (rentabilidade fora d
 1. The system SHALL converter a rentabilidade anual em taxa mensal por `(1 + anual)^(1/12) − 1` (6% → 0,4868% a.m.) e usar essa taxa em aporte, projeção e marcos.  <!-- ubiquitous -->
 2. WHEN o resumo é calculado THEN the system SHALL obter o aporte mensal resolvendo `FV = PV × (1+r)^n + PMT × ((1+r)^n − 1) ÷ r` para PMT, com FV igual à meta derivada da taxa de retirada e aporte no fim do mês, arredondado para cima ao centavo.  <!-- event-driven -->
 3. WHEN o resumo é calculado THEN the system SHALL devolver no mesmo objeto a rentabilidade real, a taxa de retirada, a renda anual, a meta, o aporte e os meses até o ápice, e SHALL usar essa meta para o progresso, a distância do alvo, os marcos de 25/50/75/100% e o teto do eixo Y.  <!-- event-driven -->
-4. WHEN a projeção cresce pagando o aporte necessário THEN the system SHALL terminar o último ponto da linha do tempo no valor da meta, com diferença de no máximo 1 centavo por arredondamento.  <!-- event-driven -->
+4. WHEN a projeção cresce pagando o aporte necessário THEN the system SHALL terminar o último ponto da linha do tempo em valor maior ou igual à meta, com a sobra limitada ao efeito de arredondar o aporte para cima ao centavo (com 1 centavo a menos de aporte por mês a meta não é alcançada).  <!-- event-driven -->
 5. WHEN o gráfico é desenhado THEN the system SHALL posicionar a linha "Meta" na altura de `summary.targetCents`, o mesmo valor exibido no Hero e na gaveta.  <!-- event-driven -->
 6. WHEN renda desejada, guardado, data de nascimento ou idade do ápice, ou rentabilidade mudam THEN the system SHALL recalcular retirada, meta, aporte, prazo, linha do tempo e marcos a partir das novas entradas.  <!-- event-driven -->
 7. WHILE o guardado capitalizado até o ápice já alcança a meta, the system SHALL mostrar aporte mensal R$ 0,00.  <!-- state-driven -->
@@ -128,7 +128,7 @@ Implicit-requirement dimensions: input validation & bounds (rentabilidade fora d
 
 ## Edge Cases
 
-- IF a renda desejada é a máxima (R$ 1.000.000,00/mês) com 10% THEN the system SHALL calcular a meta sem perda de precisão acima de 1 centavo (R$ 1.714.285.714,29). Errata (T2): R$ 12.000.000,00 ÷ 7% = R$ 171.428.571,43 (17.142.857.143 centavos); o valor entre parênteses tem um fator 10 a mais.
+- IF a renda desejada é a máxima (R$ 1.000.000,00/mês) com 10% THEN the system SHALL calcular a meta sem perda de precisão acima de 1 centavo (R$ 171.428.571,43, ou seja, R$ 12.000.000,00 ÷ 7%).
 - WHEN a meta com 10% não é inteira em centavos THEN the system SHALL usar o valor arredondado em Hero, gaveta, marcos, gráfico e aporte, sem recalcular a partir do valor não arredondado.
 - WHEN o guardado é maior que a meta nova THEN the system SHALL mostrar progresso acima de 100% como hoje e aporte R$ 0,00.
 - WHEN `months` é 0 e o guardado alcança a meta THEN the system SHALL mostrar aporte R$ 0,00.
@@ -164,6 +164,6 @@ Implicit-requirement dimensions: input validation & bounds (rentabilidade fora d
 ## Success Criteria
 
 - [ ] Com R$ 20.000/mês, os três cenários mostram meta de R$ 6.000.000,00, R$ 4.000.000,00 e R$ 3.428.571,43 no Hero, na gaveta e na linha "Meta" do gráfico.
-- [ ] Para cada cenário, projetar o patrimônio pagando o aporte exibido por `n` meses chega à meta com diferença de no máximo 1 centavo.
+- [ ] Para cada cenário, projetar o patrimônio pagando o aporte exibido por `n` meses chega à meta ou a um valor acima dela por no máximo o efeito do arredondamento do aporte ao centavo.
 - [ ] Nenhum arquivo de UI contém os valores 4, 6 e 7 como taxa de retirada; todos leem `getWithdrawalRate`.
 - [ ] Testes, lint e typecheck passam e a tela mantém o layout atual.
