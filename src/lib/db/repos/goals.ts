@@ -3,11 +3,9 @@ import type { AnnualRateBp, Goal } from "@/lib/domain/freedom";
 import { db } from "../client";
 import { financialGoal } from "../schema";
 
-type StoredGoal = Goal & { annualRateBp: AnnualRateBp };
-
 export const goalsRepo = {
   /** The user's goal, or `null` when none was saved. */
-  async get(userId: string): Promise<StoredGoal | null> {
+  async get(userId: string): Promise<Goal | null> {
     const [row] = await db
       .select({
         monthlyIncomeCents: financialGoal.monthlyIncomeCents,
@@ -23,7 +21,7 @@ export const goalsRepo = {
   },
 
   /** Saves the user's goal, replacing the previous one (one row per user). */
-  async upsert(userId: string, goal: StoredGoal): Promise<void> {
+  async upsert(userId: string, goal: Goal): Promise<void> {
     await db
       .insert(financialGoal)
       .values({ userId, ...goal })

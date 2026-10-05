@@ -275,12 +275,12 @@ T16 → T17 → T18 → T19
 
 **Done when**:
 
-- [ ] `summarize` com renda R$ 10.000,00, guardado 0, nascimento 1990-06-15, aposentadoria 60 e `now` 2026-06-15 devolve alvo 200_000_000 / 150_000_000 / 120_000_000 e aporte 441_075 / 263_621 / 167_071 para 600 / 800 / 1000
-- [ ] O resumo devolve `monthlyIncomeCents` igual à renda do objetivo e `annualRateBp` igual à taxa
-- [ ] `months = 0` com guardado < alvo continua `monthlyCents = null`; guardado ≥ alvo continua 0
-- [ ] Os testes existentes de `summarize` migram para incluir `annualRateBp: 800` com os mesmos valores esperados
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
-- [ ] Test count: testes novos passam, nenhum existente removido
+- [x] `summarize` com renda R$ 10.000,00, guardado 0, nascimento 1986-06-15 (240 meses), aposentadoria 60 e `now` 2026-06-15 devolve alvo 200_000_000 / 150_000_000 / 120_000_000 e aporte 441_075 / 263_621 / 167_071 para 600 / 800 / 1000
+- [x] O resumo devolve `monthlyIncomeCents` igual à renda do objetivo e `annualRateBp` igual à taxa
+- [x] `months = 0` com guardado < alvo continua `monthlyCents = null`; guardado ≥ alvo continua 0
+- [x] Os testes existentes de `summarize` migram para incluir `annualRateBp: 800` com os mesmos valores esperados
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
+- [x] Test count: testes novos passam, nenhum existente removido
 
 **Tests**: unit
 **Gate**: full

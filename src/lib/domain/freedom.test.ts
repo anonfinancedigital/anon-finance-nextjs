@@ -1,7 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
   ageOn,
-  ANNUAL_RATE_BP,
   ANNUAL_RATES,
   DEFAULT_ANNUAL_RATE_BP,
   monthlyRate,
@@ -15,15 +14,11 @@ import {
 
 describe("targetCents", () => {
   it("R$ 10.000,00 de renda dá alvo de R$ 1.500.000,00", () => {
-    expect(targetCents(1_000_000)).toBe(150_000_000);
+    expect(targetCents(1_000_000, 800)).toBe(150_000_000);
   });
 
   it("R$ 0,01 de renda dá R$ 1,50", () => {
-    expect(targetCents(1)).toBe(150);
-  });
-
-  it("usa taxa anual de 8%", () => {
-    expect(ANNUAL_RATE_BP).toBe(800);
+    expect(targetCents(1, 800)).toBe(150);
   });
 });
 
@@ -97,16 +92,16 @@ describe("monthsUntilRetirement", () => {
 
 describe("requiredMonthlyCents", () => {
   it("alvo R$ 1.500.000,00, guardado zero e 240 meses dá 263.621 centavos (R$ 2.636,21)", () => {
-    expect(requiredMonthlyCents({ targetCents: 150_000_000, savedCents: 0, months: 240 })).toBe(263_621);
+    expect(requiredMonthlyCents({ targetCents: 150_000_000, savedCents: 0, months: 240, annualRateBp: 800 })).toBe(263_621);
   });
 
   it("guardado capitalizado que já alcança o alvo dá 0", () => {
     // 100.000.000 × 1,08^20 ≈ 466.096.000 > 150.000.000
-    expect(requiredMonthlyCents({ targetCents: 150_000_000, savedCents: 100_000_000, months: 240 })).toBe(0);
+    expect(requiredMonthlyCents({ targetCents: 150_000_000, savedCents: 100_000_000, months: 240, annualRateBp: 800 })).toBe(0);
   });
 
   it("guardado igual ao alvo dá 0", () => {
-    expect(requiredMonthlyCents({ targetCents: 150_000_000, savedCents: 150_000_000, months: 12 })).toBe(0);
+    expect(requiredMonthlyCents({ targetCents: 150_000_000, savedCents: 150_000_000, months: 12, annualRateBp: 800 })).toBe(0);
   });
 
   it.each([
@@ -114,7 +109,7 @@ describe("requiredMonthlyCents", () => {
     { targetCents: 150_000_000, savedCents: 20_000_000, months: 120 },
     { targetCents: 30_000_000, savedCents: 1_234_567, months: 37 },
   ])("o aporte atinge o alvo a 8%% a.a. efetivos (%j)", ({ targetCents, savedCents, months }) => {
-    const payment = requiredMonthlyCents({ targetCents, savedCents, months });
+    const payment = requiredMonthlyCents({ targetCents, savedCents, months, annualRateBp: 800 });
     const i = 1.08 ** (1 / 12) - 1;
     const growth = (1 + i) ** months;
     const future = savedCents * growth + (payment * (growth - 1)) / i;
@@ -130,7 +125,7 @@ describe("summarize", () => {
 
   it("devolve alvo, falta, progresso, prazo e aporte", () => {
     const summary = summarize(
-      { monthlyIncomeCents: 1_000_000, savedCents: 15_000_000, birthDate: "1986-06-15", retirementAge: 60 },
+      { monthlyIncomeCents: 1_000_000, savedCents: 15_000_000, birthDate: "1986-06-15", retirementAge: 60, annualRateBp: 800 },
       now,
     );
     expect(summary).toMatchObject({
@@ -141,13 +136,13 @@ describe("summarize", () => {
       months: 240,
     });
     expect(summary.monthlyCents).toBe(
-      requiredMonthlyCents({ targetCents: 150_000_000, savedCents: 15_000_000, months: 240 }),
+      requiredMonthlyCents({ targetCents: 150_000_000, savedCents: 15_000_000, months: 240, annualRateBp: 800 }),
     );
   });
 
   it("guardado zero e 240 meses dá aporte de 263.621 centavos e 0 pb", () => {
     const summary = summarize(
-      { monthlyIncomeCents: 1_000_000, savedCents: 0, birthDate: "1986-06-15", retirementAge: 60 },
+      { monthlyIncomeCents: 1_000_000, savedCents: 0, birthDate: "1986-06-15", retirementAge: 60, annualRateBp: 800 },
       now,
     );
     expect(summary.monthlyCents).toBe(263_621);
@@ -156,7 +151,7 @@ describe("summarize", () => {
 
   it("guardado acima do alvo: falta 0, progresso acima de 10000 e aporte 0", () => {
     const summary = summarize(
-      { monthlyIncomeCents: 1_000_000, savedCents: 180_000_000, birthDate: "1986-06-15", retirementAge: 60 },
+      { monthlyIncomeCents: 1_000_000, savedCents: 180_000_000, birthDate: "1986-06-15", retirementAge: 60, annualRateBp: 800 },
       now,
     );
     expect(summary.remainingCents).toBe(0);
@@ -166,7 +161,7 @@ describe("summarize", () => {
 
   it("months = 0 e guardado < alvo: monthlyCents nulo e falta mantida", () => {
     const summary = summarize(
-      { monthlyIncomeCents: 1_000_000, savedCents: 15_000_000, birthDate: "1966-06-20", retirementAge: 60 },
+      { monthlyIncomeCents: 1_000_000, savedCents: 15_000_000, birthDate: "1966-06-20", retirementAge: 60, annualRateBp: 800 },
       now,
     );
     expect(summary.months).toBe(0);
@@ -176,7 +171,7 @@ describe("summarize", () => {
 
   it("months = 0 e guardado >= alvo: aporte 0", () => {
     const summary = summarize(
-      { monthlyIncomeCents: 1_000_000, savedCents: 150_000_000, birthDate: "1966-06-20", retirementAge: 60 },
+      { monthlyIncomeCents: 1_000_000, savedCents: 150_000_000, birthDate: "1966-06-20", retirementAge: 60, annualRateBp: 800 },
       now,
     );
     expect(summary.months).toBe(0);
@@ -184,13 +179,19 @@ describe("summarize", () => {
   });
 
   it("recalcula o prazo só com o passar do tempo (mês seguinte, 1 mês a menos)", () => {
-    const goal = { monthlyIncomeCents: 1_000_000, savedCents: 0, birthDate: "1986-06-15", retirementAge: 60 };
+    const goal = {
+      monthlyIncomeCents: 1_000_000,
+      savedCents: 0,
+      birthDate: "1986-06-15",
+      retirementAge: 60,
+      annualRateBp: 800 as const,
+    };
     expect(summarize(goal, new Date("2026-07-15T15:00:00Z")).months).toBe(239);
   });
 });
 
 describe("projectMilestones", () => {
-  const base = { targetCents: 150_000_000, savedCents: 0, months: 240, monthlyCents: 263_621, retirementAge: 60 };
+  const base = { targetCents: 150_000_000, savedCents: 0, months: 240, monthlyCents: 263_621, retirementAge: 60, annualRateBp: 800 };
 
   it("marca nos meses 48, 96, 144, 192 e uma final no prazo (20 anos)", () => {
     expect(projectMilestones(base).map((m) => m.months)).toEqual([48, 96, 144, 192, 240]);
@@ -241,7 +242,13 @@ describe("projectMilestones", () => {
   });
 
   it("summarize inclui as marcas (renda 10.000, 20 anos)", () => {
-    const goal = { monthlyIncomeCents: 1_000_000, savedCents: 0, birthDate: "1986-06-15", retirementAge: 60 };
+    const goal = {
+      monthlyIncomeCents: 1_000_000,
+      savedCents: 0,
+      birthDate: "1986-06-15",
+      retirementAge: 60,
+      annualRateBp: 800 as const,
+    };
     const summary = summarize(goal, new Date("2026-06-15T15:00:00Z"));
     expect(summary.milestones.map((m) => m.months)).toEqual([48, 96, 144, 192, 240]);
   });
@@ -261,10 +268,6 @@ describe("taxa anual como parâmetro", () => {
     expect(targetCents(1_000_000, rate)).toBe(expected);
   });
 
-  it("sem a taxa, targetCents usa 8%", () => {
-    expect(targetCents(1_000_000)).toBe(150_000_000);
-  });
-
   it.each([
     [600, 441_075],
     [800, 263_621],
@@ -274,10 +277,6 @@ describe("taxa anual como parâmetro", () => {
     expect(requiredMonthlyCents({ targetCents: target, savedCents: 0, months: 240, annualRateBp: rate })).toBe(expected);
   });
 
-  it("sem a taxa, requiredMonthlyCents usa 8%", () => {
-    expect(requiredMonthlyCents({ targetCents: 150_000_000, savedCents: 0, months: 240 })).toBe(263_621);
-  });
-
   it.each([[600], [800], [1000]])("guardado capitalizado que alcança o alvo dá 0 a %d pb", (rate) => {
     const target = targetCents(1_000_000, rate);
     expect(requiredMonthlyCents({ targetCents: target, savedCents: target, months: 12, annualRateBp: rate })).toBe(0);
@@ -285,5 +284,28 @@ describe("taxa anual como parâmetro", () => {
 
   it("monthlyRate(800) é 1,08^(1/12) − 1", () => {
     expect(Math.abs(monthlyRate(800) - (1.08 ** (1 / 12) - 1))).toBeLessThan(1e-12);
+  });
+});
+
+describe("summarize por taxa", () => {
+  // 2026-06-15 em São Paulo; nascido em 1986-06-15, aposenta aos 60: 240 meses.
+  const now = new Date("2026-06-15T15:00:00Z");
+  const goal = { monthlyIncomeCents: 1_000_000, savedCents: 0, birthDate: "1986-06-15", retirementAge: 60 };
+
+  it.each([
+    [600, 200_000_000, 441_075],
+    [800, 150_000_000, 263_621],
+    [1000, 120_000_000, 167_071],
+  ] as const)("taxa %d pb: alvo %d e aporte %d centavos", (annualRateBp, target, monthly) => {
+    const summary = summarize({ ...goal, annualRateBp }, now);
+    expect(summary.months).toBe(240);
+    expect(summary.targetCents).toBe(target);
+    expect(summary.monthlyCents).toBe(monthly);
+  });
+
+  it("devolve a renda e a taxa do objetivo", () => {
+    const summary = summarize({ ...goal, monthlyIncomeCents: 2_000_000, annualRateBp: 1000 }, now);
+    expect(summary.monthlyIncomeCents).toBe(2_000_000);
+    expect(summary.annualRateBp).toBe(1000);
   });
 });

@@ -2,9 +2,6 @@ import { currentMonth, type YearMonth } from "./month";
 
 export type YearMonthDay = { year: number; month: number; day: number };
 
-/** Taxa anual fixa, em pontos-base (8% = 800). */
-export const ANNUAL_RATE_BP = 800;
-
 /** Taxas anuais oferecidas, em pontos-base: conservador 6%, moderado 8%, agressivo 10%. */
 export const ANNUAL_RATES = [600, 800, 1000] as const;
 export type AnnualRateBp = (typeof ANNUAL_RATES)[number];
@@ -16,7 +13,7 @@ export function monthlyRate(annualRateBp: number): number {
 }
 
 /** Patrimônio-alvo por perpetuidade: renda mensal × 12 ÷ taxa anual (6%, 8% e 10% dão × 200, × 150 e × 120; sempre inteiro). */
-export function targetCents(monthlyIncomeCents: number, annualRateBp: number = DEFAULT_ANNUAL_RATE_BP): number {
+export function targetCents(monthlyIncomeCents: number, annualRateBp: number): number {
   return (monthlyIncomeCents * 12 * 10_000) / annualRateBp;
 }
 
@@ -47,8 +44,6 @@ export function progressBp(savedCents: number, targetCents: number): number {
   return Math.round((savedCents * 10_000) / targetCents);
 }
 
-const MONTHLY_RATE = monthlyRate(ANNUAL_RATE_BP);
-
 /**
  * Aporte mensal (fim de mês) que leva `savedCents` ao alvo em `months` meses, arredondado para cima
  * ao centavo; 0 se o guardado capitalizado já alcança o alvo. Não definido para `months = 0`.
@@ -57,9 +52,9 @@ export function requiredMonthlyCents(input: {
   targetCents: number;
   savedCents: number;
   months: number;
-  annualRateBp?: number;
+  annualRateBp: number;
 }): number {
-  const rate = monthlyRate(input.annualRateBp ?? DEFAULT_ANNUAL_RATE_BP);
+  const rate = monthlyRate(input.annualRateBp);
   const growth = (1 + rate) ** input.months;
   const gap = input.targetCents - input.savedCents * growth;
   if (gap <= 0) return 0;
@@ -73,6 +68,7 @@ export type Goal = {
   savedCents: number;
   birthDate: string;
   retirementAge: number;
+  annualRateBp: AnnualRateBp;
 };
 
 export type Milestone = {
@@ -98,8 +94,10 @@ export function projectMilestones(input: {
   months: number;
   monthlyCents: number | null;
   retirementAge: number;
+  annualRateBp: number;
 }): Milestone[] {
   const { targetCents: target, savedCents, months, monthlyCents, retirementAge } = input;
+  const rate = monthlyRate(input.annualRateBp);
   if (monthlyCents === null || monthlyCents === 0 || months === 0) return [];
 
   const marks: number[] = [];
@@ -108,8 +106,8 @@ export function projectMilestones(input: {
 
   return marks.map((m) => {
     const isFinal = m === months;
-    const growth = (1 + MONTHLY_RATE) ** m;
-    const projected = savedCents * growth + (monthlyCents * (growth - 1)) / MONTHLY_RATE;
+    const growth = (1 + rate) ** m;
+    const projected = savedCents * growth + (monthlyCents * (growth - 1)) / rate;
     const valueCents = isFinal ? target : Math.round(projected);
     return {
       months: m,
@@ -121,6 +119,8 @@ export function projectMilestones(input: {
 }
 
 export type GoalSummary = {
+  monthlyIncomeCents: number;
+  annualRateBp: AnnualRateBp;
   targetCents: number;
   savedCents: number;
   remainingCents: number;
@@ -133,15 +133,24 @@ export type GoalSummary = {
 
 /** Resumo calculado na leitura a partir do objetivo salvo e de `now`. */
 export function summarize(goal: Goal, now: Date): GoalSummary {
-  const target = targetCents(goal.monthlyIncomeCents);
+  const target = targetCents(goal.monthlyIncomeCents, goal.annualRateBp);
   const months = monthsUntilRetirement(goal.birthDate, goal.retirementAge, currentMonth(now));
   const reached = goal.savedCents >= target;
 
   let monthlyCents: number | null;
   if (months === 0) monthlyCents = reached ? 0 : null;
-  else monthlyCents = requiredMonthlyCents({ targetCents: target, savedCents: goal.savedCents, months });
+  else {
+    monthlyCents = requiredMonthlyCents({
+      targetCents: target,
+      savedCents: goal.savedCents,
+      months,
+      annualRateBp: goal.annualRateBp,
+    });
+  }
 
   return {
+    monthlyIncomeCents: goal.monthlyIncomeCents,
+    annualRateBp: goal.annualRateBp,
     targetCents: target,
     savedCents: goal.savedCents,
     remainingCents: Math.max(0, target - goal.savedCents),
@@ -154,6 +163,7 @@ export function summarize(goal: Goal, now: Date): GoalSummary {
       months,
       monthlyCents,
       retirementAge: goal.retirementAge,
+      annualRateBp: goal.annualRateBp,
     }),
   };
 }
