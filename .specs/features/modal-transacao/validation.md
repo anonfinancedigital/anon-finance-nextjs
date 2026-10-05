@@ -5,9 +5,11 @@
 **Diff range**: `cfa056b..6f8ff64` (commits de T1-T11; o commit `6d9ac97`, de outra feature, foi ignorado)
 **Verifier**: sub-agente independente (autor != verificador)
 
-## Validation: modal-transacao - FAIL
+## Validation: modal-transacao - PASS
 
-Motivo: 1 edge case do spec diverge do código (categoria removida da lista, ver Gap 1). Todo o resto tem evidência `file:line`, mas a UI não tem teste automatizado (Tests=none, AD-005): a evidência de UI é leitura de código mais a verificação manual registrada no rodapé da T11 (`.specs/features/modal-transacao/tasks.md:602-610`).
+Re-verificação (iteração 1 de 3) sobre o commit `267a9ec`, que corrige o Gap 1 e registra em Assumptions do spec as decisões dos Gaps 2-5. Diff range da re-verificação: `cfa056b..267a9ec`. Nota: após `267a9ec`, as referências de `transaction-form.tsx` posteriores à linha 105 estão deslocadas em +6 linhas em relação às citadas abaixo (a mudança foi em `submit`, `:105-115`).
+
+Todo AC e edge case tem evidência `file:line`. A UI não tem teste automatizado (Tests=none, AD-005): a evidência de UI é leitura de código mais a verificação manual registrada no rodapé da T11 (`.specs/features/modal-transacao/tasks.md:602-610`).
 
 ---
 
@@ -42,7 +44,7 @@ Legenda: "sem teste" = sem teste automatizado (UI, AD-005); "manual" = coberto p
 | Cat AC6: salvar sem categoria mostra "Selecione uma categoria" sob o select | texto literal | `transaction-form.tsx:212,219-223`; mensagem vem de `src/lib/validation/transaction.ts:49`. Sem teste de UI; zod coberto por `transaction.int.test.ts:99` | OK (leitura) |
 | Cat AC7: edição abre com os dois selects preenchidos | valores iniciais | `transaction-form.tsx:203,230-236`; `transaction-list.tsx:169-170`. Manual parcial (editar funciona). Sem teste | OK (leitura) |
 | Cat AC8: Ganho não renderiza Categoria/Subcategoria | ausentes | `transaction-form.tsx:187`. Sem teste | OK (leitura) |
-| Edge: categoria editada ausente da lista cai no placeholder e o save falha com "Selecione uma categoria" | placeholder + mensagem "Selecione uma categoria" | placeholder OK em `transaction-form.tsx:203`; **save envia o id obsoleto** (`transaction-form.tsx:108,114-123`, usa `values.categoryId`) e a action responde "Categoria não encontrada" (`src/actions/transactions.ts:12,32-34`) | **GAP (divergência)** |
+| Edge: categoria editada ausente da lista cai no placeholder e o save falha com "Selecione uma categoria" | placeholder + mensagem "Selecione uma categoria" | placeholder `transaction-form.tsx:209` (antes `:203`); `submit` agora envia `categoryId` `""` quando `selectedCategory` não existe (`transaction-form.tsx:110`) e `subcategoryId` `""` se não pertence à categoria (`:111-115`); `""` falha em `z.uuid` com "Selecione uma categoria" (`src/lib/validation/transaction.ts:49`; caso coberto em `transactions.int.test.ts:99`). Sem teste de UI | OK (leitura; corrigido em `267a9ec`) |
 
 ### MODT-03 / MODT-04 / MODT-05: tipo e valor
 
@@ -71,8 +73,8 @@ Legenda: "sem teste" = sem teste automatizado (UI, AD-005); "manual" = coberto p
 | Rod AC4: "Excluir" abre a confirmação existente, mesmo título/descrição, mesma transação e mês | mesmo diálogo | `transaction-list.tsx:181-184` (`setDeleting(editing)`, Occurrence com `month`), `190-201`. Manual (título "Excluir transação?"). Sem teste | OK (leitura + manual) |
 | Rod AC5: confirmar chama `deleteTransaction(id, month)`, fecha os dois, remove da lista | chamada + fechamento | `transaction-list.tsx:61-72` (`deleteTransaction(id, month)`, `setDeleting(null); setEditing(null)`). Remoção sem reload depende de `revalidatePath` da action (fora do diff); manual (linha some). Sem teste | OK (leitura + manual) |
 | Rod AC6: erro mantém confirmação aberta com `role="alert"` | alerta | `transaction-list.tsx:70,203-207`; `setDeleteError(null)` ao abrir `:182`. Caminho de erro **não** exercitado manualmente nem por teste | OK (leitura), sem teste, sem manual |
-| Rod AC7: durante save/delete, desabilita Salvar e Excluir | desabilitados | `transaction-form.tsx:347,361` (pending do save); pending da exclusão vive na lista e desabilita apenas o "Excluir" da confirmação (`transaction-list.tsx:47,212`). Ver Gap 3 | OK parcial (spec-precision gap) |
-| Rod AC8: "Excluir" `destructive`, afastado dos demais | variant + oposto | `transaction-form.tsx:346,349` (`sm:mr-auto`). No mobile empilhado (`flex-col-reverse`, `:342`) não há afastamento além da ordem. Ver Gap 4 | OK em >= 640px; spec-precision gap no mobile |
+| Rod AC7: durante save/delete, desabilita Salvar e Excluir | desabilitados | `transaction-form.tsx:347,361` (pending do save, linhas anteriores a `267a9ec`); exclusão: `transaction-list.tsx:47,212`. Spec agora define a divisão em Assumptions "Quem desabilita Excluir" | OK (leitura; gap resolvido no spec) |
+| Rod AC8: "Excluir" `destructive`, afastado dos demais | variant + oposto | `transaction-form.tsx:346,349` (`sm:mr-auto`). No mobile empilhado (`flex-col-reverse`, `:342`) não há afastamento além da ordem. Ver Gap 4 | OK (leitura; Assumptions "Posição do Excluir" define o empilhado no mobile) |
 
 ### MODT-09: recorrência por switch
 
@@ -111,9 +113,9 @@ Legenda: "sem teste" = sem teste automatizado (UI, AD-005); "manual" = coberto p
 | Critério | Spec-defined outcome | Evidência `file:line` | Resultado |
 | -------- | -------------------- | --------------------- | --------- |
 | P3 AC1: 390x844, gasto, sem categoria, sem recorrência: sem rolagem | `scrollHeight <= clientHeight` | Só manual: `tasks.md:606` (medido com categoria selecionada, caso mais exigente que o do spec). Sem teste | OK (manual) |
-| Goal: altura < metade da atual (6 categorias, 1 com 5 subs) | < 50% do baseline | Nenhum baseline registrado; só vale a medição absoluta de `tasks.md:606` | Spec-precision gap (Gap 5) |
+| Goal: altura < metade da atual (6 categorias, 1 com 5 subs) | < 50% do baseline | Nenhum baseline registrado; só vale a medição absoluta de `tasks.md:606` | OK por definição do spec (Assumptions "Baseline da meta de altura": meta qualitativa, valendo P3 AC1 e a medição da T11) |
 
-**Status**: 40 de 41 ACs e 5 de 6 edge cases com evidência e resultado conforme (conta o edge de categoria removida como o único divergente). Gaps presentes: 1 divergência real e 4 spec-precision gaps. Teste automatizado só em `maskBRLInput` (MODT-04/05, 13 testes novos em `money.test.ts:63-97`).
+**Status**: 41/41 ACs e 6/6 edge cases com evidência e resultado conforme. Sem divergências; sem spec-precision gaps abertos. Teste automatizado só em `maskBRLInput` (MODT-04/05, 13 testes novos em `money.test.ts:63-97`).
 
 ---
 
@@ -148,28 +150,23 @@ Escopo: `maskBRLInput` (único código com teste automatizado). Scratch: `git wo
 ## Gate Check
 
 - **Gate command**: `npm run typecheck && npm run lint && npm run test:unit` e `npm run test:int` (Postgres `orcamento-pg` de pé), na árvore real, Node 20.20.2.
-- **Resultado**: typecheck e lint sem erros; `test:unit` 343 passaram, 0 falhas, 0 pulados (12 arquivos); `test:int` 235 passaram, 0 falhas (11 arquivos).
+- **Resultado**: typecheck e lint sem erros; `test:unit` 343 passaram, 0 falhas, 0 pulados (12 arquivos); `test:int` 235 passaram, 0 falhas (11 arquivos). Reexecutado após `267a9ec` com o mesmo resultado.
 - **Delta de testes**: +13 testes em `money.test.ts` (bloco `maskBRLInput`, linhas 63-97); nenhum teste removido ou enfraquecido no diff da feature.
 
 ---
 
 ## Fix Plans
 
-### Fix 1: categoria removida envia id obsoleto (Major)
-
-- **Root cause**: `submit` envia `values.categoryId` (`transaction-form.tsx:108,114-123`) mesmo quando o select está no placeholder porque a categoria não existe mais (`:203`); a action rejeita com "Categoria não encontrada" (`src/actions/transactions.ts:12,32-34`) em vez de "Selecione uma categoria". O mesmo vale para `subcategoryId` obsoleto (`:230-236` exibe `""` mas `:108` envia o id antigo).
-- **Fix task**: em `submit`, enviar `categoryId: selectedCategory ? values.categoryId : ""` e `subcategoryId` só se pertencer a `selectedCategory.subcategories`; ou normalizar o estado ao montar.
-- **Priority**: Major.
+Fix 1 (categoria removida envia id obsoleto) aplicado em `267a9ec` e re-verificado acima. Nenhum fix aberto.
 
 ---
 
-## Gaps de precisão do spec (⚠️)
+## Limitações registradas (AD-005, não bloqueiam)
 
-- Gap 3: Rod AC7 não diz quem desabilita "Excluir" durante a exclusão em andamento (o pending da exclusão está na lista, não no form).
-- Gap 4: Rod AC8 "afastado ... na borda oposta" não define o layout empilhado no mobile (`flex-col-reverse`, sem margem).
-- Gap 5: Goal "menos da metade da altura atual" não tem baseline registrado, só a medição absoluta; e P3 AC1 mede sem categoria, enquanto a T11 mediu com categoria.
-- Gap 6: Edge "11 dígitos... ignore further digits" não define inserção no meio do texto (código mantém os 11 primeiros dígitos).
-- Dívida sem teste/manual: Rod AC6 (erro de `deleteTransaction`) e Mob AC2 (rolagem do corpo com rodapé visível) só têm leitura de código.
+- Rod AC6 (erro de `deleteTransaction` mantém a confirmação com `role="alert"`): o código satisfaz o AC por leitura (`transaction-list.tsx:70,203-207`), sem teste e sem exercício manual.
+- Mob AC2 (corpo rola com rodapé visível em conteúdo longo): satisfeito por leitura do layout (`transaction-form.tsx:142,145`, `max-h` em `new-transaction-button.tsx:106`), sem medição (`tasks.md:610`).
+- Toda a UI segue sem teste automatizado (AD-005); só `maskBRLInput` tem teste, com sensor 5/5.
+- Sensor não reexecutado: `267a9ec` não altera `money.ts` (fora do alcance de testes automatizados).
 
 ---
 
@@ -178,13 +175,13 @@ Escopo: `maskBRLInput` (único código com teste automatizado). Scratch: `git wo
 | Requirement | Previous Status | New Status |
 | ----------- | --------------- | ---------- |
 | MODT-01 | Pending | Verified (leitura de código) |
-| MODT-02 | Pending | Needs Fix (edge de categoria removida) |
+| MODT-02 | Pending | Verified (leitura; edge corrigido em `267a9ec`) |
 | MODT-03 | Pending | Verified (leitura + manual) |
 | MODT-04 | Pending | Verified (teste + leitura) |
 | MODT-05 | Pending | Verified (teste + leitura) |
 | MODT-06 | Pending | Verified (leitura + manual) |
 | MODT-07 | Pending | Verified (erro sem verificação manual) |
-| MODT-08 | Pending | Verified com spec-precision gaps |
+| MODT-08 | Pending | Verified (decisões em Assumptions) |
 | MODT-09 | Pending | Verified (leitura) |
 | MODT-10 | Pending | Verified (leitura) |
 | MODT-11 | Pending | Verified (rolagem do corpo sem medição) |
@@ -194,14 +191,12 @@ Escopo: `maskBRLInput` (único código com teste automatizado). Scratch: `git wo
 
 ## Summary
 
-**Overall**: Not Ready (1 divergência real)
+**Overall**: Ready (com limitações registradas sob AD-005)
 
-**Spec-anchored check**: 40/41 ACs e 5/6 edge cases conformes; 1 divergência (edge de categoria removida); 4 spec-precision gaps
+**Spec-anchored check**: 41/41 ACs e 6/6 edge cases conformes; 0 spec-precision gaps abertos
 **Sensor**: 5/5 mutações mortas
 **Gate**: typecheck e lint limpos; 343 unit e 235 integração passaram
 
-**What works**: máscara de moeda totalmente testada e discriminante; o formulário, o switch, o toggle e a integração nos dois diálogos seguem o spec por leitura de código e pela verificação manual da T11.
+**What works**: máscara de moeda testada e discriminante; formulário, switch, toggle e integração nos diálogos conformes por leitura e verificação manual da T11; edge de categoria removida corrigido.
 
-**Issues found**: Fix 1 (categoria removida).
-
-**Next steps**: aplicar o Fix 1 e re-verificar (iteração 1 de 3).
+**Next steps**: nenhum.
