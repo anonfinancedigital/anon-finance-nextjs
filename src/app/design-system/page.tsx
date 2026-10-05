@@ -35,7 +35,7 @@ export default async function DesignSystemPage() {
     <main className="mx-auto w-full max-w-5xl space-y-10 px-4 py-6">
       <header>
         <h1 className="text-2xl font-semibold">Design system</h1>
-        <p className="text-muted-foreground">Tokens e componentes base do Orçamento.</p>
+        <p className="text-muted-foreground">Tokens e componentes base do Vértice.</p>
       </header>
 
       <Section title="Cores">

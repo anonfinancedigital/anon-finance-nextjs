@@ -392,10 +392,10 @@ T22 → T23 → T24 → T25 → T26 → T27 → T28
 
 **Done when**:
 
-- [ ] Nenhuma ocorrência de "Orçamento" no arquivo
-- [ ] Gate build passa e `grep -rn "Orçamento" src` só retorna comentários e identificadores
-- [ ] Gate build: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
-- [ ] Contagem de testes unit/int igual à anterior (nenhum teste removido)
+- [x] Nenhuma ocorrência de "Orçamento" no arquivo
+- [x] Gate build passa e `grep -rn "Orçamento" src` só retorna comentários e identificadores
+- [x] Gate build: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
+- [x] Contagem de testes unit/int igual à anterior (nenhum teste removido)
 
 **Tests**: none
 **Gate**: build
