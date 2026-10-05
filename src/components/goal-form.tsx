@@ -30,17 +30,21 @@ const MAX_SLIDER_AGE = 90;
 const blank: GoalFormValues = { monthlyIncome: "", saved: "", birthDate: "", retirementAge: "", annualRate: "8" };
 
 /**
- * Form of the financial freedom goal. Without a saved goal it shows empty; with one it stays
- * collapsed behind an "Calibrar Parâmetros" button and opens filled with the saved values.
- * `onDraftChange` gets the values at every edit, and `null` when the draft is discarded.
+ * Form of the financial freedom goal, filled with the saved values or empty without a saved goal.
+ * The host decides when it is shown: `onDraftChange` gets the values at every edit, `onSaved`
+ * runs after a successful save and `onCancel` when the user gives up.
  */
 export function GoalForm({
   initial,
   onDraftChange,
+  onSaved,
+  onCancel,
   nowIso,
 }: {
   initial?: GoalFormValues;
-  onDraftChange?: (values: GoalFormValues | null) => void;
+  onDraftChange?: (values: GoalFormValues) => void;
+  onSaved?: () => void;
+  onCancel?: () => void;
   nowIso?: string;
 }) {
   const uid = useId();
@@ -48,7 +52,6 @@ export function GoalForm({
   const [values, setValues] = useState<GoalFormValues>(initial ?? blank);
   const [result, setResult] = useState<ActionResult | null>(null);
   const [pending, startTransition] = useTransition();
-  const [editing, setEditing] = useState(!initial);
 
   const fieldErrors = result && !result.ok ? (result.fieldErrors ?? {}) : {};
   const field = (name: string) => `${uid}-${name}`;
@@ -74,30 +77,15 @@ export function GoalForm({
       const res = await saveGoal(values);
       setResult(res);
       if (res.ok) {
-        setEditing(false);
+        onSaved?.();
         router.refresh();
       }
     });
   }
 
-  function cancel() {
-    setValues(initial ?? blank);
-    setResult(null);
-    setEditing(false);
-    onDraftChange?.(null);
-  }
-
-  if (!editing) {
-    return (
-      <Button type="button" variant="outline" onClick={() => setEditing(true)}>
-        Calibrar Parâmetros
-      </Button>
-    );
-  }
-
   return (
     <form onSubmit={submit} className="space-y-3" aria-label="Objetivo de liberdade financeira">
-      <div className="grid gap-3 sm:grid-cols-2">
+      <div className="grid gap-3">
         <div className="space-y-1">
           <Label htmlFor={field("monthlyIncome")}>Renda mensal desejada (R$)</Label>
           <Input
@@ -182,15 +170,13 @@ export function GoalForm({
         </p>
       )}
 
-      <div className="flex gap-2">
+      <div className="sticky bottom-0 flex gap-2 border-t border-border bg-popover py-3">
         <Button type="submit" disabled={pending}>
           Salvar
         </Button>
-        {initial && (
-          <Button type="button" variant="outline" onClick={cancel} disabled={pending}>
-            Cancelar
-          </Button>
-        )}
+        <Button type="button" variant="outline" onClick={onCancel} disabled={pending}>
+          Cancelar
+        </Button>
       </div>
     </form>
   );

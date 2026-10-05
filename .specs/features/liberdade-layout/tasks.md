@@ -233,13 +233,13 @@ T5 → T6 → T7 → T8
 
 **Done when**:
 
-- [ ] Props `{ initial, onDraftChange, onSaved, onCancel, nowIso }`; sem `editing` e sem o botão que colapsava
-- [ ] Salvar com sucesso chama `onSaved()` e `router.refresh()`; com erro mantém o formulário com as mensagens por campo e o alerta
-- [ ] Cancelar chama `onCancel()` (visível também sem objetivo salvo); `onDraftChange` segue sendo chamado a cada alteração
-- [ ] Campos em coluna única (`grid-cols-1`); botões Salvar e Cancelar num rodapé `sticky bottom-0`
-- [ ] A estrutura e os rótulos dos campos, o slider e a taxa ficam como estão
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
-- [ ] Test count: nenhum teste novo (UI = none); contagem anterior mantida
+- [x] Props `{ initial, onDraftChange, onSaved, onCancel, nowIso }`; sem `editing` e sem o botão que colapsava
+- [x] Salvar com sucesso chama `onSaved()` e `router.refresh()`; com erro mantém o formulário com as mensagens por campo e o alerta
+- [x] Cancelar chama `onCancel()` (visível também sem objetivo salvo); `onDraftChange` segue sendo chamado a cada alteração
+- [x] Campos em coluna única (`grid-cols-1`); botões Salvar e Cancelar num rodapé `sticky bottom-0`
+- [x] A estrutura e os rótulos dos campos, o slider e a taxa ficam como estão
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
+- [x] Test count: nenhum teste novo (UI = none); contagem anterior mantida
 
 **Tests**: none
 **Gate**: build
