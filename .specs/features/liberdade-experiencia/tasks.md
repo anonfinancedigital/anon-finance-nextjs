@@ -103,11 +103,11 @@ T16 → T17 → T18 → T19
 
 **Done when**:
 
-- [ ] `isoToBR("1993-09-18")` = `"18/09/1993"`
-- [ ] `brToIso("18/09/1993")` = `"1993-09-18"`; `brToIso("31/02/1993")`, `brToIso("1993-09-18")`, `brToIso("18/09/93")` e `brToIso("")` = `null`
-- [ ] `maskDateInput("18091993")` = `"18/09/1993"`, `maskDateInput("1809")` = `"18/09"`, `maskDateInput("18/09/1993x9")` = `"18/09/1993"` (descarta não dígitos, corta em 8 dígitos)
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
-- [ ] Test count: um teste por exemplo acima, todos passam
+- [x] `isoToBR("1993-09-18")` = `"18/09/1993"`
+- [x] `brToIso("18/09/1993")` = `"1993-09-18"`; `brToIso("31/02/1993")`, `brToIso("1993-09-18")`, `brToIso("18/09/93")` e `brToIso("")` = `null`
+- [x] `maskDateInput("18091993")` = `"18/09/1993"`, `maskDateInput("1809")` = `"18/09"`, `maskDateInput("18/09/1993x9")` = `"18/09/1993"` (descarta não dígitos, corta em 8 dígitos)
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Test count: um teste por exemplo acima, todos passam
 
 **Tests**: unit
 **Gate**: quick
