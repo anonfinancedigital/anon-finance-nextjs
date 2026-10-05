@@ -274,15 +274,16 @@ T6 → T7 → T8
 
 **Done when**:
 
-- [ ] Legenda visível abaixo do título e acima dos 3 presets (RFN-07 AC1)
-- [ ] `RateToggle` mantém o nome "Taxa esperada" e os valores 6, 8 e 10; erro de taxa continua abaixo dos presets
-- [ ] Trocar a taxa continua chamando `onDraftChange` e atualizando o resumo da gaveta (RFN-09 AC4)
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] Legenda visível abaixo do título e acima dos 3 presets (RFN-07 AC1)
+- [x] `RateToggle` mantém o nome "Taxa esperada" e os valores 6, 8 e 10; erro de taxa continua abaixo dos presets
+- [x] Trocar a taxa continua chamando `onDraftChange` e atualizando o resumo da gaveta (RFN-09 AC4)
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
 
 **Tests**: none
 **Gate**: build
 
 **Commit**: `feat(liberdade): label the expected rate as real`
+**Status**: ✅ Done
 
 ---
 

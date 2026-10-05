@@ -157,6 +157,7 @@ export function GoalForm({
 
       <div className="space-y-1">
         <p className="text-sm font-medium">Taxa esperada ao ano</p>
+        <p className="text-xs text-muted-foreground">Taxa real estimada (descontada a inflação)</p>
         <RateToggle
           value={values.annualRate === "6" || values.annualRate === "10" ? (values.annualRate as RateValue) : "8"}
           onChange={(rate) => set("annualRate", rate)}
