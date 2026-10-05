@@ -205,15 +205,16 @@ T7 → T8 → T9 → T10 → T11
 
 **Done when**:
 
-- [ ] "Categoria" lista todas as categorias na ordem atual, com opção vazia "Selecione uma categoria"
-- [ ] "Subcategoria" só aparece para categoria com subcategorias; trocar a categoria volta a "Sem subcategoria"
-- [ ] Edição abre os dois selects já preenchidos; categoria ausente da lista cai no placeholder
-- [ ] Salvar sem categoria mostra "Selecione uma categoria" sob o select
-- [ ] Ganho não renderiza os selects; "Crie suas categorias primeiro" e o botão desabilitado seguem sem categorias
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] "Categoria" lista todas as categorias na ordem atual, com opção vazia "Selecione uma categoria"
+- [x] "Subcategoria" só aparece para categoria com subcategorias; trocar a categoria volta a "Sem subcategoria"
+- [x] Edição abre os dois selects já preenchidos; categoria ausente da lista cai no placeholder
+- [x] Salvar sem categoria mostra "Selecione uma categoria" sob o select
+- [x] Ganho não renderiza os selects; "Crie suas categorias primeiro" e o botão desabilitado seguem sem categorias
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
 
 **Tests**: none
 **Gate**: build
+**Status**: ✅ Complete
 
 **Commit**: `feat(transactions): select category and subcategory with compact selects`
 

@@ -3,12 +3,13 @@
 import Link from "next/link";
 import { useId, useState, useTransition } from "react";
 import { createTransaction, updateTransaction } from "@/actions/transactions";
-import { CategoryPicker } from "@/components/category-picker";
 import { KindToggle } from "@/components/kind-toggle";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { NativeSelect } from "@/components/ui/native-select";
 import type { ActionResult } from "@/lib/action-result";
+import { categoryDisplayName, pickSelection } from "@/lib/domain/category-label";
 import { maskBRLInput } from "@/lib/domain/money";
 import { cn } from "cn";
 
@@ -73,6 +74,7 @@ export function TransactionForm({ categories, defaultDate, transaction, month, o
   const [pending, startTransition] = useTransition();
 
   const fieldErrors = result && !result.ok ? (result.fieldErrors ?? {}) : {};
+  const selectedCategory = categories.find((c) => c.id === values.categoryId);
   const needsCategories = values.kind === "expense" && categories.length === 0;
 
   function set<K extends keyof TransactionFormValues>(key: K, value: TransactionFormValues[K]) {
@@ -147,16 +149,44 @@ export function TransactionForm({ categories, defaultDate, transaction, month, o
             </p>
           ) : (
             <>
-              <Label>Categoria</Label>
-              <CategoryPicker
-                categories={categories}
-                categoryId={values.categoryId}
-                subcategoryId={values.subcategoryId}
-                invalid={!!fieldErrors.categoryId || !!fieldErrors.subcategoryId}
-                onChange={(selection) => setValues((v) => ({ ...v, ...selection }))}
-              />
+              <Label htmlFor={field("category")}>Categoria</Label>
+              <NativeSelect
+                id={field("category")}
+                value={selectedCategory ? values.categoryId : ""}
+                aria-invalid={!!fieldErrors.categoryId}
+                onChange={(e) => setValues((v) => ({ ...v, ...pickSelection(e.target.value) }))}
+              >
+                <option value="">Selecione uma categoria</option>
+                {categories.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {categoryDisplayName(c.name)}
+                  </option>
+                ))}
+              </NativeSelect>
               {fieldErrors.categoryId && (
                 <p className="text-sm text-destructive">{fieldErrors.categoryId}</p>
+              )}
+              {selectedCategory && selectedCategory.subcategories.length > 0 && (
+                <div className="space-y-1 pt-2">
+                  <Label htmlFor={field("subcategory")}>Subcategoria</Label>
+                  <NativeSelect
+                    id={field("subcategory")}
+                    value={
+                      selectedCategory.subcategories.some((s) => s.id === values.subcategoryId)
+                        ? values.subcategoryId
+                        : ""
+                    }
+                    aria-invalid={!!fieldErrors.subcategoryId}
+                    onChange={(e) => set("subcategoryId", e.target.value)}
+                  >
+                    <option value="">Sem subcategoria</option>
+                    {selectedCategory.subcategories.map((s) => (
+                      <option key={s.id} value={s.id}>
+                        {categoryDisplayName(s.name)}
+                      </option>
+                    ))}
+                  </NativeSelect>
+                </div>
               )}
               {fieldErrors.subcategoryId && (
                 <p className="text-sm text-destructive">{fieldErrors.subcategoryId}</p>
