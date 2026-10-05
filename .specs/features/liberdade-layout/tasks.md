@@ -263,15 +263,15 @@ T5 → T6 → T7 → T8
 
 **Done when**:
 
-- [ ] Estado `open`; o wrapper da página é `space-y-6 transition-[padding] duration-200` e ganha `lg:pr-96` enquanto `open`
-- [ ] `PageHeader` (eyebrow "Independência financeira", título "Ápice") com o botão "Calibrar Parâmetros" (`SheetTrigger asChild`) só quando há objetivo salvo
-- [ ] Sem objetivo e sem prévia: cartão de estado vazio com o parágrafo de introdução e "Definir objetivo" (`SheetTrigger asChild`); sem botão no cabeçalho
-- [ ] `Sheet modal={false}` com `SheetContent` e `onInteractOutside` impedindo o fechamento por clique fora; `SheetTitle` "Calibrar Parâmetros"; `SheetDescription` com o parágrafo de introdução atual, sem mudar o texto
-- [ ] Faixa no topo da gaveta com "Meta Patrimonial" e "Aporte Estratégico Mensal" da prévia ("R$ … / mês", "Prazo encerrado" se `monthlyCents` nulo, "—" sem prévia)
-- [ ] X, Esc e Cancelar fecham e restauram o resumo salvo (ou voltam ao estado vazio sem objetivo); Salvar com sucesso fecha sem restaurar, mantendo o resultado da prévia
-- [ ] Rascunho válido recalcula Hero e gráfico ao lado da gaveta; rascunho inválido mantém o último resultado válido
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
-- [ ] Test count: nenhum teste novo (UI = none); contagem anterior mantida
+- [x] Estado `open`; o wrapper da página é `space-y-6 transition-[padding] duration-200` e ganha `lg:pr-96` enquanto `open`
+- [x] `PageHeader` (eyebrow "Independência financeira", título "Ápice") com o botão "Calibrar Parâmetros" (`SheetTrigger asChild`) só quando há objetivo salvo
+- [x] Sem objetivo e sem prévia: cartão de estado vazio com o parágrafo de introdução e "Definir objetivo" (`SheetTrigger asChild`); sem botão no cabeçalho
+- [x] `Sheet modal={false}` com `SheetContent` e `onInteractOutside` impedindo o fechamento por clique fora; `SheetTitle` "Calibrar Parâmetros"; `SheetDescription` com o parágrafo de introdução atual, sem mudar o texto
+- [x] Faixa no topo da gaveta com "Meta Patrimonial" e "Aporte Estratégico Mensal" da prévia ("R$ … / mês", "Prazo encerrado" se `monthlyCents` nulo, "—" sem prévia)
+- [x] X, Esc e Cancelar fecham e restauram o resumo salvo (ou voltam ao estado vazio sem objetivo); Salvar com sucesso fecha sem restaurar, mantendo o resultado da prévia
+- [x] Rascunho válido recalcula Hero e gráfico ao lado da gaveta; rascunho inválido mantém o último resultado válido
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
+- [x] Test count: nenhum teste novo (UI = none); contagem anterior mantida
 
 **Tests**: none
 **Gate**: build
