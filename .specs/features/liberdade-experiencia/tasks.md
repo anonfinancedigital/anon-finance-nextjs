@@ -335,14 +335,14 @@ T16 → T17 → T18 → T19
 
 **Done when**:
 
-- [ ] Alvo R$ 1.500.000,00: valores 37_500_000, 75_000_000, 112_500_000 e 150_000_000 para 2500, 5000, 7500 e 10000 pb
-- [ ] Guardado 0, 8%, 240 meses, aposentadoria aos 60: `months` 102, 163, 206 e 240 e `ageYears` 48, 53, 57 e 60
-- [ ] Guardado R$ 400.000,00 (acima de 25%, abaixo de 50%): o de 25% tem `reached` verdadeiro e `months`/`ageYears` nulos; os demais têm previsão
-- [ ] Guardado ≥ alvo: os 4 `reached` verdadeiros
-- [ ] Prazo 0 e guardado < alvo: os não atingidos têm `months` e `ageYears` nulos
-- [ ] `positionBp` = fração do alvo (2500, 5000, 7500, 10000); o checkpoint de 100% prevê no prazo para 600, 800 e 1000
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
-- [ ] Test count: um teste por AC e Edge Case acima, todos passam
+- [x] Alvo R$ 1.500.000,00: valores 37_500_000, 75_000_000, 112_500_000 e 150_000_000 para 2500, 5000, 7500 e 10000 pb
+- [x] Guardado 0, 8%, 240 meses, aposentadoria aos 60: `months` 102, 163, 206 e 240 e `ageYears` 48, 53, 57 e 60
+- [x] Guardado R$ 400.000,00 (acima de 25%, abaixo de 50%): o de 25% tem `reached` verdadeiro e `months`/`ageYears` nulos; os demais têm previsão
+- [x] Guardado ≥ alvo: os 4 `reached` verdadeiros
+- [x] Prazo 0 e guardado < alvo: os não atingidos têm `months` e `ageYears` nulos
+- [x] `positionBp` = fração do alvo (2500, 5000, 7500, 10000); o checkpoint de 100% prevê no prazo para 600, 800 e 1000
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Test count: um teste por AC e Edge Case acima, todos passam
 
 **Tests**: unit
 **Gate**: quick

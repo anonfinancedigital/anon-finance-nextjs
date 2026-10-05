@@ -178,6 +178,62 @@ export function interestSharePct(timeline: TimelinePoint[]): number | null {
   return last ? Math.round((last.interestCents * 100) / last.totalCents) : null;
 }
 
+export type Checkpoint = {
+  /** Fração do alvo em pontos-base: 2500, 5000, 7500 ou 10000. */
+  fractionBp: number;
+  valueCents: number;
+  /** Guardado já alcança o valor. */
+  reached: boolean;
+  /** Mês em que o valor projetado o alcança; nulo se atingido ou sem prazo. */
+  months: number | null;
+  /** Idade em anos completos nessa data; nulo quando `months` é nulo. */
+  ageYears: number | null;
+  /** Posição na barra em pontos-base (a própria fração). */
+  positionBp: number;
+};
+
+const CHECKPOINT_FRACTIONS_BP = [2500, 5000, 7500, 10_000];
+
+/**
+ * Checkpoints em 25%, 50%, 75% e 100% do alvo. Os não atingidos ganham a previsão: o menor mês em
+ * que o valor projetado (pagando o aporte necessário) alcança o checkpoint; o de 100% cai no prazo.
+ */
+export function buildCheckpoints(input: {
+  targetCents: number;
+  savedCents: number;
+  months: number;
+  monthlyCents: number | null;
+  retirementAge: number;
+  annualRateBp: number;
+}): Checkpoint[] {
+  const { targetCents: target, savedCents, months, monthlyCents, retirementAge, annualRateBp } = input;
+
+  return CHECKPOINT_FRACTIONS_BP.map((fractionBp) => {
+    const valueCents = Math.round((target * fractionBp) / 10_000);
+    const reached = savedCents >= valueCents;
+    let forecast: number | null = null;
+    if (!reached && months > 0 && monthlyCents !== null) {
+      forecast = months;
+      if (fractionBp < 10_000) {
+        for (let m = 1; m < months; m++) {
+          if (projectedCents({ savedCents, monthlyCents, annualRateBp }, m) >= valueCents) {
+            forecast = m;
+            break;
+          }
+        }
+      }
+    }
+    return {
+      fractionBp,
+      valueCents,
+      reached,
+      months: forecast,
+      ageYears: forecast === null ? null : retirementAge - Math.ceil((months - forecast) / 12),
+      positionBp: fractionBp,
+    };
+  });
+}
+
 export type GoalSummary = {
   monthlyIncomeCents: number;
   annualRateBp: AnnualRateBp;
@@ -191,6 +247,7 @@ export type GoalSummary = {
   milestones: Milestone[];
   timeline: TimelinePoint[];
   interestSharePct: number | null;
+  checkpoints: Checkpoint[];
 };
 
 /** Resumo calculado na leitura a partir do objetivo salvo e de `now`. */
@@ -237,5 +294,13 @@ export function summarize(goal: Goal, now: Date): GoalSummary {
     }),
     timeline,
     interestSharePct: interestSharePct(timeline),
+    checkpoints: buildCheckpoints({
+      targetCents: target,
+      savedCents: goal.savedCents,
+      months,
+      monthlyCents,
+      retirementAge: goal.retirementAge,
+      annualRateBp: goal.annualRateBp,
+    }),
   };
 }

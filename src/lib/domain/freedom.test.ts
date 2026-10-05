@@ -13,6 +13,7 @@ import {
   summarize,
   targetCents,
 } from "./freedom";
+import type { Goal } from "./freedom";
 
 describe("targetCents", () => {
   it("R$ 10.000,00 de renda dá alvo de R$ 1.500.000,00", () => {
@@ -409,5 +410,69 @@ describe("projectTimeline", () => {
     const summary = summarize(goal, new Date("2026-06-15T15:00:00Z"));
     expect(summary.timeline).toEqual([]);
     expect(summary.interestSharePct).toBeNull();
+  });
+});
+
+describe("buildCheckpoints", () => {
+  // 2026-06-15 em São Paulo; nascido em 1986-06-15, aposenta aos 60: 240 meses; renda R$ 10.000,00 a 8%
+  const now = new Date("2026-06-15T15:00:00Z");
+  const goal: Goal = {
+    monthlyIncomeCents: 1_000_000,
+    savedCents: 0,
+    birthDate: "1986-06-15",
+    retirementAge: 60,
+    annualRateBp: 800,
+  };
+  const checkpointsOf = (override: Partial<Goal> = {}, at = now) =>
+    summarize({ ...goal, ...override }, at).checkpoints;
+
+  it("alvo R$ 1.500.000,00: valores de 25%, 50%, 75% e 100% do alvo", () => {
+    expect(checkpointsOf().map((c) => c.valueCents)).toEqual([37_500_000, 75_000_000, 112_500_000, 150_000_000]);
+  });
+
+  it("posição na barra igual à fração do alvo em pontos-base", () => {
+    expect(checkpointsOf().map((c) => c.positionBp)).toEqual([2500, 5000, 7500, 10_000]);
+    expect(checkpointsOf().map((c) => c.fractionBp)).toEqual([2500, 5000, 7500, 10_000]);
+  });
+
+  it("guardado 0, 8%, 240 meses, aposentadoria aos 60: previsão nos meses 102, 163, 206 e 240", () => {
+    expect(checkpointsOf().map((c) => c.months)).toEqual([102, 163, 206, 240]);
+  });
+
+  it("idade da previsão: 48, 53, 57 e 60 anos", () => {
+    expect(checkpointsOf().map((c) => c.ageYears)).toEqual([48, 53, 57, 60]);
+    expect(checkpointsOf().every((c) => !c.reached)).toBe(true);
+  });
+
+  it("guardado R$ 400.000,00: 25% atingido sem previsão; os demais com previsão", () => {
+    const [quarter, half, three, full] = checkpointsOf({ savedCents: 40_000_000 });
+    expect(quarter).toMatchObject({ reached: true, months: null, ageYears: null });
+    expect(half.reached).toBe(false);
+    expect(half.months).toEqual(expect.any(Number));
+    expect(three.ageYears).toEqual(expect.any(Number));
+    expect(full).toMatchObject({ reached: false, months: 240, ageYears: 60 });
+  });
+
+  it("guardado igual ao alvo: os 4 atingidos", () => {
+    const all = checkpointsOf({ savedCents: 150_000_000 });
+    expect(all.map((c) => c.reached)).toEqual([true, true, true, true]);
+    expect(all.every((c) => c.months === null && c.ageYears === null)).toBe(true);
+  });
+
+  it("prazo 0 e guardado abaixo do alvo: sem previsão nos não atingidos", () => {
+    const ended = checkpointsOf({ savedCents: 15_000_000, birthDate: "1966-06-20" });
+    expect(ended.every((c) => !c.reached)).toBe(true);
+    expect(ended.every((c) => c.months === null && c.ageYears === null)).toBe(true);
+  });
+
+  it.each([[600], [800], [1000]] as const)("o checkpoint de 100%% prevê no prazo (240 meses, 60 anos) a %d pb", (annualRateBp) => {
+    const full = checkpointsOf({ annualRateBp }).at(-1);
+    expect(full).toMatchObject({ months: 240, ageYears: 60, fractionBp: 10_000 });
+  });
+
+  it("os valores seguem o alvo da taxa: R$ 10.000,00 a 6% dá checkpoints de R$ 500.000,00 e 2.000.000,00", () => {
+    const values = checkpointsOf({ annualRateBp: 600 }).map((c) => c.valueCents);
+    expect(values[0]).toBe(50_000_000);
+    expect(values[3]).toBe(200_000_000);
   });
 });
