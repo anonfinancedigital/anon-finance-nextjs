@@ -159,10 +159,10 @@ T5 → T6 → T7
 
 **Done when**:
 
-- [ ] O container usa `grid grid-cols-1 gap-3 md:grid-cols-[minmax(0,2fr)_minmax(0,1fr)_minmax(0,1fr)]` e o campo de busca perde o `sm:col-span-2`
-- [ ] Rótulos "Buscar por descrição", "Filtrar por categoria" e "Filtrar por subcategoria" intactos; nenhuma mudança em `apply`, `onSearch` ou nos parâmetros de URL
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
-- [ ] Contagem de testes unit e int igual à de antes
+- [x] O container usa `grid grid-cols-1 gap-3 md:grid-cols-[minmax(0,2fr)_minmax(0,1fr)_minmax(0,1fr)]` e o campo de busca perde o `sm:col-span-2`
+- [x] Rótulos "Buscar por descrição", "Filtrar por categoria" e "Filtrar por subcategoria" intactos; nenhuma mudança em `apply`, `onSearch` ou nos parâmetros de URL
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
+- [x] Contagem de testes unit e int igual à de antes
 
 **Tests**: none
 **Gate**: build

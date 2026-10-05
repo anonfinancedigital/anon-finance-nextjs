@@ -45,8 +45,8 @@ export function TransactionFilter({
   }
 
   return (
-    <div className="grid gap-3 sm:grid-cols-2">
-      <div className="relative space-y-1 sm:col-span-2">
+    <div className="grid grid-cols-1 gap-3 md:grid-cols-[minmax(0,2fr)_minmax(0,1fr)_minmax(0,1fr)]">
+      <div className="relative space-y-1">
         <Label htmlFor="filter-search">Buscar por descrição</Label>
         <SearchIcon aria-hidden className="pointer-events-none absolute bottom-3 left-3.5 size-4 text-muted-foreground" />
         <Input
