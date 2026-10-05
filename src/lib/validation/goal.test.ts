@@ -31,6 +31,7 @@ describe("goalSchema", () => {
         birthDate: "1990-06-15",
         retirementAge: 60,
         annualRateBp: 800,
+        withdrawalRateBp: 600,
       });
     }
   });

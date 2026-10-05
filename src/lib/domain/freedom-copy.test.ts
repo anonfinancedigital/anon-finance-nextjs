@@ -7,8 +7,10 @@ const normalize = (s: string) => s.replace(/\s/g, " ");
 // 2026-06-15 em São Paulo; renda R$ 20.000,00, guardado 0, ápice aos 60 (240 meses).
 const now = new Date("2026-06-15T15:00:00Z");
 const goal = { monthlyIncomeCents: 2_000_000, savedCents: 0, birthDate: "1986-06-15", retirementAge: 60 };
+// Retirada de cada preset: 6% → 4%, 8% → 6%, 10% → 7%.
+const WITHDRAWAL_BP = { 600: 400, 800: 600, 1000: 700 } as const;
 const factsOf = (annualRateBp: 600 | 800 | 1000) =>
-  heroFacts(summarize({ ...goal, annualRateBp }, now)).map((f) => `${f.label} ${normalize(f.value)}`);
+  heroFacts(summarize({ ...goal, annualRateBp, withdrawalRateBp: WITHDRAWAL_BP[annualRateBp] }, now)).map((f) => `${f.label} ${normalize(f.value)}`);
 
 describe("rótulos do seletor", () => {
   it("título e legenda da rentabilidade real", () => {
@@ -105,7 +107,7 @@ describe("formatRate", () => {
 
 describe("heroPill", () => {
   it("renda R$ 20.000 e retirada 6% a.a.", () => {
-    const summary = summarize({ ...goal, annualRateBp: 800 }, now);
+    const summary = summarize({ ...goal, annualRateBp: 800, withdrawalRateBp: 600 }, now);
     expect(normalize(heroPill(summary))).toBe("Gera R$ 20.000,00/mês com retirada de 6% a.a.");
   });
 });

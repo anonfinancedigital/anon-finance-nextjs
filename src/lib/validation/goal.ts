@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { brToIso } from "@/lib/domain/date-br";
-import { ageOn, ANNUAL_RATES, type YearMonthDay } from "@/lib/domain/freedom";
+import { ageOn, PRESET_RATES, type YearMonthDay } from "@/lib/domain/freedom";
 import { parseBRL } from "@/lib/domain/money";
 
 const MAX_INCOME_CENTS = 100_000_000;
@@ -80,8 +80,8 @@ export function goalSchema(now: Date) {
         } else retirementAge = age;
       }
 
-      const annualRateBp = ANNUAL_RATES.find((rate) => String(rate / 100) === input.annualRate.trim()) ?? null;
-      if (annualRateBp === null) fail("annualRate", RATE_MESSAGE);
+      const preset = PRESET_RATES.find((p) => String(p.annualBp / 100) === input.annualRate.trim()) ?? null;
+      if (preset === null) fail("annualRate", RATE_MESSAGE);
 
       if (
         monthlyIncomeCents === null ||
@@ -89,11 +89,18 @@ export function goalSchema(now: Date) {
         birthDate === null ||
         currentAge === null ||
         retirementAge === null ||
-        annualRateBp === null
+        preset === null
       ) {
         return z.NEVER;
       }
-      return { monthlyIncomeCents, savedCents, birthDate, retirementAge, annualRateBp };
+      return {
+        monthlyIncomeCents,
+        savedCents,
+        birthDate,
+        retirementAge,
+        annualRateBp: preset.annualBp as number,
+        withdrawalRateBp: preset.withdrawalBp as number,
+      };
     });
 }
 

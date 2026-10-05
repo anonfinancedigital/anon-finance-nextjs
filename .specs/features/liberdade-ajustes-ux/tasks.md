@@ -301,9 +301,9 @@ T9 → T10 → T11 → T12 → T13 → T14
 
 **Done when**:
 
-- [ ] Testes em `freedom.test.ts` reescritos pelos valores da spec: renda 20.000/mês e retirada 450 → meta 533.333.333 centavos (AJL-12); retiradas 400/600/700 dão R$ 6.000.000,00, R$ 4.000.000,00 e R$ 3.428.571,43; `presetFor(600,400)`=600, `presetFor(650,450)`=null, `presetFor(600,500)`=null (AJL-19/20); `summarize` expõe `withdrawalRateBp` do objetivo
-- [ ] Gate quick passa; nenhum teste removido sem substituto
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Testes em `freedom.test.ts` reescritos pelos valores da spec: renda 20.000/mês e retirada 450 → meta 533.333.333 centavos (AJL-12); retiradas 400/600/700 dão R$ 6.000.000,00, R$ 4.000.000,00 e R$ 3.428.571,43; `presetFor(600,400)`=600, `presetFor(650,450)`=null, `presetFor(600,500)`=null (AJL-19/20); `summarize` expõe `withdrawalRateBp` do objetivo
+- [x] Gate quick passa; nenhum teste removido sem substituto
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
 
 **Tests**: unit
 **Gate**: quick

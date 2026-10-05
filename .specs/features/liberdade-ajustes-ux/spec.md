@@ -198,13 +198,13 @@ Implicit-requirement dimensions: input validation & bounds (taxa personalizada f
 | AJL-31 | P1: Card de Meta | Execute | Implementing |
 | AJL-10 | P2: Taxa personalizada | - | Pending |
 | AJL-11 | P2: Taxa personalizada | - | Pending |
-| AJL-12 | P2: Taxa personalizada | - | Pending |
+| AJL-12 | P2: Taxa personalizada | Execute | Implementing |
 | AJL-13 | P2: Taxa personalizada | - | Pending |
 | AJL-14 | P2: Taxa personalizada | - | Pending |
 | AJL-15 | P2: Taxa personalizada | - | Pending |
 | AJL-18 | P2: Taxa personalizada | - | Pending |
 | AJL-19 | P2: Taxa personalizada | - | Pending |
-| AJL-20 | P2: Taxa personalizada | - | Pending |
+| AJL-20 | P2: Taxa personalizada | Execute | Implementing |
 | AJL-16 | P2: Taxa personalizada | - | Pending |
 | AJL-21 | Edge cases | - | Pending |
 | AJL-22 | Edge cases | - | Pending |

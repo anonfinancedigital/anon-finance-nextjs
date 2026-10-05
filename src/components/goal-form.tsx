@@ -11,7 +11,7 @@ import { RateToggle, type RateValue } from "@/components/rate-toggle";
 import { Slider } from "@/components/ui/slider";
 import type { ActionResult } from "@/lib/action-result";
 import { brToIso, maskDateInput } from "@/lib/domain/date-br";
-import { ageOn, getWithdrawalRate } from "@/lib/domain/freedom";
+import { ageOn, PRESET_RATES } from "@/lib/domain/freedom";
 import { RATE_HINT, RATE_TITLE } from "@/lib/domain/freedom-copy";
 import { today } from "@/lib/validation/goal";
 
@@ -68,7 +68,7 @@ export function GoalForm({
 
   // Same fallback the selector shows; the withdrawal rate is read for that scenario, in basis points.
   const rate: RateValue = values.annualRate === "6" || values.annualRate === "10" ? values.annualRate : "8";
-  const withdrawalRate = getWithdrawalRate(Number(rate) * 100) / 100;
+  const withdrawalRate = PRESET_RATES.find((p) => p.annualBp === Number(rate) * 100)!.withdrawalBp / 100;
 
   function set<K extends keyof GoalFormValues>(key: K, value: GoalFormValues[K]) {
     const next = { ...values, [key]: value };

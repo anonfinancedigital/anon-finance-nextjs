@@ -1,5 +1,5 @@
 import { eq, sql } from "drizzle-orm";
-import type { AnnualRateBp, Goal } from "@/lib/domain/freedom";
+import { type Goal, PRESET_RATES } from "@/lib/domain/freedom";
 import { db } from "../client";
 import { financialGoal } from "../schema";
 
@@ -16,18 +16,23 @@ export const goalsRepo = {
       })
       .from(financialGoal)
       .where(eq(financialGoal.userId, userId));
-    // The CHECK on the column keeps the rate within AnnualRateBp.
-    return row ? { ...row, annualRateBp: row.annualRateBp as AnnualRateBp } : null;
+    if (!row) return null;
+    // The CHECK on the column keeps the rate within the presets, so the lookup always finds one.
+    const preset = PRESET_RATES.find((p) => p.annualBp === row.annualRateBp)!;
+    return { ...row, withdrawalRateBp: preset.withdrawalBp };
   },
 
   /** Saves the user's goal, replacing the previous one (one row per user). */
   async upsert(userId: string, goal: Goal): Promise<void> {
+    // The withdrawal rate follows from the preset until the table stores it.
+    const { monthlyIncomeCents, savedCents, birthDate, retirementAge, annualRateBp } = goal;
+    const row = { monthlyIncomeCents, savedCents, birthDate, retirementAge, annualRateBp };
     await db
       .insert(financialGoal)
-      .values({ userId, ...goal })
+      .values({ userId, ...row })
       .onConflictDoUpdate({
         target: financialGoal.userId,
-        set: { ...goal, updatedAt: sql`clock_timestamp()` },
+        set: { ...row, updatedAt: sql`clock_timestamp()` },
       });
   },
 };

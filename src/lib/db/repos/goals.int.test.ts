@@ -12,7 +12,8 @@ const GOAL = {
   savedCents: 15_000_000,
   birthDate: "1990-06-15",
   retirementAge: 60,
-  annualRateBp: 800 as const,
+  annualRateBp: 800,
+  withdrawalRateBp: 600,
 };
 
 const rowsOf = (userId: string) => db.select().from(financialGoal).where(eq(financialGoal.userId, userId));
@@ -43,16 +44,20 @@ describe("goalsRepo.get", () => {
 });
 
 describe("goalsRepo annual rate", () => {
-  it.each([[600], [800], [1000]] as const)("saves and returns the rate %d", async (annualRateBp) => {
+  it.each([
+    [600, 400],
+    [800, 600],
+    [1000, 700],
+  ])("saves and returns the rate %d", async (annualRateBp, withdrawalRateBp) => {
     const userId = await insertTestUser();
-    await goalsRepo.upsert(userId, { ...GOAL, annualRateBp });
+    await goalsRepo.upsert(userId, { ...GOAL, annualRateBp, withdrawalRateBp });
     expect((await goalsRepo.get(userId))?.annualRateBp).toBe(annualRateBp);
   });
 
   it("replaces the rate on a second upsert in the same row", async () => {
     const userId = await insertTestUser();
-    await goalsRepo.upsert(userId, { ...GOAL, annualRateBp: 600 });
-    await goalsRepo.upsert(userId, { ...GOAL, annualRateBp: 1000 });
+    await goalsRepo.upsert(userId, { ...GOAL, annualRateBp: 600, withdrawalRateBp: 400 });
+    await goalsRepo.upsert(userId, { ...GOAL, annualRateBp: 1000, withdrawalRateBp: 700 });
 
     expect((await goalsRepo.get(userId))?.annualRateBp).toBe(1000);
     expect(await rowsOf(userId)).toHaveLength(1);
@@ -82,7 +87,8 @@ describe("goalsRepo.upsert", () => {
       savedCents: 0,
       birthDate: "1985-02-28",
       retirementAge: 55,
-      annualRateBp: 1000 as const,
+      annualRateBp: 1000,
+      withdrawalRateBp: 700,
     };
     await goalsRepo.upsert(userId, replacement);
 

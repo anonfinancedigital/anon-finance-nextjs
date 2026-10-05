@@ -2,19 +2,21 @@ import { currentMonth, type YearMonth } from "./month";
 
 export type YearMonthDay = { year: number; month: number; day: number };
 
-/** Taxas anuais oferecidas, em pontos-base: conservador 6%, moderado 8%, agressivo 10%. */
-export const ANNUAL_RATES = [600, 800, 1000] as const;
-export type AnnualRateBp = (typeof ANNUAL_RATES)[number];
-export const DEFAULT_ANNUAL_RATE_BP: AnnualRateBp = 800;
+/**
+ * Presets do seletor, em pontos-base: conservador 6% → retirada 4%, moderado 8% → 6%,
+ * agressivo 10% → 7%.
+ */
+export const PRESET_RATES = [
+  { annualBp: 600, withdrawalBp: 400 },
+  { annualBp: 800, withdrawalBp: 600 },
+  { annualBp: 1000, withdrawalBp: 700 },
+] as const;
+export type PresetAnnualBp = (typeof PRESET_RATES)[number]["annualBp"];
+export const DEFAULT_ANNUAL_RATE_BP: PresetAnnualBp = 800;
 
-/** Taxa de retirada de cada cenário, em pontos-base: 6% → 4%, 8% → 6%, 10% → 7%. */
-export const WITHDRAWAL_RATE_BP: Record<AnnualRateBp, number> = { 600: 400, 800: 600, 1000: 700 };
-
-/** Taxa de retirada da rentabilidade real, em pontos-base; lança `RangeError` fora da tabela. */
-export function getWithdrawalRate(annualRateBp: number): number {
-  const rate = (WITHDRAWAL_RATE_BP as Record<number, number | undefined>)[annualRateBp];
-  if (rate === undefined) throw new RangeError(`Rentabilidade sem taxa de retirada definida: ${annualRateBp}`);
-  return rate;
+/** O preset cujo par (rentabilidade, retirada) coincide com o informado; `null` se nenhum coincide. */
+export function presetFor(annualBp: number, withdrawalBp: number): PresetAnnualBp | null {
+  return PRESET_RATES.find((p) => p.annualBp === annualBp && p.withdrawalBp === withdrawalBp)?.annualBp ?? null;
 }
 
 /** Taxa mensal efetiva equivalente à taxa anual: (1 + taxa)^(1/12) − 1. */
@@ -27,9 +29,9 @@ export function annualIncomeCents(monthlyIncomeCents: number): number {
   return monthlyIncomeCents * 12;
 }
 
-/** Patrimônio-alvo: renda anual ÷ taxa de retirada do cenário, arredondado ao centavo. */
-export function targetCents(monthlyIncomeCents: number, annualRateBp: number): number {
-  return Math.round((annualIncomeCents(monthlyIncomeCents) * 10_000) / getWithdrawalRate(annualRateBp));
+/** Patrimônio-alvo: renda anual ÷ taxa de retirada, arredondado ao centavo. */
+export function targetCents(monthlyIncomeCents: number, withdrawalRateBp: number): number {
+  return Math.round((annualIncomeCents(monthlyIncomeCents) * 10_000) / withdrawalRateBp);
 }
 
 const isLeapYear = (year: number) => (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
@@ -83,7 +85,10 @@ export type Goal = {
   savedCents: number;
   birthDate: string;
   retirementAge: number;
-  annualRateBp: AnnualRateBp;
+  /** Rentabilidade real, em pontos-base. */
+  annualRateBp: number;
+  /** Taxa de retirada, em pontos-base. */
+  withdrawalRateBp: number;
 };
 
 export type TimelinePoint = {
@@ -220,8 +225,8 @@ export function buildCheckpoints(input: {
 export type GoalSummary = {
   monthlyIncomeCents: number;
   annualIncomeCents: number;
-  annualRateBp: AnnualRateBp;
-  /** Taxa de retirada do cenário, em pontos-base. */
+  annualRateBp: number;
+  /** Taxa de retirada do objetivo, em pontos-base. */
   withdrawalRateBp: number;
   targetCents: number;
   savedCents: number;
@@ -237,7 +242,7 @@ export type GoalSummary = {
 
 /** Resumo calculado na leitura a partir do objetivo salvo e de `now`. */
 export function summarize(goal: Goal, now: Date): GoalSummary {
-  const target = targetCents(goal.monthlyIncomeCents, goal.annualRateBp);
+  const target = targetCents(goal.monthlyIncomeCents, goal.withdrawalRateBp);
   const months = monthsUntilRetirement(goal.birthDate, goal.retirementAge, currentMonth(now));
   const reached = goal.savedCents >= target;
 
@@ -264,7 +269,7 @@ export function summarize(goal: Goal, now: Date): GoalSummary {
     monthlyIncomeCents: goal.monthlyIncomeCents,
     annualIncomeCents: annualIncomeCents(goal.monthlyIncomeCents),
     annualRateBp: goal.annualRateBp,
-    withdrawalRateBp: getWithdrawalRate(goal.annualRateBp),
+    withdrawalRateBp: goal.withdrawalRateBp,
     targetCents: target,
     savedCents: goal.savedCents,
     remainingCents: Math.max(0, target - goal.savedCents),
