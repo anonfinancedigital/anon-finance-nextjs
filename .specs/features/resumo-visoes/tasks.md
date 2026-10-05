@@ -9,7 +9,11 @@ Implement these tasks with the `tlc-spec-driven` skill: **activate it by name an
 ---
 
 **Design**: `.specs/features/resumo-visoes/design.md`
-**Status**: In Progress
+**Status**: Done
+
+**Dívida registrada (AD-005):** `e2e/charts.spec.ts:20,46,64` espera o gráfico de barras (`bar-chart`) visível sem clicar em "Barras"; agora ele só aparece após escolher "Barras". Com o e2e suspenso o spec não é ajustado aqui. Reativar o e2e exige clicar na aba "Barras" antes dessas asserções e cobrir o `pace-chart`.
+
+**Verificação (T8):** conferida no navegador com uma spec Playwright temporária (removida) contra o app em build, banco privado `orcamento_visoes_test`. Resultado: seletor com 2 abas, `aria-selected` correto e seta à esquerda volta a "Tabela"; barras e tabela nunca juntas; sem card "Gasto × meta por categoria"; mês corrente com curva até hoje, referência até o dia 31 e "Acima do ritmo ideal"; tooltip "Dia 2: Gasto acumulado R$ 1.000,00, Ritmo ideal R$ 645,16" e, depois de hoje, só o ideal; mês passado sem metas (sem "Ritmo ideal"); mês futuro sem curva de gasto e com referência; mês sem gastos com "Sem gastos no mês"; mobile 390px empilhado. Achado corrigido em `6065c5b` (título em 3 linhas no mobile).
 
 ---
 
@@ -269,11 +273,11 @@ T5 → T6 → T7 → T8
 
 **Done when**:
 
-- [ ] Seletor alterna sem mostrar tabela e barras juntas; teclado e `aria-selected` conferidos
-- [ ] Curva do ritmo fecha o mês no mesmo total do card "Gasto"
-- [ ] Mês futuro, mês sem gastos e meta zero conferidos
-- [ ] Rastreabilidade da spec atualizada
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
+- [x] Seletor alterna sem mostrar tabela e barras juntas; teclado e `aria-selected` conferidos
+- [x] Curva do ritmo fecha o mês no mesmo total do card "Gasto"
+- [x] Mês futuro, mês sem gastos e meta zero conferidos
+- [x] Rastreabilidade da spec atualizada
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
 
 **Tests**: none
 **Gate**: build

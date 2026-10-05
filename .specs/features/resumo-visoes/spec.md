@@ -112,16 +112,16 @@ Implicit-requirement dimensions: input validation & bounds (meses de 28 a 31 dia
 
 | Requirement ID | Story | Phase | Status |
 | -------------- | ----- | ----- | ------ |
-| VISOES-01 | P1: Seletor (AC 1, 7) | Specify | Pending |
-| VISOES-02 | P1: Seletor (AC 2-5) | Specify | Pending |
-| VISOES-03 | P1: Seletor (AC 6, 8) | Specify | Pending |
-| RITMO-01 | P1: Ritmo (AC 1, 11) | Specify | Pending |
-| RITMO-02 | P1: Ritmo (AC 2-4) | Implementing | Pending |
-| RITMO-03 | P1: Ritmo (AC 5-6, 12-13) | Implementing | Pending |
-| RITMO-04 | P1: Ritmo (AC 7-9) | Implementing | Pending |
-| RITMO-05 | P1: Ritmo (AC 10) | Specify | Pending |
+| VISOES-01 | P1: Seletor (AC 1, 7) | Implementing | Verified |
+| VISOES-02 | P1: Seletor (AC 2-5) | Implementing | Verified |
+| VISOES-03 | P1: Seletor (AC 6, 8) | Implementing | Verified |
+| RITMO-01 | P1: Ritmo (AC 1, 11) | Implementing | Verified |
+| RITMO-02 | P1: Ritmo (AC 2-4) | Implementing | Verified |
+| RITMO-03 | P1: Ritmo (AC 5-6, 12-13) | Implementing | Verified |
+| RITMO-04 | P1: Ritmo (AC 7-9) | Implementing | Verified |
+| RITMO-05 | P1: Ritmo (AC 10) | Implementing | Verified |
 
-**Coverage:** 8 total, 0 mapped to tasks, 8 unmapped ⚠️
+**Coverage:** 8 total, 8 mapped to tasks, 0 unmapped
 
 ---
 
