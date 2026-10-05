@@ -1,5 +1,6 @@
 "use client";
 
+import { Trash2Icon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { saveCategories } from "@/actions/categories";
@@ -10,6 +11,7 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
@@ -19,6 +21,7 @@ import { ReferenceIncomeCard } from "@/components/reference-income-card";
 import { SubcategoryEditor, type SubcategoryRow } from "@/components/subcategory-editor";
 import type { ActionResult } from "@/lib/action-result";
 import { allocateCents, type Category } from "@/lib/domain/budget";
+import { categoryDisplayName } from "@/lib/domain/category-label";
 import { CATEGORY_COLORS, colorVar, nextFreeColor } from "@/lib/domain/color";
 import { formatBRL, parseBRL } from "@/lib/domain/money";
 import {
@@ -138,6 +141,8 @@ export function CategoryEditor({
   const [adjustError, setAdjustError] = useState<string | null>(null);
   // Row whose percent field has focus: it shows the full text, the others show 2 decimals.
   const [focusedRow, setFocusedRow] = useState<number | null>(null);
+  // Row waiting for the removal confirmation dialog.
+  const [removing, setRemoving] = useState<number | null>(null);
   const [pending, startTransition] = useTransition();
 
   // After a save the server sends the set again (with ids of new categories): start from it.
@@ -156,6 +161,7 @@ export function CategoryEditor({
     incomeCents !== null && p?.ok ? allocateCents(incomeCents, p.value) : null,
   );
   const amountSum = amounts.reduce<number>((sum, cents) => sum + (cents ?? 0), 0);
+  const removingRow = removing === null ? null : rows[removing];
   const fieldErrors = result && !result.ok ? (result.fieldErrors ?? {}) : {};
 
   function update(index: number, patch: Partial<Row>) {
@@ -242,7 +248,7 @@ export function CategoryEditor({
           const amountError = typedMicro && !typedMicro.ok ? typedMicro.error : undefined;
           const percentError = fieldErrors[`${i}.percent`] ?? (live && !live.ok ? live.error : undefined);
           return (
-            <div key={row.key} className="py-2">
+            <div key={row.key} className="group/row py-2">
               <SubcategoryEditor
                 index={i}
                 name={row.name}
@@ -314,11 +320,12 @@ export function CategoryEditor({
                     <Button
                       type="button"
                       variant="ghost"
-                      size="sm"
+                      size="icon-sm"
                       aria-label={`Remover categoria ${i + 1}`}
-                      onClick={() => remove(i)}
+                      onClick={() => (row.subcategories.length > 0 ? setRemoving(i) : remove(i))}
+                      className="opacity-40 group-hover/row:text-destructive group-hover/row:opacity-100 group-focus-within/row:text-destructive group-focus-within/row:opacity-100"
                     >
-                      Remover
+                      <Trash2Icon aria-hidden className="size-4" />
                     </Button>
                   </>
                 }
@@ -363,10 +370,44 @@ export function CategoryEditor({
         <Button type="button" variant="outline" onClick={add}>
           Adicionar categoria
         </Button>
-        <Button type="submit" disabled={!sumOk || pending}>
+        <Button
+          type="submit"
+          disabled={!sumOk || pending}
+          className="disabled:pointer-events-auto disabled:cursor-not-allowed disabled:opacity-40"
+        >
           Salvar
         </Button>
       </div>
+      <Dialog open={removing !== null} onOpenChange={(open) => !open && setRemoving(null)}>
+        <DialogContent className="sm:max-w-sm">
+          <DialogHeader>
+            <DialogTitle>Remover categoria?</DialogTitle>
+            <DialogDescription>
+              {removingRow &&
+                `"${categoryDisplayName(removingRow.name)}" e ${
+                  removingRow.subcategories.length === 1
+                    ? "sua 1 subcategoria"
+                    : `suas ${removingRow.subcategories.length} subcategorias`
+                } serão removidas ao salvar.`}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button type="button" variant="outline" onClick={() => setRemoving(null)}>
+              Cancelar
+            </Button>
+            <Button
+              type="button"
+              variant="destructive"
+              onClick={() => {
+                if (removing !== null) remove(removing);
+                setRemoving(null);
+              }}
+            >
+              Remover
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </form>
   );
 }

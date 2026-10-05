@@ -304,15 +304,17 @@ T10 → T11
 
 **Done when**:
 
-- [ ] Botão `size-4` com `aria-label` "Remover categoria N", opacidade 40% e 100% com cor destrutiva no hover ou foco da linha (`group/row`)
-- [ ] Categoria com 1+ subcategorias abre o diálogo "Remover categoria?" com o texto da spec ("suas N subcategorias", "sua 1 subcategoria") e botões "Cancelar" e "Remover"
-- [ ] "Remover" no diálogo remove a linha; "Cancelar" ou fechar mantém tudo
-- [ ] Categoria sem subcategorias remove na hora
-- [ ] Salvar desabilitado mostra opacidade 40% e `cursor-not-allowed`
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
+- [x] Botão `size-4` com `aria-label` "Remover categoria N", opacidade 40% e 100% com cor destrutiva no hover ou foco da linha (`group/row`)
+- [x] Categoria com 1+ subcategorias abre o diálogo "Remover categoria?" com o texto da spec ("suas N subcategorias", "sua 1 subcategoria") e botões "Cancelar" e "Remover"
+- [x] "Remover" no diálogo remove a linha; "Cancelar" ou fechar mantém tudo
+- [x] Categoria sem subcategorias remove na hora
+- [x] Salvar desabilitado mostra opacidade 40% e `cursor-not-allowed`
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
 
 **Tests**: none
 **Gate**: build
+
+**Status**: ✅ Complete
 
 **Commit**: `feat(categories): confirm removal and style the disabled save button`
 
