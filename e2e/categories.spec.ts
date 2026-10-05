@@ -306,3 +306,52 @@ test("two categories with the same color save normally", async ({ page }) => {
     await expect(colorButton(page, n)).toHaveAccessibleName(`Cor da categoria ${n}: Azul`);
   }
 });
+
+test("adjusting a category closes the sum at 100% and enables saving", async ({ page }) => {
+  await login(page);
+  await page.goto("/categorias");
+  await addCategories(page, [["A", "50"], ["B", "30,5"], ["C", "10"]]);
+  await expect(page.getByTestId("category-sum")).toHaveText("90,5%");
+
+  await page.getByRole("button", { name: "Ajustar categoria 3 para fechar 100%" }).click();
+
+  await expect(percent(page, 3)).toHaveValue("19,5");
+  await expect(percent(page, 1)).toHaveValue("50");
+  await expect(percent(page, 2)).toHaveValue("30,5");
+  await expect(page.getByTestId("category-sum")).toHaveText("100%");
+  await expect(page.getByRole("button", { name: /Ajustar categoria/ })).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "Salvar" })).toBeEnabled();
+});
+
+test("adjusting down lowers the chosen category by the excess", async ({ page }) => {
+  await login(page);
+  await page.goto("/categorias");
+  await addCategories(page, [["A", "50"], ["B", "40"], ["C", "10,297973"]]);
+
+  await page.getByRole("button", { name: "Ajustar categoria 3 para fechar 100%" }).click();
+
+  await expect(percent(page, 3)).toHaveValue("10");
+  await expect(page.getByTestId("category-sum")).toHaveText("100%");
+});
+
+test("an adjustment that would leave the range shows the message and changes nothing", async ({
+  page,
+}) => {
+  await login(page);
+  await page.goto("/categorias");
+  await addCategories(page, [["A", "60"], ["B", "40,297973"], ["C", "0,2"]]);
+
+  await page.getByRole("button", { name: "Ajustar categoria 3 para fechar 100%" }).click();
+
+  await expect(
+    page.getByText(
+      "Não é possível ajustar esta categoria: o percentual ficaria fora do intervalo de 0,000001% a 100%",
+      { exact: true },
+    ),
+  ).toBeVisible();
+  await expect(percent(page, 3)).toHaveValue("0,2");
+  await expect(page.getByTestId("category-sum")).toHaveText("100,497973%");
+
+  await percent(page, 3).fill("0,1");
+  await expect(page.getByText(/Não é possível ajustar esta categoria/)).toHaveCount(0);
+});

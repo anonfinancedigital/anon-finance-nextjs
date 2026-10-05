@@ -19,7 +19,7 @@ import type { ActionResult } from "@/lib/action-result";
 import { allocateCents, type Category } from "@/lib/domain/budget";
 import { CATEGORY_COLORS, colorVar, nextFreeColor } from "@/lib/domain/color";
 import { formatBRL, parseBRL } from "@/lib/domain/money";
-import { formatPercent, microFromCents, parsePercent, TOTAL_MICRO } from "@/lib/domain/percent";
+import { adjustToTotal, formatPercent, microFromCents, parsePercent, TOTAL_MICRO } from "@/lib/domain/percent";
 
 type Row = {
   key: string;
@@ -118,6 +118,7 @@ export function CategoryEditor({ categories }: { categories: Category[] }) {
   const [result, setResult] = useState<ActionResult | null>(null);
   // Kept apart from the rows so it survives the reset after a save.
   const [income, setIncome] = useState("");
+  const [adjustError, setAdjustError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
 
   // After a save the server sends the set again (with ids of new categories): start from it.
@@ -141,6 +142,18 @@ export function CategoryEditor({ categories }: { categories: Category[] }) {
   function update(index: number, patch: Partial<Row>) {
     setRows((current) => current.map((r, i) => (i === index ? { ...r, ...patch } : r)));
     setResult(null);
+    setAdjustError(null);
+  }
+
+  /** Makes this row absorb the difference so the sum becomes exactly 100%. */
+  function adjust(index: number) {
+    const current = parsed[index];
+    const next = adjustToTotal(current?.ok ? current.value : 0, sumMicro);
+    if (!next.ok) {
+      setAdjustError(next.error);
+      return;
+    }
+    update(index, { percent: percentText(next.value), amountText: undefined });
   }
 
   function changeAmount(index: number, text: string) {
@@ -156,6 +169,7 @@ export function CategoryEditor({ categories }: { categories: Category[] }) {
   function remove(index: number) {
     setRows((current) => current.filter((_, i) => i !== index));
     setResult(null);
+    setAdjustError(null);
   }
 
   function add() {
@@ -170,6 +184,7 @@ export function CategoryEditor({ categories }: { categories: Category[] }) {
       },
     ]);
     setResult(null);
+    setAdjustError(null);
   }
 
   function save() {
@@ -211,7 +226,7 @@ export function CategoryEditor({ categories }: { categories: Category[] }) {
         )}
       </div>
 
-      <div className="divide-y rounded-lg border px-3">
+      <div className="divide-y divide-white/[0.06] rounded-2xl border border-white/[0.09] bg-card px-4 shadow-lg">
         {rows.map((row, i) => {
           const nameError = fieldErrors[`${i}.name`];
           const colorError = fieldErrors[`${i}.color`];
@@ -285,15 +300,28 @@ export function CategoryEditor({ categories }: { categories: Category[] }) {
                   </>
                 }
                 trailing={
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    aria-label={`Remover categoria ${i + 1}`}
-                    onClick={() => remove(i)}
-                  >
-                    Remover
-                  </Button>
+                  <>
+                    {!sumOk && (
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        aria-label={`Ajustar categoria ${i + 1} para fechar 100%`}
+                        onClick={() => adjust(i)}
+                      >
+                        Ajustar para 100%
+                      </Button>
+                    )}
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      aria-label={`Remover categoria ${i + 1}`}
+                      onClick={() => remove(i)}
+                    >
+                      Remover
+                    </Button>
+                  </>
                 }
               />
             </div>
@@ -311,6 +339,11 @@ export function CategoryEditor({ categories }: { categories: Category[] }) {
       {!sumOk && (
         <p className="text-sm text-destructive">
           {`A soma dos percentuais deve ser 100% (atual: ${formatPercent(sumMicro)})`}
+        </p>
+      )}
+      {adjustError && (
+        <p role="alert" className="text-sm text-destructive">
+          {adjustError}
         </p>
       )}
       {result && !result.ok && (
