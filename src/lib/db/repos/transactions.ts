@@ -1,12 +1,15 @@
 import { randomUUID } from "node:crypto";
 import { and, desc, eq, gte, inArray, isNull, lt, not, or, sql } from "drizzle-orm";
 import {
+  type Installment,
   type Segment,
   appliesInMonth,
+  installmentOf,
   monthKey,
   occurrenceDate,
   planDelete,
   planEdit,
+  startOfSeries,
 } from "@/lib/domain/recurrence";
 import { db } from "../client";
 import { transaction } from "../schema";
@@ -41,6 +44,10 @@ export type Occurrence = Transaction & {
   recurrenceEnd: string | null;
   /** AAAA-MM of the month the occurrence belongs to. */
   month: string;
+  /** "N/T" of a series with an end month; null otherwise. */
+  installment: Installment | null;
+  /** AAAA-MM of the series' first month; null when not recurring. */
+  seriesStart: string | null;
 };
 
 const columns = {
@@ -251,16 +258,57 @@ async function deleteFrom(userId: string, id: string, month: string): Promise<bo
   });
 }
 
-/** Stored date and recurrence flag of the user's row; null when it does not exist. */
+/** Segments (id, series, date, day, end) of the user's series `seriesIds`, grouped by series. */
+async function loadSeries(userId: string, seriesIds: string[]): Promise<Map<string, Segment[]>> {
+  const bySeries = new Map<string, Segment[]>();
+  if (seriesIds.length === 0) return bySeries;
+  const rows = await db
+    .select({
+      id: transaction.id,
+      seriesId: transaction.seriesId,
+      date: transaction.date,
+      recurrenceDay: transaction.recurrenceDay,
+      recurrenceEnd: transaction.recurrenceEnd,
+    })
+    .from(transaction)
+    .where(and(eq(transaction.userId, userId), inArray(transaction.seriesId, seriesIds)));
+  for (const row of rows) {
+    const list = bySeries.get(row.seriesId!) ?? [];
+    list.push({
+      id: row.id,
+      seriesId: row.seriesId,
+      date: row.date,
+      recurringDay: row.recurrenceDay,
+      endMonth: row.recurrenceEnd === null ? null : monthKey(row.recurrenceEnd),
+    });
+    bySeries.set(row.seriesId!, list);
+  }
+  return bySeries;
+}
+
+/**
+ * Stored date and recurrence flag of the user's row, plus the first month (AAAA-MM) of its series
+ * (null when not recurring); null when the row does not exist.
+ */
 async function findStored(
   userId: string,
   id: string,
-): Promise<{ date: string; recurring: boolean } | null> {
+): Promise<{ date: string; recurring: boolean; seriesStart: string | null } | null> {
   const [row] = await db
-    .select({ date: transaction.date, recurring: transaction.recurring })
+    .select({
+      date: transaction.date,
+      recurring: transaction.recurring,
+      seriesId: transaction.seriesId,
+    })
     .from(transaction)
     .where(ownedBy(userId, id));
-  return row ?? null;
+  if (!row) return null;
+  const segments = row.seriesId ? (await loadSeries(userId, [row.seriesId])).get(row.seriesId) : null;
+  return {
+    date: row.date,
+    recurring: row.recurring,
+    seriesStart: segments ? startOfSeries(segments) : null,
+  };
 }
 
 /** Returns false when the user has no transaction with this id. */
@@ -280,21 +328,30 @@ async function listByMonth(userId: string, range: MonthRange): Promise<Occurrenc
       recurring: transaction.recurring,
       recurrenceDay: transaction.recurrenceDay,
       recurrenceEnd: transaction.recurrenceEnd,
+      seriesId: transaction.seriesId,
     })
     .from(transaction)
     .where(applicableInMonth(userId, range))
     // Ties keep this order (stable sort below): createdAt at full database precision.
     .orderBy(desc(transaction.createdAt));
   const month = monthKey(range.start);
+  const series = await loadSeries(userId, [
+    ...new Set(rows.flatMap((r) => (r.seriesId ? [r.seriesId] : []))),
+  ]);
   return rows
-    .map(({ recurrenceDay, ...row }) => ({
-      ...row,
-      date: occurrenceDate(
-        { id: row.id, seriesId: null, date: row.date, recurringDay: recurrenceDay, endMonth: null },
+    .map(({ recurrenceDay, seriesId, ...row }) => {
+      const segments = seriesId ? series.get(seriesId) : undefined;
+      return {
+        ...row,
+        date: occurrenceDate(
+          { id: row.id, seriesId: null, date: row.date, recurringDay: recurrenceDay, endMonth: null },
+          month,
+        ),
         month,
-      ),
-      month,
-    }))
+        installment: segments ? installmentOf(segments, month) : null,
+        seriesStart: segments ? startOfSeries(segments) : null,
+      };
+    })
     .sort((a, b) => b.date.localeCompare(a.date));
 }
 

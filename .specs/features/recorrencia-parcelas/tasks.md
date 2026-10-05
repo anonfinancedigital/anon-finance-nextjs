@@ -200,15 +200,15 @@ T5 → T8
 
 **Done when**:
 
-- [ ] Série "até" de 05/2026 a 12/2026: 1/8 em maio, 3/8 em julho, 8/8 em dezembro
-- [ ] Série "sempre" e avulso: `installment` null; `seriesStart` null só no avulso
-- [ ] Série editada no meio (valor muda em dezembro) mantém N e T contados pela série inteira
-- [ ] Após `deleteFrom` no mês M, o total T dos meses anteriores é recalculado até M-1
-- [ ] Série cujo último segmento ficou "sem data final" → `installment` null em todas as ocorrências
-- [ ] `findStored` devolve `seriesStart` (AAAA-MM) da série, null para avulso
-- [ ] Séries de outro usuário não entram na conta
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
-- [ ] Test count: ≥ 7 testes de integração novos, nenhum removido
+- [x] Série "até" de 05/2026 a 12/2026: 1/8 em maio, 3/8 em julho, 8/8 em dezembro
+- [x] Série "sempre" e avulso: `installment` null; `seriesStart` null só no avulso
+- [x] Série editada no meio (valor muda em dezembro) mantém N e T contados pela série inteira
+- [x] Após `deleteFrom` no mês M, o total T dos meses anteriores é recalculado até M-1
+- [x] Série cujo último segmento ficou "sem data final" → `installment` null em todas as ocorrências
+- [x] `findStored` devolve `seriesStart` (AAAA-MM) da série, null para avulso
+- [x] Séries de outro usuário não entram na conta
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
+- [x] Test count: ≥ 7 testes de integração novos, nenhum removido
 
 **Tests**: integration
 **Gate**: full

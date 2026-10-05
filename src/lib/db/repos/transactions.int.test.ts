@@ -968,3 +968,116 @@ describe("transactionsRepo start month of an 'until' series", () => {
     });
   });
 });
+
+describe("transactionsRepo installment of listed occurrences", () => {
+  const month = (key: string) =>
+    monthRange({ year: Number(key.slice(0, 4)), month: Number(key.slice(5, 7)) });
+  const listIn = (key: string, user = userId) => transactionsRepo.listByMonth(user, month(key));
+  const until = (date: string, end: string, amountCents = 4000) => ({
+    ...expense(date, amountCents),
+    recurrence: "until" as const,
+    recurrenceStartMonth: date.slice(0, 7),
+    recurrenceEndMonth: end,
+  });
+
+  it("numbers a 05/2026-12/2026 series 1/8 in May, 3/8 in July and 8/8 in December", async () => {
+    await transactionsRepo.create(userId, until("2026-05-10", "2026-12"));
+
+    expect((await listIn("2026-05"))[0].installment).toEqual({ number: 1, total: 8 });
+    expect((await listIn("2026-07"))[0].installment).toEqual({ number: 3, total: 8 });
+    expect((await listIn("2026-12"))[0].installment).toEqual({ number: 8, total: 8 });
+    expect((await listIn("2026-07"))[0].seriesStart).toBe("2026-05");
+  });
+
+  it("has no installment for a 'forever' series or a single row; only the single has no series start", async () => {
+    const forever = { ...expense("2026-10-10", 1000), recurrence: "forever" as const };
+    const single = expense("2026-10-11", 2000);
+    await transactionsRepo.create(userId, forever);
+    await transactionsRepo.create(userId, single);
+
+    const listed = await listIn("2026-10");
+    expect(listed.map((t) => [t.id, t.installment, t.seriesStart])).toEqual([
+      [single.id, null, null],
+      [forever.id, null, "2026-10"],
+    ]);
+  });
+
+  it("counts N from the series start and T to the final end after a mid-series edit", async () => {
+    const tx = until("2026-05-10", "2027-04");
+    await transactionsRepo.create(userId, tx);
+    await transactionsRepo.updateFrom(userId, tx.id, "2026-12", {
+      ...tx,
+      date: "2026-12-10",
+      amountCents: 5000,
+    });
+
+    const [july] = await listIn("2026-07");
+    const [dec] = await listIn("2026-12");
+    expect([july.amountCents, july.installment]).toEqual([4000, { number: 3, total: 12 }]);
+    expect([dec.amountCents, dec.installment]).toEqual([5000, { number: 8, total: 12 }]);
+    expect(dec.seriesStart).toBe("2026-05");
+  });
+
+  it("recomputes the total up to the previous month after deleting from month M", async () => {
+    const tx = until("2026-05-10", "2026-12");
+    await transactionsRepo.create(userId, tx);
+    await transactionsRepo.deleteFrom(userId, tx.id, "2026-09");
+
+    expect((await listIn("2026-08"))[0].installment).toEqual({ number: 4, total: 4 });
+    expect((await listIn("2026-05"))[0].installment).toEqual({ number: 1, total: 4 });
+  });
+
+  it("has no installment anywhere when the last segment of the series has no end", async () => {
+    const tx = until("2026-05-10", "2027-04");
+    await transactionsRepo.create(userId, tx);
+    await transactionsRepo.updateFrom(userId, tx.id, "2026-09", {
+      ...tx,
+      date: "2026-09-10",
+      recurrence: "forever",
+      recurrenceEndMonth: null,
+    });
+
+    expect((await listIn("2026-07"))[0].installment).toBeNull();
+    expect((await listIn("2026-10"))[0].installment).toBeNull();
+  });
+
+  it("does not mix in the series of another user", async () => {
+    await transactionsRepo.create(userId, until("2026-05-10", "2026-12"));
+    const other = await insertTestUser();
+    await categoriesRepo.replaceSet(other, [{ name: "Conforto", percentMicro: 100000000, color: 1 }]);
+    const otherCategory = (await categoriesRepo.list(other))[0].id;
+    await transactionsRepo.create(other, {
+      ...until("2026-01-10", "2026-12"),
+      categoryId: otherCategory,
+    });
+
+    expect((await listIn("2026-07"))[0].installment).toEqual({ number: 3, total: 8 });
+    expect((await listIn("2026-07", other))[0].installment).toEqual({ number: 7, total: 12 });
+  });
+});
+
+describe("transactionsRepo.findStored series start", () => {
+  it("returns the first month of the series, the same for every segment, and null for a single row", async () => {
+    const tx = {
+      ...expense("2026-05-10"),
+      recurrence: "until" as const,
+      recurrenceStartMonth: "2026-05",
+      recurrenceEndMonth: "2027-04",
+    };
+    await transactionsRepo.create(userId, tx);
+    await transactionsRepo.updateFrom(userId, tx.id, "2026-09", { ...tx, date: "2026-09-10" });
+    const rows = await db.select().from(transaction);
+    const later = rows.find((r) => r.id !== tx.id)!;
+    const single = expense("2026-10-01");
+    await transactionsRepo.create(userId, single);
+
+    expect(await transactionsRepo.findStored(userId, tx.id)).toMatchObject({ seriesStart: "2026-05" });
+    expect(await transactionsRepo.findStored(userId, later.id)).toMatchObject({
+      seriesStart: "2026-05",
+    });
+    expect(await transactionsRepo.findStored(userId, single.id)).toMatchObject({
+      recurring: false,
+      seriesStart: null,
+    });
+  });
+});
