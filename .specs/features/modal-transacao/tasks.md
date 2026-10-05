@@ -148,13 +148,14 @@ T7 → T8 → T9 → T10 → T11
 
 **Done when**:
 
-- [ ] Props `{ value: "expense" | "income"; onChange(kind) }`
-- [ ] Renderiza `role="radiogroup"` com nome acessível "Tipo" e dois `role="radio"` "Gasto" e "Ganho"
-- [ ] Setas do teclado trocam a opção
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] Props `{ value: "expense" | "income"; onChange(kind) }`
+- [x] Renderiza `role="radiogroup"` com nome acessível "Tipo" e dois `role="radio"` "Gasto" e "Ganho"
+- [x] Setas do teclado trocam a opção
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
 
 **Tests**: none
 **Gate**: build
+**Status**: ✅ Complete
 
 **Commit**: `feat(transactions): add KindToggle segmented control`
 
