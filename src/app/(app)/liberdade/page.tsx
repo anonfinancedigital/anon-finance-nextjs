@@ -1,11 +1,9 @@
 import type { Metadata } from "next";
-import { GoalForm } from "@/components/goal-form";
-import { GoalSummary } from "@/components/goal-summary";
+import { GoalExperience } from "@/components/goal-experience";
 import { PageHeader } from "@/components/page-header";
 import { requireSessionForPage } from "@/lib/auth-guard";
 import { isoToBR } from "@/lib/domain/date-br";
 import { goalsRepo } from "@/lib/db/repos/goals";
-import { summarize } from "@/lib/domain/freedom";
 import { formatBRL } from "@/lib/domain/money";
 
 export const metadata: Metadata = { title: "Liberdade · Orçamento" };
@@ -21,11 +19,11 @@ export default async function FreedomPage() {
     <div className="space-y-6">
       <PageHeader eyebrow="Objetivo" title="Liberdade" />
       <p className="text-sm text-muted-foreground">
-        Informe a renda mensal que quer ter, o que já guardou e quando quer se aposentar. O alvo é o
-        patrimônio que rende essa renda a 8% ao ano sem consumir o principal.
+        Informe a renda mensal que quer ter, o que já guardou, quando quer se aposentar e a taxa
+        esperada. O alvo é o patrimônio que rende essa renda à taxa escolhida sem consumir o principal.
       </p>
-      {goal && <GoalSummary summary={summarize(goal, new Date())} />}
-      <GoalForm
+      <GoalExperience
+        saved={goal}
         initial={
           goal
             ? {
@@ -33,10 +31,11 @@ export default async function FreedomPage() {
                 saved: moneyText(goal.savedCents),
                 birthDate: isoToBR(goal.birthDate),
                 retirementAge: String(goal.retirementAge),
-                annualRate: "8",
+                annualRate: String(goal.annualRateBp / 100),
               }
             : undefined
         }
+        nowIso={new Date().toISOString()}
       />
     </div>
   );

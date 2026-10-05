@@ -627,12 +627,12 @@ T16 → T17 → T18 → T19
 
 **Done when**:
 
-- [ ] A página renderiza `GoalExperience` no lugar de `GoalSummary` e `GoalForm` soltos
-- [ ] `initial.annualRate` vem da taxa salva (`String(annualRateBp / 100)`) e `initial.birthDate` em DD/MM/AAAA; sem objetivo, `initial` indefinido
-- [ ] A introdução fala em "a taxa escolhida" e não cita 8% fixos
-- [ ] Verificação manual: com renda R$ 20.000,00, guardado R$ 216.000,00, nascimento 18/09/1993 e aposentadoria aos 45, vê alvo R$ 3.000.000,00 e progresso 7,2%; arrastar a idade e trocar a taxa atualiza Hero, gráfico e checkpoints sem recarregar; Cancelar restaura; Salvar mantém o resultado
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
-- [ ] Test count: nenhum teste novo (UI = none); contagem anterior mantida
+- [x] A página renderiza `GoalExperience` no lugar de `GoalSummary` e `GoalForm` soltos
+- [x] `initial.annualRate` vem da taxa salva (`String(annualRateBp / 100)`) e `initial.birthDate` em DD/MM/AAAA; sem objetivo, `initial` indefinido
+- [x] A introdução fala em "a taxa escolhida" e não cita 8% fixos
+- [x] Verificação manual: com renda R$ 20.000,00, guardado R$ 216.000,00, nascimento 18/09/1993 e aposentadoria aos 45, vê alvo R$ 3.000.000,00 e progresso 7,2%; arrastar a idade e trocar a taxa atualiza Hero, gráfico e checkpoints sem recarregar; Cancelar restaura; Salvar mantém o resultado
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
+- [x] Test count: nenhum teste novo (UI = none); contagem anterior mantida
 
 **Tests**: none
 **Gate**: build
