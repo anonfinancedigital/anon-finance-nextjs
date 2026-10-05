@@ -146,13 +146,13 @@ T5 → T6 → T7 → T8
 
 **Done when**:
 
-- [ ] Cabeçalho: título "Trajetória dos Juros Compostos" à esquerda; à direita o selo "Rendimentos: {X}% do patrimônio aos {N} anos" (pill `bg-income/15 text-income`) e a legenda
-- [ ] Sem o parágrafo do rodapé (frase e "marcas nos 25%, 50% e 75% do alvo") e sem `ReferenceDot`; o cálculo `marks` sai junto
-- [ ] Cada `Area` com `activeDot` (raio 4, contorno `var(--card)`); `Tooltip cursor` com linha sólida fina
-- [ ] O tooltip segue mostrando "Aos N anos", total investido, rendimentos e total do ponto anual mais próximo
-- [ ] `aria-label` da figura e tabela `sr-only` mantidos, com a mesma frase do selo
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
-- [ ] Test count: nenhum teste novo (UI = none); contagem anterior mantida
+- [x] Cabeçalho: título "Trajetória dos Juros Compostos" à esquerda; à direita o selo "Rendimentos: {X}% do patrimônio aos {N} anos" (pill `bg-income/15 text-income`) e a legenda
+- [x] Sem o parágrafo do rodapé (frase e "marcas nos 25%, 50% e 75% do alvo") e sem `ReferenceDot`; o cálculo `marks` sai junto
+- [x] Cada `Area` com `activeDot` (raio 4, contorno `var(--card)`); `Tooltip cursor` com linha sólida fina
+- [x] O tooltip segue mostrando "Aos N anos", total investido, rendimentos e total do ponto anual mais próximo
+- [x] `aria-label` da figura e tabela `sr-only` mantidos, com a mesma frase do selo
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
+- [x] Test count: nenhum teste novo (UI = none); contagem anterior mantida
 
 **Tests**: none
 **Gate**: build

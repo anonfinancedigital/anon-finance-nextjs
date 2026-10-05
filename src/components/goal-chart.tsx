@@ -1,6 +1,6 @@
 "use client";
 
-import { Area, AreaChart, CartesianGrid, ReferenceDot, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import type { GoalSummary } from "@/lib/domain/freedom";
 import { formatBRL, formatCompactBRL } from "@/lib/domain/money";
 
@@ -54,7 +54,7 @@ function ChartTooltip({ active, payload }: { active?: boolean; payload?: { paylo
 
 /**
  * Stacked area of the patrimony up to retirement: what came out of the pocket versus compound
- * interest, with the 25/50/75% checkpoints marked. Renders nothing when the term is over.
+ * interest; the tooltip reads the patrimony year by year. Renders nothing when the term is over.
  */
 export function GoalChart({ summary }: { summary: GoalSummary }) {
   const { timeline } = summary;
@@ -71,8 +71,6 @@ export function GoalChart({ summary }: { summary: GoalSummary }) {
   const last = timeline[timeline.length - 1];
   const share = summary.interestSharePct;
   const summaryText = `Rendimentos: ${share}% do patrimônio aos ${last.ageYears} anos`;
-  // Checkpoints still ahead (25/50/75%) become dots on the curve, at the age the projection reaches them.
-  const marks = summary.checkpoints.filter((c) => c.fractionBp < 10_000 && c.months !== null);
 
   return (
     <figure
@@ -82,14 +80,17 @@ export function GoalChart({ summary }: { summary: GoalSummary }) {
     >
       <figcaption className="flex flex-wrap items-center justify-between gap-2">
         <span className="text-sm font-medium">Trajetória dos Juros Compostos</span>
-        <ul className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
-          <li className="flex items-center gap-1.5">
-            <Swatch color={INVESTED} /> Total investido
-          </li>
-          <li className="flex items-center gap-1.5">
-            <Swatch color={INTEREST} /> Rendimentos
-          </li>
-        </ul>
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+          <span className="rounded-full bg-income/15 px-3 py-1 text-xs font-medium text-income">{summaryText}</span>
+          <ul className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
+            <li className="flex items-center gap-1.5">
+              <Swatch color={INVESTED} /> Total investido
+            </li>
+            <li className="flex items-center gap-1.5">
+              <Swatch color={INTEREST} /> Rendimentos
+            </li>
+          </ul>
+        </div>
       </figcaption>
 
       <div className="h-64 sm:h-80">
@@ -114,7 +115,7 @@ export function GoalChart({ summary }: { summary: GoalSummary }) {
               axisLine={false}
               tickLine={false}
             />
-            <Tooltip content={<ChartTooltip />} cursor={{ stroke: "var(--muted-foreground)", strokeDasharray: "3 3" }} />
+            <Tooltip content={<ChartTooltip />} cursor={{ stroke: "var(--muted-foreground)", strokeWidth: 1 }} />
             <Area
               type="monotone"
               dataKey="invested"
@@ -124,6 +125,7 @@ export function GoalChart({ summary }: { summary: GoalSummary }) {
               strokeWidth={2}
               fill={INVESTED}
               fillOpacity={0.3}
+              activeDot={{ r: 4, stroke: "var(--card)", strokeWidth: 2 }}
               isAnimationActive={false}
             />
             <Area
@@ -135,28 +137,12 @@ export function GoalChart({ summary }: { summary: GoalSummary }) {
               strokeWidth={2}
               fill={INTEREST}
               fillOpacity={0.3}
+              activeDot={{ r: 4, stroke: "var(--card)", strokeWidth: 2 }}
               isAnimationActive={false}
             />
-            {marks.map((c) => (
-              <ReferenceDot
-                key={c.fractionBp}
-                x={last.age - (summary.months - c.months!) / 12}
-                y={c.valueCents}
-                r={5}
-                fill="var(--card)"
-                stroke="var(--foreground)"
-                strokeWidth={2}
-                label={{ value: `${c.fractionBp / 100}%`, position: "top", fill: "var(--foreground)", fontSize: 12 }}
-              />
-            ))}
           </AreaChart>
         </ResponsiveContainer>
       </div>
-
-      <p className="text-sm">
-        <span className="font-medium">{summaryText}</span>
-        <span className="text-muted-foreground"> · marcas nos 25%, 50% e 75% do alvo</span>
-      </p>
 
       <table className="sr-only">
         <caption>Evolução do patrimônio por idade</caption>
