@@ -100,8 +100,9 @@ const minMonth = (a: YearMonth, b: YearMonth): YearMonth =>
 
 /**
  * Replaces the user's whole set atomically: items with `id` are updated, items without are
- * created and categories left out are deleted; the same goes for each category's subcategories.
- * Removing a category or subcategory that has expenses aborts the whole replacement.
+ * created and categories left out are soft-deleted (`deleted_from` = current month, versions and
+ * subcategories stay); subcategories left out are deleted. Removing a category or subcategory
+ * that has expenses aborts the whole replacement.
  */
 async function replaceSet(
   userId: string,
@@ -119,7 +120,7 @@ async function replaceSet(
     const existing = await tx
       .select({ id: category.id })
       .from(category)
-      .where(eq(category.userId, userId));
+      .where(and(eq(category.userId, userId), isNull(category.deletedFrom)));
     const existingIds = new Set(existing.map((c) => c.id));
     const keptIds = new Set(items.flatMap((c) => (c.id ? [c.id] : [])));
 
@@ -188,7 +189,8 @@ async function replaceSet(
 
     if (removedIds.length > 0) {
       await tx
-        .delete(category)
+        .update(category)
+        .set({ deletedFrom: fromMonth })
         .where(and(eq(category.userId, userId), inArray(category.id, removedIds)));
     }
 

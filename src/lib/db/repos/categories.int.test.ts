@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { eq } from "drizzle-orm";
+import { eq, isNotNull } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
 import { insertCategory, insertTestUser, setupTestDb } from "@/test/db";
 import { db } from "../client";
@@ -278,7 +278,7 @@ describe("categoriesRepo.replaceSet subcategories", () => {
     expect(await categoriesRepo.list(userId)).toEqual(saved);
   });
 
-  it("removes the subcategories along with a category that has no expenses", async () => {
+  it("keeps the subcategories of a soft-deleted category that has no expenses", async () => {
     const userId = await insertTestUser();
     const saved = await seed(userId, "Restaurante", "Streaming");
     const next = saved
@@ -286,7 +286,8 @@ describe("categoriesRepo.replaceSet subcategories", () => {
       .map((c) => (c.name === "Liberdade" ? { ...c, percentMicro: 50000000 } : c));
 
     expect(await categoriesRepo.replaceSet(userId, next)).toEqual({ ok: true });
-    expect(await db.$count(subcategory)).toBe(0);
+    expect(await db.$count(subcategory)).toBe(2);
+    expect((await categoriesRepo.list(userId)).some((c) => c.name === "Conforto")).toBe(false);
   });
 
   it("keeps the category message when removing a category whose subcategory has expenses", async () => {
@@ -660,5 +661,93 @@ describe("categoriesRepo.replaceSet percent versions", () => {
     expect(await db.$count(categoryPercent)).toBe(2);
     expect(await db.$count(category)).toBe(2);
     expect(await db.$count(subcategory)).toBe(0);
+  });
+});
+
+describe("categoriesRepo.replaceSet soft delete", () => {
+  const OCT_NOW = new Date("2026-10-15T15:00:00Z");
+  const SEP = { year: 2026, month: 9 };
+  const OCT = { year: 2026, month: 10 };
+  const THREE = [
+    { name: "A", percentMicro: 50000000, color: 1 },
+    { name: "B", percentMicro: 30000000, color: 2 },
+    { name: "C", percentMicro: 20000000, color: 3 },
+  ];
+
+  async function seed(userId: string) {
+    const rows = [];
+    for (const c of THREE) rows.push({ ...c, id: (await insertCategory(userId, c)).id });
+    return rows;
+  }
+
+  it("removing a category without expenses sets deleted_from and keeps row, versions and subcategories", async () => {
+    const userId = await insertTestUser();
+    const [a, b, c] = await seed(userId);
+    await db.insert(subcategory).values({ userId, categoryId: c.id, name: "Sub" });
+
+    const result = await categoriesRepo.replaceSet(
+      userId,
+      [{ ...a, percentMicro: 60000000 }, { ...b, percentMicro: 40000000 }],
+      OCT_NOW,
+    );
+    expect(result).toEqual({ ok: true });
+
+    const [row] = await db.select().from(category).where(eq(category.id, c.id));
+    expect(row.deletedFrom).toBe("2026-10-01");
+    expect(await db.$count(categoryPercent, eq(categoryPercent.categoryId, c.id))).toBe(1);
+    expect(await db.$count(subcategory, eq(subcategory.categoryId, c.id))).toBe(1);
+  });
+
+  it("blocks removing a category with expenses and changes nothing", async () => {
+    const userId = await insertTestUser();
+    const [a, b, c] = await seed(userId);
+    await addExpenses(userId, c.id, 2);
+
+    const result = await categoriesRepo.replaceSet(
+      userId,
+      [{ ...a, percentMicro: 60000000 }, { ...b, percentMicro: 40000000 }],
+      OCT_NOW,
+    );
+    expect(result).toEqual({ ok: false, error: "Esta categoria tem 2 gastos e não pode ser excluída" });
+    expect(await db.$count(category, isNotNull(category.deletedFrom))).toBe(0);
+    expect(await db.$count(categoryPercent)).toBe(3);
+  });
+
+  it("sending the id of a deleted category answers 'Categoria não encontrada'", async () => {
+    const userId = await insertTestUser();
+    const [a, b, c] = await seed(userId);
+    await categoriesRepo.replaceSet(userId, [{ ...a, percentMicro: 60000000 }, { ...b, percentMicro: 40000000 }], OCT_NOW);
+
+    const result = await categoriesRepo.replaceSet(userId, [a, b, c], OCT_NOW);
+    expect(result).toEqual({ ok: false, error: "Categoria não encontrada" });
+  });
+
+  it("accepts a new category named like a deleted one", async () => {
+    const userId = await insertTestUser();
+    const [a, b, c] = await seed(userId);
+    await categoriesRepo.replaceSet(userId, [{ ...a, percentMicro: 60000000 }, { ...b, percentMicro: 40000000 }], OCT_NOW);
+
+    const result = await categoriesRepo.replaceSet(
+      userId,
+      [{ ...a, percentMicro: 60000000 }, { ...b, percentMicro: 20000000 }, { name: c.name.toLowerCase(), percentMicro: 20000000, color: 3 }],
+      OCT_NOW,
+    );
+    expect(result).toEqual({ ok: true });
+    expect((await categoriesRepo.list(userId, OCT_NOW)).map((x) => x.name)).toEqual(["A", "B", "c"]);
+  });
+
+  it("a deleted category leaves list, shows before deleted_from and is absent from it on", async () => {
+    const userId = await insertTestUser();
+    const [a, b] = await seed(userId);
+    await categoriesRepo.replaceSet(userId, [{ ...a, percentMicro: 60000000 }, { ...b, percentMicro: 40000000 }], OCT_NOW);
+
+    const names = async (month: { year: number; month: number }) =>
+      (await categoriesRepo.listForMonth(userId, month, OCT_NOW)).map((x) => x.name);
+    expect((await categoriesRepo.list(userId, OCT_NOW)).map((x) => x.name)).toEqual(["A", "B"]);
+    expect(await names(SEP)).toEqual(["A", "B", "C"]);
+    expect(await names(OCT)).toEqual(["A", "B"]);
+    // Past month keeps the percents of the time, including the deleted category's.
+    const sep = await categoriesRepo.listForMonth(userId, SEP, OCT_NOW);
+    expect(sep.map((x) => x.percentMicro)).toEqual([50000000, 30000000, 20000000]);
   });
 });

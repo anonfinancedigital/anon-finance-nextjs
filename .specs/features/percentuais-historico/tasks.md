@@ -262,6 +262,7 @@ T9 → T10 → T11
 **Depends on**: T6
 **Reuses**: checagem de gastos e mensagem `expensesMessage` existentes
 **Requirement**: HIST-08
+**Status**: Done
 
 **Tools**:
 
@@ -270,13 +271,13 @@ T9 → T10 → T11
 
 **Done when**:
 
-- [ ] Remover categoria sem gastos preenche `deleted_from` (dia 1 do mês corrente) e mantém linha, vigências e subcategorias
-- [ ] Remover categoria com gastos retorna "Esta categoria tem N gasto(s) e não pode ser excluída" e não altera dado algum
-- [ ] Enviar `id` de categoria excluída retorna "Categoria não encontrada"
-- [ ] Criar categoria com o nome de uma excluída é aceito
-- [ ] Categoria excluída fica fora de `list`, presente em `listForMonth` de mês anterior ao `deleted_from` e ausente a partir dele
-- [ ] Testes existentes de exclusão ajustados ao novo comportamento sem enfraquecer asserções (contagem final de testes ≥ a anterior)
-- [ ] Gate check passes: `npm run test:unit && npm run test:int`
+- [x] Remover categoria sem gastos preenche `deleted_from` (dia 1 do mês corrente) e mantém linha, vigências e subcategorias
+- [x] Remover categoria com gastos retorna "Esta categoria tem N gasto(s) e não pode ser excluída" e não altera dado algum
+- [x] Enviar `id` de categoria excluída retorna "Categoria não encontrada"
+- [x] Criar categoria com o nome de uma excluída é aceito
+- [x] Categoria excluída fica fora de `list`, presente em `listForMonth` de mês anterior ao `deleted_from` e ausente a partir dele
+- [x] Testes existentes de exclusão ajustados ao novo comportamento sem enfraquecer asserções (contagem final de testes ≥ a anterior)
+- [x] Gate check passes: `npm run test:unit && npm run test:int`
 
 **Tests**: integration
 **Gate**: full
