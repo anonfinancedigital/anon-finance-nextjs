@@ -2,7 +2,7 @@ import { randomUUID } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { asc, eq } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
-import { setupTestDb } from "@/test/db";
+import { insertCategory, setupTestDb } from "@/test/db";
 import { db, pool } from "./client";
 import { user } from "./auth-schema";
 import { category, categoryPercent, subcategory, transaction } from "./schema";
@@ -31,8 +31,14 @@ async function createUser() {
   return id;
 }
 
-async function createCategory(userId: string, name = "Conforto", percentMicro = 30000000, color = 1) {
-  const [row] = await db.insert(category).values({ userId, name, percentMicro, color }).returning();
+/** Category plus its 0001-01-01 percent version, through the shared helper. */
+function createCategory(userId: string, name = "Conforto", percentMicro = 30000000, color = 1) {
+  return insertCategory(userId, { name, percentMicro, color });
+}
+
+/** Category row with no percent version, for tests that insert the versions themselves. */
+async function createBareCategory(userId: string, name = "Conforto", color = 1) {
+  const [row] = await db.insert(category).values({ userId, name, color }).returning();
   return row;
 }
 
@@ -46,20 +52,20 @@ const expense = (userId: string, categoryId: string | null) => ({
 });
 
 describe("category constraints", () => {
-  it("accepts percent_micro at the bounds 1 and 100000000", async () => {
+  it("accepts a percent version at the bounds 1 and 100000000", async () => {
     const userId = await createUser();
     await createCategory(userId, "Mínimo", 1);
     await createCategory(userId, "Máximo", 100000000);
-    const rows = await db.select().from(category).where(eq(category.userId, userId));
-    expect(rows.map((r) => r.percentMicro).sort((a, b) => a! - b!)).toEqual([1, 100000000]);
+    const rows = await db.select().from(categoryPercent);
+    expect(rows.map((r) => r.percentMicro).sort((a, b) => a - b)).toEqual([1, 100000000]);
   });
 
-  it("rejects percent_micro 0", async () => {
+  it("rejects a percent version of 0", async () => {
     const userId = await createUser();
     expect(await pgErrorCode(createCategory(userId, "Zero", 0))).toBe(CHECK_VIOLATION);
   });
 
-  it("rejects percent_micro 100000001", async () => {
+  it("rejects a percent version of 100000001", async () => {
     const userId = await createUser();
     expect(await pgErrorCode(createCategory(userId, "Demais", 100000001))).toBe(CHECK_VIOLATION);
   });
@@ -94,7 +100,7 @@ describe("category color", () => {
   it("rejects a null color", async () => {
     const userId = await createUser();
     const query = pool.query(
-      `INSERT INTO "category" ("user_id", "name", "percent_micro", "color") VALUES ($1, 'Sem cor', 30000000, NULL)`,
+      `INSERT INTO "category" ("user_id", "name", "color") VALUES ($1, 'Sem cor', NULL)`,
       [userId],
     );
     expect(await pgErrorCode(query)).toBe(NOT_NULL_VIOLATION);
@@ -117,7 +123,6 @@ describe("migration 0002 color backfill", () => {
       await db.insert(category).values({
         userId,
         name: `Categoria ${i + 1}`,
-        percentMicro: 1000000,
         color: 5,
         createdAt: new Date(base + i * 1000),
       });
@@ -125,7 +130,6 @@ describe("migration 0002 color backfill", () => {
         await db.insert(category).values({
           userId: otherId,
           name: `Outra ${i + 1}`,
-          percentMicro: 50000000,
           color: 5,
           createdAt: new Date(base + i * 1000),
         });
@@ -379,27 +383,27 @@ describe("category_percent constraints", () => {
     db.insert(categoryPercent).values({ categoryId, fromMonth, percentMicro });
 
   it("accepts percent_micro at the bounds 1 and 100000000", async () => {
-    const a = await createCategory(await createUser(), "Mínimo");
-    const b = await createCategory(await createUser(), "Máximo");
+    const a = await createBareCategory(await createUser(), "Mínimo");
+    const b = await createBareCategory(await createUser(), "Máximo");
     await insertVersion(a.id, "2026-10-01", 1);
     await insertVersion(b.id, "2026-10-01", 100000000);
     expect(await db.$count(categoryPercent)).toBe(2);
   });
 
   it("rejects percent_micro 0 and 100000001", async () => {
-    const { id } = await createCategory(await createUser());
+    const { id } = await createBareCategory(await createUser());
     expect(await pgErrorCode(insertVersion(id, "2026-10-01", 0))).toBe(CHECK_VIOLATION);
     expect(await pgErrorCode(insertVersion(id, "2026-10-01", 100000001))).toBe(CHECK_VIOLATION);
   });
 
   it("accepts the 0001-01-01 sentinel and rejects a from_month that is not day 1", async () => {
-    const { id } = await createCategory(await createUser());
+    const { id } = await createBareCategory(await createUser());
     await insertVersion(id, "0001-01-01", 10000000);
     expect(await pgErrorCode(insertVersion(id, "2026-10-15", 10000000))).toBe(CHECK_VIOLATION);
   });
 
   it("rejects a second row with the same (category_id, from_month)", async () => {
-    const { id } = await createCategory(await createUser());
+    const { id } = await createBareCategory(await createUser());
     await insertVersion(id, "2026-10-01", 10000000);
     expect(await pgErrorCode(insertVersion(id, "2026-10-01", 20000000))).toBe(UNIQUE_VIOLATION);
     await insertVersion(id, "2026-11-01", 20000000);
@@ -410,7 +414,7 @@ describe("category_percent constraints", () => {
   });
 
   it("deleting the category deletes its versions", async () => {
-    const { id } = await createCategory(await createUser());
+    const { id } = await createBareCategory(await createUser());
     await insertVersion(id, "2026-10-01", 10000000);
     await insertVersion(id, "2026-11-01", 20000000);
     await db.delete(category).where(eq(category.id, id));

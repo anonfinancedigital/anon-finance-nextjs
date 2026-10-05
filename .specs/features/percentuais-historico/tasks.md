@@ -350,6 +350,7 @@ T9 → T10 → T11
 **Depends on**: T9
 **Reuses**: `insertCategory` (T4)
 **Requirement**: HIST-06
+**Status**: Done
 
 **Tools**:
 
@@ -358,9 +359,9 @@ T9 → T10 → T11
 
 **Done when**:
 
-- [ ] Asserções de constraint de `percent_micro` em `category` migram para `category_percent` (já cobertas em T3) ou saem junto da coluna, sem reduzir o número de cenários cobertos no total do arquivo; contagem registrada no commit
-- [ ] Nenhum `insert(category)` com `percentMicro` restante
-- [ ] Gate check passes: `npm run test:unit && npm run test:int`
+- [x] Asserções de constraint de `percent_micro` em `category` migram para `category_percent` (já cobertas em T3) ou saem junto da coluna, sem reduzir o número de cenários cobertos no total do arquivo; contagem registrada no commit
+- [x] Nenhum `insert(category)` com `percentMicro` restante
+- [x] Gate check passes: `npm run test:unit && npm run test:int`
 
 **Tests**: integration
 **Gate**: full
