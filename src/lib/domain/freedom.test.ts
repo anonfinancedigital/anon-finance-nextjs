@@ -2,6 +2,9 @@ import { describe, expect, it } from "vitest";
 import {
   ageOn,
   ANNUAL_RATE_BP,
+  ANNUAL_RATES,
+  DEFAULT_ANNUAL_RATE_BP,
+  monthlyRate,
   monthsUntilRetirement,
   projectMilestones,
   progressBp,
@@ -241,5 +244,46 @@ describe("projectMilestones", () => {
     const goal = { monthlyIncomeCents: 1_000_000, savedCents: 0, birthDate: "1986-06-15", retirementAge: 60 };
     const summary = summarize(goal, new Date("2026-06-15T15:00:00Z"));
     expect(summary.milestones.map((m) => m.months)).toEqual([48, 96, 144, 192, 240]);
+  });
+});
+
+describe("taxa anual como parâmetro", () => {
+  it("oferece as taxas 6%, 8% e 10%, com 8% como padrão", () => {
+    expect(ANNUAL_RATES).toEqual([600, 800, 1000]);
+    expect(DEFAULT_ANNUAL_RATE_BP).toBe(800);
+  });
+
+  it.each([
+    [600, 200_000_000],
+    [800, 150_000_000],
+    [1000, 120_000_000],
+  ])("targetCents(R$ 10.000,00, %d pb) = %d centavos", (rate, expected) => {
+    expect(targetCents(1_000_000, rate)).toBe(expected);
+  });
+
+  it("sem a taxa, targetCents usa 8%", () => {
+    expect(targetCents(1_000_000)).toBe(150_000_000);
+  });
+
+  it.each([
+    [600, 441_075],
+    [800, 263_621],
+    [1000, 167_071],
+  ])("aporte para guardado 0 e 240 meses a %d pb = %d centavos", (rate, expected) => {
+    const target = targetCents(1_000_000, rate);
+    expect(requiredMonthlyCents({ targetCents: target, savedCents: 0, months: 240, annualRateBp: rate })).toBe(expected);
+  });
+
+  it("sem a taxa, requiredMonthlyCents usa 8%", () => {
+    expect(requiredMonthlyCents({ targetCents: 150_000_000, savedCents: 0, months: 240 })).toBe(263_621);
+  });
+
+  it.each([[600], [800], [1000]])("guardado capitalizado que alcança o alvo dá 0 a %d pb", (rate) => {
+    const target = targetCents(1_000_000, rate);
+    expect(requiredMonthlyCents({ targetCents: target, savedCents: target, months: 12, annualRateBp: rate })).toBe(0);
+  });
+
+  it("monthlyRate(800) é 1,08^(1/12) − 1", () => {
+    expect(Math.abs(monthlyRate(800) - (1.08 ** (1 / 12) - 1))).toBeLessThan(1e-12);
   });
 });

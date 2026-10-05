@@ -158,13 +158,13 @@ T16 → T17 → T18 → T19
 
 **Done when**:
 
-- [ ] `targetCents(1_000_000, 600)` = 200_000_000, `targetCents(1_000_000, 800)` = 150_000_000, `targetCents(1_000_000, 1000)` = 120_000_000; sem o segundo argumento = 150_000_000
-- [ ] `requiredMonthlyCents` com renda R$ 10.000,00, guardado 0 e 240 meses devolve 441_075 a 600, 263_621 a 800 e 167_071 a 1000 (R$ 4.410,75 / 2.636,21 / 1.670,71)
-- [ ] `monthlyRate(800)` ≈ 1,08^(1/12) − 1 (diferença < 1e-12)
-- [ ] Guardado capitalizado ≥ alvo devolve 0 em cada taxa
-- [ ] Testes existentes de `freedom.test.ts` passam sem edição
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
-- [ ] Test count: testes novos passam, nenhum existente removido
+- [x] `targetCents(1_000_000, 600)` = 200_000_000, `targetCents(1_000_000, 800)` = 150_000_000, `targetCents(1_000_000, 1000)` = 120_000_000; sem o segundo argumento = 150_000_000
+- [x] `requiredMonthlyCents` com renda R$ 10.000,00, guardado 0 e 240 meses devolve 441_075 a 600, 263_621 a 800 e 167_071 a 1000 (R$ 4.410,75 / 2.636,21 / 1.670,71)
+- [x] `monthlyRate(800)` ≈ 1,08^(1/12) − 1 (diferença < 1e-12)
+- [x] Guardado capitalizado ≥ alvo devolve 0 em cada taxa
+- [x] Testes existentes de `freedom.test.ts` passam sem edição
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Test count: testes novos passam, nenhum existente removido
 
 **Tests**: unit
 **Gate**: quick
