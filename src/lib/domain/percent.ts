@@ -7,6 +7,7 @@ export const TOTAL_MICRO = 100 * MICRO_PER_PERCENT;
 const PERCENT_PATTERN = /^(\d+)(?:,(\d{1,6}))?$/;
 
 const percent = new Intl.NumberFormat("pt-BR", { maximumFractionDigits: 6 });
+const fixed = new Intl.NumberFormat("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 const share = new Intl.NumberFormat("pt-BR", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
 
 const ADJUST_OUT_OF_RANGE =
@@ -56,4 +57,31 @@ export function formatPercent(micro: number): string {
 /** Formats basis points (spending shares, not category percentages) with exactly one decimal, e.g. 6250 → "62,5%", 0 → "0,0%". */
 export function formatShare(bp: number): string {
   return `${share.format(bp / 100)}%`;
+}
+
+/** Formats micro-percent with exactly two decimals and no "%", rounding half up, e.g. 6_303_138 → "6,30". */
+export function formatPercentFixed(micro: number): string {
+  return fixed.format(Math.floor((micro + 5_000) / 10_000) / 100);
+}
+
+/** Text of a percent field: as typed while focused, empty or invalid; otherwise with two decimals. */
+export function percentFieldText(text: string, focused: boolean): string {
+  if (focused) return text;
+  const parsed = parsePercent(text);
+  return parsed.ok ? formatPercentFixed(parsed.value) : text;
+}
+
+/** Footer label of the sum: two decimals, except a sum that is not 100% but would show as "100,00%", which keeps up to 6. */
+export function sumLabel(sumMicro: number): string {
+  const label = formatPercentFixed(sumMicro);
+  return sumMicro !== TOTAL_MICRO && label === "100,00" ? formatPercent(sumMicro) : `${label}%`;
+}
+
+/** Index of the largest valid percentage (the first on a tie), or null when there is none. */
+export function defaultAdjustIndex(micros: (number | null)[]): number | null {
+  let best: number | null = null;
+  micros.forEach((micro, i) => {
+    if (micro !== null && (best === null || micro > (micros[best] as number))) best = i;
+  });
+  return best;
 }

@@ -91,15 +91,17 @@ T10 → T11
 
 **Done when**:
 
-- [ ] `formatPercentFixed(6_303_138)` = "6,30", `formatPercentFixed(30_000_000)` = "30,00", `formatPercentFixed(4_999)` = "0,00", `formatPercentFixed(5_000)` = "0,01"
-- [ ] `percentFieldText("6,303138", false)` = "6,30"; com foco `true` devolve "6,303138"; texto vazio e inválido ("abc") devolvem o texto sem alteração
-- [ ] `sumLabel(100_005_248)` = "100,01%"; `sumLabel(99_999_999)` = "99,999999%"; `sumLabel(100_000_000)` = "100,00%"; `sumLabel(99_000_000)` = "99,00%"
-- [ ] `defaultAdjustIndex([null, 10_000_000, 30_000_000, 30_000_000])` = 2 (primeiro em empate); `defaultAdjustIndex([null])` = null
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
-- [ ] Test count: testes novos em `percent.test.ts` passam e nenhum existente é removido
+- [x] `formatPercentFixed(6_303_138)` = "6,30", `formatPercentFixed(30_000_000)` = "30,00", `formatPercentFixed(4_999)` = "0,00", `formatPercentFixed(5_000)` = "0,01"
+- [x] `percentFieldText("6,303138", false)` = "6,30"; com foco `true` devolve "6,303138"; texto vazio e inválido ("abc") devolvem o texto sem alteração
+- [x] `sumLabel(100_005_248)` = "100,01%"; `sumLabel(99_999_999)` = "99,999999%"; `sumLabel(100_000_000)` = "100,00%"; `sumLabel(99_000_000)` = "99,00%"
+- [x] `defaultAdjustIndex([null, 10_000_000, 30_000_000, 30_000_000])` = 2 (primeiro em empate); `defaultAdjustIndex([null])` = null
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Test count: testes novos em `percent.test.ts` passam e nenhum existente é removido
 
 **Tests**: unit
 **Gate**: quick
+
+**Status**: ✅ Complete
 
 **Commit**: `feat(percent): add fixed two-decimal formatting and sum label`
 

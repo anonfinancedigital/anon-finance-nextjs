@@ -1,5 +1,15 @@
 import { describe, expect, it } from "vitest";
-import { adjustToTotal, formatPercent, formatShare, microFromCents, parsePercent } from "./percent";
+import {
+  adjustToTotal,
+  defaultAdjustIndex,
+  formatPercent,
+  formatPercentFixed,
+  formatShare,
+  microFromCents,
+  parsePercent,
+  percentFieldText,
+  sumLabel,
+} from "./percent";
 
 describe("parsePercent", () => {
   it.each([
@@ -101,5 +111,51 @@ describe("adjustToTotal", () => {
 
   it("rejects a result above 100%", () => {
     expect(adjustToTotal(60 * P, 10 * P).ok).toBe(false);
+  });
+});
+
+describe("formatPercentFixed", () => {
+  it.each([
+    [6_303_138, "6,30"],
+    [30_000_000, "30,00"],
+    [4_999, "0,00"],
+    [5_000, "0,01"],
+  ])("formats %i micro-percent as %s", (micro, text) => {
+    expect(formatPercentFixed(micro)).toBe(text);
+  });
+});
+
+describe("percentFieldText", () => {
+  it("shows 2 decimals while unfocused", () => {
+    expect(percentFieldText("6,303138", false)).toBe("6,30");
+  });
+
+  it("shows the full text while focused", () => {
+    expect(percentFieldText("6,303138", true)).toBe("6,303138");
+  });
+
+  it.each([[""], ["abc"]])("returns %j unchanged when empty or invalid", (text) => {
+    expect(percentFieldText(text, false)).toBe(text);
+  });
+});
+
+describe("sumLabel", () => {
+  it.each([
+    [100_005_248, "100,01%"],
+    [99_999_999, "99,999999%"],
+    [100_000_000, "100,00%"],
+    [99_000_000, "99,00%"],
+  ])("labels a sum of %i micro-percent as %s", (micro, text) => {
+    expect(sumLabel(micro)).toBe(text);
+  });
+});
+
+describe("defaultAdjustIndex", () => {
+  it("picks the first of the largest valid percentages", () => {
+    expect(defaultAdjustIndex([null, 10_000_000, 30_000_000, 30_000_000])).toBe(2);
+  });
+
+  it("returns null when no percentage is valid", () => {
+    expect(defaultAdjustIndex([null])).toBeNull();
   });
 });
