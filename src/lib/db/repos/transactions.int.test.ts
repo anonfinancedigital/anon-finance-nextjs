@@ -1056,6 +1056,41 @@ describe("transactionsRepo installment of listed occurrences", () => {
   });
 });
 
+describe("transactionsRepo series of another user with the same series id", () => {
+  const month = (key: string) =>
+    monthRange({ year: Number(key.slice(0, 4)), month: Number(key.slice(5, 7)) });
+
+  it("ignores the other user's segments when computing installment and series start", async () => {
+    const tx = {
+      ...expense("2026-05-10", 4000),
+      recurrence: "until" as const,
+      recurrenceStartMonth: "2026-05",
+      recurrenceEndMonth: "2026-12",
+    };
+    await transactionsRepo.create(userId, tx);
+    const other = await insertTestUser();
+    // The schema does not make series_id unique per user, so a foreign row can share it.
+    await db.insert(transaction).values({
+      id: randomUUID(),
+      userId: other,
+      kind: "income",
+      amountCents: 1000,
+      date: "2026-01-10",
+      recurring: true,
+      recurrenceDay: 10,
+      recurrenceEnd: "2027-12-01",
+      seriesId: tx.id,
+    });
+
+    const [july] = await transactionsRepo.listByMonth(userId, month("2026-07"));
+    expect(july.installment).toEqual({ number: 3, total: 8 });
+    expect(july.seriesStart).toBe("2026-05");
+    expect(await transactionsRepo.findStored(userId, tx.id)).toMatchObject({
+      seriesStart: "2026-05",
+    });
+  });
+});
+
 describe("transactionsRepo.findStored series start", () => {
   it("returns the first month of the series, the same for every segment, and null for a single row", async () => {
     const tx = {
