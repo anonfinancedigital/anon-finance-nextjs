@@ -18,7 +18,7 @@ import type { CategorySummary } from "@/lib/domain/budget";
 import { colorVar } from "@/lib/domain/color";
 import { formatBRL } from "@/lib/domain/money";
 
-type Row = Pick<CategorySummary, "id" | "name" | "color" | "targetCents" | "spentCents" | "overspent" | "overspentCents">;
+export type Row = Pick<CategorySummary, "id" | "name" | "color" | "targetCents" | "spentCents" | "overspent" | "overspentCents">;
 
 const compactBRL = new Intl.NumberFormat("pt-BR", {
   style: "currency",
@@ -42,7 +42,7 @@ function Swatch({ color }: { color: string }) {
 }
 
 /** Bars: spent × target per category (overspent bar in a distinct color plus a text label). */
-function SpentVsTarget({ rows }: { rows: Row[] }) {
+export function SpentVsTarget({ rows }: { rows: Row[] }) {
   const data = rows.map((r) => ({
     name: r.name,
     meta: r.targetCents / 100,

@@ -107,9 +107,9 @@ T5 → T6 → T7 → T8
 
 **Done when**:
 
-- [ ] `SpentVsTarget` e o tipo de linha que ele recebe são exportados
-- [ ] A página renderiza igual a antes
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
+- [x] `SpentVsTarget` e o tipo de linha que ele recebe são exportados
+- [x] A página renderiza igual a antes
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
 
 **Tests**: none
 **Gate**: build
