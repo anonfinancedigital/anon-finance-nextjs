@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { summarize, type Checkpoint } from "./freedom";
-import { checkpointLabel, heroFacts, HOW_WE_CALCULATE, RATE_HINT, RATE_TITLE } from "./freedom-copy";
+import { checkpointLabel, formatRate, heroFacts, heroPill, HOW_WE_CALCULATE, RATE_HINT, RATE_TITLE } from "./freedom-copy";
 
 const normalize = (s: string) => s.replace(/\s/g, " ");
 
@@ -90,5 +90,22 @@ describe("checkpointLabel", () => {
 
   it("marco sem previsão mostra Sem previsão", () => {
     expect(checkpointLabel(cp({ months: null, ageYears: null }), false)).toBe("Sem previsão");
+  });
+});
+
+describe("formatRate", () => {
+  it.each([
+    [600, "6%"],
+    [650, "6,5%"],
+    [675, "6,75%"],
+  ])("%d pb vira %s", (bp, text) => {
+    expect(formatRate(bp)).toBe(text);
+  });
+});
+
+describe("heroPill", () => {
+  it("renda R$ 20.000 e retirada 6% a.a.", () => {
+    const summary = summarize({ ...goal, annualRateBp: 800 }, now);
+    expect(normalize(heroPill(summary))).toBe("Gera R$ 20.000,00/mês com retirada de 6% a.a.");
   });
 });

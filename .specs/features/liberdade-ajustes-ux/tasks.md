@@ -249,9 +249,9 @@ T9 → T10 → T11 → T12 → T13 → T14
 
 **Done when**:
 
-- [ ] Testes: `formatRate(600)`="6%", `formatRate(650)`="6,5%", `formatRate(675)`="6,75%" (AJL-31); `heroPill` com renda R$ 20.000 e retirada 600 = "Gera R$ 20.000,00/mês com retirada de 6% a.a." (AJL-28); `heroFacts` traz as 4 linhas com taxas em pt-BR (AJL-30)
-- [ ] Gate quick passa
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Testes: `formatRate(600)`="6%", `formatRate(650)`="6,5%", `formatRate(675)`="6,75%" (AJL-31); `heroPill` com renda R$ 20.000 e retirada 600 = "Gera R$ 20.000,00/mês com retirada de 6% a.a." (AJL-28); `heroFacts` traz as 4 linhas com taxas em pt-BR (AJL-30)
+- [x] Gate quick passa
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
 
 **Tests**: unit
 **Gate**: quick

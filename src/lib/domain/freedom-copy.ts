@@ -14,7 +14,17 @@ export const HOW_WE_CALCULATE = [
   "Os valores são premissas de simulação, não promessa de renda nem de retorno.",
 ];
 
-const perYear = (bp: number) => `${bp / 100}% a.a.`;
+/** Taxa em pt-BR, sem zeros à direita: 600 -> "6%", 650 -> "6,5%". */
+export function formatRate(bp: number): string {
+  return `${(bp / 100).toLocaleString("pt-BR", { maximumFractionDigits: 2 })}%`;
+}
+
+const perYear = (bp: number) => `${formatRate(bp)} a.a.`;
+
+/** Pílula do card de Meta: a renda que o patrimônio gera e a retirada usada. */
+export function heroPill(summary: GoalSummary): string {
+  return `Gera ${formatBRL(summary.monthlyIncomeCents)}/mês com retirada de ${perYear(summary.withdrawalRateBp)}`;
+}
 
 /** Linhas de apoio do Hero: rentabilidade, retirada, renda e patrimônio necessário, todos do resumo. */
 export function heroFacts(summary: GoalSummary): { label: string; value: string }[] {
