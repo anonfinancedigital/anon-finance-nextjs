@@ -25,6 +25,7 @@ export default async function FreedomPage() {
               birthDate: isoToBR(goal.birthDate),
               retirementAge: String(goal.retirementAge),
               annualRate: String(goal.annualRateBp / 100),
+              withdrawalRate: String(goal.withdrawalRateBp / 100),
             }
           : undefined
       }

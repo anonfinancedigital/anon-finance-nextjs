@@ -11,9 +11,9 @@ import { RateToggle, type RateValue } from "@/components/rate-toggle";
 import { Slider } from "@/components/ui/slider";
 import type { ActionResult } from "@/lib/action-result";
 import { brToIso, maskDateInput } from "@/lib/domain/date-br";
-import { ageOn, PRESET_RATES } from "@/lib/domain/freedom";
+import { ageOn, PRESET_RATES, presetFor } from "@/lib/domain/freedom";
 import { RATE_HINT, RATE_TITLE } from "@/lib/domain/freedom-copy";
-import { today } from "@/lib/validation/goal";
+import { parseRate, today } from "@/lib/validation/goal";
 
 export type GoalFormValues = {
   /** pt-BR text, e.g. "10.000,00". */
@@ -23,13 +23,30 @@ export type GoalFormValues = {
   /** DD/MM/AAAA. */
   birthDate: string;
   retirementAge: string;
-  /** "6", "8" or "10" (% ao ano). */
+  /** Real return in % a.a., pt-BR text, e.g. "8" or "6,5". */
   annualRate: string;
+  /** Withdrawal rate in % a.a., pt-BR text, e.g. "6" or "4,5". */
+  withdrawalRate: string;
 };
 
 const MAX_SLIDER_AGE = 90;
 
-const blank: GoalFormValues = { monthlyIncome: "", saved: "", birthDate: "", retirementAge: "", annualRate: "8" };
+const blank: GoalFormValues = {
+  monthlyIncome: "",
+  saved: "",
+  birthDate: "",
+  retirementAge: "",
+  annualRate: "8",
+  withdrawalRate: "6",
+};
+
+/** The preset whose pair matches the typed rates, as the selector value; `null` for any other pair. */
+function presetOf(values: GoalFormValues): RateValue | null {
+  const annual = parseRate(values.annualRate);
+  const withdrawal = parseRate(values.withdrawalRate);
+  const preset = annual.ok && withdrawal.ok ? presetFor(annual.value, withdrawal.value) : null;
+  return preset === null ? null : (String(preset / 100) as RateValue);
+}
 
 /**
  * Form of the financial freedom goal, filled with the saved values or empty without a saved goal.
@@ -52,6 +69,8 @@ export function GoalForm({
   const uid = useId();
   const router = useRouter();
   const [values, setValues] = useState<GoalFormValues>(initial ?? blank);
+  // Custom mode opens when the saved pair matches no preset, or when the user picks "Personalizada".
+  const [custom, setCustom] = useState(() => presetOf(initial ?? blank) === null);
   const [result, setResult] = useState<ActionResult | null>(null);
   const [pending, startTransition] = useTransition();
 
@@ -66,27 +85,27 @@ export function GoalForm({
   const typedAge = Number(values.retirementAge);
   const sliderValue = Math.min(MAX_SLIDER_AGE, Math.max(sliderMin, Number.isFinite(typedAge) ? typedAge : sliderMin));
 
-  // Same fallback the selector shows; the withdrawal rate is read for that scenario, in basis points.
-  const rate: RateValue = values.annualRate === "6" || values.annualRate === "10" ? values.annualRate : "8";
-  const withdrawalRate = PRESET_RATES.find((p) => p.annualBp === Number(rate) * 100)!.withdrawalBp / 100;
-
-  // Until the drawer edits the withdrawal rate, it follows the chosen preset.
-  const withWithdrawal = (v: GoalFormValues) => {
-    const preset = PRESET_RATES.find((p) => String(p.annualBp / 100) === v.annualRate);
-    return { ...v, withdrawalRate: preset ? String(preset.withdrawalBp / 100) : "" };
-  };
+  function update(next: GoalFormValues) {
+    setValues(next);
+    onDraftChange?.(next);
+  }
 
   function set<K extends keyof GoalFormValues>(key: K, value: GoalFormValues[K]) {
-    const next = { ...values, [key]: value };
-    setValues(next);
-    onDraftChange?.(withWithdrawal(next));
+    update({ ...values, [key]: value });
+  }
+
+  // A preset writes both rates from the table: 6 → 4, 8 → 6, 10 → 7.
+  function choosePreset(rate: RateValue) {
+    const preset = PRESET_RATES.find((p) => String(p.annualBp / 100) === rate)!;
+    setCustom(false);
+    update({ ...values, annualRate: rate, withdrawalRate: String(preset.withdrawalBp / 100) });
   }
 
   function submit(event: React.FormEvent) {
     event.preventDefault();
     if (pending) return;
     startTransition(async () => {
-      const res = await saveGoal(withWithdrawal(values));
+      const res = await saveGoal(values);
       setResult(res);
       if (res.ok) {
         onSaved?.();
@@ -171,13 +190,33 @@ export function GoalForm({
         <p className="text-sm font-medium">{RATE_TITLE}</p>
         <p className="text-xs text-muted-foreground">{RATE_HINT}</p>
         <RateToggle
-          value={rate}
-          onChange={(next) => set("annualRate", next)}
-          onCustom={() => {}}
-          customActive={false}
+          value={custom ? null : presetOf(values)}
+          onChange={choosePreset}
+          onCustom={() => setCustom(true)}
+          customActive={custom}
         />
-        <p className="text-xs text-muted-foreground">Taxa de retirada {withdrawalRate}% a.a.</p>
-        {fieldErrors.annualRate && <p className="text-sm text-destructive">{fieldErrors.annualRate}</p>}
+        {custom ? (
+          <div className="grid grid-cols-2 gap-3 pt-2">
+            <RateInput
+              id={field("annualRate")}
+              label="Rentabilidade real (% a.a.)"
+              value={values.annualRate}
+              error={fieldErrors.annualRate}
+              onChange={(text) => set("annualRate", text)}
+            />
+            <RateInput
+              id={field("withdrawalRate")}
+              label="Taxa de retirada (% a.a.)"
+              value={values.withdrawalRate}
+              error={fieldErrors.withdrawalRate}
+              onChange={(text) => set("withdrawalRate", text)}
+            />
+          </div>
+        ) : (
+          (fieldErrors.annualRate || fieldErrors.withdrawalRate) && (
+            <p className="text-sm text-destructive">{fieldErrors.annualRate ?? fieldErrors.withdrawalRate}</p>
+          )
+        )}
       </div>
 
       {result && !result.ok && !Object.keys(fieldErrors).length && (
@@ -195,5 +234,44 @@ export function GoalForm({
         </Button>
       </div>
     </form>
+  );
+}
+
+/** Rate field in % a.a. with a fixed "%" suffix and its error below. */
+function RateInput({
+  id,
+  label,
+  value,
+  error,
+  onChange,
+}: {
+  id: string;
+  label: string;
+  value: string;
+  error?: string;
+  onChange: (text: string) => void;
+}) {
+  return (
+    <div className="space-y-1">
+      <Label htmlFor={id}>{label}</Label>
+      <div className="relative">
+        <Input
+          id={id}
+          inputMode="decimal"
+          placeholder="6,5"
+          value={value}
+          aria-invalid={!!error}
+          onChange={(e) => onChange(e.target.value)}
+          className="pr-8"
+        />
+        <span
+          aria-hidden
+          className="pointer-events-none absolute top-1/2 right-3.5 -translate-y-1/2 text-base text-muted-foreground md:text-sm"
+        >
+          %
+        </span>
+      </div>
+      {error && <p className="text-sm text-destructive">{error}</p>}
+    </div>
   );
 }

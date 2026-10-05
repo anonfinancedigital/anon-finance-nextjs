@@ -190,20 +190,20 @@ Implicit-requirement dimensions: input validation & bounds (taxa personalizada f
 | AJL-17 | P1: Prefixo R$ | Execute | Implementing |
 | AJL-24 | P1: Seletor de perfil | Execute | Implementing |
 | AJL-25 | P1: Seletor de perfil | Execute | Implementing |
-| AJL-26 | P1: Seletor de perfil | - | Pending |
+| AJL-26 | P1: Seletor de perfil | Execute | Implementing |
 | AJL-27 | P1: Seletor de perfil | Execute | Implementing |
 | AJL-28 | P1: Card de Meta | Execute | Implementing |
 | AJL-29 | P1: Card de Meta | Execute | Implementing |
 | AJL-30 | P1: Card de Meta | Execute | Implementing |
 | AJL-31 | P1: Card de Meta | Execute | Implementing |
 | AJL-10 | P2: Taxa personalizada | Execute | Implementing |
-| AJL-11 | P2: Taxa personalizada | - | Pending |
+| AJL-11 | P2: Taxa personalizada | Execute | Implementing |
 | AJL-12 | P2: Taxa personalizada | Execute | Implementing |
 | AJL-13 | P2: Taxa personalizada | Execute | Implementing |
 | AJL-14 | P2: Taxa personalizada | Execute | Implementing |
 | AJL-15 | P2: Taxa personalizada | Execute | Implementing |
 | AJL-18 | P2: Taxa personalizada | Execute | Implementing |
-| AJL-19 | P2: Taxa personalizada | - | Pending |
+| AJL-19 | P2: Taxa personalizada | Execute | Implementing |
 | AJL-20 | P2: Taxa personalizada | Execute | Implementing |
 | AJL-16 | P2: Taxa personalizada | Execute | Implementing |
 | AJL-21 | Edge cases | Execute | Implementing |

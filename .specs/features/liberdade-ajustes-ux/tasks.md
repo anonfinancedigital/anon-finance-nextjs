@@ -408,11 +408,11 @@ T9 → T10 → T11 → T12 → T13 → T14
 
 **Done when**:
 
-- [ ] Preset 8 grava annualRate "8" e withdrawalRate "6" (AJL-20)
-- [ ] Personalizada abre com os valores do preset ativo (AJL-11)
-- [ ] Erros por campo aparecem sob cada input
-- [ ] Gate build passa
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] Preset 8 grava annualRate "8" e withdrawalRate "6" (AJL-20)
+- [x] Personalizada abre com os valores do preset ativo (AJL-11)
+- [x] Erros por campo aparecem sob cada input
+- [x] Gate build passa
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
 
 **Tests**: none
 **Gate**: build
