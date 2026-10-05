@@ -10,6 +10,7 @@ function Slider({
   defaultValue,
   min = 0,
   max = 100,
+  "aria-label": ariaLabel,
   ...props
 }: React.ComponentProps<typeof SliderPrimitive.Root>) {
   const thumbs = value ?? defaultValue ?? [min]
@@ -37,6 +38,7 @@ function Slider({
         <SliderPrimitive.Thumb
           key={index}
           data-slot="slider-thumb"
+          aria-label={ariaLabel}
           className="block size-4 shrink-0 cursor-pointer rounded-full border-2 border-primary bg-background shadow-sm transition-colors outline-none focus-visible:ring-3 focus-visible:ring-ring/50 disabled:cursor-not-allowed"
         />
       ))}
