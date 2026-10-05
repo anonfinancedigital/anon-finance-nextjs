@@ -121,12 +121,13 @@ T7 → T8 → T9 → T10 → T11
 
 **Done when**:
 
-- [ ] Exporta `Switch` com `checked`, `onCheckedChange`, `id`, `aria-*` repassados
-- [ ] Estados desligado/ligado/foco/desabilitado usam tokens do design system
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] Exporta `Switch` com `checked`, `onCheckedChange`, `id`, `aria-*` repassados
+- [x] Estados desligado/ligado/foco/desabilitado usam tokens do design system
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
 
 **Tests**: none
 **Gate**: build
+**Status**: ✅ Complete
 
 **Commit**: `feat(ui): add Switch primitive`
 
