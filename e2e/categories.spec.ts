@@ -74,7 +74,7 @@ test("removing a category that has expenses is blocked with the expense count", 
   await expect(name(page, 2)).toHaveValue("Lazer");
 });
 
-const income = (page: Page) => page.getByLabel("Receita de referência (R$)", { exact: true });
+const income = (page: Page) => page.getByLabel("Receita Base Mensal", { exact: true });
 /** Types the reference income, passing through "Editar base" when the card is shown instead of the field. */
 async function setIncome(page: Page, text: string) {
   const edit = page.getByRole("button", { name: "Editar base", exact: true });
@@ -99,7 +99,7 @@ test("a reference income shows the amount of each category and their sum", async
   await page.goto("/categorias");
 
   await expect(income(page)).toHaveValue("");
-  for (const header of ["CATEGORIA", "% DO TOTAL", "VALOR ESTIMADO", "SUBCATEGORIAS", "AÇÕES"]) {
+  for (const header of ["CATEGORIA", "ALOCAÇÃO (%)", "VALOR PREVISTO (R$)", "SUBCATEGORIAS", "AÇÕES"]) {
     await expect(page.getByText(header, { exact: true })).toBeVisible();
   }
 
@@ -316,7 +316,7 @@ test("two categories with the same color save normally", async ({ page }) => {
 
 const adjustSelect = (page: Page, direction: "Descontar" | "Acrescentar") =>
   page.getByLabel(`${direction} a diferença em`, { exact: true });
-const apply = (page: Page) => page.getByRole("button", { name: "Aplicar", exact: true });
+const apply = (page: Page) => page.getByRole("button", { name: "Rebalancear", exact: true });
 
 test("the sum bar closes the sum at 100% on the chosen category and enables saving", async ({ page }) => {
   await login(page);
