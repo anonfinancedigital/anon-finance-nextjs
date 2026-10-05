@@ -422,13 +422,13 @@ T16 → T17 → T18 → T19
 
 **Done when**:
 
-- [ ] Alvo em `font-display text-4xl`; guardado, percentual com uma casa e "a 8% ao ano" (taxa do resumo) visíveis no cartão
-- [ ] O selo exibe `Gera {renda em BRL}/mês sem consumir o principal` (renda R$ 20.000,00 → "Gera R$ 20.000,00/mês sem consumir o principal")
-- [ ] "Aporte mensal necessário" é o texto de maior peso do cartão; com `monthlyCents` nulo exibe "Prazo encerrado"
-- [ ] Falta (`max(0, alvo − guardado)`) e Prazo restante como linhas de texto secundário, sem caixas
-- [ ] Brilho sutil com `--glow-a`/`--income`, legível nos temas claro e escuro
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
-- [ ] Test count: nenhum teste novo (UI = none); contagem anterior mantida
+- [x] Alvo em `font-display` `text-3xl sm:text-4xl` (maior que guardado e progresso); guardado, percentual com uma casa e "a 8% ao ano" (taxa do resumo) visíveis no cartão
+- [x] O selo exibe `Gera {renda em BRL}/mês sem consumir o principal` (renda R$ 20.000,00 → "Gera R$ 20.000,00/mês sem consumir o principal")
+- [x] "Aporte mensal necessário" é o texto de maior peso do cartão (`font-display` `text-4xl sm:text-5xl` em painel destacado); com `monthlyCents` nulo exibe "Prazo encerrado"
+- [x] Falta (`max(0, alvo − guardado)`) e Prazo restante como linhas de texto secundário, sem caixas
+- [x] Brilho sutil com `--glow-a`/`--income`, legível nos temas claro e escuro
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
+- [x] Test count: nenhum teste novo (UI = none); contagem anterior mantida
 
 **Tests**: none
 **Gate**: build
