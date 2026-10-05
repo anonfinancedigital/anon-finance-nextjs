@@ -167,19 +167,19 @@ Implicit-requirement dimensions: failure states (salvar com falha mantém a gave
 
 | Requirement ID | Story | Phase | Status |
 | -------------- | ----- | ----- | ------ |
-| LAY-01 | P1: Hero (AC 1, 2, 7: duas colunas, empilhar, metade direita sem card interno) | Tasks | In Tasks |
-| LAY-02 | P1: Hero (AC 3, 4, 8: textos do destino e do plano de ação, peso do aporte, brilho) | Tasks | In Tasks |
-| LAY-03 | P1: Hero (AC 5, 6: prazo encerrado e guardado ≥ alvo) | Tasks | In Tasks |
-| LAY-04 | P1: Barra (AC 1, 5, 6: barra no rodapé do Hero, sem seção própria, `--income`) | Tasks | In Tasks |
-| LAY-05 | P1: Barra (AC 2, 3, 4: percentual único, nome acessível, checkpoints) | Tasks | In Tasks |
-| LAY-06 | P1: Gaveta (AC 1, 10: botão e estado vazio) | Tasks | In Tasks |
-| LAY-07 | P1: Gaveta (AC 2, 3, 4, 5: abrir, sem overlay, reserva de espaço, tela cheia no celular) | Tasks | In Tasks |
-| LAY-08 | P1: Gaveta (AC 6, 7, 8: cancelar, X, Esc, clique fora, salvar) | Tasks | In Tasks |
-| LAY-09 | P1: Gaveta (AC 9, 11: erro mantém aberta; prévia ao vivo) | Tasks | In Tasks |
-| LAY-10 | P1: Gaveta (AC 12, 13: foco e nome acessível) | Tasks | In Tasks |
-| LAY-11 | P2: Gráfico (AC 1, 2, 3, 5: selo, sem frase nem marcas, acessibilidade) | Tasks | In Tasks |
-| LAY-12 | P2: Gráfico (AC 4: linha-guia, ponto ativo e tooltip) | Tasks | In Tasks |
-| LAY-13 | P2: Resumo na gaveta (AC 1, 2, 3) | Tasks | In Tasks |
+| LAY-01 | P1: Hero (AC 1, 2, 7: duas colunas, empilhar, metade direita sem card interno) | Verified | Verified |
+| LAY-02 | P1: Hero (AC 3, 4, 8: textos do destino e do plano de ação, peso do aporte, brilho) | Verified | Verified |
+| LAY-03 | P1: Hero (AC 5, 6: prazo encerrado e guardado ≥ alvo) | Verified | Verified |
+| LAY-04 | P1: Barra (AC 1, 5, 6: barra no rodapé do Hero, sem seção própria, `--income`) | Verified | Verified |
+| LAY-05 | P1: Barra (AC 2, 3, 4: percentual único, nome acessível, checkpoints) | Verified | Verified |
+| LAY-06 | P1: Gaveta (AC 1, 10: botão e estado vazio) | Verified | Verified |
+| LAY-07 | P1: Gaveta (AC 2, 3, 4, 5: abrir, sem overlay, reserva de espaço, tela cheia no celular) | Verified | Verified |
+| LAY-08 | P1: Gaveta (AC 6, 7, 8: cancelar, X, Esc, clique fora, salvar) | Verified | Verified |
+| LAY-09 | P1: Gaveta (AC 9, 11: erro mantém aberta; prévia ao vivo) | Verified | Verified |
+| LAY-10 | P1: Gaveta (AC 12, 13: foco e nome acessível) | Verified | Verified |
+| LAY-11 | P2: Gráfico (AC 1, 2, 3, 5: selo, sem frase nem marcas, acessibilidade) | Verified | Verified |
+| LAY-12 | P2: Gráfico (AC 4: linha-guia, ponto ativo e tooltip) | Verified | Verified |
+| LAY-13 | P2: Resumo na gaveta (AC 1, 2, 3) | Verified | Verified |
 
 **Coverage:** 13 total, 13 mapped to tasks, 0 unmapped
 

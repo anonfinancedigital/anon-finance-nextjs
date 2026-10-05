@@ -1,7 +1,7 @@
 # Liberdade: Layout Enxuto Design
 
 **Spec**: `.specs/features/liberdade-layout/spec.md`
-**Status**: Draft
+**Status**: Approved
 
 ---
 

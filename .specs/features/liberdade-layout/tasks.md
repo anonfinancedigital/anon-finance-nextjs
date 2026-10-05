@@ -9,7 +9,7 @@ Implement these tasks with the `tlc-spec-driven` skill: **activate it by name an
 ---
 
 **Design**: `.specs/features/liberdade-layout/design.md`
-**Status**: Draft
+**Status**: Done
 
 **Estratégia de ordem:** cada tarefa deixa `typecheck`, `lint`, `build` e os testes verdes. Alguns commits intermediários mostram a tela por um momento com duplicidade ou sem a gaveta (T4 deixa os checkpoints duas vezes até a T5; T6 deixa o formulário aberto na página até a T7; T7 deixa o cabeçalho duas vezes até a T8). É o preço de manter cada commit compilando e de tocar um arquivo por tarefa.
 
