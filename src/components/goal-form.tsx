@@ -170,7 +170,12 @@ export function GoalForm({
       <div className="space-y-1">
         <p className="text-sm font-medium">{RATE_TITLE}</p>
         <p className="text-xs text-muted-foreground">{RATE_HINT}</p>
-        <RateToggle value={rate} onChange={(next) => set("annualRate", next)} />
+        <RateToggle
+          value={rate}
+          onChange={(next) => set("annualRate", next)}
+          onCustom={() => {}}
+          customActive={false}
+        />
         <p className="text-xs text-muted-foreground">Taxa de retirada {withdrawalRate}% a.a.</p>
         {fieldErrors.annualRate && <p className="text-sm text-destructive">{fieldErrors.annualRate}</p>}
       </div>

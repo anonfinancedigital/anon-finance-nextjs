@@ -381,10 +381,10 @@ T9 → T10 → T11 → T12 → T13 → T14
 
 **Done when**:
 
-- [ ] Props `value: "6"|"8"|"10"|null`, `customActive`, `onCustom`
-- [ ] Textos "Retirada: 4% a.a.", "6%", "7%" vêm da tabela
-- [ ] Gate build passa
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] Props `value: "6"|"8"|"10"|null`, `customActive`, `onCustom`
+- [x] Textos "Retirada: 4% a.a.", "6%", "7%" vêm da tabela
+- [x] Gate build passa
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
 
 **Tests**: none
 **Gate**: build

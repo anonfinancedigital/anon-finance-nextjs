@@ -188,15 +188,15 @@ Implicit-requirement dimensions: input validation & bounds (taxa personalizada f
 | AJL-08 | P1: Eixo do gráfico | Execute | Implementing |
 | AJL-09 | P1: Prefixo R$ | Execute | Implementing |
 | AJL-17 | P1: Prefixo R$ | Execute | Implementing |
-| AJL-24 | P1: Seletor de perfil | - | Pending |
-| AJL-25 | P1: Seletor de perfil | - | Pending |
+| AJL-24 | P1: Seletor de perfil | Execute | Implementing |
+| AJL-25 | P1: Seletor de perfil | Execute | Implementing |
 | AJL-26 | P1: Seletor de perfil | - | Pending |
-| AJL-27 | P1: Seletor de perfil | - | Pending |
+| AJL-27 | P1: Seletor de perfil | Execute | Implementing |
 | AJL-28 | P1: Card de Meta | Execute | Implementing |
 | AJL-29 | P1: Card de Meta | Execute | Implementing |
 | AJL-30 | P1: Card de Meta | Execute | Implementing |
 | AJL-31 | P1: Card de Meta | Execute | Implementing |
-| AJL-10 | P2: Taxa personalizada | - | Pending |
+| AJL-10 | P2: Taxa personalizada | Execute | Implementing |
 | AJL-11 | P2: Taxa personalizada | - | Pending |
 | AJL-12 | P2: Taxa personalizada | Execute | Implementing |
 | AJL-13 | P2: Taxa personalizada | Execute | Implementing |
@@ -209,7 +209,7 @@ Implicit-requirement dimensions: input validation & bounds (taxa personalizada f
 | AJL-21 | Edge cases | Execute | Implementing |
 | AJL-22 | Edge cases | Execute | Implementing |
 | AJL-23 | Edge cases | Execute | Implementing |
-| AJL-32 | Edge cases | - | Pending |
+| AJL-32 | Edge cases | Execute | Implementing |
 
 **Coverage:** 32 total, 0 mapped to tasks, 32 unmapped ⚠️
 
