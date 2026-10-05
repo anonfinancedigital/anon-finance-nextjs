@@ -7,7 +7,7 @@ import { transactionsRepo } from "@/lib/db/repos/transactions";
 import { referenceIncomeText } from "@/lib/domain/money";
 import { currentMonth, monthRange } from "@/lib/domain/month";
 
-export const metadata: Metadata = { title: "Categorias · Orçamento" };
+export const metadata: Metadata = { title: "Alocação" };
 
 export default async function CategoriesPage() {
   const { userId } = await requireSessionForPage();
@@ -18,7 +18,8 @@ export default async function CategoriesPage() {
 
   return (
     <div className="space-y-4">
-      <PageHeader eyebrow="Orçamento" title="Categorias" />
+      <PageHeader eyebrow="Planejamento" title="Alocação" />
+      <p className="text-sm text-muted-foreground">Alocação total obrigatória: 100% da receita</p>
       <p className="text-sm text-muted-foreground">
         Defina quanto da receita do mês vai para cada categoria. A soma deve ser 100%.
       </p>

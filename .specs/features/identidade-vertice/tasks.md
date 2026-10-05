@@ -336,11 +336,11 @@ T22 → T23 → T24 → T25 → T26 → T27 → T28
 
 **Done when**:
 
-- [ ] `<title>` renderizado "Vértice • Alocação"
-- [ ] Título, eyebrow e texto de apoio exatamente como no spec
-- [ ] Texto de apoio aparece sempre, independente da soma
-- [ ] Gate quick: `npm run typecheck && npm run lint && npm run test:unit`
-- [ ] Contagem de testes unit/int igual à anterior (nenhum teste removido)
+- [x] `<title>` renderizado "Vértice • Alocação"
+- [x] Título, eyebrow e texto de apoio exatamente como no spec
+- [x] Texto de apoio aparece sempre, independente da soma
+- [x] Gate quick: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Contagem de testes unit/int igual à anterior (nenhum teste removido)
 
 **Tests**: none
 **Gate**: quick
