@@ -1,3 +1,4 @@
+import { GoalCheckpoints } from "@/components/goal-checkpoints";
 import type { GoalSummary } from "@/lib/domain/freedom";
 import { formatBRL } from "@/lib/domain/money";
 import { formatShare } from "@/lib/domain/percent";
@@ -20,8 +21,9 @@ const glow = {
 };
 
 /**
- * Top card of the goal: target, what is saved and the progress, the monthly deposit as the main
- * action, and the passive income the target pays.
+ * Top card of the goal. Two columns when the card is wide enough: the destination (target, what is
+ * saved) on the left and the plan (monthly deposit, time and distance left) on the right; the
+ * progress bar with the checkpoints closes the card.
  */
 export function GoalHero({ summary }: { summary: GoalSummary }) {
   const rate = String(summary.annualRateBp / 100);
@@ -30,47 +32,50 @@ export function GoalHero({ summary }: { summary: GoalSummary }) {
     <section
       aria-label="Resumo do objetivo"
       style={glow}
-      className="space-y-6 rounded-2xl border border-border bg-card p-6 shadow-lg sm:p-8"
+      className="@container overflow-hidden rounded-2xl border border-border bg-card shadow-lg"
     >
-      <div className="space-y-3">
-        <p className="text-sm text-muted-foreground">Meta Patrimonial</p>
-        <p className="font-display text-3xl font-bold tracking-tight sm:text-4xl">
-          {formatBRL(summary.targetCents)}
-        </p>
-        <p className="inline-flex flex-wrap items-center gap-x-2 rounded-full bg-income/15 px-3 py-1 text-sm font-medium text-income">
-          <span>Gera {formatBRL(summary.monthlyIncomeCents)}/mês sem consumir o principal</span>
-          <span className="font-normal">a {rate}% ao ano</span>
-        </p>
+      <div className="grid @xl:grid-cols-[1.1fr_1fr]">
+        <div className="space-y-3 p-5">
+          <p className="text-sm text-muted-foreground">Meta Patrimonial</p>
+          <p className="font-display text-3xl font-bold tracking-tight @xl:text-2xl @3xl:text-3xl">
+            {formatBRL(summary.targetCents)}
+          </p>
+          <p className="inline-flex rounded-full bg-income/15 px-3 py-1 text-sm font-medium text-income">
+            Gera {formatBRL(summary.monthlyIncomeCents)}/mês perpétuos a {rate}% a.a.
+          </p>
+          <p className="text-sm text-muted-foreground">
+            {formatBRL(summary.savedCents)} acumulados ({formatShare(summary.progressBp)} do alvo)
+          </p>
+        </div>
+
+        <div className="space-y-2 bg-primary/10 p-5">
+          <p className="text-sm font-medium text-link">Aporte Estratégico Mensal</p>
+          <p className="font-display text-4xl font-bold tracking-tight @xl:text-3xl @3xl:text-4xl">
+            {summary.monthlyCents === null ? (
+              "Prazo encerrado"
+            ) : (
+              <>
+                {formatBRL(summary.monthlyCents)}
+                <span className="text-base font-medium text-muted-foreground"> / mês</span>
+              </>
+            )}
+          </p>
+          <dl className="space-y-0.5 text-sm">
+            <div className="flex flex-wrap gap-x-2">
+              <dt className="text-muted-foreground">Tempo até o Ápice:</dt>
+              <dd className="font-medium">{formatTerm(summary.months)}</dd>
+            </div>
+            <div className="flex flex-wrap gap-x-2">
+              <dt className="text-muted-foreground">Distância do Alvo:</dt>
+              <dd className="font-medium">{formatBRL(summary.remainingCents)}</dd>
+            </div>
+          </dl>
+        </div>
       </div>
 
-      <dl className="flex flex-wrap items-baseline gap-x-8 gap-y-2">
-        <div>
-          <dt className="text-sm text-muted-foreground">Patrimônio Acumulado</dt>
-          <dd className="font-display text-2xl font-bold">{formatBRL(summary.savedCents)}</dd>
-        </div>
-        <div>
-          <dt className="text-sm text-muted-foreground">Progresso</dt>
-          <dd className="font-display text-2xl font-bold text-income">{formatShare(summary.progressBp)}</dd>
-        </div>
-      </dl>
-
-      <div className="rounded-xl border border-primary/30 bg-primary/10 p-5">
-        <p className="text-sm font-medium text-link">Aporte Estratégico Mensal</p>
-        <p className="font-display text-4xl font-bold tracking-tight sm:text-5xl">
-          {summary.monthlyCents === null ? "Prazo encerrado" : formatBRL(summary.monthlyCents)}
-        </p>
+      <div className="border-t border-border px-5 py-4">
+        <GoalCheckpoints summary={summary} />
       </div>
-
-      <dl className="flex flex-wrap gap-x-8 gap-y-1 text-sm">
-        <div className="flex gap-2">
-          <dt className="text-muted-foreground">Distância do Alvo</dt>
-          <dd className="font-medium">{formatBRL(summary.remainingCents)}</dd>
-        </div>
-        <div className="flex gap-2">
-          <dt className="text-muted-foreground">Tempo até o Ápice</dt>
-          <dd className="font-medium">{formatTerm(summary.months)}</dd>
-        </div>
-      </dl>
     </section>
   );
 }

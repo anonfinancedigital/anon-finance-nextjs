@@ -176,13 +176,13 @@ T5 → T6 → T7 → T8
 
 **Done when**:
 
-- [ ] A raiz é `@container overflow-hidden rounded-2xl border border-border bg-card shadow-lg` com o `glow`; o grid vira duas colunas em `@xl` e empilha abaixo
-- [ ] Destino: "Meta Patrimonial", alvo em `font-display text-3xl @xl:text-2xl @3xl:text-3xl`, selo "Gera {renda}/mês perpétuos a {taxa}% a.a." e linha "{guardado} acumulados ({formatShare} do alvo)" (renda R$ 20.000,00, 8%, guardado R$ 565.000,00, alvo R$ 3.000.000,00 → "Gera R$ 20.000,00/mês perpétuos a 8% a.a." e "R$ 565.000,00 acumulados (18,8% do alvo)")
-- [ ] Plano de ação: metade direita com `bg-primary/10`, sem borda e sem raio próprios; "Aporte Estratégico Mensal"; "R$ 6.794,95 / mês" em `font-display text-4xl @xl:text-3xl @3xl:text-4xl` (o texto de maior peso); "Tempo até o Ápice: 11 anos e 11 meses"; "Distância do Alvo: R$ 2.435.000,00"
-- [ ] Aporte nulo mostra "Prazo encerrado" no lugar de "R$ … / mês"; prazo 0 mostra "Tempo até o Ápice: 0 meses"; guardado ≥ alvo mostra "Distância do Alvo: R$ 0,00" e a linha de contexto com o percentual real (ex.: "120,0% do alvo")
-- [ ] Rodapé: `border-t border-border` com `GoalCheckpoints`; nenhum "Progresso" nem percentual solto no restante do Hero
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
-- [ ] Test count: nenhum teste novo (UI = none); contagem anterior mantida
+- [x] A raiz é `@container overflow-hidden rounded-2xl border border-border bg-card shadow-lg` com o `glow`; o grid vira duas colunas em `@xl` e empilha abaixo
+- [x] Destino: "Meta Patrimonial", alvo em `font-display text-3xl @xl:text-2xl @3xl:text-3xl`, selo "Gera {renda}/mês perpétuos a {taxa}% a.a." e linha "{guardado} acumulados ({formatShare} do alvo)" (renda R$ 20.000,00, 8%, guardado R$ 565.000,00, alvo R$ 3.000.000,00 → "Gera R$ 20.000,00/mês perpétuos a 8% a.a." e "R$ 565.000,00 acumulados (18,8% do alvo)")
+- [x] Plano de ação: metade direita com `bg-primary/10`, sem borda e sem raio próprios; "Aporte Estratégico Mensal"; "R$ 6.794,95 / mês" em `font-display text-4xl @xl:text-3xl @3xl:text-4xl` (o texto de maior peso); "Tempo até o Ápice: 11 anos e 11 meses"; "Distância do Alvo: R$ 2.435.000,00"
+- [x] Aporte nulo mostra "Prazo encerrado" no lugar de "R$ … / mês"; prazo 0 mostra "Tempo até o Ápice: 0 meses"; guardado ≥ alvo mostra "Distância do Alvo: R$ 0,00" e a linha de contexto com o percentual real (ex.: "120,0% do alvo")
+- [x] Rodapé: `border-t border-border` com `GoalCheckpoints`; nenhum "Progresso" nem percentual solto no restante do Hero
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
+- [x] Test count: nenhum teste novo (UI = none); contagem anterior mantida
 
 **Tests**: none
 **Gate**: build
