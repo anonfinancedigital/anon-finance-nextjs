@@ -1,4 +1,5 @@
 import { ArrowDownLeftIcon, ArrowUpRightIcon, WalletIcon } from "lucide-react";
+import type { Metadata } from "next";
 import { BudgetCharts } from "@/components/budget-charts";
 import { ContentCard } from "@/components/content-card";
 import { MonthPicker } from "@/components/month-picker";
@@ -23,6 +24,8 @@ import {
 /** Today as AAAA-MM-DD in America/Sao_Paulo. */
 const todayInSaoPaulo = () =>
   new Intl.DateTimeFormat("en-CA", { timeZone: "America/Sao_Paulo" }).format(new Date());
+
+export const metadata: Metadata = { title: "Cockpit" };
 
 export default async function SummaryPage({ searchParams }: PageProps<"/">) {
   const { userId } = await requireSessionForPage();
@@ -79,7 +82,7 @@ export default async function SummaryPage({ searchParams }: PageProps<"/">) {
 
   return (
     <div className="space-y-6 pb-32">
-      <PageHeader eyebrow="Visão geral" title="Resumo">
+      <PageHeader eyebrow="Visão geral" title="Cockpit">
         <MonthPicker month={month} />
       </PageHeader>
 
