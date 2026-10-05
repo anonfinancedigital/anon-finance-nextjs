@@ -182,15 +182,17 @@ T10 → T11
 
 **Done when**:
 
-- [ ] Com valor válido e fora de edição mostra `Base de cálculo mensal: <formatBRL>` e o botão "Editar base", sem o campo
-- [ ] "Editar base" mostra o campo `reference-income` com label "Receita de referência (R$)", texto atual e foco
-- [ ] Enter ou blur com texto vazio ou válido volta ao card (vazio volta ao campo vazio, sem card)
-- [ ] Texto inválido mantém o campo aberto e mostra o erro de `parseBRL`
-- [ ] Valor vazio mostra o campo com placeholder "5.000,00"
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
+- [x] Com valor válido e fora de edição mostra `Base de cálculo mensal: <formatBRL>` e o botão "Editar base", sem o campo
+- [x] "Editar base" mostra o campo `reference-income` com label "Receita de referência (R$)", texto atual e foco
+- [x] Enter ou blur com texto vazio ou válido volta ao card (vazio volta ao campo vazio, sem card)
+- [x] Texto inválido mantém o campo aberto e mostra o erro de `parseBRL`
+- [x] Valor vazio mostra o campo com placeholder "5.000,00"
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
 
 **Tests**: none
 **Gate**: build
+
+**Status**: ✅ Complete
 
 **Commit**: `feat(categories): add reference income card`
 
