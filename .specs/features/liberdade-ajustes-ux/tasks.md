@@ -169,10 +169,10 @@ T9 → T10 → T11 → T12 → T13 → T14
 
 **Done when**:
 
-- [ ] A função `status` local sai
-- [ ] Gate build passa
-- [ ] Verificação visual em 360 e 1280 px fica para a validação
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] A função `status` local sai
+- [x] Gate build passa
+- [x] Verificação visual em 360 e 1280 px fica para a validação
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
 
 **Tests**: none
 **Gate**: build

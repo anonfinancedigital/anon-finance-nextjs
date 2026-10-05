@@ -182,7 +182,7 @@ Implicit-requirement dimensions: input validation & bounds (taxa personalizada f
 | AJL-02 | P1: Rótulos dos marcos | Execute | Implementing |
 | AJL-03 | P1: Rótulos dos marcos | Execute | Implementing |
 | AJL-04 | P1: Rótulos dos marcos | Execute | Implementing |
-| AJL-05 | P1: Rótulos dos marcos | - | Pending |
+| AJL-05 | P1: Rótulos dos marcos | Execute | Implementing |
 | AJL-06 | P1: Eixo do gráfico | Execute | Implementing |
 | AJL-07 | P1: Eixo do gráfico | Execute | Implementing |
 | AJL-08 | P1: Eixo do gráfico | Execute | Implementing |

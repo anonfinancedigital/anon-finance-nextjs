@@ -1,15 +1,10 @@
 import { Check } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
-import type { Checkpoint, GoalSummary } from "@/lib/domain/freedom";
+import type { GoalSummary } from "@/lib/domain/freedom";
+import { checkpointLabel } from "@/lib/domain/freedom-copy";
 import { formatCompactBRL } from "@/lib/domain/money";
 import { formatShare } from "@/lib/domain/percent";
 import { cn } from "cn";
-
-function status(checkpoint: Checkpoint): string {
-  if (checkpoint.reached) return "Atingido";
-  if (checkpoint.ageYears === null) return "Sem previsão";
-  return `Previsão: aos ${checkpoint.ageYears} anos`;
-}
 
 /**
  * Progress bar (emerald fill with glow) with the 25/50/75/100% checkpoints of the target as markers
@@ -63,13 +58,17 @@ export function GoalCheckpoints({ summary }: { summary: GoalSummary }) {
           <li
             key={c.fractionBp}
             className={cn(
-              "space-y-0.5 text-sm @xl:absolute @xl:top-0 @xl:text-center",
+              "min-w-0 space-y-0.5 text-sm @xl:absolute @xl:top-0 @xl:text-center",
               index === lastIndex ? "@xl:right-0 @xl:text-right" : "@xl:-translate-x-1/2",
             )}
             style={index === lastIndex ? undefined : { left: `${c.positionBp / 100}%` }}
           >
             <span className="block font-medium">{formatCompactBRL(c.valueCents)}</span>
-            <span className={c.reached ? "block text-xs text-income" : "block text-xs text-muted-foreground"}>{status(c)}</span>
+            <span
+              className={cn("block truncate text-xs whitespace-nowrap", c.reached ? "text-income" : "text-muted-foreground")}
+            >
+              {checkpointLabel(c, index === lastIndex)}
+            </span>
           </li>
         ))}
       </ol>
