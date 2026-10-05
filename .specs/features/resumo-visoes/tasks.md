@@ -133,11 +133,11 @@ T5 → T6 → T7 → T8
 
 **Done when**:
 
-- [ ] Seletor com exatamente "Tabela" e "Barras", expondo `aria-selected` e navegável por setas
-- [ ] Só a visão selecionada fica montada
-- [ ] Sem categorias, mostra o link "Crie suas categorias primeiro" e nenhum seletor
-- [ ] A contagem "N categorias" no `note` continua
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
+- [x] Seletor com exatamente "Tabela" e "Barras", expondo `aria-selected` e navegável por setas
+- [x] Só a visão selecionada fica montada
+- [x] Sem categorias, mostra o link "Crie suas categorias primeiro" e nenhum seletor
+- [x] A contagem "N categorias" no `note` continua
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
 
 **Tests**: none
 **Gate**: build
