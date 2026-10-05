@@ -32,6 +32,49 @@ async function addExpenses(userId: string, categoryId: string, count: number) {
   }
 }
 
+describe("categoriesRepo investment flag", () => {
+  const investment = (isInvestment?: boolean) => [
+    { name: "Moradia", percentMicro: 80000000, color: 1 },
+    { name: "Liberdade", percentMicro: 20000000, color: 5, isInvestment },
+  ];
+  const flags = async (userId: string) =>
+    (await categoriesRepo.list(userId)).map((c) => [c.name, c.isInvestment]);
+
+  it("persists true and lists it back, leaving the other category false", async () => {
+    const userId = await insertTestUser();
+    await categoriesRepo.replaceSet(userId, investment(true));
+    expect(await flags(userId)).toEqual([["Moradia", false], ["Liberdade", true]]);
+  });
+
+  it("an item without the field is stored as false", async () => {
+    const userId = await insertTestUser();
+    await categoriesRepo.replaceSet(userId, investment());
+    expect(await flags(userId)).toEqual([["Moradia", false], ["Liberdade", false]]);
+  });
+
+  it("resending an existing category with false clears the flag", async () => {
+    const userId = await insertTestUser();
+    await categoriesRepo.replaceSet(userId, investment(true));
+    const saved = await categoriesRepo.list(userId);
+    await categoriesRepo.replaceSet(
+      userId,
+      saved.map((c) => ({ id: c.id, name: c.name, percentMicro: c.percentMicro, color: c.color, isInvestment: false })),
+    );
+    expect(await flags(userId)).toEqual([["Moradia", false], ["Liberdade", false]]);
+  });
+
+  it("resending an existing category with true sets the flag", async () => {
+    const userId = await insertTestUser();
+    await categoriesRepo.replaceSet(userId, investment(false));
+    const saved = await categoriesRepo.list(userId);
+    await categoriesRepo.replaceSet(
+      userId,
+      saved.map((c) => ({ id: c.id, name: c.name, percentMicro: c.percentMicro, color: c.color, isInvestment: c.name === "Liberdade" })),
+    );
+    expect(await flags(userId)).toEqual([["Moradia", false], ["Liberdade", true]]);
+  });
+});
+
 describe("categoriesRepo.replaceSet + list", () => {
   it("persists a valid set and lists it in creation order", async () => {
     const userId = await insertTestUser();

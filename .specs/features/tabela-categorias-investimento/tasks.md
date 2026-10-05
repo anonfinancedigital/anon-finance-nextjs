@@ -162,11 +162,11 @@ T6 → T7
 
 **Done when**:
 
-- [ ] `replaceSet` com `isInvestment: true` e `listForMonth` devolvem true
-- [ ] Reenviar a categoria com `isInvestment: false` volta para false
-- [ ] Item sem o campo grava false
-- [ ] Gate check passes: `npm run test:unit && npm run test:int`
-- [ ] Test count: testes existentes + os novos passam (sem remoções)
+- [x] `replaceSet` com `isInvestment: true` e `listForMonth` devolvem true
+- [x] Reenviar a categoria com `isInvestment: false` volta para false
+- [x] Item sem o campo grava false
+- [x] Gate check passes: `npm run test:unit && npm run test:int`
+- [x] Test count: testes existentes + os novos passam (sem remoções)
 
 **Tests**: integration
 **Gate**: full

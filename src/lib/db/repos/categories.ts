@@ -15,6 +15,8 @@ export type CategoryItem = {
   name: string;
   percentMicro: number;
   color: number;
+  /** Omitted means false (an expense category). */
+  isInvestment?: boolean;
   /** Omitted means none: the category's existing subcategories are removed. */
   subcategories?: { id?: string; name: string }[];
 };
@@ -23,6 +25,7 @@ const columns = {
   id: category.id,
   name: category.name,
   color: category.color,
+  isInvestment: category.isInvestment,
 };
 
 function expensesMessage(n: number) {
@@ -110,7 +113,11 @@ async function replaceSet(
   now: Date = new Date(),
 ): Promise<CategorySetResult> {
   const fromMonth = monthStartOf(currentMonth(now));
-  const items = cats.map((c) => ({ ...c, subcategories: c.subcategories ?? [] }));
+  const items = cats.map((c) => ({
+    ...c,
+    isInvestment: c.isInvestment ?? false,
+    subcategories: c.subcategories ?? [],
+  }));
   const valid = validateCategorySet(
     items.map((c) => ({ name: c.name, micro: c.percentMicro, subcategories: c.subcategories })),
   );
@@ -204,17 +211,17 @@ async function replaceSet(
     }
 
     // One statement per item, in order, so clock_timestamp() preserves the creation order.
-    for (const { id, name, percentMicro, color, subcategories } of items) {
+    for (const { id, name, percentMicro, color, isInvestment, subcategories } of items) {
       let categoryId = id;
       if (categoryId) {
         await tx
           .update(category)
-          .set({ name, color })
+          .set({ name, color, isInvestment })
           .where(and(eq(category.id, categoryId), eq(category.userId, userId)));
       } else {
         [{ id: categoryId }] = await tx
           .insert(category)
-          .values({ userId, name, color })
+          .values({ userId, name, color, isInvestment })
           .returning({ id: category.id });
       }
 
