@@ -1,12 +1,14 @@
-import { and, asc, count, eq, inArray, sql } from "drizzle-orm";
+import { and, asc, count, eq, gt, inArray, isNull, or } from "drizzle-orm";
 import {
   type Category,
   type CategorySetResult,
   type Subcategory,
   validateCategorySet,
 } from "@/lib/domain/budget";
+import { currentMonth, type YearMonth } from "@/lib/domain/month";
+import { monthStartOf, type PercentVersion, resolvePercent } from "@/lib/domain/percent-history";
 import { db } from "../client";
-import { category, subcategory, transaction } from "../schema";
+import { category, categoryPercent, subcategory, transaction } from "../schema";
 
 export type CategoryItem = {
   id?: string;
@@ -20,7 +22,6 @@ export type CategoryItem = {
 const columns = {
   id: category.id,
   name: category.name,
-  percentMicro: sql<number>`coalesce(${category.percentMicro}, 0)`.mapWith(Number),
   color: category.color,
 };
 
@@ -32,13 +33,38 @@ function subcategoryExpensesMessage(n: number) {
   return `Esta subcategoria tem ${n} ${n === 1 ? "gasto" : "gastos"} e não pode ser excluída`;
 }
 
-/** The user's categories in creation order, each with its subcategories in creation order. */
-async function list(userId: string): Promise<Category[]> {
+/**
+ * The user's categories in force in `month`, in creation order, each with its subcategories in
+ * creation order. A category is in force when it is active or deleted after `month`; its percent
+ * is the version in force that month (months after the current one use the current month's
+ * versions). No version in force means `percentMicro` 0 and `hasPercent` false.
+ */
+async function listForMonth(
+  userId: string,
+  month: YearMonth,
+  now: Date = new Date(),
+): Promise<Category[]> {
+  const monthStart = monthStartOf(month);
+  const resolveAt = monthStartOf(minMonth(month, currentMonth(now)));
   const categories = await db
     .select(columns)
     .from(category)
-    .where(eq(category.userId, userId))
+    .where(
+      and(
+        eq(category.userId, userId),
+        or(isNull(category.deletedFrom), gt(category.deletedFrom, monthStart)),
+      ),
+    )
     .orderBy(asc(category.createdAt), asc(category.id));
+  const versions = await db
+    .select({
+      categoryId: categoryPercent.categoryId,
+      fromMonth: categoryPercent.fromMonth,
+      percentMicro: categoryPercent.percentMicro,
+    })
+    .from(categoryPercent)
+    .innerJoin(category, eq(category.id, categoryPercent.categoryId))
+    .where(eq(category.userId, userId));
   const subcategories = await db
     .select({ id: subcategory.id, categoryId: subcategory.categoryId, name: subcategory.name })
     .from(subcategory)
@@ -49,8 +75,28 @@ async function list(userId: string): Promise<Category[]> {
   for (const { id, categoryId, name } of subcategories) {
     byCategory.set(categoryId, [...(byCategory.get(categoryId) ?? []), { id, name }]);
   }
-  return categories.map((c) => ({ ...c, subcategories: byCategory.get(c.id) ?? [] }));
+  const versionsOf = new Map<string, PercentVersion[]>();
+  for (const { categoryId, ...version } of versions) {
+    versionsOf.set(categoryId, [...(versionsOf.get(categoryId) ?? []), version]);
+  }
+  return categories.map((c) => {
+    const percent = resolvePercent(versionsOf.get(c.id) ?? [], resolveAt);
+    return {
+      ...c,
+      percentMicro: percent ?? 0,
+      hasPercent: percent !== null,
+      subcategories: byCategory.get(c.id) ?? [],
+    };
+  });
 }
+
+/** The user's active categories with the percent in force in the month of `now`. */
+function list(userId: string, now: Date = new Date()): Promise<Category[]> {
+  return listForMonth(userId, currentMonth(now), now);
+}
+
+const minMonth = (a: YearMonth, b: YearMonth): YearMonth =>
+  a.year !== b.year ? (a.year < b.year ? a : b) : a.month <= b.month ? a : b;
 
 /**
  * Replaces the user's whole set atomically: items with `id` are updated, items without are
@@ -151,6 +197,15 @@ async function replaceSet(userId: string, cats: CategoryItem[]): Promise<Categor
           .returning({ id: category.id });
       }
 
+      // Transitional (T5): keeps the single "since ever" version in sync until T6 stores monthly versions.
+      await tx
+        .insert(categoryPercent)
+        .values({ categoryId: categoryId!, fromMonth: "0001-01-01", percentMicro })
+        .onConflictDoUpdate({
+          target: [categoryPercent.categoryId, categoryPercent.fromMonth],
+          set: { percentMicro },
+        });
+
       for (const sub of subcategories) {
         if (sub.id) {
           await tx.update(subcategory).set({ name: sub.name }).where(eq(subcategory.id, sub.id));
@@ -168,4 +223,4 @@ async function countExpenses(categoryId: string): Promise<number> {
   return db.$count(transaction, eq(transaction.categoryId, categoryId));
 }
 
-export const categoriesRepo = { list, replaceSet, countExpenses };
+export const categoriesRepo = { list, listForMonth, replaceSet, countExpenses };

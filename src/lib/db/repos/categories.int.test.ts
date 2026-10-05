@@ -1,9 +1,9 @@
 import { randomUUID } from "node:crypto";
 import { eq } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
-import { insertTestUser, setupTestDb } from "@/test/db";
+import { insertCategory, insertTestUser, setupTestDb } from "@/test/db";
 import { db } from "../client";
-import { subcategory, transaction } from "../schema";
+import { category, categoryPercent, subcategory, transaction } from "../schema";
 import { categoriesRepo } from "./categories";
 
 setupTestDb();
@@ -377,5 +377,89 @@ describe("categoriesRepo.replaceSet subcategories", () => {
       { id: a.id, name: "Streaming" },
       { id: b.id, name: "Restaurante" },
     ]);
+  });
+});
+
+describe("categoriesRepo.listForMonth", () => {
+  const NOW = new Date("2026-10-15T15:00:00Z"); // October 2026 in America/Sao_Paulo
+  const OCT = { year: 2026, month: 10 };
+  const percents = (cats: { name: string; percentMicro: number; hasPercent?: boolean }[]) =>
+    cats.map(({ name, percentMicro, hasPercent }) => [name, percentMicro, hasPercent]);
+
+  async function addVersion(categoryId: string, fromMonth: string, percentMicro: number) {
+    await db.insert(categoryPercent).values({ categoryId, fromMonth, percentMicro });
+  }
+
+  it("uses the old version in a past month and the new one in the current month", async () => {
+    const userId = await insertTestUser();
+    const a = await insertCategory(userId, { name: "A", percentMicro: 50000000, color: 1 });
+    const b = await insertCategory(userId, { name: "B", percentMicro: 50000000, color: 2 });
+    await addVersion(a.id, "2026-10-01", 40000000);
+    await addVersion(b.id, "2026-10-01", 60000000);
+
+    expect(percents(await categoriesRepo.listForMonth(userId, { year: 2026, month: 9 }, NOW))).toEqual([
+      ["A", 50000000, true],
+      ["B", 50000000, true],
+    ]);
+    expect(percents(await categoriesRepo.listForMonth(userId, OCT, NOW))).toEqual([
+      ["A", 40000000, true],
+      ["B", 60000000, true],
+    ]);
+  });
+
+  it("uses the last version for a future month", async () => {
+    const userId = await insertTestUser();
+    const a = await insertCategory(userId, { name: "A", percentMicro: 50000000, color: 1 });
+    await addVersion(a.id, "2026-10-01", 40000000);
+    const [future] = await categoriesRepo.listForMonth(userId, { year: 2027, month: 3 }, NOW);
+    expect(future).toMatchObject({ percentMicro: 40000000, hasPercent: true });
+  });
+
+  it("marks a category with a version only from the current month as hasPercent false before it", async () => {
+    const userId = await insertTestUser();
+    await insertCategory(userId, { name: "Nova", percentMicro: 100000000, color: 1, fromMonth: "2026-10-01" });
+    const [before] = await categoriesRepo.listForMonth(userId, { year: 2026, month: 9 }, NOW);
+    expect(before).toMatchObject({ name: "Nova", percentMicro: 0, hasPercent: false });
+    const [current] = await categoriesRepo.listForMonth(userId, OCT, NOW);
+    expect(current).toMatchObject({ percentMicro: 100000000, hasPercent: true });
+  });
+
+  it("shows a deleted category before deleted_from and hides it from that month on", async () => {
+    const userId = await insertTestUser();
+    await insertCategory(userId, { name: "Fica", percentMicro: 50000000, color: 1 });
+    const gone = await insertCategory(userId, { name: "Sai", percentMicro: 50000000, color: 2 });
+    await db.update(category).set({ deletedFrom: "2026-10-01" }).where(eq(category.id, gone.id));
+
+    const names = async (month: { year: number; month: number }) =>
+      (await categoriesRepo.listForMonth(userId, month, NOW)).map((c) => c.name);
+    expect(await names({ year: 2026, month: 9 })).toEqual(["Fica", "Sai"]);
+    expect(await names(OCT)).toEqual(["Fica"]);
+    expect(await names({ year: 2026, month: 11 })).toEqual(["Fica"]);
+  });
+
+  it("list is the month of now and omits deleted categories", async () => {
+    const userId = await insertTestUser();
+    const a = await insertCategory(userId, { name: "A", percentMicro: 50000000, color: 1 });
+    const gone = await insertCategory(userId, { name: "Sai", percentMicro: 50000000, color: 2 });
+    await addVersion(a.id, "2026-10-01", 70000000);
+    await db.update(category).set({ deletedFrom: "2026-10-01" }).where(eq(category.id, gone.id));
+
+    expect(percents(await categoriesRepo.list(userId, NOW))).toEqual([["A", 70000000, true]]);
+    expect(percents(await categoriesRepo.list(userId, new Date("2026-09-30T23:30:00-03:00")))).toEqual([
+      ["A", 50000000, true],
+      ["Sai", 50000000, true],
+    ]);
+  });
+
+  it("returns only the categories and subcategories of the requested user", async () => {
+    const userId = await insertTestUser();
+    const otherId = await insertTestUser();
+    const mine = await insertCategory(userId, { name: "Minha", percentMicro: 100000000, color: 1 });
+    await insertCategory(otherId, { name: "Dela", percentMicro: 100000000, color: 2 });
+    await db.insert(subcategory).values({ userId, categoryId: mine.id, name: "Sub" });
+
+    const result = await categoriesRepo.listForMonth(userId, OCT, NOW);
+    expect(result.map((c) => c.name)).toEqual(["Minha"]);
+    expect(result[0].subcategories.map((s) => s.name)).toEqual(["Sub"]);
   });
 });

@@ -202,6 +202,7 @@ T9 → T10 → T11
 **Depends on**: T4
 **Reuses**: `resolvePercent`, `currentMonth`, a montagem de subcategorias de `list`
 **Requirement**: HIST-04, HIST-05, HIST-08
+**Status**: Done
 
 **Tools**:
 
@@ -210,10 +211,10 @@ T9 → T10 → T11
 
 **Done when**:
 
-- [ ] `listForMonth(userId, month, now)` carrega categorias do usuário com `deleted_from IS NULL OR month < deleted_from` e `percentMicro` resolvido; sem vigência elegível → `percentMicro: 0`, `hasPercent: false`
-- [ ] `list(userId, now)` = `listForMonth` no mês de `now` e não traz categoria excluída
-- [ ] Testes: mês passado usa vigência antiga e mês corrente a nova; mês futuro usa a última vigência; categoria com vigência só no mês corrente vem `hasPercent: false` em mês anterior; categoria excluída aparece em mês < `deleted_from` e some em mês ≥ `deleted_from`; só categorias do usuário pedido
-- [ ] Gate check passes: `npm run test:unit && npm run test:int`
+- [x] `listForMonth(userId, month, now)` carrega categorias do usuário com `deleted_from IS NULL OR month < deleted_from` e `percentMicro` resolvido; sem vigência elegível → `percentMicro: 0`, `hasPercent: false`
+- [x] `list(userId, now)` = `listForMonth` no mês de `now` e não traz categoria excluída
+- [x] Testes: mês passado usa vigência antiga e mês corrente a nova; mês futuro usa a última vigência; categoria com vigência só no mês corrente vem `hasPercent: false` em mês anterior; categoria excluída aparece em mês < `deleted_from` e some em mês ≥ `deleted_from`; só categorias do usuário pedido
+- [x] Gate check passes: `npm run test:unit && npm run test:int`
 
 **Tests**: integration
 **Gate**: full
