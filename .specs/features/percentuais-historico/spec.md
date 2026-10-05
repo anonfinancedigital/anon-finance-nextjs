@@ -144,7 +144,7 @@ Explicitamente excluído. Documentado para evitar scope creep.
 | HIST-03 | P1: Editar percentuais sem alterar o passado (AC 5, 6) | Design | Implementing |
 | HIST-04 | P1: Resumo e gráficos (AC 1, 2, 3) | Design | Implementing |
 | HIST-05 | P1: Resumo e gráficos (AC 4, 5) | Design | Implementing |
-| HIST-06 | P1: Meses existentes (AC 1, 2) | Design | Pending |
+| HIST-06 | P1: Meses existentes (AC 1, 2) | Design | Implementing |
 | HIST-07 | P2: Categoria criada no meio do histórico (AC 1) | Design | Implementing |
 | HIST-08 | P2: Categoria excluída (AC 2, 3, 4, 5, 6, 7) | Design | Implementing |
 

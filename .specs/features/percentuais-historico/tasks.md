@@ -378,6 +378,7 @@ T9 → T10 → T11
 **Depends on**: T10
 **Reuses**: `drizzle/0006_percent_micro.sql` (estilo de migração)
 **Requirement**: HIST-06
+**Status**: Done
 
 **Tools**:
 
@@ -386,11 +387,11 @@ T9 → T10 → T11
 
 **Done when**:
 
-- [ ] Migração remove o check `category_percent_micro_range` de `category` e a coluna `percent_micro`; `schema.ts` sem `category.percentMicro`
-- [ ] `grep -rn "category.percentMicro\|percent_micro" src` não acha uso da coluna em `category` (a tabela `category_percent` mantém a sua)
-- [ ] Teste de migração de T3 continua passando (aplica só até a 0007)
-- [ ] Gate check passes: `npm run build && npm run lint && npm run test:unit && npm run test:int`
-- [ ] `e2e/helpers.ts` (`seedCategories`) continua compilando (usa `replaceSet`)
+- [x] Migração remove o check `category_percent_micro_range` de `category` e a coluna `percent_micro`; `schema.ts` sem `category.percentMicro`
+- [x] `grep -rn "category.percentMicro\|percent_micro" src` não acha uso da coluna em `category` (a tabela `category_percent` mantém a sua)
+- [x] Teste de migração de T3 continua passando (aplica só até a 0007)
+- [x] Gate check passes: `npm run build && npm run lint && npm run test:unit && npm run test:int`
+- [x] `e2e/helpers.ts` (`seedCategories`) continua compilando (usa `replaceSet`)
 
 **Tests**: integration
 **Gate**: build

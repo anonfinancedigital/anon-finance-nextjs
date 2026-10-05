@@ -21,7 +21,7 @@ export async function insertTestUser(): Promise<string> {
 
 /**
  * Inserts a category and its percent version (`fromMonth` defaults to the 0001-01-01 sentinel, in
- * force for every month). Returns the `category` row; never writes the legacy `percent_micro` column.
+ * force for every month). Returns the `category` row.
  */
 export async function insertCategory(
   userId: string,
