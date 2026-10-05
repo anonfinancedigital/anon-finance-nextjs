@@ -8,6 +8,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { NativeSelect } from "@/components/ui/native-select";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Switch } from "@/components/ui/switch";
 import type { ActionResult } from "@/lib/action-result";
 import { categoryDisplayName, pickSelection } from "@/lib/domain/category-label";
 import { maskBRLInput } from "@/lib/domain/money";
@@ -75,6 +77,7 @@ export function TransactionForm({ categories, defaultDate, transaction, month, o
 
   const fieldErrors = result && !result.ok ? (result.fieldErrors ?? {}) : {};
   const selectedCategory = categories.find((c) => c.id === values.categoryId);
+  const recurrenceMode = values.recurrence ?? "none";
   const needsCategories = values.kind === "expense" && categories.length === 0;
 
   function set<K extends keyof TransactionFormValues>(key: K, value: TransactionFormValues[K]) {
@@ -208,29 +211,40 @@ export function TransactionForm({ categories, defaultDate, transaction, month, o
         {fieldErrors.date && <p className="text-sm text-destructive">{fieldErrors.date}</p>}
       </div>
 
-      <fieldset className="flex flex-wrap gap-4">
-        <legend className="mb-1 text-sm font-medium">Repetir</legend>
-        {(
-          [
-            ["none", "Não recorrente"],
-            ["forever", "Sempre"],
-            ["until", "Até mês/ano"],
-          ] as const
-        ).map(([option, label]) => (
-          <label key={option} className="flex items-center gap-1.5 text-sm">
-            <input
-              type="radio"
-              name={field("recurrence")}
-              value={option}
-              checked={(values.recurrence ?? "none") === option}
-              onChange={() => set("recurrence", option)}
-            />
-            {label}
-          </label>
-        ))}
-      </fieldset>
+      <div className="flex items-center justify-between gap-3">
+        <Label htmlFor={field("recurring")}>Transação recorrente</Label>
+        <Switch
+          id={field("recurring")}
+          checked={recurrenceMode !== "none"}
+          onCheckedChange={(on) =>
+            setValues((v) => ({ ...v, recurrence: on ? "forever" : "none", recurrenceEnd: "" }))
+          }
+        />
+      </div>
 
-      {values.recurrence === "until" && (
+      {recurrenceMode !== "none" && (
+        <RadioGroup
+          aria-label="Frequência"
+          value={recurrenceMode}
+          onValueChange={(next) => set("recurrence", next as Recurrence)}
+        >
+          {(
+            [
+              ["forever", "Todo mês, sem data final"],
+              ["until", "Todo mês, até um mês/ano"],
+            ] as const
+          ).map(([option, label]) => (
+            <div key={option} className="flex items-center gap-2">
+              <RadioGroupItem id={field(`recurrence-${option}`)} value={option} />
+              <Label htmlFor={field(`recurrence-${option}`)} className="font-normal">
+                {label}
+              </Label>
+            </div>
+          ))}
+        </RadioGroup>
+      )}
+
+      {recurrenceMode === "until" && (
         <div className="space-y-1">
           <Label htmlFor={field("recurrenceEnd")}>Mês final</Label>
           <Input

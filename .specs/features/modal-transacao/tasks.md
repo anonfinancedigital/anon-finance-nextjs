@@ -235,14 +235,15 @@ T7 → T8 → T9 → T10 → T11
 
 **Done when**:
 
-- [ ] Ligar o switch seleciona "Todo mês, sem data final" (`forever`); escolher "Todo mês, até um mês/ano" mostra "Mês final"
-- [ ] Desligar volta `recurrence` para `none` e limpa o mês final
-- [ ] Edição de série `forever`/`until` abre com o switch ligado e a opção e o mês corretos
-- [ ] "Informe o mês final" aparece sob "Mês final" quando vazio
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] Ligar o switch seleciona "Todo mês, sem data final" (`forever`); escolher "Todo mês, até um mês/ano" mostra "Mês final"
+- [x] Desligar volta `recurrence` para `none` e limpa o mês final
+- [x] Edição de série `forever`/`until` abre com o switch ligado e a opção e o mês corretos
+- [x] "Informe o mês final" aparece sob "Mês final" quando vazio
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
 
 **Tests**: none
 **Gate**: build
+**Status**: ✅ Complete
 
 **Commit**: `feat(transactions): replace repeat radios with recurrence switch`
 
