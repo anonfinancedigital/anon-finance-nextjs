@@ -113,6 +113,7 @@ T9 → T10 → T11
 **Depends on**: T1
 **Reuses**: `buildMonthlySummary`, `Category` atuais
 **Requirement**: HIST-05
+**Status**: Done
 
 **Tools**:
 
@@ -121,11 +122,11 @@ T9 → T10 → T11
 
 **Done when**:
 
-- [ ] `Category` aceita `hasPercent?: boolean` (omitido = `true`); testes existentes passam sem mudança
-- [ ] Teste: `hasPercent: false` sem gasto → categoria ausente de `rows`
-- [ ] Teste: `hasPercent: false` com gasto → linha com `targetCents` 0, `overspent` verdadeiro, `overspentCents` = gasto
-- [ ] Teste: o total `spentCents` do resumo não muda ao omitir categorias sem gasto
-- [ ] Gate check passes: `npm run test:unit`
+- [x] `Category` aceita `hasPercent?: boolean` (omitido = `true`); testes existentes passam sem mudança
+- [x] Teste: `hasPercent: false` sem gasto → categoria ausente de `rows`
+- [x] Teste: `hasPercent: false` com gasto → linha com `targetCents` 0, `overspent` verdadeiro, `overspentCents` = gasto
+- [x] Teste: o total `spentCents` do resumo não muda ao omitir categorias sem gasto
+- [x] Gate check passes: `npm run test:unit`
 
 **Tests**: unit
 **Gate**: quick

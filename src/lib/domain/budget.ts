@@ -78,6 +78,8 @@ export type Category = {
   percentMicro: number;
   color: number;
   subcategories: Subcategory[];
+  /** False when no percent version covers the month; omitted means true. */
+  hasPercent?: boolean;
 };
 
 export type SubcategorySpend = {
@@ -147,7 +149,10 @@ export function buildMonthlySummary(input: {
 }): MonthlySummary {
   const { categories, incomeCents, spentByCategory, spentBySubcategory } = input;
 
-  const rows = categories.map((cat): CategorySummary => {
+  const shown = categories.filter(
+    (cat) => cat.hasPercent !== false || (spentByCategory.get(cat.id) ?? 0) > 0,
+  );
+  const rows = shown.map((cat): CategorySummary => {
     const targetCents = allocateCents(incomeCents, cat.percentMicro);
     const spentCents = spentByCategory.get(cat.id) ?? 0;
     const consumedPct =

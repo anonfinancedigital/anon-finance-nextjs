@@ -374,3 +374,53 @@ describe("buildMonthlySummary breakdown", () => {
     expect(rowWithSubs).toMatchObject({ targetCents: 150000, overspentCents: 10000 });
   });
 });
+
+describe("buildMonthlySummary without percent in force", () => {
+  const base = { subcategories: [] };
+  const conforto = { ...base, id: "c1", name: "Conforto", percentMicro: 100000000, color: 1 };
+  const nova = { ...base, id: "c2", name: "Nova", percentMicro: 0, color: 2, hasPercent: false };
+
+  it("omits a category with hasPercent false and no spending", () => {
+    const { rows } = buildMonthlySummary({
+      categories: [conforto, nova],
+      incomeCents: 500000,
+      spentByCategory: new Map([["c1", 1000]]),
+    });
+    expect(rows.map((r) => r.id)).toEqual(["c1"]);
+  });
+
+  it("keeps a category with hasPercent false and spending at target 0, overspent", () => {
+    const { rows } = buildMonthlySummary({
+      categories: [conforto, nova],
+      incomeCents: 500000,
+      spentByCategory: new Map([["c2", 2500]]),
+    });
+    expect(rows.map((r) => r.id)).toEqual(["c1", "c2"]);
+    expect(rows[1]).toMatchObject({
+      targetCents: 0,
+      spentCents: 2500,
+      overspent: true,
+      overspentCents: 2500,
+    });
+  });
+
+  it("treats an omitted hasPercent as true", () => {
+    const { rows } = buildMonthlySummary({
+      categories: [conforto],
+      incomeCents: 500000,
+      spentByCategory: new Map(),
+    });
+    expect(rows).toHaveLength(1);
+    expect(rows[0].targetCents).toBe(500000);
+  });
+
+  it("does not change the total spent when omitting categories without spending", () => {
+    const summary = buildMonthlySummary({
+      categories: [conforto, nova],
+      incomeCents: 500000,
+      spentByCategory: new Map([["c1", 1000]]),
+    });
+    expect(summary.spentCents).toBe(1000);
+    expect(summary.balanceCents).toBe(499000);
+  });
+});
