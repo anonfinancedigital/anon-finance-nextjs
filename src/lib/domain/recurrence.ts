@@ -47,6 +47,33 @@ export function appliesInMonth(seg: Segment, key: string): boolean {
   return start <= key && (seg.endMonth === null || seg.endMonth >= key);
 }
 
+/** Months from `from` to `to` (AAAA-MM), negative when `to` is earlier. */
+function monthsBetween(from: string, to: string): number {
+  const a = toYearMonth(from);
+  const b = toYearMonth(to);
+  return (b.year - a.year) * 12 + (b.month - a.month);
+}
+
+/** First month (AAAA-MM) of a series: the earliest start among its segments. */
+export function startOfSeries(segments: Segment[]): string {
+  return segments.map((s) => monthKey(s.date)).reduce((a, b) => (a < b ? a : b));
+}
+
+export type Installment = { number: number; total: number };
+
+/**
+ * Installment "N/T" of the occurrence in `month` for the segments of one series: N counts months
+ * from the series start, T up to the end of its last segment. Null when the series has no end
+ * (its last segment is open-ended) or the row is not recurring.
+ */
+export function installmentOf(segments: Segment[], month: string): Installment | null {
+  if (segments.some((s) => s.recurringDay === null)) return null;
+  const last = segments.reduce((a, b) => (a.date > b.date ? a : b));
+  if (last.endMonth === null) return null;
+  const start = startOfSeries(segments);
+  return { number: monthsBetween(start, month) + 1, total: monthsBetween(start, last.endMonth) + 1 };
+}
+
 /** Segments of the same series as `seg` that start after `month`. */
 function laterIds(segments: Segment[], seg: Segment, month: string): string[] {
   if (seg.seriesId === null) return [];

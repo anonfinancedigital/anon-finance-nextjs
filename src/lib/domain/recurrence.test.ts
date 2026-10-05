@@ -7,9 +7,11 @@ import {
   monthKey,
   occurrenceDate,
   planDelete,
+  installmentOf,
   planEdit,
   previousMonthKey,
   resolveDay,
+  startOfSeries,
 } from "./recurrence";
 
 const recurring = (date: string, endMonth: string | null = null, day?: number): Segment => ({
@@ -370,5 +372,59 @@ describe("planEdit", () => {
       ["n10"],
       ["n10"],
     ]);
+  });
+});
+
+describe("startOfSeries", () => {
+  it("is the earliest segment start, whatever the order", () => {
+    const later = { ...recurring("2026-12-10"), id: "s2" };
+    expect(startOfSeries([later, recurring("2026-05-10", "2026-11")])).toBe("2026-05");
+  });
+});
+
+describe("installmentOf", () => {
+  const series12 = [recurring("2026-05-10", "2027-04")];
+
+  it("is 1/12 in the start month and 12/12 in the end month of a 12-month series", () => {
+    expect(installmentOf(series12, "2026-05")).toEqual({ number: 1, total: 12 });
+    expect(installmentOf(series12, "2027-04")).toEqual({ number: 12, total: 12 });
+  });
+
+  it("counts a middle month (July of 05/2026-12/2026 is 3/8)", () => {
+    expect(installmentOf([recurring("2026-05-10", "2026-12")], "2026-07")).toEqual({
+      number: 3,
+      total: 8,
+    });
+  });
+
+  it("is 1/1 when the start month is the end month", () => {
+    expect(installmentOf([recurring("2026-10-10", "2026-10")], "2026-10")).toEqual({
+      number: 1,
+      total: 1,
+    });
+  });
+
+  it("counts continuously across the year change (11/2026-02/2027)", () => {
+    const seg = [recurring("2026-11-10", "2027-02")];
+    expect(installmentOf(seg, "2026-11")).toEqual({ number: 1, total: 4 });
+    expect(installmentOf(seg, "2027-02")).toEqual({ number: 4, total: 4 });
+  });
+
+  it("counts N from the series start and T to the last segment end after a mid-series edit", () => {
+    const first = recurring("2026-05-10", "2026-11");
+    const second = { ...recurring("2026-12-10", "2027-04"), id: "s2" };
+    expect(installmentOf([first, second], "2026-07")).toEqual({ number: 3, total: 12 });
+    expect(installmentOf([first, second], "2026-12")).toEqual({ number: 8, total: 12 });
+  });
+
+  it("is null when the last segment has no end", () => {
+    const first = recurring("2026-05-10", "2026-11");
+    const open = { ...recurring("2026-12-10"), id: "s2" };
+    expect(installmentOf([first, open], "2026-07")).toBeNull();
+    expect(installmentOf([recurring("2026-05-10")], "2026-07")).toBeNull();
+  });
+
+  it("is null for a non-recurring row", () => {
+    expect(installmentOf([single("2026-05-10")], "2026-05")).toBeNull();
   });
 });
