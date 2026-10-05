@@ -255,8 +255,8 @@ export function CategoryEditor({
         >
           <span className="w-9 shrink-0" />
           <span className="min-w-40 flex-1">CATEGORIA</span>
-          <span className={COL_PERCENT}>% DO TOTAL</span>
-          <span className={COL_AMOUNT}>VALOR ESTIMADO</span>
+          <span className={COL_PERCENT}>ALOCAÇÃO (%)</span>
+          <span className={COL_AMOUNT}>VALOR PREVISTO (R$)</span>
           <span className={COL_COUNT}>SUBCATEGORIAS</span>
           <span className={`${COL_ACTION} shrink-0 whitespace-nowrap text-center text-[10px] tracking-normal`}>AÇÕES</span>
         </div>
@@ -394,7 +394,7 @@ export function CategoryEditor({
         <Button
           type="submit"
           disabled={!sumOk || pending}
-          className="disabled:pointer-events-auto disabled:cursor-not-allowed disabled:opacity-40"
+          className="disabled:pointer-events-auto disabled:cursor-not-allowed disabled:opacity-50"
         >
           Salvar
         </Button>

@@ -446,12 +446,12 @@ T22 → T23 → T24 → T25 → T26 → T27 → T28
 
 **Done when**:
 
-- [ ] Cinco colunas na ordem do spec, alinhadas com as linhas
-- [ ] "Salvar" desabilitado com soma ≠ 100% tem `opacity-50` e `cursor-not-allowed` (sem `opacity-40`)
-- [ ] Sufixo "%", prefixo "R$", lixeira da categoria e `percentFieldText` inalterados
-- [ ] Nenhum texto "Remover" visível na linha da categoria
-- [ ] Gate quick: `npm run typecheck && npm run lint && npm run test:unit`
-- [ ] Contagem de testes unit/int igual à anterior (nenhum teste removido)
+- [x] Cinco colunas na ordem do spec, alinhadas com as linhas
+- [x] "Salvar" desabilitado com soma ≠ 100% tem `opacity-50` e `cursor-not-allowed` (sem `opacity-40`)
+- [x] Sufixo "%", prefixo "R$", lixeira da categoria e `percentFieldText` inalterados
+- [x] Nenhum texto "Remover" visível na linha da categoria
+- [x] Gate quick: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Contagem de testes unit/int igual à anterior (nenhum teste removido)
 
 **Tests**: none
 **Gate**: quick
