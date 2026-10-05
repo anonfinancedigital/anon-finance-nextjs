@@ -3,7 +3,7 @@
   "promote_threshold": 2,
   "window_days": 45,
   "quarantine_threshold": 2,
-  "next_id": 12,
+  "next_id": 14,
   "lessons": [
     {
       "id": "L-001",
@@ -204,6 +204,42 @@
       ],
       "created": "2026-10-05T11:59:39Z",
       "last_seen": "2026-10-05T11:59:39Z"
+    },
+    {
+      "id": "L-012",
+      "key": "ac_gap::when a page switches to a per month data source check every consumer of that data since forms and selectors usually still need only the active records",
+      "text": "When a page switches to a per-month data source, check every consumer of that data, since forms and selectors usually still need only the active records",
+      "signal": "ac_gap",
+      "scope": "pages",
+      "status": "candidate",
+      "features": [
+        "percentuais-historico"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "validation.md Fix 1; src/app/(app)/page.tsx:34,128; HIST-08 AC5 (pages)"
+      ],
+      "created": "2026-10-05T12:48:13Z",
+      "last_seen": "2026-10-05T12:48:13Z"
+    },
+    {
+      "id": "L-013",
+      "key": "surviving_mutant::give every defensive guard a test that reaches its state or remove it when the state is unreachable",
+      "text": "Give every defensive guard a test that reaches its state, or remove it when the state is unreachable",
+      "signal": "surviving_mutant",
+      "scope": "repo-layer",
+      "status": "candidate",
+      "features": [
+        "percentuais-historico"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "validation.md M6; src/lib/db/repos/categories.ts:48 (repo-layer)"
+      ],
+      "created": "2026-10-05T12:48:13Z",
+      "last_seen": "2026-10-05T12:48:13Z"
     }
   ]
 }

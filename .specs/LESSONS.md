@@ -78,6 +78,18 @@ Seen once or not yet corroborated. Tracked, not trusted.
 - evidence: MODT-07 AC7; src/components/transaction-list.tsx:212 (ui)
 - last seen: 2026-10-05T11:59:39Z
 
+### L-012 - When a page switches to a per-month data source, check every consumer of that data, since forms and selectors usually still need only the active records
+- signal: `ac_gap` · recurrence: 1 feature(s) · scope: `pages` · harmful: 0
+- features: percentuais-historico
+- evidence: validation.md Fix 1; src/app/(app)/page.tsx:34,128; HIST-08 AC5 (pages)
+- last seen: 2026-10-05T12:48:13Z
+
+### L-013 - Give every defensive guard a test that reaches its state, or remove it when the state is unreachable
+- signal: `surviving_mutant` · recurrence: 1 feature(s) · scope: `repo-layer` · harmful: 0
+- features: percentuais-historico
+- evidence: validation.md M6; src/lib/db/repos/categories.ts:48 (repo-layer)
+- last seen: 2026-10-05T12:48:13Z
+
 ## Quarantined (failed when applied - ignore)
 
 A confirmed lesson that recurred alongside failure. Kept for the maintainer to review.

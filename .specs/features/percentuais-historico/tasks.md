@@ -9,7 +9,7 @@ Implement these tasks with the `tlc-spec-driven` skill: **activate it by name an
 ---
 
 **Design**: `.specs/features/percentuais-historico/design.md`
-**Status**: Draft
+**Status**: Done
 
 Antes de qualquer comando: `export PATH=$HOME/.nvm/versions/node/v20.20.2/bin:$PATH`. A árvore tem alterações não commitadas de outras features (design system, receita de referência): cada commit desta feature adiciona só os arquivos da própria task (`git add <arquivos>`, nunca `-A`).
 
