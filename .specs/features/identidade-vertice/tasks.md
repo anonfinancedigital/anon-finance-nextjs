@@ -777,10 +777,10 @@ T22 → T23 → T24 → T25 → T26 → T27 → T28
 
 **Done when**:
 
-- [ ] Tipo `kind` e `getByRole("form")` usam os novos nomes
-- [ ] `grep` não acha os textos antigos no arquivo
-- [ ] `npm run typecheck` passa
-- [ ] Contagem de testes unit/int igual à anterior (nenhum teste removido)
+- [x] Tipo `kind` e `getByRole("form")` usam os novos nomes
+- [x] `grep` não acha os textos antigos no arquivo
+- [x] `npm run typecheck` passa
+- [x] Contagem de testes unit/int igual à anterior (nenhum teste removido)
 
 **Tests**: none
 **Gate**: quick

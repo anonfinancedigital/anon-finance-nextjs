@@ -3,11 +3,11 @@ import { login, resetDatabase, seedCategories, chooseOption } from "./helpers";
 
 test.beforeEach(resetDatabase);
 
-const form = (page: Page) => page.getByRole("form", { name: "Nova transação" });
+const form = (page: Page) => page.getByRole("form", { name: "Registrar Lançamento" });
 
 async function fillTransaction(
   page: Page,
-  tx: { kind: "Gasto" | "Ganho"; amount: string; date: string; category?: string; description?: string },
+  tx: { kind: "Saída de Caixa" | "Entrada de Capital"; amount: string; date: string; category?: string; description?: string },
 ) {
   const f = form(page);
   await f.getByLabel(tx.kind, { exact: true }).check();
@@ -26,12 +26,12 @@ test("an income and an expense are saved and both appear in the month list", asy
   await page.goto("/?mes=2026-09");
   const rows = page.getByTestId("transaction-row");
 
-  await fillTransaction(page, { kind: "Ganho", amount: "5.000", date: "2026-09-05", description: "Salário" });
+  await fillTransaction(page, { kind: "Entrada de Capital", amount: "5.000", date: "2026-09-05", description: "Salário" });
   await form(page).getByRole("button", { name: "Salvar" }).click();
   await expect(rows).toHaveCount(1);
 
   await fillTransaction(page, {
-    kind: "Gasto",
+    kind: "Saída de Caixa",
     amount: "200,00",
     date: "2026-09-06",
     category: "Conforto",
@@ -51,7 +51,7 @@ test("amount 0 shows a validation message and keeps what was typed", async ({ pa
   await page.goto("/?mes=2026-09");
 
   await fillTransaction(page, {
-    kind: "Gasto",
+    kind: "Saída de Caixa",
     amount: "0",
     date: "2026-09-06",
     category: "Conforto",
@@ -74,7 +74,7 @@ test("a fast double click on save creates a single transaction", async ({ page }
   await page.goto("/?mes=2026-09");
 
   await fillTransaction(page, {
-    kind: "Gasto",
+    kind: "Saída de Caixa",
     amount: "50",
     date: "2026-09-06",
     category: "Conforto",
