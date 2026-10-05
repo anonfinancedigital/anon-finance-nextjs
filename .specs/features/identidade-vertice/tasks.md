@@ -280,11 +280,11 @@ T22 → T23 → T24 → T25 → T26 → T27 → T28
 
 **Done when**:
 
-- [ ] Três rótulos exatamente como no spec
-- [ ] Hrefs `/`, `/categorias`, `/liberdade` intactos
-- [ ] `aria-current="page"` continua no item ativo
-- [ ] Gate quick: `npm run typecheck && npm run lint && npm run test:unit`
-- [ ] Contagem de testes unit/int igual à anterior (nenhum teste removido)
+- [x] Três rótulos exatamente como no spec
+- [x] Hrefs `/`, `/categorias`, `/liberdade` intactos
+- [x] `aria-current="page"` continua no item ativo
+- [x] Gate quick: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Contagem de testes unit/int igual à anterior (nenhum teste removido)
 
 **Tests**: none
 **Gate**: quick

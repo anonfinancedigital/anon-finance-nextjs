@@ -6,9 +6,9 @@ import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 
 const items = [
-  { href: "/", label: "Resumo", icon: LayoutGridIcon },
-  { href: "/categorias", label: "Categorias", icon: TagsIcon },
-  { href: "/liberdade", label: "Liberdade", icon: TargetIcon },
+  { href: "/", label: "Cockpit", icon: LayoutGridIcon },
+  { href: "/categorias", label: "Alocação", icon: TagsIcon },
+  { href: "/liberdade", label: "Ápice", icon: TargetIcon },
 ] as const;
 
 /** Main navigation: a bottom bar on small screens, the sidebar list from `md` up. */
