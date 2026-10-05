@@ -186,7 +186,7 @@ describe("createTransaction recurrence", () => {
   });
 
   it("stores a single recurring row for 'Até mês/ano' with the end month", async () => {
-    const input = expense({ recurrence: "until", recurrenceEnd: "2026-12" });
+    const input = expense({ recurrence: "until", recurrenceStart: "2026-10", recurrenceEnd: "2026-12" });
 
     expect(await createTransaction(input)).toEqual({ ok: true });
 
@@ -207,13 +207,15 @@ describe("createTransaction recurrence", () => {
   it.each([
     ["is missing", { recurrenceEnd: undefined }, "Informe o mês final"],
     [
-      "is before the date's month",
+      "is before the start month",
       { recurrenceEnd: "2026-09" },
-      "O mês final deve ser igual ou posterior ao mês do lançamento",
+      "O mês final deve ser igual ou posterior ao mês inicial",
     ],
     ["is invalid", { recurrenceEnd: "2026-13" }, "Mês final inválido"],
   ])("rejects 'Até mês/ano' when the end month %s and saves nothing", async (_, overrides, message) => {
-    const result = await createTransaction(expense({ recurrence: "until", ...overrides }));
+    const result = await createTransaction(
+      expense({ recurrence: "until", recurrenceStart: "2026-10", ...overrides }),
+    );
 
     expect(result).toMatchObject({ ok: false, fieldErrors: { recurrenceEnd: message } });
     expect(await db.$count(transaction)).toBe(0);

@@ -1,7 +1,6 @@
 import { z } from "zod";
 import { parseBRL } from "@/lib/domain/money";
 import { isValidCalendarDate } from "@/lib/domain/month";
-import { monthKey } from "@/lib/domain/recurrence";
 
 const amount = z.string({ error: "Informe o valor" }).transform((input, ctx) => {
   const result = parseBRL(input);
@@ -35,11 +34,14 @@ const common = {
   recurrence: z.enum(["none", "forever", "until"]).default("none"),
   /** AAAA-MM, only read when `recurrence` is "until". */
   recurrenceEnd: z.string().optional(),
+  /** AAAA-MM first month of the series, only read when `recurrence` is "until". */
+  recurrenceStart: z.string().optional(),
 };
 
 /**
  * Input of create/update transaction actions; `amount` is pt-BR text, output has `amountCents`.
- * `recurrence` defaults to "none"; output has `recurrenceEndMonth` instead of `recurrenceEnd`.
+ * `recurrence` defaults to "none"; output has `recurrenceStartMonth` and `recurrenceEndMonth`
+ * instead of `recurrenceStart` and `recurrenceEnd`.
  */
 export const transactionSchema = z
   .discriminatedUnion("kind", [
@@ -60,19 +62,29 @@ export const transactionSchema = z
       subcategoryId: z.undefined({ error: "Ganho não tem subcategoria" }).optional(),
     }),
   ])
-  .superRefine(({ recurrence, recurrenceEnd, date }, ctx) => {
+  .superRefine(({ recurrence, recurrenceStart, recurrenceEnd }, ctx) => {
     if (recurrence !== "until") return;
-    const issue = (message: string) =>
-      ctx.addIssue({ code: "custom", path: ["recurrenceEnd"], message });
-    if (!recurrenceEnd) return issue("Informe o mês final");
-    if (!isValidMonth(recurrenceEnd)) return issue("Mês final inválido");
-    if (recurrenceEnd < monthKey(date)) {
-      issue("O mês final deve ser igual ou posterior ao mês do lançamento");
+    const issue = (field: "recurrenceStart" | "recurrenceEnd", message: string) =>
+      ctx.addIssue({ code: "custom", path: [field], message });
+    let startOk = true;
+    if (!recurrenceStart) {
+      issue("recurrenceStart", "Informe o mês inicial");
+      startOk = false;
+    } else if (!isValidMonth(recurrenceStart)) {
+      issue("recurrenceStart", "Mês inicial inválido");
+      startOk = false;
+    }
+    if (!recurrenceEnd) return issue("recurrenceEnd", "Informe o mês final");
+    if (!isValidMonth(recurrenceEnd)) return issue("recurrenceEnd", "Mês final inválido");
+    if (startOk && recurrenceEnd < recurrenceStart!) {
+      issue("recurrenceEnd", "O mês final deve ser igual ou posterior ao mês inicial");
     }
   })
-  .transform(({ amount, recurrenceEnd, ...rest }) => ({
+  .transform(({ amount, recurrenceStart, recurrenceEnd, ...rest }) => ({
     ...rest,
     amountCents: amount,
+    /** AAAA-MM; null unless `recurrence` is "until". */
+    recurrenceStartMonth: rest.recurrence === "until" ? recurrenceStart! : null,
     /** AAAA-MM; null unless `recurrence` is "until". */
     recurrenceEndMonth: rest.recurrence === "until" ? recurrenceEnd! : null,
   }));

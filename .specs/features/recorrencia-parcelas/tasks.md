@@ -145,13 +145,13 @@ T5 → T8
 
 **Done when**:
 
-- [ ] "until" sem início → "Informe o mês inicial" em `recurrenceStart`; início fora de 2000-01..2100-12 ou malformado → "Mês inicial inválido"
-- [ ] Fim anterior ao início → "O mês final deve ser igual ou posterior ao mês inicial" em `recurrenceEnd`; início = fim é aceito
-- [ ] "Informe o mês final" e "Mês final inválido" mantidos
-- [ ] "none"/"forever" ignoram `recurrenceStart` e devolvem `recurrenceStartMonth: null`; "until" devolve o início
-- [ ] Testes antigos que esperavam a mensagem "…ao mês do lançamento" atualizados para a nova mensagem
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
-- [ ] Test count: ≥ 6 testes novos; os alterados mantêm a contagem anterior
+- [x] "until" sem início → "Informe o mês inicial" em `recurrenceStart`; início fora de 2000-01..2100-12 ou malformado → "Mês inicial inválido"
+- [x] Fim anterior ao início → "O mês final deve ser igual ou posterior ao mês inicial" em `recurrenceEnd`; início = fim é aceito
+- [x] "Informe o mês final" e "Mês final inválido" mantidos
+- [x] "none"/"forever" ignoram `recurrenceStart` e devolvem `recurrenceStartMonth: null`; "until" devolve o início
+- [x] Testes antigos que esperavam a mensagem "…ao mês do lançamento" atualizados para a nova mensagem
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Test count: ≥ 6 testes novos; os alterados mantêm a contagem anterior
 
 **Tests**: unit
 **Gate**: quick
