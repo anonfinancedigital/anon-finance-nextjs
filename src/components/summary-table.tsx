@@ -15,7 +15,7 @@ import {
 import type { CategorySummary } from "@/lib/domain/budget";
 import { colorVar } from "@/lib/domain/color";
 import { formatBRL } from "@/lib/domain/money";
-import { formatPercent, formatShare } from "@/lib/domain/percent";
+import { formatPercentCompact, formatShare } from "@/lib/domain/percent";
 
 /** Per category: percentage, target, spent, remaining and how much of the target was used. */
 export function SummaryTable({ rows }: { rows: CategorySummary[] }) {
@@ -86,7 +86,7 @@ export function SummaryTable({ rows }: { rows: CategorySummary[] }) {
                 )}
               </span>
             </TableCell>
-            <TableCell className="text-right text-muted-foreground tabular-nums">{formatPercent(row.percentMicro)}</TableCell>
+            <TableCell className="text-right text-muted-foreground tabular-nums">{formatPercentCompact(row.percentMicro)}</TableCell>
             <TableCell className="text-right tabular-nums">{formatBRL(row.targetCents)}</TableCell>
             <TableCell className="text-right font-semibold tabular-nums">{formatBRL(row.spentCents)}</TableCell>
             <TableCell
@@ -107,6 +107,11 @@ export function SummaryTable({ rows }: { rows: CategorySummary[] }) {
               {row.overspent && (
                 <p className="mt-1 text-right text-[11px] font-semibold text-destructive">
                   Estourou {formatBRL(row.overspentCents)}
+                </p>
+              )}
+              {row.exceeded && (
+                <p className="mt-1 text-right text-[11px] font-semibold text-income">
+                  Excedeu a meta em {formatBRL(row.exceededCents)}
                 </p>
               )}
             </TableCell>

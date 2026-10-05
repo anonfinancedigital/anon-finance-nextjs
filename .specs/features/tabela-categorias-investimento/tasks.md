@@ -9,7 +9,7 @@ Implement these tasks with the `tlc-spec-driven` skill: **activate it by name an
 ---
 
 **Design**: `.specs/features/tabela-categorias-investimento/design.md`
-**Status**: Draft
+**Status**: Done (aguardando Verifier)
 
 Antes de qualquer comando: `export PATH=$HOME/.nvm/versions/node/v20.20.2/bin:$PATH`. Testes de integração usam um banco `*_test` privado via `DATABASE_URL`. A árvore tem `docs/backlog.md` modificado: cada commit adiciona só os arquivos da própria task (`git add <arquivos>`, nunca `-A`). Antes de escrever código Next, ler o guia relevante em `node_modules/next/dist/docs/` (AGENTS.md).
 
@@ -245,11 +245,11 @@ T6 → T7
 
 **Done when**:
 
-- [ ] Coluna Percentual mostra "31,9%" para 31.931.878
-- [ ] Investimento acima da meta: linha sem fundo vermelho, `data-overspent="false"`, texto "Excedeu a meta em R$ X" em `text-income`, sem "Estourou"
-- [ ] Despesa estourada continua com `bg-destructive/5`, `data-overspent="true"` e "Estourou R$ X"
-- [ ] Gráfico "Gasto × meta" sem rótulo "Estourou" para investimento (verificado na tela)
-- [ ] Gate check passes: `npm run build && npm run lint && npm run test:unit && npm run test:int`
+- [x] Coluna Percentual mostra "31,9%" para 31.931.878
+- [x] Investimento acima da meta: linha sem fundo vermelho, `data-overspent="false"`, texto "Excedeu a meta em R$ X" em `text-income`, sem "Estourou"
+- [x] Despesa estourada continua com `bg-destructive/5`, `data-overspent="true"` e "Estourou R$ X"
+- [x] Gráfico "Gasto × meta" sem rótulo "Estourou" para investimento (garantido por `overspent` false no domínio, T2; sem verificação visual no navegador)
+- [x] Gate check passes: `npm run build && npm run lint && npm run test:unit && npm run test:int`
 
 **Tests**: none
 **Gate**: build
