@@ -5,6 +5,7 @@ import {
   chartYMax,
   compositionShares,
   DEFAULT_ANNUAL_RATE_BP,
+  getWithdrawalRate,
   interestSharePct,
   monthlyRate,
   projectTimeline,
@@ -13,8 +14,27 @@ import {
   requiredMonthlyCents,
   summarize,
   targetCents,
+  WITHDRAWAL_RATE_BP,
 } from "./freedom";
 import type { Goal } from "./freedom";
+
+describe("getWithdrawalRate", () => {
+  it.each([
+    [600, 400],
+    [800, 600],
+    [1000, 700],
+  ])("rentabilidade %d pb tem retirada de %d pb", (rate, expected) => {
+    expect(getWithdrawalRate(rate)).toBe(expected);
+  });
+
+  it.each([[0], [500], [700], [1200], [NaN]])("rentabilidade %d pb fora da tabela lança RangeError", (rate) => {
+    expect(() => getWithdrawalRate(rate)).toThrow(RangeError);
+  });
+
+  it("a tabela tem uma retirada para cada cenário oferecido, e só para eles", () => {
+    expect(Object.keys(WITHDRAWAL_RATE_BP).map(Number)).toEqual([...ANNUAL_RATES]);
+  });
+});
 
 describe("targetCents", () => {
   it("R$ 10.000,00 de renda dá alvo de R$ 1.500.000,00", () => {

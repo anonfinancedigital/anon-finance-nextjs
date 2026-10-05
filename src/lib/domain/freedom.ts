@@ -7,6 +7,16 @@ export const ANNUAL_RATES = [600, 800, 1000] as const;
 export type AnnualRateBp = (typeof ANNUAL_RATES)[number];
 export const DEFAULT_ANNUAL_RATE_BP: AnnualRateBp = 800;
 
+/** Taxa de retirada de cada cenário, em pontos-base: 6% → 4%, 8% → 6%, 10% → 7%. */
+export const WITHDRAWAL_RATE_BP: Record<AnnualRateBp, number> = { 600: 400, 800: 600, 1000: 700 };
+
+/** Taxa de retirada da rentabilidade real, em pontos-base; lança `RangeError` fora da tabela. */
+export function getWithdrawalRate(annualRateBp: number): number {
+  const rate = (WITHDRAWAL_RATE_BP as Record<number, number | undefined>)[annualRateBp];
+  if (rate === undefined) throw new RangeError(`Rentabilidade sem taxa de retirada definida: ${annualRateBp}`);
+  return rate;
+}
+
 /** Taxa mensal efetiva equivalente à taxa anual: (1 + taxa)^(1/12) − 1. */
 export function monthlyRate(annualRateBp: number): number {
   return (1 + annualRateBp / 10_000) ** (1 / 12) - 1;
