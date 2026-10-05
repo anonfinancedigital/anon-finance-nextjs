@@ -128,7 +128,7 @@ Implicit-requirement dimensions: input validation & bounds (rentabilidade fora d
 
 ## Edge Cases
 
-- IF a renda desejada é a máxima (R$ 1.000.000,00/mês) com 10% THEN the system SHALL calcular a meta sem perda de precisão acima de 1 centavo (R$ 1.714.285.714,29).
+- IF a renda desejada é a máxima (R$ 1.000.000,00/mês) com 10% THEN the system SHALL calcular a meta sem perda de precisão acima de 1 centavo (R$ 1.714.285.714,29). Errata (T2): R$ 12.000.000,00 ÷ 7% = R$ 171.428.571,43 (17.142.857.143 centavos); o valor entre parênteses tem um fator 10 a mais.
 - WHEN a meta com 10% não é inteira em centavos THEN the system SHALL usar o valor arredondado em Hero, gaveta, marcos, gráfico e aporte, sem recalcular a partir do valor não arredondado.
 - WHEN o guardado é maior que a meta nova THEN the system SHALL mostrar progresso acima de 100% como hoje e aporte R$ 0,00.
 - WHEN `months` é 0 e o guardado alcança a meta THEN the system SHALL mostrar aporte R$ 0,00.
@@ -142,8 +142,8 @@ Implicit-requirement dimensions: input validation & bounds (rentabilidade fora d
 | RET-01 | P1: Meta pela taxa de retirada (tabela única) | Execute | Implementing |
 | RET-02 | P1: Meta pela taxa de retirada (`getWithdrawalRate` 6/8/10) | Execute | Implementing |
 | RET-03 | P1: Meta pela taxa de retirada (rentabilidade fora da tabela) | Execute | Implementing |
-| RET-04 | P1: Meta pela taxa de retirada (valores para R$ 20.000/mês) | Tasks | In Tasks |
-| RET-05 | P1: Meta pela taxa de retirada (fórmula e arredondamento) | Tasks | In Tasks |
+| RET-04 | P1: Meta pela taxa de retirada (valores para R$ 20.000/mês) | Execute | Implementing |
+| RET-05 | P1: Meta pela taxa de retirada (fórmula e arredondamento) | Execute | Implementing |
 | RET-06 | P1: Aporte, projeção e gráfico (taxa mensal) | Tasks | In Tasks |
 | RET-07 | P1: Aporte, projeção e gráfico (aporte resolve PMT com a meta nova) | Tasks | In Tasks |
 | RET-08 | P1: Aporte, projeção e gráfico (resumo único e recálculo por entrada) | Tasks | In Tasks |

@@ -128,16 +128,19 @@ T8 → T9
 
 **Done when**:
 
-- [ ] R$ 20.000,00/mês: 6% → 600.000.000 centavos, 8% → 400.000.000, 10% → 342.857.143 (R$ 3.428.571,43) (RET-04)
-- [ ] Teste: a meta de 6% não é mais `renda × 12 ÷ 6%` (R$ 4.000.000), que era o resultado antigo (RET-05)
-- [ ] Teste: renda máxima R$ 1.000.000,00 com 10% → 171.428.571.429 centavos, diferença de no máximo 1 centavo para o valor exato (edge case)
-- [ ] Teste: `annualIncomeCents(2_000_000) = 24_000_000`
-- [ ] Todas as expectativas antigas de meta em `freedom.test.ts` reescritas com os valores da spec, sem remover testes
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
-- [ ] Test count: nenhum teste excluído; testes novos entram
+- [x] R$ 20.000,00/mês: 6% → 600.000.000 centavos, 8% → 400.000.000, 10% → 342.857.143 (R$ 3.428.571,43) (RET-04)
+- [x] Teste: a meta de 6% não é mais `renda × 12 ÷ 6%` (R$ 4.000.000), que era o resultado antigo (RET-05)
+- [x] Teste: renda máxima R$ 1.000.000,00 com 10% → 171.428.571.429 centavos, diferença de no máximo 1 centavo para o valor exato (edge case)
+  - Errata: R$ 1.000.000,00 × 12 ÷ 7% = R$ 171.428.571,43 (17.142.857.143 centavos). O valor 171.428.571.429 (R$ 1.714.285.714,29) tem um fator 10 a mais. O teste usa a renda máxima do `goalSchema` e o valor correto.
+- [x] Teste: `annualIncomeCents(2_000_000) = 24_000_000`
+- [x] Todas as expectativas antigas de meta em `freedom.test.ts` reescritas com os valores da spec, sem remover testes
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Test count: nenhum teste excluído; testes novos entram
 
 **Tests**: unit
 **Gate**: quick
+
+**Status**: ✅ Done
 
 **Commit**: `feat(freedom): derive the target patrimony from the withdrawal rate`
 

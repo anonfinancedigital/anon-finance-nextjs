@@ -22,9 +22,14 @@ export function monthlyRate(annualRateBp: number): number {
   return (1 + annualRateBp / 10_000) ** (1 / 12) - 1;
 }
 
-/** Patrimônio-alvo por perpetuidade: renda mensal × 12 ÷ taxa anual (6%, 8% e 10% dão × 200, × 150 e × 120; sempre inteiro). */
+/** Renda anual desejada: renda mensal × 12. */
+export function annualIncomeCents(monthlyIncomeCents: number): number {
+  return monthlyIncomeCents * 12;
+}
+
+/** Patrimônio-alvo: renda anual ÷ taxa de retirada do cenário, arredondado ao centavo. */
 export function targetCents(monthlyIncomeCents: number, annualRateBp: number): number {
-  return (monthlyIncomeCents * 12 * 10_000) / annualRateBp;
+  return Math.round((annualIncomeCents(monthlyIncomeCents) * 10_000) / getWithdrawalRate(annualRateBp));
 }
 
 const isLeapYear = (year: number) => (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;

@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   ageOn,
+  annualIncomeCents,
   ANNUAL_RATES,
   chartYMax,
   compositionShares,
@@ -37,12 +38,35 @@ describe("getWithdrawalRate", () => {
 });
 
 describe("targetCents", () => {
-  it("R$ 10.000,00 de renda dá alvo de R$ 1.500.000,00", () => {
-    expect(targetCents(1_000_000, 800)).toBe(150_000_000);
+  it("R$ 10.000,00 de renda a 8% (retirada 6%) dá alvo de R$ 2.000.000,00", () => {
+    expect(targetCents(1_000_000, 800)).toBe(200_000_000);
   });
 
-  it("R$ 0,01 de renda dá R$ 1,50", () => {
-    expect(targetCents(1, 800)).toBe(150);
+  it("R$ 0,01 de renda a 8% dá R$ 2,00", () => {
+    expect(targetCents(1, 800)).toBe(200);
+  });
+
+  it.each([
+    [600, 600_000_000],
+    [800, 400_000_000],
+    [1000, 342_857_143],
+  ])("R$ 20.000,00/mês a %d pb dá alvo de %d centavos", (rate, expected) => {
+    expect(targetCents(2_000_000, rate)).toBe(expected);
+  });
+
+  it("a 6% a meta não é mais renda × 12 ÷ rentabilidade (R$ 4.000.000,00)", () => {
+    expect(targetCents(2_000_000, 600)).not.toBe(400_000_000);
+  });
+
+  it("renda máxima R$ 1.000.000,00 a 10% dá R$ 171.428.571,43, a no máximo 1 centavo do valor exato", () => {
+    const target = targetCents(100_000_000, 1000);
+    expect(target).toBe(17_142_857_143);
+    // valor exato: 1.200.000.000 × 10.000 ÷ 700; |meta × 700 − 12 × 10^12| ≤ 700 equivale a ≤ 1 centavo
+    expect(Math.abs(target * 700 - 12_000_000_000_000)).toBeLessThanOrEqual(700);
+  });
+
+  it("annualIncomeCents(R$ 20.000,00) = R$ 240.000,00", () => {
+    expect(annualIncomeCents(2_000_000)).toBe(24_000_000);
   });
 });
 
@@ -153,29 +177,29 @@ describe("summarize", () => {
       now,
     );
     expect(summary).toMatchObject({
-      targetCents: 150_000_000,
+      targetCents: 200_000_000,
       savedCents: 15_000_000,
-      remainingCents: 135_000_000,
-      progressBp: 1000,
+      remainingCents: 185_000_000,
+      progressBp: 750,
       months: 240,
     });
     expect(summary.monthlyCents).toBe(
-      requiredMonthlyCents({ targetCents: 150_000_000, savedCents: 15_000_000, months: 240, annualRateBp: 800 }),
+      requiredMonthlyCents({ targetCents: 200_000_000, savedCents: 15_000_000, months: 240, annualRateBp: 800 }),
     );
   });
 
-  it("guardado zero e 240 meses dá aporte de 263.621 centavos e 0 pb", () => {
+  it("guardado zero e 240 meses dá aporte de 351.495 centavos e 0 pb", () => {
     const summary = summarize(
       { monthlyIncomeCents: 1_000_000, savedCents: 0, birthDate: "1986-06-15", retirementAge: 60, annualRateBp: 800 },
       now,
     );
-    expect(summary.monthlyCents).toBe(263_621);
+    expect(summary.monthlyCents).toBe(351_495);
     expect(summary.progressBp).toBe(0);
   });
 
   it("guardado acima do alvo: falta 0, progresso acima de 10000 e aporte 0", () => {
     const summary = summarize(
-      { monthlyIncomeCents: 1_000_000, savedCents: 180_000_000, birthDate: "1986-06-15", retirementAge: 60, annualRateBp: 800 },
+      { monthlyIncomeCents: 1_000_000, savedCents: 240_000_000, birthDate: "1986-06-15", retirementAge: 60, annualRateBp: 800 },
       now,
     );
     expect(summary.remainingCents).toBe(0);
@@ -190,12 +214,12 @@ describe("summarize", () => {
     );
     expect(summary.months).toBe(0);
     expect(summary.monthlyCents).toBeNull();
-    expect(summary.remainingCents).toBe(135_000_000);
+    expect(summary.remainingCents).toBe(185_000_000);
   });
 
   it("months = 0 e guardado >= alvo: aporte 0", () => {
     const summary = summarize(
-      { monthlyIncomeCents: 1_000_000, savedCents: 150_000_000, birthDate: "1966-06-20", retirementAge: 60, annualRateBp: 800 },
+      { monthlyIncomeCents: 1_000_000, savedCents: 200_000_000, birthDate: "1966-06-20", retirementAge: 60, annualRateBp: 800 },
       now,
     );
     expect(summary.months).toBe(0);
@@ -221,17 +245,17 @@ describe("taxa anual como parâmetro", () => {
   });
 
   it.each([
-    [600, 200_000_000],
-    [800, 150_000_000],
-    [1000, 120_000_000],
+    [600, 300_000_000],
+    [800, 200_000_000],
+    [1000, 171_428_571],
   ])("targetCents(R$ 10.000,00, %d pb) = %d centavos", (rate, expected) => {
     expect(targetCents(1_000_000, rate)).toBe(expected);
   });
 
   it.each([
-    [600, 441_075],
-    [800, 263_621],
-    [1000, 167_071],
+    [600, 661_612],
+    [800, 351_495],
+    [1000, 238_673],
   ])("aporte para guardado 0 e 240 meses a %d pb = %d centavos", (rate, expected) => {
     const target = targetCents(1_000_000, rate);
     expect(requiredMonthlyCents({ targetCents: target, savedCents: 0, months: 240, annualRateBp: rate })).toBe(expected);
@@ -253,9 +277,9 @@ describe("summarize por taxa", () => {
   const goal = { monthlyIncomeCents: 1_000_000, savedCents: 0, birthDate: "1986-06-15", retirementAge: 60 };
 
   it.each([
-    [600, 200_000_000, 441_075],
-    [800, 150_000_000, 263_621],
-    [1000, 120_000_000, 167_071],
+    [600, 300_000_000, 661_612],
+    [800, 200_000_000, 351_495],
+    [1000, 171_428_571, 238_673],
   ] as const)("taxa %d pb: alvo %d e aporte %d centavos", (annualRateBp, target, monthly) => {
     const summary = summarize({ ...goal, annualRateBp }, now);
     expect(summary.months).toBe(240);
@@ -352,7 +376,7 @@ describe("projectTimeline", () => {
     };
     const summary = summarize(goal, new Date("2026-06-15T15:00:00Z"));
     expect(summary.timeline).toHaveLength(21);
-    expect(summary.timeline.at(-1)?.totalCents).toBe(150_000_104);
+    expect(summary.timeline.at(-1)?.totalCents).toBe(200_000_328);
     expect(summary.interestSharePct).toBe(58);
   });
 
@@ -371,7 +395,7 @@ describe("projectTimeline", () => {
 });
 
 describe("buildCheckpoints", () => {
-  // 2026-06-15 em São Paulo; nascido em 1986-06-15, aposenta aos 60: 240 meses; renda R$ 10.000,00 a 8%
+  // 2026-06-15 em São Paulo; nascido em 1986-06-15, aposenta aos 60: 240 meses; renda R$ 10.000,00 a 8% (alvo R$ 2.000.000,00)
   const now = new Date("2026-06-15T15:00:00Z");
   const goal: Goal = {
     monthlyIncomeCents: 1_000_000,
@@ -383,8 +407,8 @@ describe("buildCheckpoints", () => {
   const checkpointsOf = (override: Partial<Goal> = {}, at = now) =>
     summarize({ ...goal, ...override }, at).checkpoints;
 
-  it("alvo R$ 1.500.000,00: valores de 25%, 50%, 75% e 100% do alvo", () => {
-    expect(checkpointsOf().map((c) => c.valueCents)).toEqual([37_500_000, 75_000_000, 112_500_000, 150_000_000]);
+  it("alvo R$ 2.000.000,00: valores de 25%, 50%, 75% e 100% do alvo", () => {
+    expect(checkpointsOf().map((c) => c.valueCents)).toEqual([50_000_000, 100_000_000, 150_000_000, 200_000_000]);
   });
 
   it("posição na barra igual à fração do alvo em pontos-base", () => {
@@ -401,8 +425,8 @@ describe("buildCheckpoints", () => {
     expect(checkpointsOf().every((c) => !c.reached)).toBe(true);
   });
 
-  it("guardado R$ 400.000,00: 25% atingido sem previsão; os demais com previsão", () => {
-    const [quarter, half, three, full] = checkpointsOf({ savedCents: 40_000_000 });
+  it("guardado R$ 500.000,00: 25% atingido sem previsão; os demais com previsão", () => {
+    const [quarter, half, three, full] = checkpointsOf({ savedCents: 50_000_000 });
     expect(quarter).toMatchObject({ reached: true, months: null, ageYears: null });
     expect(half.reached).toBe(false);
     expect(half.months).toEqual(expect.any(Number));
@@ -411,7 +435,7 @@ describe("buildCheckpoints", () => {
   });
 
   it("guardado igual ao alvo: os 4 atingidos", () => {
-    const all = checkpointsOf({ savedCents: 150_000_000 });
+    const all = checkpointsOf({ savedCents: 200_000_000 });
     expect(all.map((c) => c.reached)).toEqual([true, true, true, true]);
     expect(all.every((c) => c.months === null && c.ageYears === null)).toBe(true);
   });
@@ -427,10 +451,10 @@ describe("buildCheckpoints", () => {
     expect(full).toMatchObject({ months: 240, ageYears: 60, fractionBp: 10_000 });
   });
 
-  it("os valores seguem o alvo da taxa: R$ 10.000,00 a 6% dá checkpoints de R$ 500.000,00 e 2.000.000,00", () => {
+  it("os valores seguem o alvo da taxa: R$ 10.000,00 a 6% (retirada 4%) dá checkpoints de R$ 750.000,00 e 3.000.000,00", () => {
     const values = checkpointsOf({ annualRateBp: 600 }).map((c) => c.valueCents);
-    expect(values[0]).toBe(50_000_000);
-    expect(values[3]).toBe(200_000_000);
+    expect(values[0]).toBe(75_000_000);
+    expect(values[3]).toBe(300_000_000);
   });
 });
 
