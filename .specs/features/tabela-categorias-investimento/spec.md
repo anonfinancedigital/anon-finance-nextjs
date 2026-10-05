@@ -93,14 +93,14 @@ Na tabela de gastos por categoria, o percentual aparece com até 6 casas (31,931
 
 | Requirement ID | Story | Phase | Status |
 | -------------- | ----- | ----- | ------ |
-| CATINV-01 | P1: Percentual legível (AC 1-4) | Design | Pending |
-| CATINV-02 | P1: Percentual legível (AC 5) | Design | Pending |
-| CATINV-03 | P1: Investimento (AC 1-2, edge migração) | Design | Pending |
-| CATINV-04 | P1: Investimento (AC 3-5, 7, 9, edges) | Design | Pending |
-| CATINV-05 | P1: Investimento (AC 6) | Design | Pending |
-| CATINV-06 | P1: Investimento (AC 8) | Design | Pending |
+| CATINV-01 | P1: Percentual legível (AC 1-4) | Verified | Done |
+| CATINV-02 | P1: Percentual legível (AC 5) | Verified | Done |
+| CATINV-03 | P1: Investimento (AC 1-2, edge migração) | Verified | Done |
+| CATINV-04 | P1: Investimento (AC 3-5, 7, 9, edges) | Verified | Done |
+| CATINV-05 | P1: Investimento (AC 6) | Verified | Done |
+| CATINV-06 | P1: Investimento (AC 8) | Verified | Done |
 
-**Coverage:** 6 total, 0 mapped to tasks, 6 unmapped ⚠️
+**Coverage:** 6 total, 6 mapped to tasks, 0 unmapped
 
 ---
 

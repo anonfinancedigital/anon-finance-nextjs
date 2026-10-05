@@ -9,7 +9,7 @@ Implement these tasks with the `tlc-spec-driven` skill: **activate it by name an
 ---
 
 **Design**: `.specs/features/tabela-categorias-investimento/design.md`
-**Status**: Done (aguardando Verifier)
+**Status**: Done
 
 Antes de qualquer comando: `export PATH=$HOME/.nvm/versions/node/v20.20.2/bin:$PATH`. Testes de integração usam um banco `*_test` privado via `DATABASE_URL`. A árvore tem `docs/backlog.md` modificado: cada commit adiciona só os arquivos da própria task (`git add <arquivos>`, nunca `-A`). Antes de escrever código Next, ler o guia relevante em `node_modules/next/dist/docs/` (AGENTS.md).
 
