@@ -2,9 +2,9 @@ import { randomUUID } from "node:crypto";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { db } from "@/lib/db/client";
 import { transactionsRepo } from "@/lib/db/repos/transactions";
-import { category, subcategory, transaction } from "@/lib/db/schema";
+import { subcategory, transaction } from "@/lib/db/schema";
 import { createSignedInUser } from "@/test/auth";
-import { insertTestUser, setupTestDb } from "@/test/db";
+import { insertCategory as insertCategoryRow, insertTestUser, setupTestDb } from "@/test/db";
 import { createTransaction, deleteTransaction, updateTransaction } from "./transactions";
 
 const request = vi.hoisted(() => ({ headers: new Headers() }));
@@ -22,10 +22,7 @@ let userId: string;
 let categoryId: string;
 
 async function insertCategory(owner: string) {
-  const [row] = await db
-    .insert(category)
-    .values({ userId: owner, name: "Conforto", percentMicro: 100000000, color: 1 })
-    .returning({ id: category.id });
+  const row = await insertCategoryRow(owner, { name: "Conforto", percentMicro: 100000000, color: 1 });
   return row.id;
 }
 
@@ -236,10 +233,7 @@ describe("updateTransaction", () => {
   it("updates date, amount, category and description and revalidates /", async () => {
     const original = expense();
     await createTransaction(original);
-    const [other] = await db
-      .insert(category)
-      .values({ userId, name: "Metas", percentMicro: 10000, color: 1 })
-      .returning({ id: category.id });
+    const other = await insertCategoryRow(userId, { name: "Metas", percentMicro: 10000, color: 1 });
     vi.mocked(revalidatePath).mockClear();
 
     const edited = {
@@ -617,10 +611,7 @@ describe("transaction subcategory", () => {
   }
 
   async function insertOtherCategory(name = "Lazer") {
-    const [row] = await db
-      .insert(category)
-      .values({ userId, name, percentMicro: 10000, color: 2 })
-      .returning({ id: category.id });
+    const row = await insertCategoryRow(userId, { name, percentMicro: 10000, color: 2 });
     return row.id;
   }
 

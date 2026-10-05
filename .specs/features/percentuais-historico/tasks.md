@@ -323,6 +323,7 @@ T9 → T10 → T11
 **Depends on**: None
 **Reuses**: `insertCategory` (T4)
 **Requirement**: HIST-06
+**Status**: Done
 
 **Tools**:
 
@@ -331,9 +332,9 @@ T9 → T10 → T11
 
 **Done when**:
 
-- [ ] Nenhum `insert(category)` restante no arquivo e nenhum `percentMicro` passado direto à tabela
-- [ ] Mesma contagem de testes e todos passam
-- [ ] Gate check passes: `npm run test:unit && npm run test:int`
+- [x] Nenhum `insert(category)` restante no arquivo e nenhum `percentMicro` passado direto à tabela
+- [x] Mesma contagem de testes e todos passam
+- [x] Gate check passes: `npm run test:unit && npm run test:int`
 
 **Tests**: integration
 **Gate**: full
