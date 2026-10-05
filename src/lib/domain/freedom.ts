@@ -131,6 +131,16 @@ export function interestSharePct(timeline: TimelinePoint[]): number | null {
   return last ? Math.round((last.interestCents * 100) / last.totalCents) : null;
 }
 
+/** Participação de investido e rendimentos no patrimônio, em % inteiros somando 100; `null` sem patrimônio. */
+export function compositionShares(
+  investedCents: number,
+  totalCents: number,
+): { investedPct: number; interestPct: number } | null {
+  if (totalCents <= 0) return null;
+  const investedPct = Math.round((investedCents * 100) / totalCents);
+  return { investedPct, interestPct: 100 - investedPct };
+}
+
 export type Checkpoint = {
   /** Fração do alvo em pontos-base: 2500, 5000, 7500 ou 10000. */
   fractionBp: number;

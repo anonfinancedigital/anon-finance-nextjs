@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   ageOn,
   ANNUAL_RATES,
+  compositionShares,
   DEFAULT_ANNUAL_RATE_BP,
   interestSharePct,
   monthlyRate,
@@ -409,5 +410,23 @@ describe("buildCheckpoints", () => {
     const values = checkpointsOf({ annualRateBp: 600 }).map((c) => c.valueCents);
     expect(values[0]).toBe(50_000_000);
     expect(values[3]).toBe(200_000_000);
+  });
+});
+
+describe("compositionShares", () => {
+  it("R$ 1.130.000,00 investidos de R$ 2.170.000,00 dão 52% e 48%", () => {
+    expect(compositionShares(113_000_000, 217_000_000)).toEqual({ investedPct: 52, interestPct: 48 });
+  });
+
+  it("arredonda o investido (1 de 8 = 12,5% → 13) e os rendimentos fecham em 100", () => {
+    expect(compositionShares(1, 8)).toEqual({ investedPct: 13, interestPct: 87 });
+  });
+
+  it("tudo investido dá 100% e 0%", () => {
+    expect(compositionShares(500_000, 500_000)).toEqual({ investedPct: 100, interestPct: 0 });
+  });
+
+  it("patrimônio zerado não tem percentuais", () => {
+    expect(compositionShares(0, 0)).toBeNull();
   });
 });
