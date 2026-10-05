@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 64" fill="none">
+  <defs>
+    <linearGradient id="verticeGrad" x1="8" y1="56" x2="56" y2="8" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#8b5cf6" />
+      <stop offset="100%" stop-color="#10b981" />
+    </linearGradient>
+    <linearGradient id="verticeBg" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#231e3d" />
+      <stop offset="100%" stop-color="#131024" />
+    </linearGradient>
+  </defs>
+
+  <rect width="64" height="64" rx="18" fill="url(#verticeBg)" />
+  <rect width="64" height="64" rx="18" stroke="rgba(255,255,255,0.12)" stroke-width="1.5" />
+
+  <path d="M18 20L31.1 43.5C31.5 44.2 32.5 44.2 32.9 43.5L46 20" stroke="url(#verticeGrad)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" />
+  <circle cx="32" cy="15" r="3.5" fill="#10b981" />
+
+  <text x="82" y="37" fill="#f8fafc" font-family="'Sora', 'Segoe UI', system-ui, sans-serif" font-size="24" font-weight="800" letter-spacing="1.5">VÉRTICE</text>
+  <text x="83" y="51" fill="#94a3b8" font-family="'Manrope', 'Segoe UI', system-ui, sans-serif" font-size="10" font-weight="600" letter-spacing="1.8">GESTÃO PATRIMONIAL</text>
+</svg>
