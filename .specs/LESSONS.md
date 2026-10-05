@@ -102,6 +102,12 @@ Seen once or not yet corroborated. Tracked, not trusted.
 - evidence: P2 AC2; category-editor.tsx:345 (ui)
 - last seen: 2026-10-05T13:52:37Z
 
+### L-016 - Test rounding functions with an input whose fraction is at least one half, so round is told apart from floor
+- signal: `surviving_mutant` · recurrence: 1 feature(s) · scope: `domain` · harmful: 0
+- features: liberdade-refinamentos
+- evidence: freedom.ts:146 mutant M4 (Math.round to Math.floor in chartYMax) (domain)
+- last seen: 2026-10-05T17:31:50Z
+
 ## Quarantined (failed when applied - ignore)
 
 A confirmed lesson that recurred alongside failure. Kept for the maintainer to review.
