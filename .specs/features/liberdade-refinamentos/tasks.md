@@ -129,16 +129,17 @@ T6 → T7 → T8
 
 **Done when**:
 
-- [ ] Alvo R$ 3.000.000,00 e final R$ 3.000.000,00 → R$ 3.210.000,00 (RFN-05 AC2)
-- [ ] Teste: final maior que o alvo usa o final; alvo maior que o final usa o alvo (edge case do patrimônio acima da meta)
-- [ ] Teste: resultado é inteiro (alvo ímpar não gera fração de centavo)
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
-- [ ] Test count: testes anteriores seguem passando e os novos entram (sem exclusões)
+- [x] Alvo R$ 3.000.000,00 e final R$ 3.000.000,00 → R$ 3.210.000,00 (RFN-05 AC2)
+- [x] Teste: final maior que o alvo usa o final; alvo maior que o final usa o alvo (edge case do patrimônio acima da meta)
+- [x] Teste: resultado é inteiro (alvo ímpar não gera fração de centavo)
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Test count: testes anteriores seguem passando e os novos entram (sem exclusões)
 
 **Tests**: unit
 **Gate**: quick
 
 **Commit**: `feat(freedom): add the chart ceiling for the patrimony axis`
+**Status**: ✅ Done
 
 ---
 

@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   ageOn,
   ANNUAL_RATES,
+  chartYMax,
   compositionShares,
   DEFAULT_ANNUAL_RATE_BP,
   interestSharePct,
@@ -428,5 +429,24 @@ describe("compositionShares", () => {
 
   it("patrimônio zerado não tem percentuais", () => {
     expect(compositionShares(0, 0)).toBeNull();
+  });
+});
+
+describe("chartYMax", () => {
+  it("alvo e final de R$ 3.000.000,00 dão teto de R$ 3.210.000,00", () => {
+    expect(chartYMax(300_000_000, 300_000_000)).toBe(321_000_000);
+  });
+
+  it("patrimônio final acima do alvo define o teto", () => {
+    expect(chartYMax(300_000_000, 400_000_000)).toBe(428_000_000);
+  });
+
+  it("alvo acima do patrimônio final define o teto", () => {
+    expect(chartYMax(300_000_000, 100_000_000)).toBe(321_000_000);
+  });
+
+  it("devolve centavos inteiros (R$ 0,05 × 107% = R$ 0,05)", () => {
+    expect(chartYMax(5, 0)).toBe(5);
+    expect(Number.isInteger(chartYMax(301_234_567, 0))).toBe(true);
   });
 });

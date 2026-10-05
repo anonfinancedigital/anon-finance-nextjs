@@ -141,6 +141,11 @@ export function compositionShares(
   return { investedPct, interestPct: 100 - investedPct };
 }
 
+/** Teto do eixo Y do gráfico: 107% do maior valor entre o alvo e o patrimônio final, em centavos inteiros. */
+export function chartYMax(targetCents: number, finalCents: number): number {
+  return Math.round((Math.max(targetCents, finalCents) * 107) / 100);
+}
+
 export type Checkpoint = {
   /** Fração do alvo em pontos-base: 2500, 5000, 7500 ou 10000. */
   fractionBp: number;
