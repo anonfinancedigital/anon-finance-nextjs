@@ -15,7 +15,7 @@ export type AdjustOption = {
   micro: number | null;
 };
 
-/** Warning for a sum that is not 100%, with a category select and "Aplicar" to close the gap. */
+/** Warning for a sum that is not 100%, with a category select and "Rebalancear" to close the gap. */
 export function AdjustSumBar({
   sumMicro,
   incomeCents,
@@ -56,7 +56,7 @@ export function AdjustSumBar({
           disabled={selected === null}
           onClick={() => selected !== null && onApply(selected)}
         >
-          Aplicar
+          Rebalancear
         </Button>
       </div>
       {error && (
