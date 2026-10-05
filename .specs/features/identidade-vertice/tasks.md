@@ -251,12 +251,12 @@ T22 → T23 → T24 → T25 → T26 → T27 → T28
 
 **Done when**:
 
-- [ ] Página mostra `Logo` e o subtítulo "Gestão Patrimonial Familiar"
-- [ ] `metadata.title` é "Entrar" e o `<title>` renderizado é "Vértice • Entrar" (conferido no HTML de `npm run build`/`next start`)
-- [ ] Mantém exatamente um `<h1>` na página (o nome acessível do `Logo` ou um `h1` visível)
-- [ ] Gate build passa
-- [ ] Gate build: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
-- [ ] Contagem de testes unit/int igual à anterior (nenhum teste removido)
+- [x] Página mostra `Logo` e o subtítulo "Gestão Patrimonial Familiar"
+- [x] `metadata.title` é "Entrar" e o `<title>` renderizado é "Vértice • Entrar" (conferido no HTML de `npm run build`/`next start`)
+- [x] Mantém exatamente um `<h1>` na página (o nome acessível do `Logo` ou um `h1` visível)
+- [x] Gate build passa
+- [x] Gate build: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
+- [x] Contagem de testes unit/int igual à anterior (nenhum teste removido)
 
 **Tests**: none
 **Gate**: build
