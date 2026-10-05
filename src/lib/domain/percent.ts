@@ -85,3 +85,16 @@ export function defaultAdjustIndex(micros: (number | null)[]): number | null {
   });
   return best;
 }
+
+/**
+ * Effective adjust target for a stored choice (a stable row key): the choice itself while that row still exists,
+ * otherwise the row with the largest valid percentage (the first row when none is valid), or null without rows.
+ */
+export function resolveAdjustKey(
+  choice: string | null,
+  options: { key: string; micro: number | null }[],
+): string | null {
+  if (choice !== null && options.some((o) => o.key === choice)) return choice;
+  const fallback = defaultAdjustIndex(options.map((o) => o.micro)) ?? 0;
+  return options[fallback]?.key ?? null;
+}

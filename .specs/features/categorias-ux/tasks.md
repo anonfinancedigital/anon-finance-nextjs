@@ -453,3 +453,7 @@ Phase 1 → Phase 2 → Phase 3 → Phase 4
 | T11: e2e | e2e | none | none | ✅ OK |
 
 **Cobertura de requisitos:** CATUX-01 (T1, T6), CATUX-02 (T2, T5, T7), CATUX-03 (T1, T5, T7), CATUX-04 (T8), CATUX-05 (T8), CATUX-06 (T3, T6, T9, T10), CATUX-07 (T4, T7). Todos os 7 mapeados.
+
+## Fix Tasks (Verifier iteração 1)
+
+- [x] F1 (Major, CATUX-03): escolha do AdjustSumBar guardada por `row.key` estável; resolução em `resolveAdjustKey` (domínio, testada). Hash: pendente

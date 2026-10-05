@@ -8,6 +8,7 @@ import {
   microFromCents,
   parsePercent,
   percentFieldText,
+  resolveAdjustKey,
   sumLabel,
 } from "./percent";
 
@@ -157,5 +158,38 @@ describe("defaultAdjustIndex", () => {
 
   it("returns null when no percentage is valid", () => {
     expect(defaultAdjustIndex([null])).toBeNull();
+  });
+});
+
+describe("resolveAdjustKey", () => {
+  const opts = [
+    { key: "a", micro: 10_000_000 },
+    { key: "b", micro: 30_000_000 },
+    { key: "c", micro: 30_000_000 },
+  ];
+
+  it("keeps a chosen row that still exists", () => {
+    expect(resolveAdjustKey("a", opts)).toBe("a");
+  });
+
+  it("falls back to the largest valid percentage when the chosen row was removed", () => {
+    expect(resolveAdjustKey("gone", opts)).toBe("b");
+  });
+
+  it("uses the default when nothing was chosen yet", () => {
+    expect(resolveAdjustKey(null, opts)).toBe("b");
+  });
+
+  it("keeps the same category when a row before it is removed", () => {
+    const afterRemoval = opts.slice(1);
+    expect(resolveAdjustKey("c", afterRemoval)).toBe("c");
+  });
+
+  it("falls back to the first row when no percentage is valid", () => {
+    expect(resolveAdjustKey("gone", [{ key: "x", micro: null }, { key: "y", micro: null }])).toBe("x");
+  });
+
+  it("returns null without rows", () => {
+    expect(resolveAdjustKey("a", [])).toBeNull();
   });
 });

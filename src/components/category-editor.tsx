@@ -179,7 +179,9 @@ export function CategoryEditor({
   }
 
   /** Makes this row absorb the difference so the sum becomes exactly 100%. */
-  function adjust(index: number) {
+  function adjust(key: string) {
+    const index = rows.findIndex((r) => r.key === key);
+    if (index < 0) return;
     const current = parsed[index];
     const next = adjustToTotal(current?.ok ? current.value : 0, sumMicro);
     if (!next.ok) {
@@ -366,7 +368,7 @@ export function CategoryEditor({
           sumMicro={sumMicro}
           incomeCents={incomeCents}
           options={rows.map((r, i) => ({
-            index: i,
+            key: r.key,
             label: r.name.trim() || `Categoria ${i + 1}`,
             micro: parsed[i]?.ok ? parsed[i].value : null,
           }))}

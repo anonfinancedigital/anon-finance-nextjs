@@ -4,12 +4,12 @@ import { useId, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { SelectField } from "@/components/ui/select-field";
-import { defaultAdjustIndex, TOTAL_MICRO } from "@/lib/domain/percent";
+import { resolveAdjustKey, TOTAL_MICRO } from "@/lib/domain/percent";
 import { sumWarning } from "@/lib/domain/sum-warning";
 
 export type AdjustOption = {
-  /** Index of the category row. */
-  index: number;
+  /** Stable key of the category row. */
+  key: string;
   label: string;
   /** Valid percentage of the row in micro-percent, or null. */
   micro: number | null;
@@ -26,15 +26,14 @@ export function AdjustSumBar({
   sumMicro: number;
   incomeCents: number | null;
   options: AdjustOption[];
-  onApply: (index: number) => void;
+  onApply: (key: string) => void;
   error: string | null;
 }) {
   const selectId = useId();
-  const [choice, setChoice] = useState<number | null>(null);
+  const [choice, setChoice] = useState<string | null>(null);
 
   // A choice for a row that no longer exists falls back to the largest valid percentage (the first row when none is valid).
-  const fallback = options[defaultAdjustIndex(options.map((o) => o.micro)) ?? 0]?.index ?? null;
-  const selected = options.some((o) => o.index === choice) ? choice : fallback;
+  const selected = resolveAdjustKey(choice, options);
 
   return (
     <div className="space-y-2">
@@ -46,9 +45,9 @@ export function AdjustSumBar({
         <div className="w-56">
           <SelectField
             id={selectId}
-            value={selected === null ? "" : String(selected)}
-            onValueChange={(v) => setChoice(v === "" ? null : Number(v))}
-            options={options.map((o) => ({ value: String(o.index), label: o.label }))}
+            value={selected ?? ""}
+            onValueChange={(v) => setChoice(v === "" ? null : v)}
+            options={options.map((o) => ({ value: o.key, label: o.label }))}
           />
         </div>
         <Button
