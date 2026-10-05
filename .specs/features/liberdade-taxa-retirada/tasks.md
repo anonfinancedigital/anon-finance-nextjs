@@ -10,7 +10,7 @@ Implement these tasks with the `tlc-spec-driven` skill: **activate it by name an
 
 **Design**: `.specs/features/liberdade-taxa-retirada/design.md`
 **Spec**: `.specs/features/liberdade-taxa-retirada/spec.md`
-**Status**: Draft
+**Status**: In Progress
 
 **Estratégia de ordem:** toda a regra financeira vive em `freedom.ts` e é testada no domínio (AD-008). Os textos saem para `freedom-copy.ts`, também puro e testado, para que a UI só consuma. A UI vem por último e não tem teste automático (AD-005 e AD-008). Cada tarefa deixa `typecheck`, `lint`, build e testes verdes e vira um commit.
 
@@ -227,13 +227,15 @@ T8 → T9
 
 **Done when**:
 
-- [ ] Hero mostra rentabilidade real, taxa de retirada, renda desejada e patrimônio necessário a partir de `summary` (RET-12)
-- [ ] "Como calculamos?" abre e fecha por toque e teclado e mostra o texto de `HOW_WE_CALCULATE` (RET-13)
-- [ ] Sem a palavra "perpétuos" no componente; layout, cores e colunas atuais preservados
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] Hero mostra rentabilidade real, taxa de retirada, renda desejada e patrimônio necessário a partir de `summary` (RET-12)
+- [x] "Como calculamos?" abre e fecha por toque e teclado e mostra o texto de `HOW_WE_CALCULATE` (RET-13)
+- [x] Sem a palavra "perpétuos" no componente; layout, cores e colunas atuais preservados
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
 
 **Tests**: none
 **Gate**: build
+
+**Status**: ✅ Done
 
 **Commit**: `feat(liberdade): show withdrawal rate and how the target is calculated in the hero`
 

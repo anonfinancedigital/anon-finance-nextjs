@@ -1,5 +1,6 @@
 import { GoalCheckpoints } from "@/components/goal-checkpoints";
 import type { GoalSummary } from "@/lib/domain/freedom";
+import { HOW_WE_CALCULATE, heroFacts } from "@/lib/domain/freedom-copy";
 import { formatBRL } from "@/lib/domain/money";
 import { formatShare } from "@/lib/domain/percent";
 
@@ -26,8 +27,6 @@ const glow = {
  * progress bar with the checkpoints closes the card.
  */
 export function GoalHero({ summary }: { summary: GoalSummary }) {
-  const rate = String(summary.annualRateBp / 100);
-
   return (
     <section
       aria-label="Resumo do objetivo"
@@ -40,12 +39,27 @@ export function GoalHero({ summary }: { summary: GoalSummary }) {
           <p className="font-display text-3xl font-bold tracking-tight @xl:text-2xl @3xl:text-3xl">
             {formatBRL(summary.targetCents)}
           </p>
-          <p className="inline-flex rounded-full bg-income/15 px-3 py-1 text-sm font-medium text-income">
-            Gera {formatBRL(summary.monthlyIncomeCents)}/mês perpétuos a {rate}% a.a.
-          </p>
+          <dl className="space-y-0.5 text-sm">
+            {heroFacts(summary).map((fact) => (
+              <div key={fact.label} className="flex flex-wrap gap-x-2">
+                <dt className="text-muted-foreground">{fact.label}:</dt>
+                <dd className="font-medium">{fact.value}</dd>
+              </div>
+            ))}
+          </dl>
           <p className="text-sm text-muted-foreground">
             {formatBRL(summary.savedCents)} acumulados ({formatShare(summary.progressBp)} do alvo)
           </p>
+          <details className="text-sm text-muted-foreground">
+            <summary className="w-fit cursor-pointer rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-primary/30">
+              Como calculamos?
+            </summary>
+            <div className="mt-2 space-y-2">
+              {HOW_WE_CALCULATE.map((paragraph) => (
+                <p key={paragraph}>{paragraph}</p>
+              ))}
+            </div>
+          </details>
         </div>
 
         <div className="space-y-2 bg-primary/10 p-5">
