@@ -215,3 +215,8 @@ Isolamento: o worktree `verify-wt` foi removido com `git worktree remove --force
 **Issues found**: nenhum que reprove a feature. Avisos: `e8b8762` renomeou "Cockpit" para "Visão Geral" no HEAD (`app-nav.tsx:9`, `(app)/page.tsx:28,85`).
 
 **Next steps**: decidir, fora desta feature, se o HEAD volta a "Cockpit" ou o spec acompanha "Visão Geral"; opcionalmente trocar o caption `sr-only` do gráfico.
+
+
+## Addendum (2026-10-05): nome da tela inicial
+
+O usuário decidiu manter "Visão Geral" no lugar de "Cockpit". O spec foi alterado para "Visão Geral" (NAV-01, BRAND-05 AC7, Success Criteria). O estado do HEAD (`app-nav.tsx:9`, `(app)/page.tsx:28,85`) passa a ser o esperado, e o aviso de divergência acima fica resolvido. As referências a "Cockpit" neste relatório descrevem o estado verificado em `01e32f3`.

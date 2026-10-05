@@ -7,7 +7,7 @@ O app se apresenta como "Orçamento", com um ícone genérico de carteira e rót
 ## Goals
 
 - [ ] Toda superfície de marca (sidebar, barra superior mobile, login, favicon, título da aba, metadata) mostra "Vértice" e nenhuma exibe "Orçamento" nem o ícone de carteira.
-- [ ] A navegação usa "Cockpit", "Alocação" e "Ápice", e o título da aba de cada tela segue "Vértice • [Tela]".
+- [ ] A navegação usa "Visão Geral", "Alocação" e "Ápice", e o título da aba de cada tela segue "Vértice • [Tela]".
 - [ ] Alocação, Ápice e o modal de lançamento usam exatamente os rótulos definidos abaixo.
 - [ ] O visual segue os tokens OKLCH, as fontes Manrope (corpo) e Sora (`font-display`) e os temas dark e claro já existentes.
 
@@ -19,10 +19,10 @@ O app se apresenta como "Orçamento", com um ícone genérico de carteira e rót
 | Renomear tabelas, colunas, actions, tipos e arquivos de domínio | Mudança só de apresentação. |
 | Mudar cálculos, validações ou mensagens de erro | Fora do pedido; mensagens de validação existentes permanecem. |
 | Reescrever a paleta de cores do app com os hex do logo (#8b5cf6, #10b981, #231e3d) | Os hex ficam só dentro dos SVGs da marca; o app mantém os tokens OKLCH. |
-| Renomear "Gasto" e "Ganho" fora do seletor de tipo do modal (cards do Cockpit, tabela, gráficos, lista de transações) | O pedido restringe a mudança ao seletor do modal. |
+| Renomear "Gasto" e "Ganho" fora do seletor de tipo do modal (cards da Visão Geral, tabela, gráficos, lista de transações) | O pedido restringe a mudança ao seletor do modal. |
 | Renomear o pacote npm, o repositório, o título do README e a pasta do projeto | Não é interface do app. |
 | Gerar favicons PNG, `apple-touch-icon` e manifest | Não pedido; só o favicon vetorial. |
-| Mudar a tela Cockpit além do rótulo de navegação, do título da aba e do título da página | Pedido sem outros ajustes nessa tela. |
+| Mudar a tela Visão Geral além do rótulo de navegação, do título da aba e do título da página | Pedido sem outros ajustes nessa tela. |
 
 ---
 
@@ -30,6 +30,7 @@ O app se apresenta como "Orçamento", com um ícone genérico de carteira e rót
 
 | Assumption / decision | Chosen default | Rationale | Confirmed? |
 | --------------------- | -------------- | --------- | ---------- |
+| Nome da tela inicial | "Visão Geral" em vez de "Cockpit" (decisão do usuário em 2026-10-05, depois da implementação; o pedido original dizia "Cockpit") | O usuário prefere manter "Visão Geral" | y |
 | Stack do pedido ("React", `index.html`) | O projeto é Next.js App Router, sem `index.html`: o favicon é o arquivo `src/app/icon.svg` (convenção de metadata do Next) e os títulos vêm de `metadata` com `title.template` `"Vértice • %s"` | `index.html` não existe; a convenção do Next gera as tags `<head>` | y |
 | Favicon antigo `src/app/favicon.ico` | Removido, para o `icon.svg` ser o único favicon | Dois arquivos de ícone geram conflito de qual o navegador usa | n |
 | Fonte dos SVGs | `docs/vertice_favicon.svg` vira `public/favicon.svg` e `src/app/icon.svg` (cópia idêntica); `docs/vertice_logo.svg` fornece a geometria do componente `Logo` | O usuário anexou os dois arquivos como referência | y |
@@ -47,7 +48,7 @@ O app se apresenta como "Orçamento", com um ícone genérico de carteira e rót
 | Salvar desabilitado | Classes `opacity-50 cursor-not-allowed` (hoje `opacity-40`) | Valor pedido | y |
 | Data de nascimento do Ápice | Já é DD/MM/AAAA com máscara; só se garante o rótulo e o placeholder "DD/MM/AAAA" | Pedido já atendido | n |
 | Título e descrição do Ápice | Título "Ápice"; descrição: "Defina a renda mensal que quer ter, o patrimônio acumulado e a idade do seu ápice patrimonial. A meta é o patrimônio que gera essa renda, sem consumir o principal, na taxa esperada escolhida: a base da sua independência financeira." | Pedido pede linguagem de ápice e independência financeira, sem texto exato | n |
-| Cabeçalho (eyebrow) das páginas | Cockpit: "Visão geral" (igual); Alocação: "Orçamento" vira "Planejamento"; Ápice: "Objetivo" vira "Independência financeira" | "Orçamento" sai da marca; o resto acompanha o tom | n |
+| Cabeçalho (eyebrow) das páginas | Visão Geral: "Visão geral" (igual); Alocação: "Orçamento" vira "Planejamento"; Ápice: "Objetivo" vira "Independência financeira" | "Orçamento" sai da marca; o resto acompanha o tom | n |
 | Rótulos de formulário do Ápice não citados ("Renda mensal desejada (R$)", "Valor já guardado (R$)", "Idade de aposentadoria", "Taxa esperada ao ano") | Permanecem | Fora do pedido | n |
 | Rótulo "Progresso" do hero | Permanece | Fora do pedido | n |
 | Rótulo do botão "Salvar" do modal de lançamento | "Salvar" e "Salvar alterações" permanecem | Fora do pedido | n |
@@ -74,7 +75,7 @@ O app se apresenta como "Orçamento", com um ícone genérico de carteira e rót
 4. WHILE the light theme is active the `Logo` text SHALL stay readable with the `foreground` and `muted-foreground` tokens, and the squircle and the "V" gradient SHALL stay unchanged.  <!-- state-driven -->
 5. The system SHALL serve `public/favicon.svg` and `src/app/icon.svg` with the content of `docs/vertice_favicon.svg`, and the `<head>` of every page SHALL link that icon.  <!-- ubiquitous -->
 6. The system SHALL set the root metadata `title.default` to "Vértice", `title.template` to "Vértice • %s" and `description` to "Vértice – Gestão Patrimonial Familiar".  <!-- ubiquitous -->
-7. WHEN the Cockpit page loads THEN the system SHALL set the document title to "Vértice • Cockpit".  <!-- event-driven -->
+7. WHEN the Visão Geral page loads THEN the system SHALL set the document title to "Vértice • Visão Geral".  <!-- event-driven -->
 8. WHEN the Alocação page loads THEN the system SHALL set the document title to "Vértice • Alocação".  <!-- event-driven -->
 9. WHEN the Ápice page loads THEN the system SHALL set the document title to "Vértice • Ápice".  <!-- event-driven -->
 10. WHEN the login page loads THEN the system SHALL set the document title to "Vértice • Entrar".  <!-- event-driven -->
@@ -85,7 +86,7 @@ O app se apresenta como "Orçamento", com um ícone genérico de carteira e rót
 
 ---
 
-### P1: Navegação Cockpit, Alocação, Ápice ⭐ MVP
+### P1: Navegação Visão Geral, Alocação, Ápice ⭐ MVP
 
 **User Story**: As a usuário, I want os itens do menu com os novos nomes so that a navegação reflita a linguagem patrimonial.
 
@@ -93,8 +94,8 @@ O app se apresenta como "Orçamento", com um ícone genérico de carteira e rót
 
 **Acceptance Criteria**:
 
-1. The system SHALL label the navigation items "Cockpit" (href `/`), "Alocação" (href `/categorias`) and "Ápice" (href `/liberdade`), keeping the current icons.  <!-- ubiquitous -->
-2. WHEN the user opens `/`, `/categorias` or `/liberdade` THEN the system SHALL title the page header "Cockpit", "Alocação" or "Ápice" respectively.  <!-- event-driven -->
+1. The system SHALL label the navigation items "Visão Geral" (href `/`), "Alocação" (href `/categorias`) and "Ápice" (href `/liberdade`), keeping the current icons.  <!-- ubiquitous -->
+2. WHEN the user opens `/`, `/categorias` or `/liberdade` THEN the system SHALL title the page header "Visão Geral", "Alocação" or "Ápice" respectively.  <!-- event-driven -->
 3. WHEN the user opens `/categorias` THEN the system SHALL show the eyebrow "Planejamento", and WHEN the user opens `/liberdade` THEN the system SHALL show the eyebrow "Independência financeira".  <!-- event-driven -->
 4. WHILE the current path starts with an item's href the system SHALL mark that item with `aria-current="page"`, as today.  <!-- state-driven -->
 
@@ -214,6 +215,6 @@ O app se apresenta como "Orçamento", com um ícone genérico de carteira e rót
 ## Success Criteria
 
 - [ ] `grep -ri "orçamento"` em `src/` (fora de nomes de arquivo, comentários e identificadores) não encontra texto visível ao usuário.
-- [ ] As quatro telas (login, Cockpit, Alocação, Ápice) exibem o título de aba "Vértice • [Tela]" e o favicon do "V".
+- [ ] As quatro telas (login, Visão Geral, Alocação, Ápice) exibem o título de aba "Vértice • [Tela]" e o favicon do "V".
 - [ ] Os rótulos citados no pedido aparecem exatamente como escritos, e `npm run lint`, `npm run build` e os testes unit e de integração passam.
 - [ ] Nenhum valor monetário, percentual ou data exibido muda em relação à versão anterior.
