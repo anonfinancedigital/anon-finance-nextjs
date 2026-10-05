@@ -14,7 +14,7 @@ import { transactionsRepo } from "@/lib/db/repos/transactions";
 import { buildMonthlySummary } from "@/lib/domain/budget";
 import { formatBRL } from "@/lib/domain/money";
 import { monthRange, parseMonth } from "@/lib/domain/month";
-import { buildSpendingPace } from "@/lib/domain/spending-pace";
+import { buildSpendingPaceViews } from "@/lib/domain/spending-pace";
 import {
   filterTransactions,
   parseSearch,
@@ -42,10 +42,10 @@ export default async function SummaryPage({ searchParams }: PageProps<"/">) {
     transactionsRepo.monthTotals(userId, range),
   ]);
   const summary = buildMonthlySummary({ categories, ...totals });
-  const pace = buildSpendingPace({
+  const paces = buildSpendingPaceViews({
     month,
     today: todayInSaoPaulo(),
-    totalTargetCents: summary.rows.reduce((total, row) => total + row.targetCents, 0),
+    categories: summary.rows,
     occurrences: transactions,
   });
   // The filter only narrows the list; summary and charts keep the whole month.
@@ -117,7 +117,13 @@ export default async function SummaryPage({ searchParams }: PageProps<"/">) {
 
       <CategoryOverview rows={summary.rows} />
 
-      <BudgetCharts rows={summary.rows} spentCents={summary.spentCents} pace={pace} />
+      {/* Keyed by month so the "Incluir investimentos" choice resets when the month changes. */}
+      <BudgetCharts
+        key={`${month.year}-${month.month}`}
+        rows={summary.rows}
+        spentCents={summary.spentCents}
+        paces={paces}
+      />
 
       <ContentCard
         title="Transações do mês"

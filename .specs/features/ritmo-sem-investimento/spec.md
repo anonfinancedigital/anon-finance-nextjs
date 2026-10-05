@@ -94,13 +94,13 @@ Implicit-requirement dimensions: input validation & bounds (categoria sem flag, 
 
 | Requirement ID | Story | Phase | Status |
 | -------------- | ----- | ----- | ------ |
-| PACE-01 | P1: Ritmo só de consumo por padrão (AC 1, 3) | Design | Pending |
-| PACE-02 | P1: Ritmo só de consumo por padrão (AC 2, 4) | Design | Pending |
-| PACE-03 | P1: Ritmo só de consumo por padrão (AC 5, 6) | Design | Pending |
-| PACE-04 | P1: Controle para incluir investimentos (AC 1, 4) | Design | Pending |
-| PACE-05 | P1: Controle para incluir investimentos (AC 2, 3, 5) | Design | Pending |
+| PACE-01 | P1: Ritmo só de consumo por padrão (AC 1, 3) | - | Verified |
+| PACE-02 | P1: Ritmo só de consumo por padrão (AC 2, 4) | - | Verified |
+| PACE-03 | P1: Ritmo só de consumo por padrão (AC 5, 6) | - | Verified |
+| PACE-04 | P1: Controle para incluir investimentos (AC 1, 4) | - | Verified |
+| PACE-05 | P1: Controle para incluir investimentos (AC 2, 3, 5) | - | Verified |
 
-**Coverage:** 5 total, 0 mapped to tasks, 5 unmapped ⚠️
+**Coverage:** 5 total, 5 implemented (no tasks.md; medium scope)
 
 ---
 

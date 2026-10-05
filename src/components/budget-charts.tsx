@@ -150,12 +150,20 @@ function SpendingShare({ rows, spentCents }: { rows: Row[]; spentCents: number }
 }
 
 /** Charts of the monthly summary; the summary table and its bars view live in the category card. */
-export function BudgetCharts({ rows, spentCents, pace }: { rows: Row[]; spentCents: number; pace: SpendingPace }) {
+export function BudgetCharts({
+  rows,
+  spentCents,
+  paces,
+}: {
+  rows: Row[];
+  spentCents: number;
+  paces: { consumption: SpendingPace; total: SpendingPace };
+}) {
   if (rows.length === 0) return null;
 
   return (
     <div data-testid="budget-charts" className="grid gap-6 lg:grid-cols-2">
-      <SpendingPaceChart pace={pace} />
+      <SpendingPaceChart paces={paces} />
       <ContentCard title="Participação no gasto do mês">
         {spentCents > 0 ? (
           <SpendingShare rows={rows} spentCents={spentCents} />

@@ -1,7 +1,9 @@
 "use client";
 
+import { useState } from "react";
 import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { ContentCard } from "@/components/content-card";
+import { Switch } from "@/components/ui/switch";
 import { formatBRL } from "@/lib/domain/money";
 import type { SpendingPace } from "@/lib/domain/spending-pace";
 
@@ -21,8 +23,13 @@ const tooltipStyle = {
   fontSize: 12,
 };
 
-/** Accumulated spending per day of the month against the pace that spends the total target evenly. */
-export function SpendingPaceChart({ pace }: { pace: SpendingPace }) {
+/**
+ * Accumulated spending per day of the month against the pace that spends the total target evenly.
+ * Investments are left out until the viewer turns them on; the choice lasts only while the page stays on the month.
+ */
+export function SpendingPaceChart({ paces }: { paces: { consumption: SpendingPace; total: SpendingPace } }) {
+  const [includeInvestments, setIncludeInvestments] = useState(false);
+  const pace = includeInvestments ? paces.total : paces.consumption;
   const data = pace.points.map((p) => ({
     day: p.day,
     gasto: p.spentCents === null ? null : p.spentCents / 100,
@@ -32,6 +39,17 @@ export function SpendingPaceChart({ pace }: { pace: SpendingPace }) {
   return (
     <ContentCard
       title="Ritmo de gastos"
+      action={
+        <label className="flex items-center gap-2 text-xs text-muted-foreground">
+          <Switch
+            checked={includeInvestments}
+            onCheckedChange={setIncludeInvestments}
+            aria-label="Incluir investimentos"
+            className="h-5 w-9"
+          />
+          Incluir investimentos
+        </label>
+      }
       note={pace.aboveIdeal ? <span className="font-semibold text-destructive">Acima do ritmo ideal</span> : undefined}
     >
       {pace.hasSpending ? (
