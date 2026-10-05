@@ -1,7 +1,7 @@
 "use client";
 
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-import type { GoalSummary } from "@/lib/domain/freedom";
+import { compositionShares, type GoalSummary } from "@/lib/domain/freedom";
 import { formatBRL, formatCompactBRL } from "@/lib/domain/money";
 
 const tick = { fill: "var(--muted-foreground)", fontSize: 12 };
@@ -38,16 +38,19 @@ type Row = { age: number; ageYears: number; invested: number; interest: number; 
 function ChartTooltip({ active, payload }: { active?: boolean; payload?: { payload: Row }[] }) {
   const row = active ? payload?.[0]?.payload : undefined;
   if (!row) return null;
+  const shares = compositionShares(row.invested, row.total);
   return (
     <div style={tooltipStyle} className="space-y-1">
       <p className="font-medium">Aos {row.ageYears} anos</p>
       <p className="flex items-center gap-1.5">
         <Swatch color={INVESTED} /> Total investido: {formatBRL(row.invested)}
+        {shares && ` (${shares.investedPct}%)`}
       </p>
       <p className="flex items-center gap-1.5">
-        <Swatch color={INTEREST} /> Rendimentos: {formatBRL(row.interest)}
+        <Swatch color={INTEREST} /> Rendimentos gerados: {formatBRL(row.interest)}
+        {shares && ` (${shares.interestPct}%)`}
       </p>
-      <p className="font-medium">Total: {formatBRL(row.total)}</p>
+      <p className="font-medium">Patrimônio total: {formatBRL(row.total)}</p>
     </div>
   );
 }

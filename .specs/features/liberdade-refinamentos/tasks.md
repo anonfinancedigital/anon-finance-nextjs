@@ -158,15 +158,16 @@ T6 → T7 → T8
 
 **Done when**:
 
-- [ ] Tooltip mostra "Aos N anos", "Total investido: R$ X (52%)", "Rendimentos gerados: R$ Y (48%)" e "Patrimônio total: R$ Z" (RFN-06 AC3)
-- [ ] Sem percentuais quando o total é R$ 0,00 (RFN-06 AC5)
-- [ ] Selo, legenda ("Rendimentos"), linha-guia, ponto ativo e tabela para leitores de tela inalterados (RFN-04 AC7)
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] Tooltip mostra "Aos N anos", "Total investido: R$ X (52%)", "Rendimentos gerados: R$ Y (48%)" e "Patrimônio total: R$ Z" (RFN-06 AC3)
+- [x] Sem percentuais quando o total é R$ 0,00 (RFN-06 AC5)
+- [x] Selo, legenda ("Rendimentos"), linha-guia, ponto ativo e tabela para leitores de tela inalterados (RFN-04 AC7)
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
 
 **Tests**: none
 **Gate**: build
 
 **Commit**: `feat(liberdade): show the share of each part in the chart tooltip`
+**Status**: ✅ Done
 
 ---
 
