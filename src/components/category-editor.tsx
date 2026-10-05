@@ -258,7 +258,7 @@ export function CategoryEditor({
           <span className={COL_PERCENT}>% DO TOTAL</span>
           <span className={COL_AMOUNT}>VALOR ESTIMADO</span>
           <span className={COL_COUNT}>SUBCATEGORIAS</span>
-          <span className={`${COL_ACTION} shrink-0 whitespace-nowrap`}>AÇÕES</span>
+          <span className={`${COL_ACTION} shrink-0 whitespace-nowrap text-center text-[10px] tracking-normal`}>AÇÕES</span>
         </div>
         {rows.map((row, i) => {
           const nameError = fieldErrors[`${i}.name`];

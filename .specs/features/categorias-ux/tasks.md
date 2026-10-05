@@ -458,3 +458,4 @@ Phase 1 → Phase 2 → Phase 3 → Phase 4
 
 - [x] F1 (Major, CATUX-03): escolha do AdjustSumBar guardada por `row.key` estável; resolução em `resolveAdjustKey` (domínio, testada). Hash: pendente
 - [x] F2 (Minor, CATUX-04 AC2): `hover:text-destructive` na lixeira (vence `hover:text-foreground` do ghost via tailwind-merge). Hash: pendente
+- [x] F3 (Minor, CATUX-06): título "AÇÕES" com `text-[10px] tracking-normal text-center` na coluna `w-8` (larguras das linhas intactas). Hash: pendente
