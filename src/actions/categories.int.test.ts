@@ -38,18 +38,18 @@ afterEach(() => {
   vi.restoreAllMocks();
 });
 
-const names = async () => (await categoriesRepo.list(userId)).map((c) => [c.name, c.percentBp]);
+const names = async () => (await categoriesRepo.list(userId)).map((c) => [c.name, c.percentMicro]);
 
 describe("saveCategories", () => {
   it("persists a set summing 100% and revalidates /", async () => {
     expect(await saveCategories(FIVE)).toEqual({ ok: true });
 
     expect(await names()).toEqual([
-      ["Custos fixos", 3000],
-      ["Conforto", 3000],
-      ["Metas", 1000],
-      ["Prazeres", 1000],
-      ["Liberdade financeira", 2000],
+      ["Custos fixos", 30000000],
+      ["Conforto", 30000000],
+      ["Metas", 10000000],
+      ["Prazeres", 10000000],
+      ["Liberdade financeira", 20000000],
     ]);
     expect(revalidatePath).toHaveBeenCalledWith("/");
   });
@@ -66,9 +66,9 @@ describe("saveCategories", () => {
   });
 
   it.each([
-    ["0", "O percentual deve estar entre 0,01 e 100"],
-    ["100,01", "O percentual deve estar entre 0,01 e 100"],
-    ["12,345", "Percentual inválido. Use um número com até 2 casas decimais"],
+    ["0", "O percentual deve estar entre 0,000001 e 100"],
+    ["100,000001", "O percentual deve estar entre 0,000001 e 100"],
+    ["12,3456789", "Percentual inválido. Use um número com até 6 casas decimais"],
   ])("rejects percent %s with a field error and persists nothing", async (percent, message) => {
     const result = await saveCategories([{ name: "Tudo", percent, color: 1 }]);
 
@@ -114,7 +114,7 @@ describe("saveCategories", () => {
       .map((c) => ({
         id: c.id,
         name: c.name,
-        percent: c.name === "Metas" ? "40" : String(c.percentBp / 100),
+        percent: c.name === "Metas" ? "40" : String(c.percentMicro / 1_000_000),
         color: c.color,
       }));
 
@@ -146,7 +146,7 @@ describe("saveCategories", () => {
     const edited = saved.map((c, i) => ({
       id: c.id,
       name: c.name,
-      percent: String(c.percentBp / 100),
+      percent: String(c.percentMicro / 1_000_000),
       color: i === 1 ? 9 : 6,
     }));
 
@@ -228,7 +228,7 @@ describe("saveCategories subcategories", () => {
     const input = saved.map((c) => ({
       id: c.id,
       name: c.name === "Metas" ? "Objetivos" : c.name,
-      percent: String(c.percentBp / 100),
+      percent: String(c.percentMicro / 1_000_000),
       color: c.color,
       subcategories: c.id === conforto.id ? [{ id: streaming.id, name: streaming.name }] : [],
     }));

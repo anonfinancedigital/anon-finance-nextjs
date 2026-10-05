@@ -24,10 +24,10 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import type { ActionResult } from "@/lib/action-result";
-import { allocateCents, type Category, TOTAL_BP } from "@/lib/domain/budget";
+import { allocateCents, type Category } from "@/lib/domain/budget";
 import { CATEGORY_COLORS, colorVar, nextFreeColor } from "@/lib/domain/color";
 import { formatBRL, parseBRL } from "@/lib/domain/money";
-import { bpFromCents, formatPercent, parsePercent } from "@/lib/domain/percent";
+import { formatPercent, microFromCents, parsePercent, TOTAL_MICRO } from "@/lib/domain/percent";
 
 type Row = {
   key: string;
@@ -40,14 +40,14 @@ type Row = {
   subcategories: SubcategoryRow[];
 };
 
-const percentText = (bp: number) => formatPercent(bp).replace("%", "");
+const percentText = (micro: number) => formatPercent(micro).replace("%", "");
 const amountField = (cents: number) => formatBRL(cents).replace(/^R\$\s*/, "");
 
 const toRow = (c: Category): Row => ({
   key: c.id,
   id: c.id,
   name: c.name,
-  percent: percentText(c.percentBp),
+  percent: percentText(c.percentMicro),
   color: c.color,
   subcategories: c.subcategories.map((s) => ({ key: s.id, id: s.id, name: s.name })),
 });
@@ -136,8 +136,8 @@ export function CategoryEditor({ categories }: { categories: Category[] }) {
   }
 
   const parsed = rows.map((r) => (r.percent.trim() === "" ? null : parsePercent(r.percent)));
-  const sumBp = parsed.reduce((sum, p) => sum + (p?.ok ? p.value : 0), 0);
-  const sumOk = sumBp === TOTAL_BP;
+  const sumMicro = parsed.reduce((sum, p) => sum + (p?.ok ? p.value : 0), 0);
+  const sumOk = sumMicro === TOTAL_MICRO;
   const parsedIncome = income.trim() === "" ? null : parseBRL(income);
   const incomeCents = parsedIncome?.ok ? parsedIncome.value : null;
   const amounts = parsed.map((p) =>
@@ -155,8 +155,8 @@ export function CategoryEditor({ categories }: { categories: Category[] }) {
     const patch: Partial<Row> = { amountText: text };
     const cents = parseBRL(text);
     if (incomeCents !== null && cents.ok) {
-      const bp = bpFromCents(cents.value, incomeCents);
-      if (bp.ok) patch.percent = percentText(bp.value);
+      const micro = microFromCents(cents.value, incomeCents);
+      if (micro.ok) patch.percent = percentText(micro.value);
     }
     update(index, patch);
   }
@@ -237,8 +237,8 @@ export function CategoryEditor({ categories }: { categories: Category[] }) {
             const colorError = fieldErrors[`${i}.color`];
             const live = parsed[i];
             const typed = row.amountText !== undefined && incomeCents !== null ? parseBRL(row.amountText) : null;
-            const typedBp = typed?.ok && incomeCents !== null ? bpFromCents(typed.value, incomeCents) : typed;
-            const amountError = typedBp && !typedBp.ok ? typedBp.error : undefined;
+            const typedMicro = typed?.ok && incomeCents !== null ? microFromCents(typed.value, incomeCents) : typed;
+            const amountError = typedMicro && !typedMicro.ok ? typedMicro.error : undefined;
             const percentError = fieldErrors[`${i}.percent`] ?? (live && !live.ok ? live.error : undefined);
             return (
               <Fragment key={row.key}>
@@ -323,7 +323,7 @@ export function CategoryEditor({ categories }: { categories: Category[] }) {
           <TableRow>
             <TableCell>Soma</TableCell>
             <TableCell />
-            <TableCell data-testid="category-sum">{formatPercent(sumBp)}</TableCell>
+            <TableCell data-testid="category-sum">{formatPercent(sumMicro)}</TableCell>
             <TableCell data-testid="category-amount-sum">
               {incomeCents === null ? "—" : formatBRL(amountSum)}
             </TableCell>
@@ -334,7 +334,7 @@ export function CategoryEditor({ categories }: { categories: Category[] }) {
 
       {!sumOk && (
         <p className="text-sm text-destructive">
-          {`A soma dos percentuais deve ser 100% (atual: ${formatPercent(sumBp)})`}
+          {`A soma dos percentuais deve ser 100% (atual: ${formatPercent(sumMicro)})`}
         </p>
       )}
       {result && !result.ok && (

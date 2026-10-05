@@ -31,8 +31,8 @@ async function createUser() {
   return id;
 }
 
-async function createCategory(userId: string, name = "Conforto", percentBp = 3000, color = 1) {
-  const [row] = await db.insert(category).values({ userId, name, percentBp, color }).returning();
+async function createCategory(userId: string, name = "Conforto", percentMicro = 30000000, color = 1) {
+  const [row] = await db.insert(category).values({ userId, name, percentMicro, color }).returning();
   return row;
 }
 
@@ -46,22 +46,22 @@ const expense = (userId: string, categoryId: string | null) => ({
 });
 
 describe("category constraints", () => {
-  it("accepts percent_bp at the bounds 1 and 10000", async () => {
+  it("accepts percent_micro at the bounds 1 and 100000000", async () => {
     const userId = await createUser();
     await createCategory(userId, "Mínimo", 1);
-    await createCategory(userId, "Máximo", 10000);
+    await createCategory(userId, "Máximo", 100000000);
     const rows = await db.select().from(category).where(eq(category.userId, userId));
-    expect(rows.map((r) => r.percentBp).sort((a, b) => a - b)).toEqual([1, 10000]);
+    expect(rows.map((r) => r.percentMicro).sort((a, b) => a - b)).toEqual([1, 100000000]);
   });
 
-  it("rejects percent_bp 0", async () => {
+  it("rejects percent_micro 0", async () => {
     const userId = await createUser();
     expect(await pgErrorCode(createCategory(userId, "Zero", 0))).toBe(CHECK_VIOLATION);
   });
 
-  it("rejects percent_bp 10001", async () => {
+  it("rejects percent_micro 100000001", async () => {
     const userId = await createUser();
-    expect(await pgErrorCode(createCategory(userId, "Demais", 10001))).toBe(CHECK_VIOLATION);
+    expect(await pgErrorCode(createCategory(userId, "Demais", 100000001))).toBe(CHECK_VIOLATION);
   });
 
   it("rejects a duplicate name with different case for the same user", async () => {
@@ -94,7 +94,7 @@ describe("category color", () => {
   it("rejects a null color", async () => {
     const userId = await createUser();
     const query = pool.query(
-      `INSERT INTO "category" ("user_id", "name", "percent_bp", "color") VALUES ($1, 'Sem cor', 3000, NULL)`,
+      `INSERT INTO "category" ("user_id", "name", "percent_micro", "color") VALUES ($1, 'Sem cor', 30000000, NULL)`,
       [userId],
     );
     expect(await pgErrorCode(query)).toBe(NOT_NULL_VIOLATION);
@@ -117,7 +117,7 @@ describe("migration 0002 color backfill", () => {
       await db.insert(category).values({
         userId,
         name: `Categoria ${i + 1}`,
-        percentBp: 100,
+        percentMicro: 1000000,
         color: 5,
         createdAt: new Date(base + i * 1000),
       });
@@ -125,7 +125,7 @@ describe("migration 0002 color backfill", () => {
         await db.insert(category).values({
           userId: otherId,
           name: `Outra ${i + 1}`,
-          percentBp: 5000,
+          percentMicro: 50000000,
           color: 5,
           createdAt: new Date(base + i * 1000),
         });

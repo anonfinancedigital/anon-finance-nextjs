@@ -1,17 +1,19 @@
 import { describe, expect, it } from "vitest";
-import { bpFromCents, formatPercent, formatShare, parsePercent } from "./percent";
+import { formatPercent, formatShare, microFromCents, parsePercent } from "./percent";
 
 describe("parsePercent", () => {
   it.each([
-    ["30", 3000],
-    ["12,5", 1250],
-    ["0,01", 1],
-    ["100", 10000],
-  ])("parses %s into %i basis points", (input, bp) => {
-    expect(parsePercent(input)).toEqual({ ok: true, value: bp });
+    ["30", 30_000_000],
+    ["12,5", 12_500_000],
+    ["0,01", 10_000],
+    ["6,666667", 6_666_667],
+    ["0,000001", 1],
+    ["100", 100_000_000],
+  ])("parses %s into %i micro-percent", (input, micro) => {
+    expect(parsePercent(input)).toEqual({ ok: true, value: micro });
   });
 
-  it.each([["0"], ["0,001"], ["100,01"], ["-1"], ["abc"], [""]])(
+  it.each([["0"], ["0,0000001"], ["100,000001"], ["-1"], ["abc"], [""]])(
     "rejects %j with a validation message",
     (input) => {
       const result = parsePercent(input);
@@ -23,10 +25,12 @@ describe("parsePercent", () => {
 
 describe("formatPercent", () => {
   it.each([
-    [1250, "12,5%"],
-    [3000, "30%"],
-  ])("formats %i bp as %s", (bp, text) => {
-    expect(formatPercent(bp)).toBe(text);
+    [12_500_000, "12,5%"],
+    [30_000_000, "30%"],
+    [6_666_667, "6,666667%"],
+    [1, "0,000001%"],
+  ])("formats %i micro-percent as %s", (micro, text) => {
+    expect(formatPercent(micro)).toBe(text);
   });
 });
 
@@ -42,22 +46,27 @@ describe("formatShare", () => {
   });
 });
 
-describe("bpFromCents", () => {
+describe("microFromCents", () => {
   it.each([
-    [50000, 500000, 1000],
-    [33333, 500000, 667],
-    [500, 500000, 10],
-    [500000, 500000, 10000],
-  ])("converts %i cents of %i into %i bp", (cents, income, bp) => {
-    expect(bpFromCents(cents, income)).toEqual({ ok: true, value: bp });
+    [50000, 500000, 10_000_000],
+    [33333, 500000, 6_666_600],
+    [500, 500000, 100_000],
+    [500000, 500000, 100_000_000],
+  ])("converts %i cents of %i into %i micro-percent", (cents, income, micro) => {
+    expect(microFromCents(cents, income)).toEqual({ ok: true, value: micro });
+  });
+
+  it("round-trips a typed amount exactly: R$ 333,33 of R$ 5.000,00 → 6,6666% → 33333 cents", () => {
+    const result = microFromCents(33333, 500000);
+    expect(result).toEqual({ ok: true, value: 6_666_600 });
   });
 
   it.each([
     [0, 500000],
     [500001 * 2, 500000],
-    [1, 100000000],
+    [1, 100_000_000_000],
   ])("rejects %i cents of %i as out of range", (cents, income) => {
-    const result = bpFromCents(cents, income);
-    expect(result).toEqual({ ok: false, error: "O percentual deve estar entre 0,01 e 100" });
+    const result = microFromCents(cents, income);
+    expect(result).toEqual({ ok: false, error: "O percentual deve estar entre 0,000001 e 100" });
   });
 });

@@ -28,7 +28,7 @@ export const category = pgTable(
       .notNull()
       .references(() => user.id, { onDelete: "cascade" }),
     name: varchar("name", { length: 40 }).notNull(),
-    percentBp: integer("percent_bp").notNull(),
+    percentMicro: integer("percent_micro").notNull(),
     /** Index 1..8 of the category color palette (`--viz-1` … `--viz-8`). */
     color: integer("color").notNull(),
     // clock_timestamp() (not now()) so rows inserted in the same DB transaction keep their creation order.
@@ -37,7 +37,7 @@ export const category = pgTable(
       .default(sql`clock_timestamp()`),
   },
   (t) => [
-    check("category_percent_bp_range", sql`${t.percentBp} BETWEEN 1 AND 10000`),
+    check("category_percent_micro_range", sql`${t.percentMicro} BETWEEN 1 AND 100000000`),
     check("category_color_range", sql`${t.color} BETWEEN 1 AND 8`),
     uniqueIndex("category_user_lower_name_unique").on(t.userId, sql`lower(${t.name})`),
   ],

@@ -83,7 +83,7 @@ export function SummaryTable({ rows }: { rows: CategorySummary[] }) {
                 )}
               </span>
             </TableCell>
-            <TableCell className="text-right tabular-nums">{formatPercent(row.percentBp)}</TableCell>
+            <TableCell className="text-right tabular-nums">{formatPercent(row.percentMicro)}</TableCell>
             <TableCell className="text-right tabular-nums">{formatBRL(row.targetCents)}</TableCell>
             <TableCell className="text-right tabular-nums">{formatBRL(row.spentCents)}</TableCell>
             <TableCell

@@ -15,19 +15,19 @@ function issues(input: unknown) {
 }
 
 describe("categorySetSchema", () => {
-  it("converts a valid set into { name, percentBp }[], keeping an existing id", () => {
+  it("converts a valid set into { name, percentMicro }[], keeping an existing id", () => {
     const input = set("30", "30", "10", "10", "20");
     input[0] = { ...input[0], id: ID } as (typeof input)[0];
     expect(categorySetSchema.parse(input)).toEqual([
-      { id: ID, name: "Cat 1", percentBp: 3000, color: 1, subcategories: [] },
-      { name: "Cat 2", percentBp: 3000, color: 2, subcategories: [] },
-      { name: "Cat 3", percentBp: 1000, color: 3, subcategories: [] },
-      { name: "Cat 4", percentBp: 1000, color: 4, subcategories: [] },
-      { name: "Cat 5", percentBp: 2000, color: 5, subcategories: [] },
+      { id: ID, name: "Cat 1", percentMicro: 30000000, color: 1, subcategories: [] },
+      { name: "Cat 2", percentMicro: 30000000, color: 2, subcategories: [] },
+      { name: "Cat 3", percentMicro: 10000000, color: 3, subcategories: [] },
+      { name: "Cat 4", percentMicro: 10000000, color: 4, subcategories: [] },
+      { name: "Cat 5", percentMicro: 20000000, color: 5, subcategories: [] },
     ]);
   });
 
-  it.each([["0"], ["100,01"], ["12,345"]])("rejects percent %j with an error on the item", (bad) => {
+  it.each([["0"], ["100,000001"], ["12,3456789"]])("rejects percent %j with an error on the item", (bad) => {
     const result = issues([{ name: "Lazer", percent: bad, color: 1 }, ...set("50")]);
     expect(result.map((i) => i.path)).toEqual(["0.percent"]);
   });

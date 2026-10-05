@@ -18,8 +18,8 @@ let lazer: string;
 beforeEach(async () => {
   userId = await insertTestUser();
   await categoriesRepo.replaceSet(userId, [
-    { name: "Conforto", percentBp: 6000, color: 1 },
-    { name: "Lazer", percentBp: 4000, color: 2 },
+    { name: "Conforto", percentMicro: 60000000, color: 1 },
+    { name: "Lazer", percentMicro: 40000000, color: 2 },
   ]);
   [conforto, lazer] = (await categoriesRepo.list(userId)).map((c) => c.id);
 });
@@ -575,7 +575,7 @@ describe("transactionsRepo.deleteFrom", () => {
     const before = await categoriesRepo.list(userId);
     const next = before
       .filter((c) => c.id !== conforto)
-      .map((c) => ({ ...c, percentBp: 10000 }));
+      .map((c) => ({ ...c, percentMicro: 100000000 }));
 
     expect(await categoriesRepo.replaceSet(userId, next)).toEqual({
       ok: false,
@@ -647,7 +647,7 @@ describe("transactionsRepo.monthTotals", () => {
 
   it("ignores transactions of other users", async () => {
     const otherId = await insertTestUser();
-    await categoriesRepo.replaceSet(otherId, [{ name: "Tudo", percentBp: 10000, color: 1 }]);
+    await categoriesRepo.replaceSet(otherId, [{ name: "Tudo", percentMicro: 100000000, color: 1 }]);
     const [tudo] = await categoriesRepo.list(otherId);
     await transactionsRepo.create(otherId, income("2026-10-01", 700000));
     await transactionsRepo.create(otherId, spend(tudo.id, "2026-10-02", 3000));
@@ -717,7 +717,7 @@ describe("transactionsRepo.monthTotals recurrence", () => {
 
   it("leaves recurring transactions of other users out", async () => {
     const otherId = await insertTestUser();
-    await categoriesRepo.replaceSet(otherId, [{ name: "Tudo", percentBp: 10000, color: 1 }]);
+    await categoriesRepo.replaceSet(otherId, [{ name: "Tudo", percentMicro: 100000000, color: 1 }]);
     const [tudo] = await categoriesRepo.list(otherId);
     await transactionsRepo.create(otherId, {
       ...recurringExpense("2026-10-15", 9000),
@@ -811,7 +811,7 @@ describe("transactionsRepo subcategory", () => {
 
   it("leaves other months and other users out of the subcategory totals", async () => {
     const otherId = await insertTestUser();
-    await categoriesRepo.replaceSet(otherId, [{ name: "Tudo", percentBp: 10000, color: 1 }]);
+    await categoriesRepo.replaceSet(otherId, [{ name: "Tudo", percentMicro: 100000000, color: 1 }]);
     const [tudo] = await categoriesRepo.list(otherId);
     await transactionsRepo.create(otherId, { ...expense("2026-10-02", 7000), categoryId: tudo.id });
     await transactionsRepo.create(userId, spend(restaurante, "2026-11-01", 99900));

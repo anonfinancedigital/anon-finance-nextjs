@@ -9,15 +9,15 @@ import { categoriesRepo } from "./categories";
 setupTestDb();
 
 const BUDGET = [
-  { name: "Moradia", percentBp: 3000, color: 1 },
-  { name: "Conforto", percentBp: 3000, color: 2 },
-  { name: "Metas", percentBp: 1000, color: 3 },
-  { name: "Prazeres", percentBp: 1000, color: 4 },
-  { name: "Liberdade", percentBp: 2000, color: 5 },
+  { name: "Moradia", percentMicro: 30000000, color: 1 },
+  { name: "Conforto", percentMicro: 30000000, color: 2 },
+  { name: "Metas", percentMicro: 10000000, color: 3 },
+  { name: "Prazeres", percentMicro: 10000000, color: 4 },
+  { name: "Liberdade", percentMicro: 20000000, color: 5 },
 ];
 
-const strip = (cats: { name: string; percentBp: number; color: number }[]) =>
-  cats.map(({ name, percentBp, color }) => ({ name, percentBp, color }));
+const strip = (cats: { name: string; percentMicro: number; color: number }[]) =>
+  cats.map(({ name, percentMicro, color }) => ({ name, percentMicro, color }));
 
 async function addExpenses(userId: string, categoryId: string, count: number) {
   for (let i = 0; i < count; i++) {
@@ -43,9 +43,9 @@ describe("categoriesRepo.replaceSet + list", () => {
     const userId = await insertTestUser();
     const otherId = await insertTestUser();
     await categoriesRepo.replaceSet(userId, BUDGET);
-    await categoriesRepo.replaceSet(otherId, [{ name: "Tudo", percentBp: 10000, color: 7 }]);
+    await categoriesRepo.replaceSet(otherId, [{ name: "Tudo", percentMicro: 100000000, color: 7 }]);
     expect(strip(await categoriesRepo.list(otherId))).toEqual([
-      { name: "Tudo", percentBp: 10000, color: 7 },
+      { name: "Tudo", percentMicro: 100000000, color: 7 },
     ]);
     expect(strip(await categoriesRepo.list(userId))).toEqual(BUDGET);
   });
@@ -55,7 +55,7 @@ describe("categoriesRepo.replaceSet + list", () => {
     await categoriesRepo.replaceSet(userId, BUDGET);
     const saved = await categoriesRepo.list(userId);
     const edited = saved.map((c, i) =>
-      i === 0 ? { ...c, name: "Casa", percentBp: 2500 } : i === 4 ? { ...c, percentBp: 2500 } : c,
+      i === 0 ? { ...c, name: "Casa", percentMicro: 25000000 } : i === 4 ? { ...c, percentMicro: 25000000 } : c,
     );
 
     expect(await categoriesRepo.replaceSet(userId, edited)).toEqual({ ok: true });
@@ -66,7 +66,7 @@ describe("categoriesRepo.replaceSet + list", () => {
     const userId = await insertTestUser();
     const result = await categoriesRepo.replaceSet(userId, [
       ...BUDGET,
-      { name: "Extra", percentBp: 500, color: 6 },
+      { name: "Extra", percentMicro: 5000000, color: 6 },
     ]);
     expect(result).toMatchObject({
       ok: false,
@@ -85,7 +85,7 @@ describe("categoriesRepo.replaceSet + list", () => {
     // Remove "Metas" and give its 10% to "Liberdade": a valid set, blocked only by the expenses.
     const next = before
       .filter((c) => c.id !== metas.id)
-      .map((c) => (c.name === "Liberdade" ? { ...c, percentBp: 3000 } : c));
+      .map((c) => (c.name === "Liberdade" ? { ...c, percentMicro: 30000000 } : c));
     const result = await categoriesRepo.replaceSet(userId, next);
 
     expect(result).toEqual({
@@ -101,7 +101,7 @@ describe("categoriesRepo.replaceSet + list", () => {
     const before = await categoriesRepo.list(userId);
     const next = before
       .filter((c) => c.name !== "Metas")
-      .map((c) => (c.name === "Liberdade" ? { ...c, percentBp: 3000 } : c));
+      .map((c) => (c.name === "Liberdade" ? { ...c, percentMicro: 30000000 } : c));
 
     expect(await categoriesRepo.replaceSet(userId, next)).toEqual({ ok: true });
     expect(await categoriesRepo.list(userId)).toEqual(next);
@@ -132,7 +132,7 @@ describe("categoriesRepo color", () => {
     const userId = await insertTestUser();
     const otherId = await insertTestUser();
     await categoriesRepo.replaceSet(userId, BUDGET);
-    await categoriesRepo.replaceSet(otherId, [{ name: "Moradia", percentBp: 10000, color: 8 }]);
+    await categoriesRepo.replaceSet(otherId, [{ name: "Moradia", percentMicro: 100000000, color: 8 }]);
     expect((await categoriesRepo.list(userId)).map((c) => c.color)).toEqual([1, 2, 3, 4, 5]);
     expect((await categoriesRepo.list(otherId)).map((c) => c.color)).toEqual([8]);
   });
@@ -184,7 +184,7 @@ describe("categoriesRepo.list subcategories", () => {
     const userId = await insertTestUser();
     const otherId = await insertTestUser();
     await categoriesRepo.replaceSet(userId, BUDGET);
-    await categoriesRepo.replaceSet(otherId, [{ name: "Tudo", percentBp: 10000, color: 7 }]);
+    await categoriesRepo.replaceSet(otherId, [{ name: "Tudo", percentMicro: 100000000, color: 7 }]);
     const [other] = await categoriesRepo.list(otherId);
     await seedSubcategories(otherId, other.id, ["Segredo"]);
 
@@ -225,7 +225,7 @@ describe("categoriesRepo.replaceSet subcategories", () => {
   it("creates a new category with subcategories in the same save", async () => {
     const userId = await insertTestUser();
     const result = await categoriesRepo.replaceSet(userId, [
-      { name: "Conforto", percentBp: 10000, color: 1, subcategories: [{ name: "Restaurante" }, { name: "Streaming" }] },
+      { name: "Conforto", percentMicro: 100000000, color: 1, subcategories: [{ name: "Restaurante" }, { name: "Streaming" }] },
     ]);
     expect(result).toEqual({ ok: true });
     const [conforto] = await categoriesRepo.list(userId);
@@ -283,7 +283,7 @@ describe("categoriesRepo.replaceSet subcategories", () => {
     const saved = await seed(userId, "Restaurante", "Streaming");
     const next = saved
       .filter((c) => c.name !== "Conforto")
-      .map((c) => (c.name === "Liberdade" ? { ...c, percentBp: 5000 } : c));
+      .map((c) => (c.name === "Liberdade" ? { ...c, percentMicro: 50000000 } : c));
 
     expect(await categoriesRepo.replaceSet(userId, next)).toEqual({ ok: true });
     expect(await db.$count(subcategory)).toBe(0);
@@ -295,7 +295,7 @@ describe("categoriesRepo.replaceSet subcategories", () => {
     await addSubExpenses(userId, saved[1].id, saved[1].subcategories[0].id, 2);
     const next = saved
       .filter((c) => c.name !== "Conforto")
-      .map((c) => (c.name === "Liberdade" ? { ...c, percentBp: 5000 } : c));
+      .map((c) => (c.name === "Liberdade" ? { ...c, percentMicro: 50000000 } : c));
 
     expect(await categoriesRepo.replaceSet(userId, next)).toEqual({
       ok: false,

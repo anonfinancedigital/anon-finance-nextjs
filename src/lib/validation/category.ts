@@ -37,15 +37,15 @@ const item = z
     color,
     subcategories: z.array(subcategory).default([]),
   })
-  .transform(({ percent, ...rest }) => ({ ...rest, percentBp: percent }));
+  .transform(({ percent, ...rest }) => ({ ...rest, percentMicro: percent }));
 
 /** Whole category set: items parsed first, then the set rules (sum = 100%, unique names, subcategory names). */
 export const categorySetSchema = z.array(item).superRefine((items, ctx) => {
-  // An item that failed its own parsing was not transformed (no percentBp): its issues are
+  // An item that failed its own parsing was not transformed (no percentMicro): its issues are
   // already reported, so the set rules would only add noise (e.g. "soma NaN%").
-  if (items.some((i) => typeof i.percentBp !== "number")) return;
+  if (items.some((i) => typeof i.percentMicro !== "number")) return;
   const result = validateCategorySet(
-    items.map((i) => ({ name: i.name, bp: i.percentBp, subcategories: i.subcategories })),
+    items.map((i) => ({ name: i.name, micro: i.percentMicro, subcategories: i.subcategories })),
   );
   if (result.ok) return;
 

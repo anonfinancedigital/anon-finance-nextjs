@@ -127,12 +127,12 @@ test("editing an amount adjusts the percent, and editing the percent adjusts the
   await expect(amountSum(page)).toHaveText("R$ 5.125,00");
 
   await amount(page, 4).fill("333,33");
-  await expect(percent(page, 4)).toHaveValue("6,67");
+  await expect(percent(page, 4)).toHaveValue("6,6666");
   await expect(amount(page, 4)).toHaveValue("333,33");
 
   await amount(page, 4).fill("0");
   await expect(percent(page, 4)).toHaveValue("6,67");
-  await expect(page.getByText("O percentual deve estar entre 0,01 e 100")).toBeVisible();
+  await expect(page.getByText("O percentual deve estar entre 0,000001 e 100")).toBeVisible();
 
   await percent(page, 4).fill("12,5");
   await expect(amount(page, 4)).toHaveValue("625,00");

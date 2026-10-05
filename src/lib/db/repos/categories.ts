@@ -11,7 +11,7 @@ import { category, subcategory, transaction } from "../schema";
 export type CategoryItem = {
   id?: string;
   name: string;
-  percentBp: number;
+  percentMicro: number;
   color: number;
   /** Omitted means none: the category's existing subcategories are removed. */
   subcategories?: { id?: string; name: string }[];
@@ -20,7 +20,7 @@ export type CategoryItem = {
 const columns = {
   id: category.id,
   name: category.name,
-  percentBp: category.percentBp,
+  percentMicro: category.percentMicro,
   color: category.color,
 };
 
@@ -60,7 +60,7 @@ async function list(userId: string): Promise<Category[]> {
 async function replaceSet(userId: string, cats: CategoryItem[]): Promise<CategorySetResult> {
   const items = cats.map((c) => ({ ...c, subcategories: c.subcategories ?? [] }));
   const valid = validateCategorySet(
-    items.map((c) => ({ name: c.name, bp: c.percentBp, subcategories: c.subcategories })),
+    items.map((c) => ({ name: c.name, micro: c.percentMicro, subcategories: c.subcategories })),
   );
   if (!valid.ok) return valid;
 
@@ -137,17 +137,17 @@ async function replaceSet(userId: string, cats: CategoryItem[]): Promise<Categor
     }
 
     // One statement per item, in order, so clock_timestamp() preserves the creation order.
-    for (const { id, name, percentBp, color, subcategories } of items) {
+    for (const { id, name, percentMicro, color, subcategories } of items) {
       let categoryId = id;
       if (categoryId) {
         await tx
           .update(category)
-          .set({ name, percentBp, color })
+          .set({ name, percentMicro, color })
           .where(and(eq(category.id, categoryId), eq(category.userId, userId)));
       } else {
         [{ id: categoryId }] = await tx
           .insert(category)
-          .values({ userId, name, percentBp, color })
+          .values({ userId, name, percentMicro, color })
           .returning({ id: category.id });
       }
 

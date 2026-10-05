@@ -26,4 +26,12 @@
 - **Date**: 2026-10-04
 - **Status**: active
 
+### AD-006
+- **Decision**: O percentual das categorias é guardado em micro-percentual inteiro (1% = 1.000.000; 100% = 100.000.000) na coluna `percent_micro`, com até 6 casas decimais. Substitui, só para o percentual de categoria, a parte "pontos-base" da AD-003; participações de gasto (`shareBp`, `progressBp`) continuam em pontos-base.
+- **Reason**: Pedido do usuário: o valor em R$ editado deve voltar quase exato em centavos; 2 casas arredondavam R$ 333,33 para R$ 333,50.
+- **Trade-off**: Cálculos de meta usam BigInt (`mulDivRound`) porque centavos × 100.000.000 passa de 2^53; migração 0006 multiplica os percentuais existentes por 10.000.
+- **Scope**: Schema `category`, `parsePercent`/`formatPercent`, `allocateCents`, validação e editor de categorias
+- **Date**: 2026-10-04
+- **Status**: active
+
 ## Handoff

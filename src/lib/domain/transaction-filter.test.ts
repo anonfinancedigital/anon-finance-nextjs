@@ -11,7 +11,7 @@ const categories: Category[] = [
   {
     id: "conforto",
     name: "Conforto",
-    percentBp: 6000,
+    percentMicro: 60000000,
     color: 1,
     subcategories: [
       { id: "restaurante", name: "Restaurante" },
@@ -21,7 +21,7 @@ const categories: Category[] = [
   {
     id: "lazer",
     name: "Lazer",
-    percentBp: 4000,
+    percentMicro: 40000000,
     color: 2,
     subcategories: [{ id: "cinema", name: "Cinema" }],
   },

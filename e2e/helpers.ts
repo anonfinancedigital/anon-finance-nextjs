@@ -46,7 +46,7 @@ export async function seedCategories(cats: { name: string; percent: number; colo
   const userId = await adminUserId();
   const result = await categoriesRepo.replaceSet(
     userId,
-    cats.map((c, i) => ({ name: c.name, percentBp: c.percent * 100, color: c.color ?? (i % 8) + 1 })),
+    cats.map((c, i) => ({ name: c.name, percentMicro: c.percent * 1_000_000, color: c.color ?? (i % 8) + 1 })),
   );
   if (!result.ok) throw new Error(result.error);
   return categoriesRepo.list(userId);

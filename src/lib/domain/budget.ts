@@ -1,11 +1,11 @@
-import { formatPercent } from "./percent";
+import { formatPercent, mulDivRound, TOTAL_MICRO } from "./percent";
 
 export const TOTAL_BP = 10000;
 export const MAX_CATEGORY_NAME = 40;
 export const MAX_SUBCATEGORY_NAME = 40;
 export const MAX_SUBCATEGORIES = 30;
 
-export type CategoryInput = { name: string; bp: number; subcategories?: { name: string }[] };
+export type CategoryInput = { name: string; micro: number; subcategories?: { name: string }[] };
 
 /**
  * Failure carries field errors keyed by "<index>.name", "<index>.subcategories.<j>.name" and
@@ -50,10 +50,10 @@ export function validateCategorySet(cats: CategoryInput[]): CategorySetResult {
     });
   });
 
-  const sum = cats.reduce((total, cat) => total + cat.bp, 0);
+  const sum = cats.reduce((total, cat) => total + cat.micro, 0);
   const hasFieldErrors = Object.keys(fieldErrors).length > 0;
 
-  if (sum !== TOTAL_BP) {
+  if (sum !== TOTAL_MICRO) {
     return {
       ok: false,
       error: `A soma dos percentuais deve ser 100% (atual: ${formatPercent(sum)})`,
@@ -64,9 +64,9 @@ export function validateCategorySet(cats: CategoryInput[]): CategorySetResult {
   return { ok: true };
 }
 
-/** Share of an income given to a category: round(income × bp / 10000). */
-export function allocateCents(incomeCents: number, percentBp: number): number {
-  return Math.round((incomeCents * percentBp) / TOTAL_BP);
+/** Share of an income given to a category: round(income × micro / TOTAL_MICRO). */
+export function allocateCents(incomeCents: number, percentMicro: number): number {
+  return mulDivRound(incomeCents, percentMicro, TOTAL_MICRO);
 }
 
 export type Subcategory = { id: string; name: string };
@@ -75,7 +75,7 @@ export type Subcategory = { id: string; name: string };
 export type Category = {
   id: string;
   name: string;
-  percentBp: number;
+  percentMicro: number;
   color: number;
   subcategories: Subcategory[];
 };
@@ -138,7 +138,7 @@ function buildBreakdown(
   return lines.sort((a, b) => b.spentCents - a.spentCents);
 }
 
-/** Target per category = round(income × bp / 10000); overspent when spent > target. */
+/** Target per category = round(income × micro / TOTAL_MICRO); overspent when spent > target. */
 export function buildMonthlySummary(input: {
   categories: Category[];
   incomeCents: number;
@@ -148,7 +148,7 @@ export function buildMonthlySummary(input: {
   const { categories, incomeCents, spentByCategory, spentBySubcategory } = input;
 
   const rows = categories.map((cat): CategorySummary => {
-    const targetCents = allocateCents(incomeCents, cat.percentBp);
+    const targetCents = allocateCents(incomeCents, cat.percentMicro);
     const spentCents = spentByCategory.get(cat.id) ?? 0;
     const consumedPct =
       targetCents > 0 ? Math.round((spentCents * 100) / targetCents) : spentCents > 0 ? 100 : 0;

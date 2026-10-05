@@ -1,7 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { allocateCents, buildMonthlySummary, shareBp, validateCategorySet } from "./budget";
 
-const cats = (...bps: number[]) => bps.map((bp, i) => ({ name: `Categoria ${i + 1}`, bp }));
+/** Percentages in basis points (1% = 100) for readability; the domain takes micro-percent. */
+const cats = (...bps: number[]) => bps.map((bp, i) => ({ name: `Categoria ${i + 1}`, micro: bp * 10000 }));
 
 describe("validateCategorySet", () => {
   it("accepts a set that sums to 100% (30/30/10/10/20)", () => {
@@ -32,8 +33,8 @@ describe("validateCategorySet", () => {
 
   it("rejects an empty name with an error on that field", () => {
     const result = validateCategorySet([
-      { name: "  ", bp: 5000 },
-      { name: "Lazer", bp: 5000 },
+      { name: "  ", micro: 50000000 },
+      { name: "Lazer", micro: 50000000 },
     ]);
     expect(result.ok).toBe(false);
     if (result.ok) return;
@@ -43,8 +44,8 @@ describe("validateCategorySet", () => {
 
   it("rejects a 41-character name with an error on that field", () => {
     const result = validateCategorySet([
-      { name: "Lazer", bp: 5000 },
-      { name: "a".repeat(41), bp: 5000 },
+      { name: "Lazer", micro: 50000000 },
+      { name: "a".repeat(41), micro: 50000000 },
     ]);
     expect(result.ok).toBe(false);
     if (result.ok) return;
@@ -54,16 +55,16 @@ describe("validateCategorySet", () => {
   it("accepts a 40-character name", () => {
     expect(
       validateCategorySet([
-        { name: "a".repeat(40), bp: 5000 },
-        { name: "Lazer", bp: 5000 },
+        { name: "a".repeat(40), micro: 50000000 },
+        { name: "Lazer", micro: 50000000 },
       ]),
     ).toEqual({ ok: true });
   });
 
   it("rejects case-insensitive duplicate names (Lazer/lazer) on the repeated field", () => {
     const result = validateCategorySet([
-      { name: "Lazer", bp: 5000 },
-      { name: "lazer", bp: 5000 },
+      { name: "Lazer", micro: 50000000 },
+      { name: "lazer", micro: 50000000 },
     ]);
     expect(result.ok).toBe(false);
     if (result.ok) return;
@@ -72,8 +73,8 @@ describe("validateCategorySet", () => {
 });
 
 describe("buildMonthlySummary", () => {
-  const conforto = { id: "c1", name: "Conforto", percentBp: 3000, color: 1, subcategories: [] };
-  const lazer = { id: "c2", name: "Lazer", percentBp: 7000, color: 2, subcategories: [] };
+  const conforto = { id: "c1", name: "Conforto", percentMicro: 30000000, color: 1, subcategories: [] };
+  const lazer = { id: "c2", name: "Lazer", percentMicro: 70000000, color: 2, subcategories: [] };
 
   const summarize = (incomeCents: number, spent: [string, number][], categories = [conforto]) =>
     buildMonthlySummary({ categories, incomeCents, spentByCategory: new Map(spent) });
@@ -82,7 +83,7 @@ describe("buildMonthlySummary", () => {
     const [row] = summarize(500000, [["c1", 160000]]).rows;
     expect(row).toMatchObject({
       id: "c1",
-      percentBp: 3000,
+      percentMicro: 30000000,
       targetCents: 150000,
       spentCents: 160000,
       remainingCents: -10000,
@@ -138,36 +139,44 @@ describe("buildMonthlySummary", () => {
   );
 
   it.each([
-    [100001, 3333, 33330],
-    [100001, 5000, 50001],
-  ])("rounds the target with Math.round: %i × %i bp → %i", (income, percentBp, target) => {
-    const [row] = summarize(income, [], [{ ...conforto, percentBp }]).rows;
+    [100001, 33330000, 33330],
+    [100001, 50000000, 50001],
+  ])("rounds the target with Math.round: %i × %i micro → %i", (income, percentMicro, target) => {
+    const [row] = summarize(income, [], [{ ...conforto, percentMicro }]).rows;
     expect(row.targetCents).toBe(target);
   });
 });
 
 describe("allocateCents", () => {
   it("income 5.000,00 and 7,5% → R$ 375,00", () => {
-    expect(allocateCents(500000, 750)).toBe(37500);
+    expect(allocateCents(500000, 7500000)).toBe(37500);
   });
 
   it.each([
-    [3000, 150000],
-    [3000, 150000],
-    [2500, 125000],
-    [750, 37500],
-    [250, 12500],
-    [500, 25000],
-  ])("income 5.000,00 and %i bp → %i cents", (percentBp, cents) => {
-    expect(allocateCents(500000, percentBp)).toBe(cents);
+    [30000000, 150000],
+    [30000000, 150000],
+    [25000000, 125000],
+    [7500000, 37500],
+    [2500000, 12500],
+    [5000000, 25000],
+  ])("income 5.000,00 and %i micro → %i cents", (percentMicro, cents) => {
+    expect(allocateCents(500000, percentMicro)).toBe(cents);
   });
 
-  it("rounds a fraction of a cent: 100001 × 3333 bp → 33330", () => {
-    expect(allocateCents(100001, 3333)).toBe(33330);
+  it("rounds a fraction of a cent: 100001 × 33,33% → 33330", () => {
+    expect(allocateCents(100001, 33330000)).toBe(33330);
   });
 
-  it("rounds half a cent up: 100001 × 5000 bp → 50001", () => {
-    expect(allocateCents(100001, 5000)).toBe(50001);
+  it("rounds half a cent up: 100001 × 50% → 50001", () => {
+    expect(allocateCents(100001, 50000000)).toBe(50001);
+  });
+
+  it("uses six decimals: R$ 5.000,00 × 6,666667% → 33333 cents", () => {
+    expect(allocateCents(500000, 6666667)).toBe(33333);
+  });
+
+  it("stays exact for the largest income: 99.999.999.999 cents × 33,333333%", () => {
+    expect(allocateCents(99_999_999_999, 33_333_333)).toBe(33333333000);
   });
 });
 
@@ -175,7 +184,7 @@ describe("validateCategorySet subcategories", () => {
   const withSubs = (...subs: string[][]) =>
     subs.map((names, i) => ({
       name: `Categoria ${i + 1}`,
-      bp: 10000 / subs.length,
+      micro: 100000000 / subs.length,
       subcategories: names.map((name) => ({ name })),
     }));
   const fieldErrorsOf = (result: ReturnType<typeof validateCategorySet>) =>
@@ -233,8 +242,8 @@ describe("validateCategorySet subcategories", () => {
 
   it("keeps the 100% rule independent of the subcategories", () => {
     const set = [
-      { name: "A", bp: 6000, subcategories: [{ name: "X" }] },
-      { name: "B", bp: 3000, subcategories: [{ name: "Y" }] },
+      { name: "A", micro: 60000000, subcategories: [{ name: "X" }] },
+      { name: "B", micro: 30000000, subcategories: [{ name: "Y" }] },
     ];
     expect(validateCategorySet(set)).toMatchObject({
       ok: false,
@@ -260,7 +269,7 @@ describe("buildMonthlySummary breakdown", () => {
   const conforto = {
     id: "c1",
     name: "Conforto",
-    percentBp: 3000,
+    percentMicro: 30000000,
     color: 1,
     subcategories: [sub("s1", "Restaurante"), sub("s2", "Streaming"), sub("s3", "Cinema")],
   };
