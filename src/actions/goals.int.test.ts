@@ -21,6 +21,7 @@ const INPUT = {
   birthDate: "15/06/1990",
   retirementAge: "90",
   annualRate: "8",
+  withdrawalRate: "6",
 };
 
 const SAVED = {
@@ -60,11 +61,29 @@ describe("saveGoal", () => {
     expect(await goalsRepo.get(userId)).toEqual({ ...SAVED, savedCents: 0, retirementAge: 95 });
   });
 
-  it("stores the chosen rate and the birth date as AAAA-MM-DD", async () => {
-    expect(await saveGoal({ ...INPUT, annualRate: "6" })).toEqual({ ok: true });
+  it("stores the chosen rates and the birth date as AAAA-MM-DD", async () => {
+    expect(await saveGoal({ ...INPUT, annualRate: "6", withdrawalRate: "4" })).toEqual({ ok: true });
 
     const [row] = await db.select().from(financialGoal);
-    expect(row).toMatchObject({ userId, annualRateBp: 600, birthDate: "1990-06-15" });
+    expect(row).toMatchObject({ userId, annualRateBp: 600, withdrawalRateBp: 400, birthDate: "1990-06-15" });
+  });
+
+  it("stores a custom pair 6,5 / 4,5 as 650 and 450", async () => {
+    expect(await saveGoal({ ...INPUT, annualRate: "6,5", withdrawalRate: "4,5" })).toEqual({ ok: true });
+
+    expect(await goalsRepo.get(userId)).toEqual({ ...SAVED, annualRateBp: 650, withdrawalRateBp: 450 });
+  });
+
+  it.each([
+    ["annualRate", { annualRate: "15,01" }, "A rentabilidade deve estar entre 1% e 15% ao ano"],
+    ["withdrawalRate", { withdrawalRate: "0,99" }, "A taxa de retirada deve estar entre 1% e 15% ao ano"],
+    ["withdrawalRate", { withdrawalRate: "6,555" }, "Informe a taxa com até 2 casas decimais, ex.: 6,5"],
+    ["withdrawalRate", { withdrawalRate: "9" }, "A taxa de retirada não pode ser maior que a rentabilidade"],
+  ])("rejects an invalid %s with the exact message and writes nothing", async (field, override, message) => {
+    const result = await saveGoal({ ...INPUT, ...override });
+
+    expect(result).toMatchObject({ ok: false, fieldErrors: { [field]: message } });
+    expect(await goalsRepo.get(userId)).toBeNull();
   });
 
   it("rejects a birth date in AAAA-MM-DD and writes nothing", async () => {
@@ -83,7 +102,8 @@ describe("saveGoal", () => {
     ["monthlyIncome", "0,00"],
     ["saved", "-1"],
     ["birthDate", "31/02/1990"],
-    ["annualRate", "7"],
+    ["annualRate", "abc"],
+    ["withdrawalRate", ""],
     ["retirementAge", "10"],
   ])("rejects invalid %s with a field error and writes nothing", async (field, value) => {
     const result = await saveGoal({ ...INPUT, [field]: value });

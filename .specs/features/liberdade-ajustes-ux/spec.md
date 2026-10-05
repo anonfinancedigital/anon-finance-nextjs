@@ -199,16 +199,16 @@ Implicit-requirement dimensions: input validation & bounds (taxa personalizada f
 | AJL-10 | P2: Taxa personalizada | - | Pending |
 | AJL-11 | P2: Taxa personalizada | - | Pending |
 | AJL-12 | P2: Taxa personalizada | Execute | Implementing |
-| AJL-13 | P2: Taxa personalizada | - | Pending |
-| AJL-14 | P2: Taxa personalizada | - | Pending |
-| AJL-15 | P2: Taxa personalizada | - | Pending |
-| AJL-18 | P2: Taxa personalizada | - | Pending |
+| AJL-13 | P2: Taxa personalizada | Execute | Implementing |
+| AJL-14 | P2: Taxa personalizada | Execute | Implementing |
+| AJL-15 | P2: Taxa personalizada | Execute | Implementing |
+| AJL-18 | P2: Taxa personalizada | Execute | Implementing |
 | AJL-19 | P2: Taxa personalizada | - | Pending |
 | AJL-20 | P2: Taxa personalizada | Execute | Implementing |
 | AJL-16 | P2: Taxa personalizada | Execute | Implementing |
-| AJL-21 | Edge cases | - | Pending |
-| AJL-22 | Edge cases | - | Pending |
-| AJL-23 | Edge cases | - | Pending |
+| AJL-21 | Edge cases | Execute | Implementing |
+| AJL-22 | Edge cases | Execute | Implementing |
+| AJL-23 | Edge cases | Execute | Implementing |
 | AJL-32 | Edge cases | - | Pending |
 
 **Coverage:** 32 total, 0 mapped to tasks, 32 unmapped ⚠️

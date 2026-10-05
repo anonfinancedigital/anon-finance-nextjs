@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { goalSchema } from "./goal";
+import { goalSchema, parseRate } from "./goal";
 
 // 2026-06-15 12:00 em São Paulo; quem nasceu em 1990-06-15 tem 36 anos.
 const now = new Date("2026-06-15T15:00:00Z");
@@ -9,7 +9,13 @@ const valid = {
   birthDate: "15/06/1990",
   retirementAge: "60",
   annualRate: "8",
+  withdrawalRate: "6",
 };
+
+const FORMAT = "Informe a taxa com até 2 casas decimais, ex.: 6,5";
+const ANNUAL_RANGE = "A rentabilidade deve estar entre 1% e 15% ao ano";
+const WITHDRAWAL_RANGE = "A taxa de retirada deve estar entre 1% e 15% ao ano";
+const WITHDRAWAL_ABOVE = "A taxa de retirada não pode ser maior que a rentabilidade";
 
 const parse = (override: Partial<typeof valid>) => goalSchema(now).safeParse({ ...valid, ...override });
 
@@ -107,22 +113,102 @@ describe("goalSchema", () => {
     });
   });
 
-  describe("taxa anual", () => {
+  describe("taxas (rentabilidade e retirada)", () => {
     it.each([
       ["6", 600],
       ["8", 800],
       ["10", 1000],
-    ])("taxa %j vira %d pontos-base", (annualRate, expected) => {
-      const result = parse({ annualRate });
+    ])("rentabilidade %j vira %d pontos-base", (annualRate, expected) => {
+      const result = parse({ annualRate, withdrawalRate: "4" });
       expect(result.success && result.data.annualRateBp).toBe(expected);
     });
 
-    it.each([["7"], [""], ["abc"], ["12"], ["8,0"]])("rejeita %j no campo annualRate", (annualRate) => {
-      expect(errors({ annualRate }).annualRate).toBe("Escolha uma taxa de 6%, 8% ou 10% ao ano");
+    it("par 6 / 4 passa: 600 e 400 pontos-base", () => {
+      const result = parse({ annualRate: "6", withdrawalRate: "4" });
+      expect(result.success && [result.data.annualRateBp, result.data.withdrawalRateBp]).toEqual([600, 400]);
     });
 
-    it("rejeita taxa ausente", () => {
-      expect(errors({ annualRate: undefined }).annualRate).toBe("Escolha uma taxa de 6%, 8% ou 10% ao ano");
+    it.each([["6,5"], ["6.5"]])("%j vira 650 pontos-base na rentabilidade e na retirada", (text) => {
+      const annual = parse({ annualRate: text, withdrawalRate: "4" });
+      const withdrawal = parse({ annualRate: "8", withdrawalRate: text });
+      expect(annual.success && annual.data.annualRateBp).toBe(650);
+      expect(withdrawal.success && withdrawal.data.withdrawalRateBp).toBe(650);
+    });
+
+    it("par personalizado 6,5 / 4,5 vira 650 e 450 pontos-base", () => {
+      const result = parse({ annualRate: "6,5", withdrawalRate: "4,5" });
+      expect(result.success && [result.data.annualRateBp, result.data.withdrawalRateBp]).toEqual([650, 450]);
+    });
+
+    it("aceita duas casas decimais: 6,75 vira 675", () => {
+      const result = parse({ annualRate: "6,75", withdrawalRate: "4" });
+      expect(result.success && result.data.annualRateBp).toBe(675);
+    });
+
+    it("aceita os limites 1% e 15%", () => {
+      const low = parse({ annualRate: "1", withdrawalRate: "1" });
+      const high = parse({ annualRate: "15", withdrawalRate: "15" });
+      expect(low.success && [low.data.annualRateBp, low.data.withdrawalRateBp]).toEqual([100, 100]);
+      expect(high.success && [high.data.annualRateBp, high.data.withdrawalRateBp]).toEqual([1500, 1500]);
+    });
+
+    it.each([["0,99"], ["15,01"], ["0"], ["16"], ["100"]])("rentabilidade %j fora de 1% a 15% é rejeitada", (annualRate) => {
+      expect(errors({ annualRate, withdrawalRate: "1" }).annualRate).toBe(ANNUAL_RANGE);
+    });
+
+    it.each([["0,99"], ["15,01"], ["0"]])("retirada %j fora de 1% a 15% é rejeitada", (withdrawalRate) => {
+      expect(errors({ annualRate: "15", withdrawalRate }).withdrawalRate).toBe(WITHDRAWAL_RANGE);
+    });
+
+    it.each([["6,555"], ["6.555"], ["abc"], ["6,5%"], ["1e1"], ["6,"], [",5"], ["6,5,0"], ["6 5"]])(
+      "%j não é taxa com até 2 casas: mensagem de formato nos dois campos",
+      (text) => {
+        expect(errors({ annualRate: text }).annualRate).toBe(FORMAT);
+        expect(errors({ withdrawalRate: text }).withdrawalRate).toBe(FORMAT);
+      },
+    );
+
+    it.each([[""], ["   "]])("campo vazio %j pede a taxa com a mensagem de formato", (text) => {
+      expect(errors({ annualRate: text }).annualRate).toBe(FORMAT);
+      expect(errors({ withdrawalRate: text }).withdrawalRate).toBe(FORMAT);
+    });
+
+    it("taxa ausente pede a taxa com a mensagem de formato", () => {
+      expect(errors({ annualRate: undefined }).annualRate).toBe(FORMAT);
+      expect(errors({ withdrawalRate: undefined }).withdrawalRate).toBe(FORMAT);
+    });
+
+    it("retirada 7 com rentabilidade 6 é rejeitada no campo da retirada", () => {
+      const all = errors({ annualRate: "6", withdrawalRate: "7" });
+      expect(all).toEqual({ withdrawalRate: WITHDRAWAL_ABOVE });
+    });
+
+    it("retirada 6,01 com rentabilidade 6 é rejeitada", () => {
+      expect(errors({ annualRate: "6", withdrawalRate: "6,01" }).withdrawalRate).toBe(WITHDRAWAL_ABOVE);
+    });
+
+    it.each([
+      ["6", "6", 600],
+      ["6,5", "6.5", 650],
+    ])("retirada igual à rentabilidade (%j e %j) passa", (annualRate, withdrawalRate, bp) => {
+      const result = parse({ annualRate, withdrawalRate });
+      expect(result.success && [result.data.annualRateBp, result.data.withdrawalRateBp]).toEqual([bp, bp]);
+    });
+  });
+
+  describe("parseRate", () => {
+    it.each([
+      ["6", 600],
+      ["6,5", 650],
+      ["6.5", 650],
+      ["6,05", 605],
+      [" 6,75 ", 675],
+    ])("%j vira %d pontos-base", (text, bp) => {
+      expect(parseRate(text)).toEqual({ ok: true, value: bp });
+    });
+
+    it.each([[""], ["6,555"], ["abc"]])("%j falha com a mensagem de formato", (text) => {
+      expect(parseRate(text)).toEqual({ ok: false, error: FORMAT });
     });
   });
 
@@ -155,7 +241,14 @@ describe("goalSchema", () => {
   });
 
   it("reporta erro em cada campo inválido ao mesmo tempo", () => {
-    const all = errors({ monthlyIncome: "", saved: "", birthDate: "", retirementAge: "", annualRate: "" });
-    expect(Object.keys(all).sort()).toEqual(["annualRate", "birthDate", "monthlyIncome", "retirementAge", "saved"]);
+    const all = errors({ monthlyIncome: "", saved: "", birthDate: "", retirementAge: "", annualRate: "", withdrawalRate: "" });
+    expect(Object.keys(all).sort()).toEqual([
+      "annualRate",
+      "birthDate",
+      "monthlyIncome",
+      "retirementAge",
+      "saved",
+      "withdrawalRate",
+    ]);
   });
 });

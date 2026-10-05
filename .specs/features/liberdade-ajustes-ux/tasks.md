@@ -354,10 +354,10 @@ T9 → T10 → T11 → T12 → T13 → T14
 
 **Done when**:
 
-- [ ] Testes 1:1 com a spec: "6,5" e "6.5" → 650 (AJL-21); "0,99" e "15,01" → mensagens exatas de AJL-13/14; "6,555", "abc" → AJL-15; vazio → AJL-22; retirada 7 com rentabilidade 6 → AJL-18; retirada = rentabilidade passa (AJL-23); par 6/4 passa
-- [ ] `actions/goals.int.test.ts` atualizado e verde
-- [ ] Gate full passa
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Testes 1:1 com a spec: "6,5" e "6.5" → 650 (AJL-21); "0,99" e "15,01" → mensagens exatas de AJL-13/14; "6,555", "abc" → AJL-15; vazio → AJL-22; retirada 7 com rentabilidade 6 → AJL-18; retirada = rentabilidade passa (AJL-23); par 6/4 passa
+- [x] `actions/goals.int.test.ts` atualizado e verde
+- [x] Gate full passa
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
 
 **Tests**: unit
 **Gate**: quick

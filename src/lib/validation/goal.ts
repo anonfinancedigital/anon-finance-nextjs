@@ -1,11 +1,28 @@
 import { z } from "zod";
 import { brToIso } from "@/lib/domain/date-br";
-import { ageOn, PRESET_RATES, type YearMonthDay } from "@/lib/domain/freedom";
+import { ageOn, type YearMonthDay } from "@/lib/domain/freedom";
 import { parseBRL } from "@/lib/domain/money";
+import type { Result } from "@/lib/domain/result";
 
 const MAX_INCOME_CENTS = 100_000_000;
 const MAX_AGE = 120;
-const RATE_MESSAGE = "Escolha uma taxa de 6%, 8% ou 10% ao ano";
+const MIN_RATE_BP = 100;
+const MAX_RATE_BP = 1500;
+const RATE_FORMAT_MESSAGE = "Informe a taxa com até 2 casas decimais, ex.: 6,5";
+const ANNUAL_RATE_RANGE_MESSAGE = "A rentabilidade deve estar entre 1% e 15% ao ano";
+const WITHDRAWAL_RATE_RANGE_MESSAGE = "A taxa de retirada deve estar entre 1% e 15% ao ano";
+const WITHDRAWAL_ABOVE_ANNUAL_MESSAGE = "A taxa de retirada não pode ser maior que a rentabilidade";
+
+// Digits with up to 2 decimals after a comma or a dot: "6", "6,5", "6.75".
+const RATE_PATTERN = /^(\d+)(?:[.,](\d{1,2}))?$/;
+
+/** Rate text in % a.a. ("6,5" or "6.5") into basis points (650); empty, non-numeric or 3+ decimals fail. */
+export function parseRate(text: string): Result<number> {
+  const match = RATE_PATTERN.exec(text.trim());
+  if (!match) return { ok: false, error: RATE_FORMAT_MESSAGE };
+  const [, whole, fraction = ""] = match;
+  return { ok: true, value: Number(whole) * 100 + Number(fraction.padEnd(2, "0")) };
+}
 
 const saoPauloDate = new Intl.DateTimeFormat("en-US", {
   timeZone: "America/Sao_Paulo",
@@ -35,7 +52,8 @@ export function goalSchema(now: Date) {
       saved: z.string({ error: "Informe o valor já guardado" }),
       birthDate: z.string({ error: "Informe a data de nascimento" }),
       retirementAge: z.string({ error: "Informe a idade de aposentadoria" }),
-      annualRate: z.string({ error: RATE_MESSAGE }),
+      annualRate: z.string({ error: RATE_FORMAT_MESSAGE }),
+      withdrawalRate: z.string({ error: RATE_FORMAT_MESSAGE }),
     })
     .transform((input, ctx) => {
       const fail = (path: string, message: string) => {
@@ -80,8 +98,17 @@ export function goalSchema(now: Date) {
         } else retirementAge = age;
       }
 
-      const preset = PRESET_RATES.find((p) => String(p.annualBp / 100) === input.annualRate.trim()) ?? null;
-      if (preset === null) fail("annualRate", RATE_MESSAGE);
+      const rate = (path: string, text: string, rangeMessage: string) => {
+        const parsed = parseRate(text);
+        if (!parsed.ok) return fail(path, parsed.error);
+        if (parsed.value < MIN_RATE_BP || parsed.value > MAX_RATE_BP) return fail(path, rangeMessage);
+        return parsed.value;
+      };
+      const annualRateBp = rate("annualRate", input.annualRate, ANNUAL_RATE_RANGE_MESSAGE);
+      let withdrawalRateBp = rate("withdrawalRate", input.withdrawalRate, WITHDRAWAL_RATE_RANGE_MESSAGE);
+      if (annualRateBp !== null && withdrawalRateBp !== null && withdrawalRateBp > annualRateBp) {
+        withdrawalRateBp = fail("withdrawalRate", WITHDRAWAL_ABOVE_ANNUAL_MESSAGE);
+      }
 
       if (
         monthlyIncomeCents === null ||
@@ -89,18 +116,12 @@ export function goalSchema(now: Date) {
         birthDate === null ||
         currentAge === null ||
         retirementAge === null ||
-        preset === null
+        annualRateBp === null ||
+        withdrawalRateBp === null
       ) {
         return z.NEVER;
       }
-      return {
-        monthlyIncomeCents,
-        savedCents,
-        birthDate,
-        retirementAge,
-        annualRateBp: preset.annualBp as number,
-        withdrawalRateBp: preset.withdrawalBp as number,
-      };
+      return { monthlyIncomeCents, savedCents, birthDate, retirementAge, annualRateBp, withdrawalRateBp };
     });
 }
 

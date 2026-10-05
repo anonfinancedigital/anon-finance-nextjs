@@ -70,17 +70,23 @@ export function GoalForm({
   const rate: RateValue = values.annualRate === "6" || values.annualRate === "10" ? values.annualRate : "8";
   const withdrawalRate = PRESET_RATES.find((p) => p.annualBp === Number(rate) * 100)!.withdrawalBp / 100;
 
+  // Until the drawer edits the withdrawal rate, it follows the chosen preset.
+  const withWithdrawal = (v: GoalFormValues) => {
+    const preset = PRESET_RATES.find((p) => String(p.annualBp / 100) === v.annualRate);
+    return { ...v, withdrawalRate: preset ? String(preset.withdrawalBp / 100) : "" };
+  };
+
   function set<K extends keyof GoalFormValues>(key: K, value: GoalFormValues[K]) {
     const next = { ...values, [key]: value };
     setValues(next);
-    onDraftChange?.(next);
+    onDraftChange?.(withWithdrawal(next));
   }
 
   function submit(event: React.FormEvent) {
     event.preventDefault();
     if (pending) return;
     startTransition(async () => {
-      const res = await saveGoal(values);
+      const res = await saveGoal(withWithdrawal(values));
       setResult(res);
       if (res.ok) {
         onSaved?.();
