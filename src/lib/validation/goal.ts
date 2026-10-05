@@ -15,7 +15,7 @@ const saoPauloDate = new Intl.DateTimeFormat("en-US", {
 });
 
 /** Calendar day of `now` in America/Sao_Paulo. */
-function today(now: Date): YearMonthDay {
+export function today(now: Date): YearMonthDay {
   const parts = saoPauloDate.formatToParts(now);
   const get = (type: "year" | "month" | "day") => Number(parts.find((p) => p.type === type)!.value);
   return { year: get("year"), month: get("month"), day: get("day") };

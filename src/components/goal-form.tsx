@@ -6,8 +6,12 @@ import { saveGoal } from "@/actions/goals";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { RateToggle, type RateValue } from "@/components/rate-toggle";
+import { Slider } from "@/components/ui/slider";
 import type { ActionResult } from "@/lib/action-result";
-import { maskDateInput } from "@/lib/domain/date-br";
+import { brToIso, maskDateInput } from "@/lib/domain/date-br";
+import { ageOn } from "@/lib/domain/freedom";
+import { today } from "@/lib/validation/goal";
 
 export type GoalFormValues = {
   /** pt-BR text, e.g. "10.000,00". */
@@ -21,13 +25,24 @@ export type GoalFormValues = {
   annualRate: string;
 };
 
+const MAX_SLIDER_AGE = 90;
+
 const blank: GoalFormValues = { monthlyIncome: "", saved: "", birthDate: "", retirementAge: "", annualRate: "8" };
 
 /**
  * Form of the financial freedom goal. Without a saved goal it shows empty; with one it stays
  * collapsed behind an "Editar objetivo" button and opens filled with the saved values.
+ * `onDraftChange` gets the values at every edit, and `null` when the draft is discarded.
  */
-export function GoalForm({ initial }: { initial?: GoalFormValues }) {
+export function GoalForm({
+  initial,
+  onDraftChange,
+  nowIso,
+}: {
+  initial?: GoalFormValues;
+  onDraftChange?: (values: GoalFormValues | null) => void;
+  nowIso?: string;
+}) {
   const uid = useId();
   const router = useRouter();
   const [values, setValues] = useState<GoalFormValues>(initial ?? blank);
@@ -38,8 +53,18 @@ export function GoalForm({ initial }: { initial?: GoalFormValues }) {
   const fieldErrors = result && !result.ok ? (result.fieldErrors ?? {}) : {};
   const field = (name: string) => `${uid}-${name}`;
 
+  // The slider range starts the year after the current age, which needs a valid birth date.
+  const birthIso = brToIso(values.birthDate);
+  const currentAge = birthIso ? ageOn(birthIso, today(nowIso ? new Date(nowIso) : new Date())) : null;
+  const sliderMin = currentAge === null ? 1 : currentAge + 1;
+  const sliderDisabled = currentAge === null || sliderMin > MAX_SLIDER_AGE;
+  const typedAge = Number(values.retirementAge);
+  const sliderValue = Math.min(MAX_SLIDER_AGE, Math.max(sliderMin, Number.isFinite(typedAge) ? typedAge : sliderMin));
+
   function set<K extends keyof GoalFormValues>(key: K, value: GoalFormValues[K]) {
-    setValues((v) => ({ ...v, [key]: value }));
+    const next = { ...values, [key]: value };
+    setValues(next);
+    onDraftChange?.(next);
   }
 
   function submit(event: React.FormEvent) {
@@ -59,6 +84,7 @@ export function GoalForm({ initial }: { initial?: GoalFormValues }) {
     setValues(initial ?? blank);
     setResult(null);
     setEditing(false);
+    onDraftChange?.(null);
   }
 
   if (!editing) {
@@ -122,10 +148,32 @@ export function GoalForm({ initial }: { initial?: GoalFormValues }) {
             aria-invalid={!!fieldErrors.retirementAge}
             onChange={(e) => set("retirementAge", e.target.value)}
           />
+          <Slider
+            aria-label="Idade de aposentadoria (controle deslizante)"
+            min={sliderMin}
+            max={MAX_SLIDER_AGE}
+            step={1}
+            value={[sliderValue]}
+            disabled={sliderDisabled}
+            onValueChange={([age]) => set("retirementAge", String(age))}
+            className="pt-2"
+          />
+          <p className="text-xs text-muted-foreground">
+            {sliderDisabled ? "Informe a data de nascimento para usar o controle" : `De ${sliderMin} a ${MAX_SLIDER_AGE} anos`}
+          </p>
           {fieldErrors.retirementAge && (
             <p className="text-sm text-destructive">{fieldErrors.retirementAge}</p>
           )}
         </div>
+      </div>
+
+      <div className="space-y-1">
+        <p className="text-sm font-medium">Taxa esperada ao ano</p>
+        <RateToggle
+          value={values.annualRate === "6" || values.annualRate === "10" ? (values.annualRate as RateValue) : "8"}
+          onChange={(rate) => set("annualRate", rate)}
+        />
+        {fieldErrors.annualRate && <p className="text-sm text-destructive">{fieldErrors.annualRate}</p>}
       </div>
 
       {result && !result.ok && !Object.keys(fieldErrors).length && (

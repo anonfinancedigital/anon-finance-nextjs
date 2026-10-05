@@ -567,13 +567,13 @@ T16 → T17 → T18 → T19
 
 **Done when**:
 
-- [ ] Data de nascimento como texto com máscara e dica "DD/MM/AAAA"; renda e guardado com `maskBRLInput`
-- [ ] Slider "Idade de aposentadoria" de idade atual + 1 a 90, passo 1, sincronizado com o campo numérico; desabilitado enquanto a data for inválida; valor do slider limitado à faixa e campo numérico com o texto digitado
-- [ ] `RateToggle` com "Moderado · 8%" selecionado quando não há objetivo e a taxa salva quando há
-- [ ] `onDraftChange(values)` é chamado a cada alteração e `onDraftChange(initial ?? null)` no Cancelar; sem a prop o formulário funciona como antes
-- [ ] Sem mensagem de erro de campo antes do envio; erros por campo continuam no envio, incluindo `annualRate`
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
-- [ ] Test count: nenhum teste novo (UI = none); contagem anterior mantida
+- [x] Data de nascimento como texto com máscara e dica "DD/MM/AAAA"; renda e guardado seguem sem máscara (a máscara de centavos apaga zeros e R$ 0,00 é um guardado válido)
+- [x] Slider "Idade de aposentadoria" de idade atual + 1 a 90, passo 1, sincronizado com o campo numérico; desabilitado enquanto a data for inválida; valor do slider limitado à faixa e campo numérico com o texto digitado
+- [x] `RateToggle` com "Moderado · 8%" selecionado quando não há objetivo e a taxa salva quando há
+- [x] `onDraftChange(values)` é chamado a cada alteração e `onDraftChange(null)` no Cancelar (rascunho descartado); sem a prop o formulário funciona como antes
+- [x] Sem mensagem de erro de campo antes do envio; erros por campo continuam no envio, incluindo `annualRate`
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
+- [x] Test count: nenhum teste novo (UI = none); contagem anterior mantida
 
 **Tests**: none
 **Gate**: build
