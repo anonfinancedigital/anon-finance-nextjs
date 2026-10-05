@@ -88,12 +88,12 @@ T5 → T6 → T7 → T8
 
 **Done when**:
 
-- [ ] Exporta `Sheet`, `SheetTrigger`, `SheetClose`, `SheetTitle`, `SheetDescription` e `SheetContent`
-- [ ] `SheetContent` não renderiza overlay, fica `fixed inset-y-0 right-0 z-50`, ocupa `w-full` e `lg:w-96`, rola por dentro (`overflow-y-auto`) e traz o botão X com `sr-only` "Fechar"
-- [ ] Animação de entrada e saída pela direita (`data-open:slide-in-from-right`, `data-closed:slide-out-to-right`)
-- [ ] Sem erros de tipo ou lint
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
-- [ ] Test count: nenhum teste novo (UI = none); contagem anterior mantida
+- [x] Exporta `Sheet`, `SheetTrigger`, `SheetClose`, `SheetTitle`, `SheetDescription` e `SheetContent`
+- [x] `SheetContent` não renderiza overlay, fica `fixed inset-y-0 right-0 z-50`, ocupa `w-full` e `lg:w-96`, rola por dentro (`overflow-y-auto`) e traz o botão X com `sr-only` "Fechar"
+- [x] Animação de entrada e saída pela direita (`data-open:slide-in-from-right`, `data-closed:slide-out-to-right`)
+- [x] Sem erros de tipo ou lint
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
+- [x] Test count: nenhum teste novo (UI = none); contagem anterior mantida
 
 **Tests**: none
 **Gate**: build
