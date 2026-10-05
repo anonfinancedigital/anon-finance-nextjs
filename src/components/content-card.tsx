@@ -5,12 +5,15 @@ import { cn } from "@/lib/utils";
 export function ContentCard({
   title,
   note,
+  action,
   children,
   className,
   bodyClassName,
 }: {
   title: string;
   note?: ReactNode;
+  /** Control shown at the right end of the header, after the note. */
+  action?: ReactNode;
   children: ReactNode;
   className?: string;
   bodyClassName?: string;
@@ -19,7 +22,12 @@ export function ContentCard({
     <section className={cn("overflow-hidden rounded-2xl border border-border bg-card shadow-lg", className)}>
       <header className="flex items-center justify-between gap-2 px-6 py-5">
         <h2 className="font-display text-base font-semibold md:text-lg">{title}</h2>
-        {note && <p className="text-xs text-muted-foreground">{note}</p>}
+        {(note || action) && (
+          <div className="flex items-center gap-3">
+            {note && <p className="text-xs text-muted-foreground">{note}</p>}
+            {action}
+          </div>
+        )}
       </header>
       <div className={bodyClassName}>{children}</div>
     </section>

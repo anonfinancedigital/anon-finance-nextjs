@@ -186,10 +186,10 @@ T5 → T6 → T7
 
 **Done when**:
 
-- [ ] `note` e `action` ficam agrupados em um `div flex items-center gap-3` à direita do título
-- [ ] Sem `action`, o cabeçalho renderiza igual ao atual (os demais usos de `ContentCard` não mudam)
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
-- [ ] Contagem de testes unit e int igual à de antes
+- [x] `note` e `action` ficam agrupados em um `div flex items-center gap-3` à direita do título
+- [x] Sem `action`, o cabeçalho renderiza igual ao atual (os demais usos de `ContentCard` não mudam)
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
+- [x] Contagem de testes unit e int igual à de antes
 
 **Tests**: none
 **Gate**: build
