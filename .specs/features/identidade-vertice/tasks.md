@@ -139,11 +139,11 @@ T22 → T23 → T24 → T25 → T26 → T27 → T28
 
 **Done when**:
 
-- [ ] `src/app/icon.svg` idêntico ao favicon
-- [ ] `src/app/favicon.ico` removido
-- [ ] `npm run build` lista o ícone sem erro (tag `<link rel="icon">` com `icon.svg` no HTML de `/login`)
-- [ ] Gate quick: `npm run typecheck && npm run lint && npm run test:unit`
-- [ ] Contagem de testes unit/int igual à anterior (nenhum teste removido)
+- [x] `src/app/icon.svg` idêntico ao favicon
+- [x] `src/app/favicon.ico` removido
+- [x] `npm run build` lista o ícone sem erro (tag `<link rel="icon">` com `icon.svg` no HTML de `/login`)
+- [x] Gate quick: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Contagem de testes unit/int igual à anterior (nenhum teste removido)
 
 **Tests**: none
 **Gate**: quick
