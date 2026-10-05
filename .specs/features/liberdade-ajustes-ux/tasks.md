@@ -10,7 +10,7 @@ Implement these tasks with the `tlc-spec-driven` skill: **activate it by name an
 
 **Design**: `.specs/features/liberdade-ajustes-ux/design.md`
 **Spec**: `.specs/features/liberdade-ajustes-ux/spec.md`
-**Status**: Draft
+**Status**: Done
 
 **Estratégia de ordem:** primeiro o que não muda contratos (marcos, eixo, prefixo, card), depois a taxa personalizada de baixo para cima (domínio, banco, validação, UI). A lógica testável vira função pura com teste unitário; a UI só a consome (AD-005, AD-008).
 

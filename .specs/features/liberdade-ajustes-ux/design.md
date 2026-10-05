@@ -1,7 +1,7 @@
 # Liberdade: Ajustes de UX e Taxa Personalizada Design
 
 **Spec**: `.specs/features/liberdade-ajustes-ux/spec.md`
-**Status**: Draft
+**Status**: Approved
 
 ---
 

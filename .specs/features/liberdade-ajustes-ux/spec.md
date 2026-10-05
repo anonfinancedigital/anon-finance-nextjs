@@ -178,38 +178,38 @@ Implicit-requirement dimensions: input validation & bounds (taxa personalizada f
 
 | Requirement ID | Story | Phase | Status |
 | -------------- | ----- | ----- | ------ |
-| AJL-01 | P1: Rótulos dos marcos | Execute | Implementing |
-| AJL-02 | P1: Rótulos dos marcos | Execute | Implementing |
-| AJL-03 | P1: Rótulos dos marcos | Execute | Implementing |
-| AJL-04 | P1: Rótulos dos marcos | Execute | Implementing |
-| AJL-05 | P1: Rótulos dos marcos | Execute | Implementing |
-| AJL-06 | P1: Eixo do gráfico | Execute | Implementing |
-| AJL-07 | P1: Eixo do gráfico | Execute | Implementing |
-| AJL-08 | P1: Eixo do gráfico | Execute | Implementing |
-| AJL-09 | P1: Prefixo R$ | Execute | Implementing |
-| AJL-17 | P1: Prefixo R$ | Execute | Implementing |
-| AJL-24 | P1: Seletor de perfil | Execute | Implementing |
-| AJL-25 | P1: Seletor de perfil | Execute | Implementing |
-| AJL-26 | P1: Seletor de perfil | Execute | Implementing |
-| AJL-27 | P1: Seletor de perfil | Execute | Implementing |
-| AJL-28 | P1: Card de Meta | Execute | Implementing |
-| AJL-29 | P1: Card de Meta | Execute | Implementing |
-| AJL-30 | P1: Card de Meta | Execute | Implementing |
-| AJL-31 | P1: Card de Meta | Execute | Implementing |
-| AJL-10 | P2: Taxa personalizada | Execute | Implementing |
-| AJL-11 | P2: Taxa personalizada | Execute | Implementing |
-| AJL-12 | P2: Taxa personalizada | Execute | Implementing |
-| AJL-13 | P2: Taxa personalizada | Execute | Implementing |
-| AJL-14 | P2: Taxa personalizada | Execute | Implementing |
-| AJL-15 | P2: Taxa personalizada | Execute | Implementing |
-| AJL-18 | P2: Taxa personalizada | Execute | Implementing |
-| AJL-19 | P2: Taxa personalizada | Execute | Implementing |
-| AJL-20 | P2: Taxa personalizada | Execute | Implementing |
-| AJL-16 | P2: Taxa personalizada | Execute | Implementing |
-| AJL-21 | Edge cases | Execute | Implementing |
-| AJL-22 | Edge cases | Execute | Implementing |
-| AJL-23 | Edge cases | Execute | Implementing |
-| AJL-32 | Edge cases | Execute | Implementing |
+| AJL-01 | P1: Rótulos dos marcos | Verified | Verified |
+| AJL-02 | P1: Rótulos dos marcos | Verified | Verified |
+| AJL-03 | P1: Rótulos dos marcos | Verified | Verified |
+| AJL-04 | P1: Rótulos dos marcos | Verified | Verified |
+| AJL-05 | P1: Rótulos dos marcos | Verified | Verified |
+| AJL-06 | P1: Eixo do gráfico | Verified | Verified |
+| AJL-07 | P1: Eixo do gráfico | Verified | Verified |
+| AJL-08 | P1: Eixo do gráfico | Verified | Verified |
+| AJL-09 | P1: Prefixo R$ | Verified | Verified |
+| AJL-17 | P1: Prefixo R$ | Verified | Verified |
+| AJL-24 | P1: Seletor de perfil | Verified | Verified |
+| AJL-25 | P1: Seletor de perfil | Verified | Verified |
+| AJL-26 | P1: Seletor de perfil | Verified | Verified |
+| AJL-27 | P1: Seletor de perfil | Verified | Verified |
+| AJL-28 | P1: Card de Meta | Verified | Verified |
+| AJL-29 | P1: Card de Meta | Verified | Verified |
+| AJL-30 | P1: Card de Meta | Verified | Verified |
+| AJL-31 | P1: Card de Meta | Verified | Verified |
+| AJL-10 | P2: Taxa personalizada | Verified | Verified |
+| AJL-11 | P2: Taxa personalizada | Verified | Verified |
+| AJL-12 | P2: Taxa personalizada | Verified | Verified |
+| AJL-13 | P2: Taxa personalizada | Verified | Verified |
+| AJL-14 | P2: Taxa personalizada | Verified | Verified |
+| AJL-15 | P2: Taxa personalizada | Verified | Verified |
+| AJL-18 | P2: Taxa personalizada | Verified | Verified |
+| AJL-19 | P2: Taxa personalizada | Verified | Verified |
+| AJL-20 | P2: Taxa personalizada | Verified | Verified |
+| AJL-16 | P2: Taxa personalizada | Verified | Verified |
+| AJL-21 | Edge cases | Verified | Verified |
+| AJL-22 | Edge cases | Verified | Verified |
+| AJL-23 | Edge cases | Verified | Verified |
+| AJL-32 | Edge cases | Verified | Verified |
 
 **Coverage:** 32 total, 0 mapped to tasks, 32 unmapped ⚠️
 
