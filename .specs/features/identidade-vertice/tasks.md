@@ -585,11 +585,11 @@ T22 → T23 → T24 → T25 → T26 → T27 → T28
 
 **Done when**:
 
-- [ ] Botão exibe "Calibrar Parâmetros"
-- [ ] Rótulo, placeholder e máscara da data inalterados
-- [ ] Mensagem "Data de nascimento inválida" continua vinda da validação
-- [ ] Gate build: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
-- [ ] Contagem de testes unit/int igual à anterior (nenhum teste removido)
+- [x] Botão exibe "Calibrar Parâmetros"
+- [x] Rótulo, placeholder e máscara da data inalterados
+- [x] Mensagem "Data de nascimento inválida" continua vinda da validação
+- [x] Gate build: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
+- [x] Contagem de testes unit/int igual à anterior (nenhum teste removido)
 
 **Tests**: none
 **Gate**: build

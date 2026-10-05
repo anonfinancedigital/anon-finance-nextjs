@@ -31,7 +31,7 @@ const blank: GoalFormValues = { monthlyIncome: "", saved: "", birthDate: "", ret
 
 /**
  * Form of the financial freedom goal. Without a saved goal it shows empty; with one it stays
- * collapsed behind an "Editar objetivo" button and opens filled with the saved values.
+ * collapsed behind an "Calibrar Parâmetros" button and opens filled with the saved values.
  * `onDraftChange` gets the values at every edit, and `null` when the draft is discarded.
  */
 export function GoalForm({
@@ -90,7 +90,7 @@ export function GoalForm({
   if (!editing) {
     return (
       <Button type="button" variant="outline" onClick={() => setEditing(true)}>
-        Editar objetivo
+        Calibrar Parâmetros
       </Button>
     );
   }
