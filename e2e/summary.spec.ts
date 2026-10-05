@@ -53,8 +53,8 @@ test("the summary updates after adding an expense, without a manual reload", asy
   await expect(page.getByTestId("total-spent")).toHaveText("R$ 0,00");
   await expect(row.getByRole("progressbar")).toHaveAttribute("aria-valuenow", "0");
 
-  const form = page.getByRole("form", { name: "Nova transação" });
-  await form.getByLabel("Gasto", { exact: true }).check();
+  const form = page.getByRole("form", { name: "Registrar Lançamento" });
+  await form.getByLabel("Saída de Caixa", { exact: true }).check();
   await form.getByLabel("Valor (R$)").fill("750,00");
   await form.getByLabel("Data").fill("2026-09-15");
   await chooseOption(form.getByLabel("Categoria"), "Conforto");

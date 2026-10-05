@@ -830,9 +830,9 @@ T22 → T23 → T24 → T25 → T26 → T27 → T28
 
 **Done when**:
 
-- [ ] `grep` não acha "Nova transação" nem "Gasto" como rótulo de rádio no arquivo
-- [ ] `npm run typecheck` passa
-- [ ] Contagem de testes unit/int igual à anterior (nenhum teste removido)
+- [x] `grep` não acha "Nova transação" nem "Gasto" como rótulo de rádio no arquivo
+- [x] `npm run typecheck` passa
+- [x] Contagem de testes unit/int igual à anterior (nenhum teste removido)
 
 **Tests**: none
 **Gate**: quick
