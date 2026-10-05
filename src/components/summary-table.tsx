@@ -12,7 +12,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import type { CategorySummary } from "@/lib/domain/budget";
+import { formatRemaining, type CategorySummary } from "@/lib/domain/budget";
 import { colorVar } from "@/lib/domain/color";
 import { formatBRL } from "@/lib/domain/money";
 import { formatPercentCompact, formatShare } from "@/lib/domain/percent";
@@ -92,7 +92,7 @@ export function SummaryTable({ rows }: { rows: CategorySummary[] }) {
             <TableCell
               className={`text-right tabular-nums ${row.overspent ? "text-destructive" : "text-income"}`}
             >
-              {formatBRL(row.remainingCents)}
+              {formatRemaining(row)}
             </TableCell>
             <TableCell className="pr-6">
               <div className="flex items-center justify-end gap-2">

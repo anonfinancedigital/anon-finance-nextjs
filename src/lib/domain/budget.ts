@@ -1,4 +1,5 @@
 import { formatPercent, mulDivRound, TOTAL_MICRO } from "./percent";
+import { formatBRL } from "./money";
 
 export const TOTAL_BP = 10000;
 export const MAX_CATEGORY_NAME = 40;
@@ -118,6 +119,11 @@ export type CategorySummary = Category & {
    */
   breakdown: SubcategorySpend[];
 };
+
+/** "Restante" cell text: an exceeded investment reads as a positive surplus ("+R$ 10,00"); otherwise the signed remainder. */
+export function formatRemaining(row: Pick<CategorySummary, "remainingCents" | "exceeded" | "exceededCents">): string {
+  return row.exceeded ? `+${formatBRL(row.exceededCents)}` : formatBRL(row.remainingCents);
+}
 
 export type MonthlySummary = {
   rows: CategorySummary[];

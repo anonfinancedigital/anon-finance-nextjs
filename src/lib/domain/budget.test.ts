@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { allocateCents, buildMonthlySummary, shareBp, validateCategorySet } from "./budget";
+import { allocateCents, buildMonthlySummary, formatRemaining, shareBp, validateCategorySet } from "./budget";
 
 /** Percentages in basis points (1% = 100) for readability; the domain takes micro-percent. */
 const cats = (...bps: number[]) => bps.map((bp, i) => ({ name: `Categoria ${i + 1}`, micro: bp * 10000 }));
@@ -475,5 +475,39 @@ describe("buildMonthlySummary with investment categories", () => {
 
   it("an omitted isInvestment behaves as an expense", () => {
     expect(summarize(160000)).toMatchObject({ overspent: true, exceeded: false });
+  });
+});
+
+describe("formatRemaining", () => {
+  const nbsp = "\u00a0";
+  const row = (targetCents: number, spentCents: number, isInvestment: boolean) =>
+    buildMonthlySummary({
+      categories: [{ id: "c1", name: "X", percentMicro: 100000000, color: 1, subcategories: [], isInvestment }],
+      incomeCents: targetCents,
+      spentByCategory: new Map([["c1", spentCents]]),
+    }).rows[0];
+
+  it("shows an exceeded investment with a plus sign", () => {
+    expect(formatRemaining(row(183918, 300000, true))).toBe(`+R$${nbsp}1.160,82`);
+  });
+
+  it("shows an overspent expense with a minus sign", () => {
+    expect(formatRemaining(row(37782, 100000, false))).toBe(`-R$${nbsp}622,18`);
+  });
+
+  it("shows a category within target without a prefix", () => {
+    expect(formatRemaining(row(187800, 136890, false))).toBe(`R$${nbsp}509,10`);
+  });
+
+  it.each([true, false])("shows spending equal to the target as zero without a prefix (investment: %s)", (inv) => {
+    expect(formatRemaining(row(10000, 10000, inv))).toBe(`R$${nbsp}0,00`);
+  });
+
+  it("shows a one-cent excess as +R$ 0,01", () => {
+    expect(formatRemaining(row(10000, 10001, true))).toBe(`+R$${nbsp}0,01`);
+  });
+
+  it("shows a 5000 excess over a zero target as +R$ 50,00", () => {
+    expect(formatRemaining(row(0, 5000, true))).toBe(`+R$${nbsp}50,00`);
   });
 });
