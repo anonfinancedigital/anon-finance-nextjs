@@ -186,16 +186,17 @@ T6 → T7 → T8
 
 **Done when**:
 
-- [ ] Linha pontilhada sutil na altura da meta com a etiqueta "Meta: R$ 3 mi" à direita (RFN-04 AC1)
-- [ ] Eixo Y de 0 a `chartYMax(targetCents, último total)`; alvo de R$ 3.000.000,00 termina em R$ 3,21 mi (RFN-05 AC2)
-- [ ] Meta visível dentro do domínio quando o patrimônio final passa do alvo (edge case) e quando o alvo é menor que o primeiro ponto
-- [ ] Legível nos temas claro e escuro; prazo restante 0 continua omitindo o gráfico (RFN-04 AC6)
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] Linha pontilhada sutil na altura da meta com a etiqueta "Meta: R$ 3 mi" à direita (RFN-04 AC1)
+- [x] Eixo Y de 0 a `chartYMax(targetCents, último total)`; alvo de R$ 3.000.000,00 termina em R$ 3,21 mi (RFN-05 AC2)
+- [x] Meta visível dentro do domínio quando o patrimônio final passa do alvo (edge case) e quando o alvo é menor que o primeiro ponto
+- [x] Legível nos temas claro e escuro; prazo restante 0 continua omitindo o gráfico (RFN-04 AC6)
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
 
 **Tests**: none
 **Gate**: build
 
 **Commit**: `feat(liberdade): draw the goal line and tighten the chart axis`
+**Status**: ✅ Done
 
 ---
 

@@ -1,7 +1,7 @@
 "use client";
 
-import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-import { compositionShares, type GoalSummary } from "@/lib/domain/freedom";
+import { Area, AreaChart, CartesianGrid, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { chartYMax, compositionShares, type GoalSummary } from "@/lib/domain/freedom";
 import { formatBRL, formatCompactBRL } from "@/lib/domain/money";
 
 const tick = { fill: "var(--muted-foreground)", fontSize: 12 };
@@ -114,9 +114,23 @@ export function GoalChart({ summary }: { summary: GoalSummary }) {
               tick={tick}
               width={64}
               tickCount={4}
+              domain={[0, chartYMax(summary.targetCents, last.totalCents)]}
               tickFormatter={(v: number) => formatCompactBRL(v)}
               axisLine={false}
               tickLine={false}
+            />
+            <ReferenceLine
+              y={summary.targetCents}
+              stroke="var(--muted-foreground)"
+              strokeDasharray="4 4"
+              strokeOpacity={0.7}
+              ifOverflow="extendDomain"
+              label={{
+                value: `Meta: ${formatCompactBRL(summary.targetCents)}`,
+                position: "insideTopRight",
+                fill: "var(--muted-foreground)",
+                fontSize: 12,
+              }}
             />
             <Tooltip content={<ChartTooltip />} cursor={{ stroke: "var(--muted-foreground)", strokeWidth: 1 }} />
             <Area
