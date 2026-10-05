@@ -273,15 +273,17 @@ T10 → T11
 
 **Done when**:
 
-- [ ] Nenhuma linha tem botão "Ajustar"
-- [ ] Com soma ≠ 100% aparece `AdjustSumBar` com o aviso, select e "Aplicar"; com soma 100% nada disso aparece
-- [ ] "Aplicar" fecha a soma em exatamente 100% na categoria escolhida; fora do intervalo mostra a mensagem existente e mantém os percentuais
-- [ ] Editar qualquer campo remove a mensagem de ajuste
-- [ ] A base de cálculo aparece como `ReferenceIncomeCard` ligado ao estado `income`
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
+- [x] Nenhuma linha tem botão "Ajustar"
+- [x] Com soma ≠ 100% aparece `AdjustSumBar` com o aviso, select e "Aplicar"; com soma 100% nada disso aparece
+- [x] "Aplicar" fecha a soma em exatamente 100% na categoria escolhida; fora do intervalo mostra a mensagem existente e mantém os percentuais
+- [x] Editar qualquer campo remove a mensagem de ajuste
+- [x] A base de cálculo aparece como `ReferenceIncomeCard` ligado ao estado `income`
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
 
 **Tests**: none
 **Gate**: build
+
+**Status**: ✅ Complete
 
 **Commit**: `feat(categories): replace per-row adjust with actionable sum bar`
 

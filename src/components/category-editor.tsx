@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { saveCategories } from "@/actions/categories";
+import { AdjustSumBar } from "@/components/adjust-sum-bar";
 import { CategorySquare } from "@/components/category-card";
 import { Button } from "@/components/ui/button";
 import {
@@ -14,8 +15,8 @@ import {
 } from "@/components/ui/dialog";
 import { InputAffix } from "@/components/input-affix";
 import { Input } from "@/components/ui/input";
+import { ReferenceIncomeCard } from "@/components/reference-income-card";
 import { SubcategoryEditor, type SubcategoryRow } from "@/components/subcategory-editor";
-import { Label } from "@/components/ui/label";
 import type { ActionResult } from "@/lib/action-result";
 import { allocateCents, type Category } from "@/lib/domain/budget";
 import { CATEGORY_COLORS, colorVar, nextFreeColor } from "@/lib/domain/color";
@@ -229,20 +230,7 @@ export function CategoryEditor({
         save();
       }}
     >
-      <div className="max-w-xs space-y-1">
-        <Label htmlFor="reference-income">Receita de referência (R$)</Label>
-        <Input
-          id="reference-income"
-          inputMode="decimal"
-          placeholder="5.000,00"
-          value={income}
-          aria-invalid={!!parsedIncome && !parsedIncome.ok}
-          onChange={(e) => setIncome(e.target.value)}
-        />
-        {parsedIncome && !parsedIncome.ok && (
-          <p className="text-sm text-destructive">{parsedIncome.error}</p>
-        )}
-      </div>
+      <ReferenceIncomeCard value={income} onChange={setIncome} />
 
       <div className="divide-y divide-border rounded-2xl border border-border bg-card px-4 shadow-lg">
         {rows.map((row, i) => {
@@ -323,17 +311,6 @@ export function CategoryEditor({
                 }
                 trailing={
                   <>
-                    {!sumOk && (
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        aria-label={`Ajustar categoria ${i + 1} para fechar 100%`}
-                        onClick={() => adjust(i)}
-                      >
-                        Ajustar
-                      </Button>
-                    )}
                     <Button
                       type="button"
                       variant="ghost"
@@ -359,14 +336,17 @@ export function CategoryEditor({
       </div>
 
       {!sumOk && (
-        <p className="text-sm text-destructive">
-          {`A soma dos percentuais deve ser 100% (atual: ${formatPercent(sumMicro)})`}
-        </p>
-      )}
-      {adjustError && (
-        <p role="alert" className="text-sm text-destructive">
-          {adjustError}
-        </p>
+        <AdjustSumBar
+          sumMicro={sumMicro}
+          incomeCents={incomeCents}
+          options={rows.map((r, i) => ({
+            index: i,
+            label: r.name.trim() || `Categoria ${i + 1}`,
+            micro: parsed[i]?.ok ? parsed[i].value : null,
+          }))}
+          onApply={adjust}
+          error={adjustError}
+        />
       )}
       {result && !result.ok && (
         <p role="alert" className="text-sm text-destructive">
