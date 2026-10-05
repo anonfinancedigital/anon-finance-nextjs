@@ -4,10 +4,13 @@ import Link from "next/link";
 import { useId, useState, useTransition } from "react";
 import { createTransaction, updateTransaction } from "@/actions/transactions";
 import { CategoryPicker } from "@/components/category-picker";
+import { KindToggle } from "@/components/kind-toggle";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import type { ActionResult } from "@/lib/action-result";
+import { maskBRLInput } from "@/lib/domain/money";
+import { cn } from "cn";
 
 type Kind = "income" | "expense";
 type Recurrence = "none" | "forever" | "until";
@@ -100,51 +103,38 @@ export function TransactionForm({ categories, defaultDate, transaction, month, o
 
   return (
     <form onSubmit={submit} className="space-y-3" aria-label={transaction ? "Editar transação" : "Nova transação"}>
-      <fieldset className="flex gap-4">
-        <legend className="mb-1 text-sm font-medium">Tipo</legend>
-        {(
-          [
-            ["expense", "Gasto"],
-            ["income", "Ganho"],
-          ] as const
-        ).map(([kind, label]) => (
-          <label key={kind} className="flex items-center gap-1.5 text-sm">
-            <input
-              type="radio"
-              name={field("kind")}
-              value={kind}
-              checked={values.kind === kind}
-              onChange={() => set("kind", kind)}
-            />
-            {label}
-          </label>
-        ))}
-      </fieldset>
+      <KindToggle value={values.kind} onChange={(kind) => set("kind", kind)} />
 
-      <div className="grid gap-3 sm:grid-cols-2">
-        <div className="space-y-1">
-          <Label htmlFor={field("amount")}>Valor (R$)</Label>
-          <Input
-            id={field("amount")}
-            inputMode="decimal"
-            placeholder="1.234,56"
-            value={values.amount}
-            aria-invalid={!!fieldErrors.amount}
-            onChange={(e) => set("amount", e.target.value)}
-          />
-          {fieldErrors.amount && <p className="text-sm text-destructive">{fieldErrors.amount}</p>}
-        </div>
-        <div className="space-y-1">
-          <Label htmlFor={field("date")}>Data</Label>
-          <Input
-            id={field("date")}
-            type="date"
-            value={values.date}
-            aria-invalid={!!fieldErrors.date}
-            onChange={(e) => set("date", e.target.value)}
-          />
-          {fieldErrors.date && <p className="text-sm text-destructive">{fieldErrors.date}</p>}
-        </div>
+      <div className="space-y-1">
+        <Label htmlFor={field("amount")}>Valor (R$)</Label>
+        <Input
+          id={field("amount")}
+          inputMode="numeric"
+          autoFocus
+          placeholder="0,00"
+          value={values.amount}
+          aria-invalid={!!fieldErrors.amount}
+          onChange={(e) => set("amount", maskBRLInput(e.target.value))}
+          className={cn(
+            "h-14 font-display text-3xl md:text-3xl",
+            values.kind === "income" && "text-success",
+          )}
+        />
+        {fieldErrors.amount && <p className="text-sm text-destructive">{fieldErrors.amount}</p>}
+      </div>
+
+      <div className="space-y-1">
+        <Label htmlFor={field("description")}>Descrição</Label>
+        <Input
+          id={field("description")}
+          maxLength={120}
+          value={values.description}
+          aria-invalid={!!fieldErrors.description}
+          onChange={(e) => set("description", e.target.value)}
+        />
+        {fieldErrors.description && (
+          <p className="text-sm text-destructive">{fieldErrors.description}</p>
+        )}
       </div>
 
       {values.kind === "expense" && (
@@ -177,17 +167,15 @@ export function TransactionForm({ categories, defaultDate, transaction, month, o
       )}
 
       <div className="space-y-1">
-        <Label htmlFor={field("description")}>Descrição</Label>
+        <Label htmlFor={field("date")}>Data</Label>
         <Input
-          id={field("description")}
-          maxLength={120}
-          value={values.description}
-          aria-invalid={!!fieldErrors.description}
-          onChange={(e) => set("description", e.target.value)}
+          id={field("date")}
+          type="date"
+          value={values.date}
+          aria-invalid={!!fieldErrors.date}
+          onChange={(e) => set("date", e.target.value)}
         />
-        {fieldErrors.description && (
-          <p className="text-sm text-destructive">{fieldErrors.description}</p>
-        )}
+        {fieldErrors.date && <p className="text-sm text-destructive">{fieldErrors.date}</p>}
       </div>
 
       <fieldset className="flex flex-wrap gap-4">

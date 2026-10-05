@@ -176,14 +176,15 @@ T7 → T8 → T9 → T10 → T11
 
 **Done when**:
 
-- [ ] Ordem renderizada: Tipo, Valor, Descrição, Categoria, Data, Repetir
-- [ ] Valor mostra o texto mascarado e envia à action o mesmo texto pt-BR
-- [ ] Valor vazio mostra "Informe o valor" sob o campo
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
-- [ ] Verificação manual: `1`,`2`,`3` no valor mostra `1,23`; Ganho pinta o valor de verde
+- [x] Ordem renderizada: Tipo, Valor, Descrição, Categoria, Data, Repetir
+- [x] Valor mostra o texto mascarado e envia à action o mesmo texto pt-BR
+- [x] Valor vazio mostra "Informe o valor" sob o campo
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] Verificação manual: `1`,`2`,`3` no valor mostra `1,23`; Ganho pinta o valor de verde
 
 **Tests**: none
 **Gate**: build
+**Status**: ✅ Complete
 
 **Commit**: `feat(transactions): highlight amount and reorder form fields`
 
