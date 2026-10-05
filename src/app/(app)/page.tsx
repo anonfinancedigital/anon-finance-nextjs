@@ -25,7 +25,7 @@ import {
 const todayInSaoPaulo = () =>
   new Intl.DateTimeFormat("en-CA", { timeZone: "America/Sao_Paulo" }).format(new Date());
 
-export const metadata: Metadata = { title: "Cockpit" };
+export const metadata: Metadata = { title: "Visão Geral" };
 
 export default async function SummaryPage({ searchParams }: PageProps<"/">) {
   const { userId } = await requireSessionForPage();
@@ -82,7 +82,7 @@ export default async function SummaryPage({ searchParams }: PageProps<"/">) {
 
   return (
     <div className="space-y-6 pb-32">
-      <PageHeader eyebrow="Visão geral" title="Cockpit">
+      <PageHeader eyebrow="Visão geral" title="Visão Geral">
         <MonthPicker month={month} />
       </PageHeader>
 

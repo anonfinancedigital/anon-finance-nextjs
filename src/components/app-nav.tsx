@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 
 const items = [
-  { href: "/", label: "Cockpit", icon: LayoutGridIcon },
+  { href: "/", label: "Visão Geral", icon: LayoutGridIcon },
   { href: "/categorias", label: "Alocação", icon: TagsIcon },
   { href: "/liberdade", label: "Ápice", icon: TargetIcon },
 ] as const;
