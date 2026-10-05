@@ -120,6 +120,24 @@ Seen once or not yet corroborated. Tracked, not trusted.
 - evidence: RET-12; src/components/goal-hero.tsx:43 (ui)
 - last seen: 2026-10-05T18:09:34Z
 
+### L-019 - To test user scoping, give another user's row the same grouping key as the user's row, not a distinct one
+- signal: `surviving_mutant` · recurrence: 1 feature(s) · scope: `repo-layer` · harmful: 0
+- features: recorrencia-parcelas
+- evidence: validation.md M12 (src/lib/db/repos/transactions.ts:274) (repo-layer)
+- last seen: 2026-10-05T20:48:03Z
+
+### L-020 - Test a bounded-count or threshold rule exactly at its limit and one past it, not only well inside and far outside
+- signal: `surviving_mutant` · recurrence: 1 feature(s) · scope: `domain` · harmful: 0
+- features: liberdade-ajustes-ux
+- evidence: validation.md M13/M15 src/lib/domain/age-ticks.test.ts (AJL-07, AJL-08) (domain)
+- last seen: 2026-10-05T20:49:13Z
+
+### L-021 - When a UI criterion depends on text fitting, state in the AC whether wrapping is allowed at the narrowest supported width
+- signal: `spec_precision_gap` · recurrence: 1 feature(s) · scope: `ui` · harmful: 0
+- features: liberdade-ajustes-ux
+- evidence: validation.md AJL-24 vs Independent Test (rate-toggle.tsx:55 wraps at 360 px) (ui)
+- last seen: 2026-10-05T20:49:13Z
+
 ## Quarantined (failed when applied - ignore)
 
 A confirmed lesson that recurred alongside failure. Kept for the maintainer to review.

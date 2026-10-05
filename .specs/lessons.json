@@ -3,7 +3,7 @@
   "promote_threshold": 2,
   "window_days": 45,
   "quarantine_threshold": 2,
-  "next_id": 19,
+  "next_id": 22,
   "lessons": [
     {
       "id": "L-001",
@@ -330,6 +330,60 @@
       ],
       "created": "2026-10-05T18:09:34Z",
       "last_seen": "2026-10-05T18:09:34Z"
+    },
+    {
+      "id": "L-019",
+      "key": "surviving_mutant::to test user scoping give another user s row the same grouping key as the user s row not a distinct one",
+      "text": "To test user scoping, give another user's row the same grouping key as the user's row, not a distinct one",
+      "signal": "surviving_mutant",
+      "scope": "repo-layer",
+      "status": "candidate",
+      "features": [
+        "recorrencia-parcelas"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "validation.md M12 (src/lib/db/repos/transactions.ts:274) (repo-layer)"
+      ],
+      "created": "2026-10-05T20:48:03Z",
+      "last_seen": "2026-10-05T20:48:03Z"
+    },
+    {
+      "id": "L-020",
+      "key": "surviving_mutant::test a bounded count or threshold rule exactly at its limit and one past it not only well inside and far outside",
+      "text": "Test a bounded-count or threshold rule exactly at its limit and one past it, not only well inside and far outside",
+      "signal": "surviving_mutant",
+      "scope": "domain",
+      "status": "candidate",
+      "features": [
+        "liberdade-ajustes-ux"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "validation.md M13/M15 src/lib/domain/age-ticks.test.ts (AJL-07, AJL-08) (domain)"
+      ],
+      "created": "2026-10-05T20:49:13Z",
+      "last_seen": "2026-10-05T20:49:13Z"
+    },
+    {
+      "id": "L-021",
+      "key": "spec_precision_gap::when a ui criterion depends on text fitting state in the ac whether wrapping is allowed at the narrowest supported width",
+      "text": "When a UI criterion depends on text fitting, state in the AC whether wrapping is allowed at the narrowest supported width",
+      "signal": "spec_precision_gap",
+      "scope": "ui",
+      "status": "candidate",
+      "features": [
+        "liberdade-ajustes-ux"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "validation.md AJL-24 vs Independent Test (rate-toggle.tsx:55 wraps at 360 px) (ui)"
+      ],
+      "created": "2026-10-05T20:49:13Z",
+      "last_seen": "2026-10-05T20:49:13Z"
     }
   ]
 }

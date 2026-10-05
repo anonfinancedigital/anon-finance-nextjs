@@ -121,12 +121,12 @@ Hoje, ao marcar um gasto ou ganho como "Todo mês, até um mês/ano", só dá pa
 
 | Requirement ID | Story | Phase | Status |
 | -------------- | ----- | ----- | ------ |
-| PARC-01 | P1: Mês inicial e final (campos no formulário, ACs 1-2) | Design | Pending |
-| PARC-02 | P1: Mês inicial e final (persistência e projeção, ACs 3-5) | Design | Pending |
-| PARC-03 | P1: Mês inicial e final (edição do mês inicial, ACs 6-8) | Design | Pending |
-| PARC-04 | P1: Validar mês inicial e final (ACs 1-5) | Design | Pending |
-| PARC-05 | P1: Parcela na lista (cálculo e exibição, ACs 1-5) | Design | Pending |
-| PARC-06 | P1: Parcela na lista (série editada, excluída ou sem fim, ACs 6-8) | Design | Pending |
+| PARC-01 | P1: Mês inicial e final (campos no formulário, ACs 1-2) | Done | Verified |
+| PARC-02 | P1: Mês inicial e final (persistência e projeção, ACs 3-5) | Done | Verified |
+| PARC-03 | P1: Mês inicial e final (edição do mês inicial, ACs 6-8) | Done | Verified |
+| PARC-04 | P1: Validar mês inicial e final (ACs 1-5) | Done | Verified |
+| PARC-05 | P1: Parcela na lista (cálculo e exibição, ACs 1-5) | Done | Verified |
+| PARC-06 | P1: Parcela na lista (série editada, excluída ou sem fim, ACs 6-8) | Done | Verified |
 
 **Coverage:** 6 total, 0 mapped to tasks, 6 unmapped ⚠️
 
