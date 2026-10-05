@@ -196,10 +196,10 @@ T22 → T23 → T24 → T25 → T26 → T27 → T28
 
 **Done when**:
 
-- [ ] `title.default`, `title.template` e `description` exatamente como no spec
-- [ ] Nenhuma ocorrência de "Orçamento" em `src/app/layout.tsx`
-- [ ] Gate quick: `npm run typecheck && npm run lint && npm run test:unit`
-- [ ] Contagem de testes unit/int igual à anterior (nenhum teste removido)
+- [x] `title.default`, `title.template` e `description` exatamente como no spec
+- [x] Nenhuma ocorrência de "Orçamento" em `src/app/layout.tsx`
+- [x] Gate quick: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Contagem de testes unit/int igual à anterior (nenhum teste removido)
 
 **Tests**: none
 **Gate**: quick

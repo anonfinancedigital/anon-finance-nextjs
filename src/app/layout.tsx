@@ -22,8 +22,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Orçamento",
-  description: "Orçamento doméstico por categoria",
+  title: { default: "Vértice", template: "Vértice • %s" },
+  description: "Vértice – Gestão Patrimonial Familiar",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
