@@ -74,6 +74,10 @@ export function installmentOf(segments: Segment[], month: string): Installment |
   return { number: monthsBetween(start, month) + 1, total: monthsBetween(start, last.endMonth) + 1 };
 }
 
+/** Predicate: the segment belongs to the series of `seg` (a non-recurring row is its own series). */
+const inSeriesOf = (seg: Segment) => (s: Segment) =>
+  seg.seriesId === null ? s.id === seg.id : s.seriesId === seg.seriesId;
+
 /** Segments of the same series as `seg` that start after `month`. */
 function laterIds(segments: Segment[], seg: Segment, month: string): string[] {
   if (seg.seriesId === null) return [];
@@ -116,6 +120,8 @@ export type EditedData = {
   recurring: boolean;
   /** AAAA-MM, inclusive; null = no end (always null when not recurring). */
   endMonth: string | null;
+  /** AAAA-MM first month of the series; only honored when editing the series' first month. */
+  startMonth?: string | null;
 };
 
 export type EditPlan = {
@@ -139,11 +145,16 @@ export function planEdit(input: {
 }): EditPlan {
   const { segments, month, next } = input;
   const seg = segments.find((s) => s.id === input.id)!;
+  const recurringDay = next.recurring ? resolveDay(seg, month, next.date) : null;
+  const movesStart =
+    next.recurring && next.startMonth && startOfSeries(segments.filter(inSeriesOf(seg))) === month;
   const result: Omit<Segment, "id"> = next.recurring
     ? {
         seriesId: seg.seriesId ?? seg.id,
-        date: next.date,
-        recurringDay: resolveDay(seg, month, next.date),
+        date: movesStart
+          ? occurrenceDate({ ...seg, recurringDay }, next.startMonth!)
+          : next.date,
+        recurringDay,
         endMonth: next.endMonth,
       }
     : { seriesId: null, date: next.date, recurringDay: null, endMonth: null };

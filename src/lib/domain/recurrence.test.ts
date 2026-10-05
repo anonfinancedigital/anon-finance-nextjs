@@ -428,3 +428,87 @@ describe("installmentOf", () => {
     expect(installmentOf([single("2026-05-10")], "2026-05")).toBeNull();
   });
 });
+
+describe("planEdit with a start month", () => {
+  const until = (date: string, startMonth: string | null, endMonth = "2027-03") => ({
+    date,
+    recurring: true,
+    endMonth,
+    startMonth,
+  });
+
+  it("moves the first occurrence to the day of the data in the new start month", () => {
+    const seg = recurring("2026-04-10", "2026-12");
+    const plan = planEdit({
+      segments: [seg],
+      id: "s1",
+      month: "2026-04",
+      next: until("2026-04-10", "2026-06"),
+    });
+    expect(plan.updateInPlace).toMatchObject({ date: "2026-06-10", recurringDay: 10 });
+    expect(plan.truncate).toBeUndefined();
+  });
+
+  it("clamps day 31 to the last day of a shorter start month but keeps the intended day", () => {
+    const seg = recurring("2026-01-31", "2026-12");
+    const plan = planEdit({
+      segments: [seg],
+      id: "s1",
+      month: "2026-01",
+      next: until("2026-01-31", "2026-04"),
+    });
+    expect(plan.updateInPlace).toMatchObject({ date: "2026-04-30", recurringDay: 31 });
+  });
+
+  it("ignores the start month when editing a month in the middle of the series", () => {
+    const seg = recurring("2026-04-10", "2026-12");
+    const plan = planEdit({
+      segments: [seg],
+      id: "s1",
+      month: "2026-08",
+      next: until("2026-08-10", "2026-02"),
+    });
+    expect(plan.truncate).toEqual({ id: "s1", endMonth: "2026-07" });
+    expect(plan.insert).toMatchObject({ date: "2026-08-10", endMonth: "2027-03" });
+  });
+
+  it("ignores the start month of a later segment that starts in the edited month", () => {
+    const first = recurring("2026-04-10", "2026-07");
+    const second = { ...recurring("2026-08-10", "2026-12"), id: "s2" };
+    const plan = planEdit({
+      segments: [first, second],
+      id: "s2",
+      month: "2026-08",
+      next: until("2026-08-10", "2026-10"),
+    });
+    expect(plan.updateInPlace).toMatchObject({ id: "s2", date: "2026-08-10" });
+  });
+
+  it("uses the start month when a single row becomes an until series", () => {
+    const plan = planEdit({
+      segments: [single("2026-04-10")],
+      id: "a1",
+      month: "2026-04",
+      next: until("2026-04-10", "2026-05"),
+    });
+    expect(plan.updateInPlace).toMatchObject({ date: "2026-05-10", recurringDay: 10 });
+  });
+
+  it("keeps the submitted date without a start month or when not recurring", () => {
+    const seg = recurring("2026-04-10", "2026-12");
+    const noStart = planEdit({
+      segments: [seg],
+      id: "s1",
+      month: "2026-04",
+      next: until("2026-04-12", null),
+    });
+    expect(noStart.updateInPlace).toMatchObject({ date: "2026-04-12" });
+    const single1 = planEdit({
+      segments: [seg],
+      id: "s1",
+      month: "2026-04",
+      next: { date: "2026-04-10", recurring: false, endMonth: null, startMonth: "2026-06" },
+    });
+    expect(single1.updateInPlace).toMatchObject({ date: "2026-04-10", recurringDay: null });
+  });
+});

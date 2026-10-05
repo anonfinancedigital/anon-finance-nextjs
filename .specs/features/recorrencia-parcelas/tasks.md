@@ -118,12 +118,12 @@ T5 → T8
 
 **Done when**:
 
-- [ ] Editar o primeiro mês com novo `startMonth` move `date` para o dia do segmento no novo mês (dia 31 → último dia do mês, `recurringDay` continua 31)
-- [ ] Editar uma ocorrência do meio com `startMonth` presente ignora `startMonth` e mantém `next.date`
-- [ ] Avulso → recorrente "até" com `startMonth` usa o `startMonth`
-- [ ] `startMonth` ausente ou não recorrente mantém o comportamento atual (testes existentes de `planEdit` passam)
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
-- [ ] Test count: ≥ 4 testes novos, nenhum removido
+- [x] Editar o primeiro mês com novo `startMonth` move `date` para o dia do segmento no novo mês (dia 31 → último dia do mês, `recurringDay` continua 31)
+- [x] Editar uma ocorrência do meio com `startMonth` presente ignora `startMonth` e mantém `next.date`
+- [x] Avulso → recorrente "até" com `startMonth` usa o `startMonth`
+- [x] `startMonth` ausente ou não recorrente mantém o comportamento atual (testes existentes de `planEdit` passam)
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Test count: ≥ 4 testes novos, nenhum removido
 
 **Tests**: unit
 **Gate**: quick
