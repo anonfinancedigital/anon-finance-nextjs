@@ -344,7 +344,7 @@ export function CategoryEditor({
                       size="icon-sm"
                       aria-label={`Remover categoria ${i + 1}`}
                       onClick={() => (row.subcategories.length > 0 ? setRemoving(i) : remove(i))}
-                      className={`size-8 opacity-40 group-hover/row:text-destructive group-hover/row:opacity-100 group-focus-within/row:text-destructive group-focus-within/row:opacity-100`}
+                      className={`size-8 opacity-40 hover:text-destructive group-hover/row:text-destructive group-hover/row:opacity-100 group-focus-within/row:text-destructive group-focus-within/row:opacity-100`}
                     >
                       <Trash2Icon aria-hidden className="size-4" />
                     </Button>
