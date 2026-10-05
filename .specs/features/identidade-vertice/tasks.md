@@ -223,11 +223,11 @@ T22 → T23 → T24 → T25 → T26 → T27 → T28
 
 **Done when**:
 
-- [ ] `Logo` aparece na sidebar (`md+`) e na barra superior (mobile)
-- [ ] Alternador de tema e "Sair" continuam visíveis em largura mobile
-- [ ] Nenhuma ocorrência de "Orçamento" no arquivo
-- [ ] Gate quick: `npm run typecheck && npm run lint && npm run test:unit`
-- [ ] Contagem de testes unit/int igual à anterior (nenhum teste removido)
+- [x] `Logo` aparece na sidebar (`md+`) e na barra superior (mobile)
+- [x] Alternador de tema e "Sair" continuam visíveis em largura mobile
+- [x] Nenhuma ocorrência de "Orçamento" no arquivo
+- [x] Gate quick: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Contagem de testes unit/int igual à anterior (nenhum teste removido)
 
 **Tests**: none
 **Gate**: quick

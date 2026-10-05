@@ -1,6 +1,7 @@
-import { LogOutIcon, WalletIcon } from "lucide-react";
+import { LogOutIcon } from "lucide-react";
 import { signOutAction } from "@/actions/auth";
 import { AppNav } from "@/components/app-nav";
+import { Logo } from "@/components/brand/Logo";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Button } from "@/components/ui/button";
 import { requireSessionForPage } from "@/lib/auth-guard";
@@ -12,15 +13,7 @@ export default async function AppLayout({ children }: LayoutProps<"/">) {
   return (
     <div className="flex flex-1 flex-col md:flex-row">
       <aside className="sticky top-0 z-30 flex items-center gap-3 border-b border-border bg-background/95 px-4 py-3 md:fixed md:inset-y-0 md:left-0 md:w-[218px] md:flex-col md:items-stretch md:gap-6 md:border-r md:border-b-0 md:bg-sidebar md:p-3">
-        <div className="flex items-center gap-3 md:px-1 md:pt-2">
-          <div className="flex size-10 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-[0_0_16px_oklch(0.57_0.21_293/0.35)]">
-            <WalletIcon aria-hidden className="size-5" />
-          </div>
-          <div className="leading-tight">
-            <p className="font-display font-bold">Orçamento</p>
-            <p className="hidden text-xs text-muted-foreground md:block">Visão da família</p>
-          </div>
-        </div>
+        <Logo className="md:px-1 md:pt-2" />
         <AppNav />
         <div className="ml-auto flex items-center gap-1 md:mt-auto md:ml-0 md:flex-col md:items-stretch">
           <ThemeToggle className="md:w-full md:justify-start" />
