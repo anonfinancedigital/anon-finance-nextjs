@@ -154,7 +154,7 @@ export function TransactionList({ transactions, categories, filtered = false, se
       <Dialog open={editing !== null} onOpenChange={(open) => !open && setEditing(null)}>
         <DialogContent className="flex max-h-[calc(100dvh-2rem)] flex-col sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Editar transação</DialogTitle>
+            <DialogTitle>Editar Lançamento</DialogTitle>
           </DialogHeader>
           {editing && (
             <TransactionForm

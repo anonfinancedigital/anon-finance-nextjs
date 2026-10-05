@@ -668,11 +668,11 @@ T22 → T23 → T24 → T25 → T26 → T27 → T28
 
 **Done when**:
 
-- [ ] Título "Editar Lançamento"
-- [ ] "Cancelar" aparece no rodapé da edição e fecha o modal sem salvar
-- [ ] Fluxo de exclusão pela lista inalterado
-- [ ] Gate quick: `npm run typecheck && npm run lint && npm run test:unit`
-- [ ] Contagem de testes unit/int igual à anterior (nenhum teste removido)
+- [x] Título "Editar Lançamento"
+- [x] "Cancelar" aparece no rodapé da edição e fecha o modal sem salvar
+- [x] Fluxo de exclusão pela lista inalterado
+- [x] Gate quick: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Contagem de testes unit/int igual à anterior (nenhum teste removido)
 
 **Tests**: none
 **Gate**: quick
