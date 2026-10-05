@@ -783,6 +783,51 @@ describe("transactionsRepo subcategory", () => {
     expect((await transactionsRepo.listByMonth(userId, OCTOBER))[0].subcategoryId).toBeNull();
   });
 
+  it("applies category, subcategory, description and day of a mid-series edit from that month on", async () => {
+    const tx = {
+      ...spend(restaurante, "2026-10-15", 10000),
+      description: "Aluguel",
+      recurrence: "forever" as const,
+      recurrenceEndMonth: null,
+    };
+    await transactionsRepo.create(userId, tx);
+    const fields = (t: Awaited<ReturnType<typeof transactionsRepo.listByMonth>>[number]) => [
+      t.kind,
+      t.categoryId,
+      t.subcategoryId,
+      t.description,
+      t.date,
+    ];
+
+    expect(
+      await transactionsRepo.updateFrom(userId, tx.id, "2026-12", {
+        ...tx,
+        date: "2026-12-20",
+        subcategoryId: streaming,
+        description: "Streaming",
+      }),
+    ).toBe(true);
+    const [dec] = await transactionsRepo.listByMonth(userId, monthRange({ year: 2026, month: 12 }));
+    const [jan] = await transactionsRepo.listByMonth(userId, monthRange({ year: 2027, month: 1 }));
+    const [nov] = await transactionsRepo.listByMonth(userId, monthRange({ year: 2026, month: 11 }));
+
+    expect(fields(dec)).toEqual(["expense", conforto, streaming, "Streaming", "2026-12-20"]);
+    expect(fields(jan)).toEqual(["expense", conforto, streaming, "Streaming", "2027-01-20"]);
+    expect(fields(nov)).toEqual(["expense", conforto, restaurante, "Aluguel", "2026-11-15"]);
+
+    expect(
+      await transactionsRepo.updateFrom(userId, jan.id, "2027-01", {
+        ...tx,
+        date: "2027-01-20",
+        categoryId: lazer,
+        subcategoryId: null,
+        description: "Cinema",
+      }),
+    ).toBe(true);
+    const [feb] = await transactionsRepo.listByMonth(userId, monthRange({ year: 2027, month: 2 }));
+    expect(fields(feb)).toEqual(["expense", lazer, null, "Cinema", "2027-02-20"]);
+  });
+
   it("totals expenses with and without subcategory under separate keys of the same category", async () => {
     for (const tx of [
       spend(restaurante, "2026-10-02", 30000),
