@@ -54,7 +54,7 @@ export function ReferenceIncomeCard({
 
   return (
     <div className="max-w-xs space-y-1">
-      <Label htmlFor="reference-income">Receita de referência (R$)</Label>
+      <Label htmlFor="reference-income">Receita Base Mensal</Label>
       <Input
         id="reference-income"
         inputMode="decimal"
