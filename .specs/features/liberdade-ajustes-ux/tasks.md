@@ -436,10 +436,10 @@ T9 → T10 → T11 → T12 → T13 → T14
 
 **Done when**:
 
-- [ ] Objetivo salvo 6,5/4,5 reabre em Personalizada com os dois campos preenchidos (AJL-19)
-- [ ] Objetivo 8/6 reabre com Moderado marcado
-- [ ] Gate build passa
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] Objetivo salvo 6,5/4,5 reabre em Personalizada com os dois campos preenchidos (AJL-19)
+- [x] Objetivo 8/6 reabre com Moderado marcado
+- [x] Gate build passa
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
 
 **Tests**: none
 **Gate**: build
