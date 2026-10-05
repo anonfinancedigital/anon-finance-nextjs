@@ -366,11 +366,11 @@ T16 → T17 → T18 → T19
 
 **Done when**:
 
-- [ ] `Slider` aceita `value`, `min`, `max`, `step`, `onValueChange`, `disabled` e `aria-label`
-- [ ] Trilho `bg-subtle`, faixa `bg-primary`, polegar com `focus-visible:ring`, legível nos temas claro e escuro
-- [ ] Sem erros de tipo ou lint
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
-- [ ] Test count: nenhum teste novo (UI = none); contagem anterior mantida
+- [x] `Slider` aceita `value`, `min`, `max`, `step`, `onValueChange`, `disabled` e `aria-label`
+- [x] Trilho `bg-subtle`, faixa `bg-primary`, polegar com `focus-visible:ring`, legível nos temas claro e escuro
+- [x] Sem erros de tipo ou lint
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
+- [x] Test count: nenhum teste novo (UI = none); contagem anterior mantida
 
 **Tests**: none
 **Gate**: build
