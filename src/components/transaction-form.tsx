@@ -36,6 +36,8 @@ export type TransactionFormValues = {
   recurrence?: Recurrence;
   /** AAAA-MM; read only when `recurrence` is "until". */
   recurrenceEnd?: string;
+  /** AAAA-MM first month of the series; read only when `recurrence` is "until". */
+  recurrenceStart?: string;
 };
 
 type Props = {
@@ -51,6 +53,8 @@ type Props = {
   transaction?: TransactionFormValues;
   /** AAAA-MM of the occurrence being edited; sent to `updateTransaction`. */
   month?: string;
+  /** Shows the start month disabled: it only changes when editing the series' first month. */
+  startLocked?: boolean;
   onSaved?: () => void;
   /** Shows "Cancelar" in the footer. */
   onCancel?: () => void;
@@ -68,6 +72,7 @@ const blank = (date: string): TransactionFormValues => ({
   description: "",
   recurrence: "none",
   recurrenceEnd: "",
+  recurrenceStart: "",
 });
 
 /**
@@ -79,6 +84,7 @@ export function TransactionForm({
   defaultDate,
   transaction,
   month,
+  startLocked,
   onSaved,
   onCancel,
   onDelete,
@@ -115,6 +121,7 @@ export function TransactionForm({
       : "";
     const recurrence = {
       recurrence: values.recurrence ?? "none",
+      recurrenceStart: values.recurrenceStart ?? "",
       recurrenceEnd: values.recurrenceEnd ?? "",
     };
     const input =
@@ -290,7 +297,14 @@ export function TransactionForm({
           <RadioGroup
             aria-label="Frequência"
             value={recurrenceMode}
-            onValueChange={(next) => set("recurrence", next as Recurrence)}
+            onValueChange={(next) =>
+              setValues((v) => ({
+                ...v,
+                recurrence: next as Recurrence,
+                // The start month begins as the month of the date.
+                recurrenceStart: v.recurrenceStart || v.date.slice(0, 7),
+              }))
+            }
           >
             {(
               [
@@ -312,6 +326,25 @@ export function TransactionForm({
               </div>
             ))}
           </RadioGroup>
+        )}
+
+        {recurrenceMode === "until" && (
+          <div className="space-y-1">
+            <Label htmlFor={field("recurrenceStart")}>Mês inicial</Label>
+            <Input
+              id={field("recurrenceStart")}
+              type="month"
+              value={values.recurrenceStart ?? ""}
+              disabled={startLocked}
+              aria-invalid={!!fieldErrors.recurrenceStart}
+              onChange={(e) => set("recurrenceStart", e.target.value)}
+            />
+            {fieldErrors.recurrenceStart && (
+              <p className="text-sm text-destructive">
+                {fieldErrors.recurrenceStart}
+              </p>
+            )}
+          </div>
         )}
 
         {recurrenceMode === "until" && (

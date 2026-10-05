@@ -257,12 +257,12 @@ T5 → T8
 
 **Done when**:
 
-- [ ] Ao escolher "até mês/ano" o Mês inicial aparece com o mês da Data; em "sem data final" e "não recorrente" fica oculto
-- [ ] Erro de `recurrenceStart` aparece sob o campo, com `aria-invalid`
-- [ ] Com `startLocked` o campo aparece desabilitado com o valor recebido
-- [ ] `submit` envia `recurrenceStart` na criação e na edição
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
-- [ ] Test count: contagem de testes igual à da task anterior (UI sem teste, AD-005)
+- [x] Ao escolher "até mês/ano" o Mês inicial aparece com o mês da Data; em "sem data final" e "não recorrente" fica oculto
+- [x] Erro de `recurrenceStart` aparece sob o campo, com `aria-invalid`
+- [x] Com `startLocked` o campo aparece desabilitado com o valor recebido
+- [x] `submit` envia `recurrenceStart` na criação e na edição
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
+- [x] Test count: contagem de testes igual à da task anterior (UI sem teste, AD-005)
 
 **Tests**: none
 **Gate**: build
