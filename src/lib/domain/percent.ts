@@ -9,6 +9,8 @@ const PERCENT_PATTERN = /^(\d+)(?:,(\d{1,6}))?$/;
 const percent = new Intl.NumberFormat("pt-BR", { maximumFractionDigits: 6 });
 const share = new Intl.NumberFormat("pt-BR", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
 
+const ADJUST_OUT_OF_RANGE =
+  "Não é possível ajustar esta categoria: o percentual ficaria fora do intervalo de 0,000001% a 100%";
 const OUT_OF_RANGE = "O percentual deve estar entre 0,000001 e 100";
 
 /** round(a × b / divisor) for non-negative integers, exact even when a × b exceeds 2^53. */
@@ -36,6 +38,13 @@ export function parsePercent(input: string): Result<number> {
 export function microFromCents(cents: number, incomeCents: number): Result<number> {
   const micro = incomeCents > 0 ? mulDivRound(cents, TOTAL_MICRO, incomeCents) : 0;
   if (micro < 1 || micro > TOTAL_MICRO) return { ok: false, error: OUT_OF_RANGE };
+  return { ok: true, value: micro };
+}
+
+/** Percentage a row needs so the whole set sums to 100%: its current value plus whatever the sum lacks (or minus the excess). */
+export function adjustToTotal(rowMicro: number, sumMicro: number): Result<number> {
+  const micro = rowMicro + TOTAL_MICRO - sumMicro;
+  if (micro < 1 || micro > TOTAL_MICRO) return { ok: false, error: ADJUST_OUT_OF_RANGE };
   return { ok: true, value: micro };
 }
 

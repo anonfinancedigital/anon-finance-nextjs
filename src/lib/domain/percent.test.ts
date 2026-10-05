@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { formatPercent, formatShare, microFromCents, parsePercent } from "./percent";
+import { adjustToTotal, formatPercent, formatShare, microFromCents, parsePercent } from "./percent";
 
 describe("parsePercent", () => {
   it.each([
@@ -68,5 +68,38 @@ describe("microFromCents", () => {
   ])("rejects %i cents of %i as out of range", (cents, income) => {
     const result = microFromCents(cents, income);
     expect(result).toEqual({ ok: false, error: "O percentual deve estar entre 0,000001 e 100" });
+  });
+});
+
+describe("adjustToTotal", () => {
+  const P = 1_000_000;
+
+  it("raises the row by what the sum lacks (6,297973 in 99,047973 → 7,25)", () => {
+    expect(adjustToTotal(6_297_973, 99_047_973)).toEqual({ ok: true, value: 7.25 * P });
+  });
+
+  it("lowers the row by the excess (6,297973 in 100,297973 → 6)", () => {
+    expect(adjustToTotal(6_297_973, 100_297_973)).toEqual({ ok: true, value: 6 * P });
+  });
+
+  it("fills an empty row (counted as 0) with what is missing", () => {
+    expect(adjustToTotal(0, 99 * P)).toEqual({ ok: true, value: 1 * P });
+  });
+
+  it("rejects a result below 0,000001%", () => {
+    const r = adjustToTotal(0.2 * P, 100_297_973);
+    expect(r).toEqual({
+      ok: false,
+      error:
+        "Não é possível ajustar esta categoria: o percentual ficaria fora do intervalo de 0,000001% a 100%",
+    });
+  });
+
+  it("rejects a result of exactly 0", () => {
+    expect(adjustToTotal(P, 101 * P).ok).toBe(false);
+  });
+
+  it("rejects a result above 100%", () => {
+    expect(adjustToTotal(60 * P, 10 * P).ok).toBe(false);
   });
 });
