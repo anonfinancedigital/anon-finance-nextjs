@@ -219,7 +219,10 @@ export function buildCheckpoints(input: {
 
 export type GoalSummary = {
   monthlyIncomeCents: number;
+  annualIncomeCents: number;
   annualRateBp: AnnualRateBp;
+  /** Taxa de retirada do cenário, em pontos-base. */
+  withdrawalRateBp: number;
   targetCents: number;
   savedCents: number;
   remainingCents: number;
@@ -259,7 +262,9 @@ export function summarize(goal: Goal, now: Date): GoalSummary {
 
   return {
     monthlyIncomeCents: goal.monthlyIncomeCents,
+    annualIncomeCents: annualIncomeCents(goal.monthlyIncomeCents),
     annualRateBp: goal.annualRateBp,
+    withdrawalRateBp: getWithdrawalRate(goal.annualRateBp),
     targetCents: target,
     savedCents: goal.savedCents,
     remainingCents: Math.max(0, target - goal.savedCents),

@@ -144,11 +144,11 @@ Implicit-requirement dimensions: input validation & bounds (rentabilidade fora d
 | RET-03 | P1: Meta pela taxa de retirada (rentabilidade fora da tabela) | Execute | Implementing |
 | RET-04 | P1: Meta pela taxa de retirada (valores para R$ 20.000/mês) | Execute | Implementing |
 | RET-05 | P1: Meta pela taxa de retirada (fórmula e arredondamento) | Execute | Implementing |
-| RET-06 | P1: Aporte, projeção e gráfico (taxa mensal) | Tasks | In Tasks |
-| RET-07 | P1: Aporte, projeção e gráfico (aporte resolve PMT com a meta nova) | Tasks | In Tasks |
-| RET-08 | P1: Aporte, projeção e gráfico (resumo único e recálculo por entrada) | Tasks | In Tasks |
-| RET-09 | P1: Aporte, projeção e gráfico (linha do tempo termina na meta, aporte 0, prazo encerrado) | Tasks | In Tasks |
-| RET-10 | P1: Aporte, projeção e gráfico (linha "Meta" do gráfico) | Tasks | In Tasks |
+| RET-06 | P1: Aporte, projeção e gráfico (taxa mensal) | Execute | Implementing |
+| RET-07 | P1: Aporte, projeção e gráfico (aporte resolve PMT com a meta nova) | Execute | Implementing |
+| RET-08 | P1: Aporte, projeção e gráfico (resumo único e recálculo por entrada) | Execute | Implementing |
+| RET-09 | P1: Aporte, projeção e gráfico (linha do tempo termina na meta, aporte 0, prazo encerrado) | Execute | Implementing |
+| RET-10 | P1: Aporte, projeção e gráfico (linha "Meta" do gráfico) | Execute | Implementing |
 | RET-11 | P1: Tela explica (seletor "Rentabilidade real esperada") | Tasks | In Tasks |
 | RET-12 | P1: Tela explica (Hero com rentabilidade, retirada, renda, patrimônio) | Tasks | In Tasks |
 | RET-13 | P1: Tela explica ("Como calculamos?") | Tasks | In Tasks |

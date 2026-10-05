@@ -161,17 +161,21 @@ T8 → T9
 
 **Done when**:
 
-- [ ] Teste: `monthlyRate(600)` ≈ 0,004867551 (0,4868% a.m.) e `(1 + monthlyRate)^12 = 1,06`; idem 8% e 10%; nunca `6% ÷ 12` (RET-06)
-- [ ] Teste: para os três cenários com R$ 20.000/mês, `summary.withdrawalRateBp` = 400, 600, 700 e `summary.annualIncomeCents` = 24.000.000 (RET-08)
-- [ ] Teste: `projectedCents` com o aporte de `summarize` ao fim de `months` fica a no máximo 1 centavo de `summary.targetCents`, para os três cenários (RET-07 e RET-09 AC4); aporte é maior com a meta nova que seria com a antiga
-- [ ] Teste: `summary.timeline.at(-1).totalCents` ≈ `summary.targetCents`; `chartYMax(summary.targetCents, último total)` = 107% da meta, e `checkpoints.at(-1).valueCents` = `summary.targetCents` (RET-10: gráfico e marcos usam a mesma meta)
-- [ ] Teste: mudar renda, guardado, data de nascimento, idade do ápice e rentabilidade, um por vez, altera meta, aporte e prazo exatamente nos campos dependentes e deixa os demais iguais (RET-08)
-- [ ] Teste: guardado capitalizado ≥ meta → aporte 0; `months = 0` sem alcançar a meta → `null`; `months = 0` alcançando → 0; guardado acima da meta mantém progresso acima de 100% (RET-09 e edge cases)
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
-- [ ] Test count: nenhum teste excluído; testes novos entram
+- [x] Teste: `monthlyRate(600)` ≈ 0,004867551 (0,4868% a.m.) e `(1 + monthlyRate)^12 = 1,06`; idem 8% e 10%; nunca `6% ÷ 12` (RET-06)
+- [x] Teste: para os três cenários com R$ 20.000/mês, `summary.withdrawalRateBp` = 400, 600, 700 e `summary.annualIncomeCents` = 24.000.000 (RET-08)
+- [x] Teste: `projectedCents` com o aporte de `summarize` ao fim de `months` fica a no máximo 1 centavo de `summary.targetCents`, para os três cenários (RET-07 e RET-09 AC4); aporte é maior com a meta nova que seria com a antiga
+  - Nota (spec-precision gap): com o aporte arredondado para cima ao centavo (RET-07, convenção mantida), o patrimônio em 240 meses passa da meta em 428, 87 e 308 centavos (6%, 8%, 10%). O teste fixa o que o arredondamento permite: projeção ≥ meta, 1 centavo a menos de aporte não alcança a meta e a sobra ≤ projeção de 1 centavo/mês.
+- [x] Teste: `summary.timeline.at(-1).totalCents` ≈ `summary.targetCents`; `chartYMax(summary.targetCents, último total)` = 107% da meta, e `checkpoints.at(-1).valueCents` = `summary.targetCents` (RET-10: gráfico e marcos usam a mesma meta)
+  - Nota: como o último total passa da meta pelo arredondamento do aporte, `chartYMax` dá 107% do último total (642.000.458, 428.000.093 e 366.857.473 centavos), sempre ≥ 107% da meta.
+- [x] Teste: mudar renda, guardado, data de nascimento, idade do ápice e rentabilidade, um por vez, altera meta, aporte e prazo exatamente nos campos dependentes e deixa os demais iguais (RET-08)
+- [x] Teste: guardado capitalizado ≥ meta → aporte 0; `months = 0` sem alcançar a meta → `null`; `months = 0` alcançando → 0; guardado acima da meta mantém progresso acima de 100% (RET-09 e edge cases)
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Test count: nenhum teste excluído; testes novos entram
 
 **Tests**: unit
 **Gate**: quick
+
+**Status**: ✅ Done
 
 **Commit**: `feat(freedom): expose the withdrawal rate and annual income in the summary`
 

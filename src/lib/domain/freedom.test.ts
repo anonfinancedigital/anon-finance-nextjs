@@ -12,6 +12,7 @@ import {
   projectTimeline,
   monthsUntilRetirement,
   progressBp,
+  projectedCents,
   requiredMonthlyCents,
   summarize,
   targetCents,
@@ -291,6 +292,141 @@ describe("summarize por taxa", () => {
     const summary = summarize({ ...goal, monthlyIncomeCents: 2_000_000, annualRateBp: 1000 }, now);
     expect(summary.monthlyIncomeCents).toBe(2_000_000);
     expect(summary.annualRateBp).toBe(1000);
+  });
+});
+
+describe("summarize com a meta pela taxa de retirada", () => {
+  // 2026-06-15 em São Paulo; nascido em 1986-06-15, aposenta aos 60: 240 meses; renda R$ 20.000,00, guardado 0.
+  const now = new Date("2026-06-15T15:00:00Z");
+  const goal: Goal = {
+    monthlyIncomeCents: 2_000_000,
+    savedCents: 0,
+    birthDate: "1986-06-15",
+    retirementAge: 60,
+    annualRateBp: 800,
+  };
+  const scenarios = [
+    { annualRateBp: 600, withdrawalRateBp: 400, target: 600_000_000, perMonth: 0.004867551, yMax: 642_000_458 },
+    { annualRateBp: 800, withdrawalRateBp: 600, target: 400_000_000, perMonth: 0.00643403, yMax: 428_000_093 },
+    { annualRateBp: 1000, withdrawalRateBp: 700, target: 342_857_143, perMonth: 0.00797414, yMax: 366_857_473 },
+  ] as const;
+
+  it.each(scenarios)(
+    "taxa mensal de $annualRateBp pb é (1 + anual)^(1/12) − 1, nunca anual ÷ 12",
+    ({ annualRateBp, perMonth }) => {
+      const rate = monthlyRate(annualRateBp);
+      expect(rate).toBeCloseTo(perMonth, 8);
+      expect((1 + rate) ** 12).toBeCloseTo(1 + annualRateBp / 10_000, 12);
+      expect(rate).not.toBeCloseTo(annualRateBp / 10_000 / 12, 6);
+    },
+  );
+
+  it.each(scenarios)(
+    "$annualRateBp pb: retirada $withdrawalRateBp pb, renda anual R$ 240.000,00 e meta $target centavos",
+    ({ annualRateBp, withdrawalRateBp, target }) => {
+      const summary = summarize({ ...goal, annualRateBp }, now);
+      expect(summary.withdrawalRateBp).toBe(withdrawalRateBp);
+      expect(summary.annualIncomeCents).toBe(24_000_000);
+      expect(summary.targetCents).toBe(target);
+    },
+  );
+
+  it.each(scenarios)(
+    "$annualRateBp pb: o aporte leva o patrimônio à meta no prazo, com folga de no máximo 1 centavo de aporte",
+    ({ annualRateBp, target }) => {
+      const summary = summarize({ ...goal, annualRateBp }, now);
+      const monthly = summary.monthlyCents!;
+      const at = (monthlyCents: number) =>
+        projectedCents({ savedCents: 0, monthlyCents, annualRateBp }, summary.months);
+      expect(summary.months).toBe(240);
+      expect(at(monthly)).toBeGreaterThanOrEqual(target);
+      // aporte arredondado para cima ao centavo: 1 centavo a menos já não alcança a meta
+      expect(at(monthly - 1)).toBeLessThan(target);
+      expect(at(monthly) - target).toBeLessThanOrEqual(at(1));
+      // a meta antiga (renda × 12 ÷ rentabilidade) pedia aporte menor
+      const oldTarget = (2_000_000 * 12 * 10_000) / annualRateBp;
+      expect(monthly).toBeGreaterThan(
+        requiredMonthlyCents({ targetCents: oldTarget, savedCents: 0, months: 240, annualRateBp }),
+      );
+    },
+  );
+
+  it.each(scenarios)(
+    "$annualRateBp pb: linha do tempo, teto do gráfico e marco de 100% usam a mesma meta",
+    ({ annualRateBp, target, yMax }) => {
+      const summary = summarize({ ...goal, annualRateBp }, now);
+      const last = summary.timeline.at(-1)!.totalCents;
+      expect(last).toBe(projectedCents({ savedCents: 0, monthlyCents: summary.monthlyCents!, annualRateBp }, 240));
+      expect(last).toBeGreaterThanOrEqual(target);
+      expect(last - target).toBeLessThanOrEqual(projectedCents({ savedCents: 0, monthlyCents: 1, annualRateBp }, 240));
+      expect(chartYMax(summary.targetCents, last)).toBe(yMax);
+      expect(chartYMax(summary.targetCents, last)).toBeGreaterThanOrEqual(Math.round((target * 107) / 100));
+      expect(summary.checkpoints.at(-1)?.valueCents).toBe(summary.targetCents);
+    },
+  );
+
+  describe("recalcula só os campos que dependem da entrada alterada", () => {
+    const base = summarize(goal, now);
+    const pick = (s: ReturnType<typeof summarize>) => ({
+      withdrawalRateBp: s.withdrawalRateBp,
+      annualIncomeCents: s.annualIncomeCents,
+      targetCents: s.targetCents,
+      months: s.months,
+      monthlyCents: s.monthlyCents,
+    });
+
+    it("base: 8%, retirada 6%, meta R$ 4.000.000,00, 240 meses", () => {
+      expect(pick(base)).toMatchObject({ withdrawalRateBp: 600, annualIncomeCents: 24_000_000, targetCents: 400_000_000, months: 240 });
+    });
+
+    it("renda R$ 30.000,00: renda anual, meta e aporte sobem; retirada e prazo iguais", () => {
+      const s = pick(summarize({ ...goal, monthlyIncomeCents: 3_000_000 }, now));
+      expect(s).toMatchObject({ withdrawalRateBp: 600, annualIncomeCents: 36_000_000, targetCents: 600_000_000, months: 240 });
+      expect(s.monthlyCents).toBeGreaterThan(base.monthlyCents!);
+    });
+
+    it("guardado R$ 500.000,00: aporte cai; meta, retirada e prazo iguais", () => {
+      const s = pick(summarize({ ...goal, savedCents: 50_000_000 }, now));
+      expect(s).toMatchObject({ ...pick(base), monthlyCents: s.monthlyCents });
+      expect(s.monthlyCents).toBeLessThan(base.monthlyCents!);
+    });
+
+    it("nascimento em 1990-06-15: prazo de 288 meses e aporte menor; meta e retirada iguais", () => {
+      const s = pick(summarize({ ...goal, birthDate: "1990-06-15" }, now));
+      expect(s).toMatchObject({ ...pick(base), months: 288, monthlyCents: s.monthlyCents });
+      expect(s.monthlyCents).toBeLessThan(base.monthlyCents!);
+    });
+
+    it("ápice aos 65: prazo de 300 meses e aporte menor; meta e retirada iguais", () => {
+      const s = pick(summarize({ ...goal, retirementAge: 65 }, now));
+      expect(s).toMatchObject({ ...pick(base), months: 300, monthlyCents: s.monthlyCents });
+      expect(s.monthlyCents).toBeLessThan(base.monthlyCents!);
+    });
+
+    it("rentabilidade 6%: retirada 4%, meta R$ 6.000.000,00 e aporte maior; renda anual e prazo iguais", () => {
+      const s = pick(summarize({ ...goal, annualRateBp: 600 }, now));
+      expect(s).toMatchObject({ withdrawalRateBp: 400, annualIncomeCents: 24_000_000, targetCents: 600_000_000, months: 240 });
+      expect(s.monthlyCents).toBeGreaterThan(base.monthlyCents!);
+    });
+  });
+
+  it("guardado R$ 1.000.000,00 que capitalizado alcança a meta de R$ 4.000.000,00: aporte 0 e progresso 25%", () => {
+    // 100.000.000 × 1,08^20 ≈ 466.096.000 ≥ 400.000.000
+    const summary = summarize({ ...goal, savedCents: 100_000_000 }, now);
+    expect(summary.monthlyCents).toBe(0);
+    expect(summary.progressBp).toBe(2500);
+  });
+
+  it("guardado acima da meta nova: progresso acima de 100% e aporte 0", () => {
+    const summary = summarize({ ...goal, savedCents: 480_000_000 }, now);
+    expect(summary.progressBp).toBe(12_000);
+    expect(summary.monthlyCents).toBe(0);
+  });
+
+  it("prazo 0: sem alcançar a meta nova o aporte é nulo; alcançando, é 0", () => {
+    const ended = { ...goal, birthDate: "1966-06-20" };
+    expect(summarize({ ...ended, savedCents: 399_999_999 }, now).monthlyCents).toBeNull();
+    expect(summarize({ ...ended, savedCents: 400_000_000 }, now).monthlyCents).toBe(0);
   });
 });
 
