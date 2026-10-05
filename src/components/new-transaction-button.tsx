@@ -40,7 +40,7 @@ export function NewTransactionButton({ categories, defaultDate }: Props) {
       </DialogTrigger>
       <DialogContent className="flex max-h-[calc(100dvh-2rem)] flex-col sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Nova transação</DialogTitle>
+          <DialogTitle>Registrar Lançamento</DialogTitle>
         </DialogHeader>
         <TransactionForm
           categories={categories}
