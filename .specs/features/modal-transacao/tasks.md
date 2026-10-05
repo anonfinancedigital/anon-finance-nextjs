@@ -264,13 +264,14 @@ T7 → T8 → T9 → T10 → T11
 
 **Done when**:
 
-- [ ] Props novas opcionais `onCancel` e `onDelete`; sem elas o form segue compilando nos chamadores atuais
-- [ ] Criação mostra Cancelar + Salvar; edição mostra Excluir (à esquerda, destrutivo) + Cancelar + "Salvar alterações"
-- [ ] Corpo rola e rodapé fica visível; abaixo de 640px o primário ocupa a largura toda
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] Props novas opcionais `onCancel` e `onDelete`; sem elas o form segue compilando nos chamadores atuais
+- [x] Criação mostra Cancelar + Salvar; edição mostra Excluir (à esquerda, destrutivo) + Cancelar + "Salvar alterações"
+- [x] Corpo rola e rodapé fica visível; abaixo de 640px o primário ocupa a largura toda
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
 
 **Tests**: none
 **Gate**: build
+**Status**: ✅ Complete
 
 **Commit**: `feat(transactions): add cancel and delete footer to transaction form`
 

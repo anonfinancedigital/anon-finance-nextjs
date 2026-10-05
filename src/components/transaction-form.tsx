@@ -11,7 +11,10 @@ import { NativeSelect } from "@/components/ui/native-select";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Switch } from "@/components/ui/switch";
 import type { ActionResult } from "@/lib/action-result";
-import { categoryDisplayName, pickSelection } from "@/lib/domain/category-label";
+import {
+  categoryDisplayName,
+  pickSelection,
+} from "@/lib/domain/category-label";
 import { maskBRLInput } from "@/lib/domain/money";
 import { cn } from "cn";
 
@@ -49,6 +52,10 @@ type Props = {
   /** AAAA-MM of the occurrence being edited; sent to `updateTransaction`. */
   month?: string;
   onSaved?: () => void;
+  /** Shows "Cancelar" in the footer. */
+  onCancel?: () => void;
+  /** Shows "Excluir" in the footer (edit only). */
+  onDelete?: () => void;
 };
 
 const blank = (date: string): TransactionFormValues => ({
@@ -67,7 +74,15 @@ const blank = (date: string): TransactionFormValues => ({
  * Creates (id generated on mount, so a double submit creates one row) or edits a transaction.
  * It does not reset after saving: the parent closes the dialog, which unmounts it.
  */
-export function TransactionForm({ categories, defaultDate, transaction, month, onSaved }: Props) {
+export function TransactionForm({
+  categories,
+  defaultDate,
+  transaction,
+  month,
+  onSaved,
+  onCancel,
+  onDelete,
+}: Props) {
   const uid = useId();
   const [values, setValues] = useState<TransactionFormValues>(
     () => transaction ?? blank(defaultDate),
@@ -80,25 +95,40 @@ export function TransactionForm({ categories, defaultDate, transaction, month, o
   const recurrenceMode = values.recurrence ?? "none";
   const needsCategories = values.kind === "expense" && categories.length === 0;
 
-  function set<K extends keyof TransactionFormValues>(key: K, value: TransactionFormValues[K]) {
+  function set<K extends keyof TransactionFormValues>(
+    key: K,
+    value: TransactionFormValues[K],
+  ) {
     setValues((v) => ({ ...v, [key]: value }));
   }
 
   function submit(event: React.FormEvent) {
     event.preventDefault();
     if (pending) return;
-    const { id, kind, amount, date, categoryId, subcategoryId, description } = values;
+    const { id, kind, amount, date, categoryId, subcategoryId, description } =
+      values;
     const recurrence = {
       recurrence: values.recurrence ?? "none",
       recurrenceEnd: values.recurrenceEnd ?? "",
     };
     const input =
       kind === "expense"
-        ? { id, kind, amount, date, categoryId, subcategoryId, description, ...recurrence }
+        ? {
+            id,
+            kind,
+            amount,
+            date,
+            categoryId,
+            subcategoryId,
+            description,
+            ...recurrence,
+          }
         : { id, kind, amount, date, description, ...recurrence };
 
     startTransition(async () => {
-      const res = await (transaction ? updateTransaction(input, month) : createTransaction(input));
+      const res = await (transaction
+        ? updateTransaction(input, month)
+        : createTransaction(input));
       setResult(res);
       if (res.ok) onSaved?.();
     });
@@ -107,168 +137,234 @@ export function TransactionForm({ categories, defaultDate, transaction, month, o
   const field = (name: string) => `${uid}-${name}`;
 
   return (
-    <form onSubmit={submit} className="space-y-3" aria-label={transaction ? "Editar transação" : "Nova transação"}>
-      <KindToggle value={values.kind} onChange={(kind) => set("kind", kind)} />
+    <form
+      onSubmit={submit}
+      className="flex min-h-0 flex-1 flex-col"
+      aria-label={transaction ? "Editar transação" : "Nova transação"}
+    >
+      <div className="-mx-1 min-h-0 flex-1 space-y-3 overflow-y-auto px-1 pb-1">
+        <KindToggle
+          value={values.kind}
+          onChange={(kind) => set("kind", kind)}
+        />
 
-      <div className="space-y-1">
-        <Label htmlFor={field("amount")}>Valor (R$)</Label>
-        <Input
-          id={field("amount")}
-          inputMode="numeric"
-          autoFocus
-          placeholder="0,00"
-          value={values.amount}
-          aria-invalid={!!fieldErrors.amount}
-          onChange={(e) => set("amount", maskBRLInput(e.target.value))}
-          className={cn(
-            "h-14 font-display text-3xl md:text-3xl",
-            values.kind === "income" && "text-success",
+        <div className="space-y-1">
+          <Label htmlFor={field("amount")}>Valor (R$)</Label>
+          <Input
+            id={field("amount")}
+            inputMode="numeric"
+            autoFocus
+            placeholder="0,00"
+            value={values.amount}
+            aria-invalid={!!fieldErrors.amount}
+            onChange={(e) => set("amount", maskBRLInput(e.target.value))}
+            className={cn(
+              "h-14 font-display text-3xl md:text-3xl",
+              values.kind === "income" && "text-success",
+            )}
+          />
+          {fieldErrors.amount && (
+            <p className="text-sm text-destructive">{fieldErrors.amount}</p>
           )}
-        />
-        {fieldErrors.amount && <p className="text-sm text-destructive">{fieldErrors.amount}</p>}
-      </div>
+        </div>
 
-      <div className="space-y-1">
-        <Label htmlFor={field("description")}>Descrição</Label>
-        <Input
-          id={field("description")}
-          maxLength={120}
-          value={values.description}
-          aria-invalid={!!fieldErrors.description}
-          onChange={(e) => set("description", e.target.value)}
-        />
-        {fieldErrors.description && (
-          <p className="text-sm text-destructive">{fieldErrors.description}</p>
+        <div className="space-y-1">
+          <Label htmlFor={field("description")}>Descrição</Label>
+          <Input
+            id={field("description")}
+            maxLength={120}
+            value={values.description}
+            aria-invalid={!!fieldErrors.description}
+            onChange={(e) => set("description", e.target.value)}
+          />
+          {fieldErrors.description && (
+            <p className="text-sm text-destructive">
+              {fieldErrors.description}
+            </p>
+          )}
+        </div>
+
+        {values.kind === "expense" && (
+          <div className="space-y-1">
+            {needsCategories ? (
+              <p className="text-sm">
+                <Link
+                  href="/categorias"
+                  className="font-medium underline underline-offset-4"
+                >
+                  Crie suas categorias primeiro
+                </Link>
+              </p>
+            ) : (
+              <>
+                <Label htmlFor={field("category")}>Categoria</Label>
+                <NativeSelect
+                  id={field("category")}
+                  value={selectedCategory ? values.categoryId : ""}
+                  aria-invalid={!!fieldErrors.categoryId}
+                  onChange={(e) =>
+                    setValues((v) => ({
+                      ...v,
+                      ...pickSelection(e.target.value),
+                    }))
+                  }
+                >
+                  <option value="">Selecione uma categoria</option>
+                  {categories.map((c) => (
+                    <option key={c.id} value={c.id}>
+                      {categoryDisplayName(c.name)}
+                    </option>
+                  ))}
+                </NativeSelect>
+                {fieldErrors.categoryId && (
+                  <p className="text-sm text-destructive">
+                    {fieldErrors.categoryId}
+                  </p>
+                )}
+                {selectedCategory &&
+                  selectedCategory.subcategories.length > 0 && (
+                    <div className="space-y-1 pt-2">
+                      <Label htmlFor={field("subcategory")}>Subcategoria</Label>
+                      <NativeSelect
+                        id={field("subcategory")}
+                        value={
+                          selectedCategory.subcategories.some(
+                            (s) => s.id === values.subcategoryId,
+                          )
+                            ? values.subcategoryId
+                            : ""
+                        }
+                        aria-invalid={!!fieldErrors.subcategoryId}
+                        onChange={(e) => set("subcategoryId", e.target.value)}
+                      >
+                        <option value="">Sem subcategoria</option>
+                        {selectedCategory.subcategories.map((s) => (
+                          <option key={s.id} value={s.id}>
+                            {categoryDisplayName(s.name)}
+                          </option>
+                        ))}
+                      </NativeSelect>
+                    </div>
+                  )}
+                {fieldErrors.subcategoryId && (
+                  <p className="text-sm text-destructive">
+                    {fieldErrors.subcategoryId}
+                  </p>
+                )}
+              </>
+            )}
+          </div>
+        )}
+
+        <div className="space-y-1">
+          <Label htmlFor={field("date")}>Data</Label>
+          <Input
+            id={field("date")}
+            type="date"
+            value={values.date}
+            aria-invalid={!!fieldErrors.date}
+            onChange={(e) => set("date", e.target.value)}
+          />
+          {fieldErrors.date && (
+            <p className="text-sm text-destructive">{fieldErrors.date}</p>
+          )}
+        </div>
+
+        <div className="flex items-center justify-between gap-3">
+          <Label htmlFor={field("recurring")}>Transação recorrente</Label>
+          <Switch
+            id={field("recurring")}
+            checked={recurrenceMode !== "none"}
+            onCheckedChange={(on) =>
+              setValues((v) => ({
+                ...v,
+                recurrence: on ? "forever" : "none",
+                recurrenceEnd: "",
+              }))
+            }
+          />
+        </div>
+
+        {recurrenceMode !== "none" && (
+          <RadioGroup
+            aria-label="Frequência"
+            value={recurrenceMode}
+            onValueChange={(next) => set("recurrence", next as Recurrence)}
+          >
+            {(
+              [
+                ["forever", "Todo mês, sem data final"],
+                ["until", "Todo mês, até um mês/ano"],
+              ] as const
+            ).map(([option, label]) => (
+              <div key={option} className="flex items-center gap-2">
+                <RadioGroupItem
+                  id={field(`recurrence-${option}`)}
+                  value={option}
+                />
+                <Label
+                  htmlFor={field(`recurrence-${option}`)}
+                  className="font-normal"
+                >
+                  {label}
+                </Label>
+              </div>
+            ))}
+          </RadioGroup>
+        )}
+
+        {recurrenceMode === "until" && (
+          <div className="space-y-1">
+            <Label htmlFor={field("recurrenceEnd")}>Mês final</Label>
+            <Input
+              id={field("recurrenceEnd")}
+              type="month"
+              value={values.recurrenceEnd ?? ""}
+              aria-invalid={!!fieldErrors.recurrenceEnd}
+              onChange={(e) => set("recurrenceEnd", e.target.value)}
+            />
+            {fieldErrors.recurrenceEnd && (
+              <p className="text-sm text-destructive">
+                {fieldErrors.recurrenceEnd}
+              </p>
+            )}
+          </div>
         )}
       </div>
 
-      {values.kind === "expense" && (
-        <div className="space-y-1">
-          {needsCategories ? (
-            <p className="text-sm">
-              <Link href="/categorias" className="font-medium underline underline-offset-4">
-                Crie suas categorias primeiro
-              </Link>
-            </p>
-          ) : (
-            <>
-              <Label htmlFor={field("category")}>Categoria</Label>
-              <NativeSelect
-                id={field("category")}
-                value={selectedCategory ? values.categoryId : ""}
-                aria-invalid={!!fieldErrors.categoryId}
-                onChange={(e) => setValues((v) => ({ ...v, ...pickSelection(e.target.value) }))}
-              >
-                <option value="">Selecione uma categoria</option>
-                {categories.map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {categoryDisplayName(c.name)}
-                  </option>
-                ))}
-              </NativeSelect>
-              {fieldErrors.categoryId && (
-                <p className="text-sm text-destructive">{fieldErrors.categoryId}</p>
-              )}
-              {selectedCategory && selectedCategory.subcategories.length > 0 && (
-                <div className="space-y-1 pt-2">
-                  <Label htmlFor={field("subcategory")}>Subcategoria</Label>
-                  <NativeSelect
-                    id={field("subcategory")}
-                    value={
-                      selectedCategory.subcategories.some((s) => s.id === values.subcategoryId)
-                        ? values.subcategoryId
-                        : ""
-                    }
-                    aria-invalid={!!fieldErrors.subcategoryId}
-                    onChange={(e) => set("subcategoryId", e.target.value)}
-                  >
-                    <option value="">Sem subcategoria</option>
-                    {selectedCategory.subcategories.map((s) => (
-                      <option key={s.id} value={s.id}>
-                        {categoryDisplayName(s.name)}
-                      </option>
-                    ))}
-                  </NativeSelect>
-                </div>
-              )}
-              {fieldErrors.subcategoryId && (
-                <p className="text-sm text-destructive">{fieldErrors.subcategoryId}</p>
-              )}
-            </>
+      <div className="shrink-0 space-y-2 border-t border-white/10 pt-3">
+        {result && !result.ok && !Object.keys(fieldErrors).length && (
+          <p role="alert" className="text-sm text-destructive">
+            {result.error}
+          </p>
+        )}
+
+        <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+          {onDelete && (
+            <Button
+              type="button"
+              variant="destructive"
+              disabled={pending}
+              onClick={onDelete}
+              className="sm:mr-auto"
+            >
+              Excluir
+            </Button>
           )}
-        </div>
-      )}
-
-      <div className="space-y-1">
-        <Label htmlFor={field("date")}>Data</Label>
-        <Input
-          id={field("date")}
-          type="date"
-          value={values.date}
-          aria-invalid={!!fieldErrors.date}
-          onChange={(e) => set("date", e.target.value)}
-        />
-        {fieldErrors.date && <p className="text-sm text-destructive">{fieldErrors.date}</p>}
-      </div>
-
-      <div className="flex items-center justify-between gap-3">
-        <Label htmlFor={field("recurring")}>Transação recorrente</Label>
-        <Switch
-          id={field("recurring")}
-          checked={recurrenceMode !== "none"}
-          onCheckedChange={(on) =>
-            setValues((v) => ({ ...v, recurrence: on ? "forever" : "none", recurrenceEnd: "" }))
-          }
-        />
-      </div>
-
-      {recurrenceMode !== "none" && (
-        <RadioGroup
-          aria-label="Frequência"
-          value={recurrenceMode}
-          onValueChange={(next) => set("recurrence", next as Recurrence)}
-        >
-          {(
-            [
-              ["forever", "Todo mês, sem data final"],
-              ["until", "Todo mês, até um mês/ano"],
-            ] as const
-          ).map(([option, label]) => (
-            <div key={option} className="flex items-center gap-2">
-              <RadioGroupItem id={field(`recurrence-${option}`)} value={option} />
-              <Label htmlFor={field(`recurrence-${option}`)} className="font-normal">
-                {label}
-              </Label>
-            </div>
-          ))}
-        </RadioGroup>
-      )}
-
-      {recurrenceMode === "until" && (
-        <div className="space-y-1">
-          <Label htmlFor={field("recurrenceEnd")}>Mês final</Label>
-          <Input
-            id={field("recurrenceEnd")}
-            type="month"
-            value={values.recurrenceEnd ?? ""}
-            aria-invalid={!!fieldErrors.recurrenceEnd}
-            onChange={(e) => set("recurrenceEnd", e.target.value)}
-          />
-          {fieldErrors.recurrenceEnd && (
-            <p className="text-sm text-destructive">{fieldErrors.recurrenceEnd}</p>
+          {onCancel && (
+            <Button type="button" variant="outline" onClick={onCancel}>
+              Cancelar
+            </Button>
           )}
+          <Button
+            type="submit"
+            disabled={pending || needsCategories}
+            className="w-full sm:w-auto"
+          >
+            {transaction ? "Salvar alterações" : "Salvar"}
+          </Button>
         </div>
-      )}
-
-      {result && !result.ok && !Object.keys(fieldErrors).length && (
-        <p role="alert" className="text-sm text-destructive">
-          {result.error}
-        </p>
-      )}
-
-      <Button type="submit" disabled={pending || needsCategories}>
-        Salvar
-      </Button>
+      </div>
     </form>
   );
 }
