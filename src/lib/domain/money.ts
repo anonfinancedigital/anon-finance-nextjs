@@ -37,3 +37,17 @@ export function parseBRL(input: string, { allowZero = false }: { allowZero?: boo
 export function formatBRL(cents: number): string {
   return brl.format(cents / 100);
 }
+
+const MAX_DIGITS = String(MAX_CENTS).length;
+
+/**
+ * Masks typed text as a pt-BR amount, filling cents from the right ("123456" → "1.234,56").
+ * Non-digits are dropped, input is cut at 11 digits, and no digits or only zeros give "".
+ */
+export function maskBRLInput(raw: string): string {
+  const digits = raw.replace(/\D/g, "").slice(0, MAX_DIGITS).replace(/^0+/, "");
+  if (digits === "") return "";
+  const padded = digits.padStart(3, "0");
+  const integer = padded.slice(0, -2).replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  return `${integer},${padded.slice(-2)}`;
+}

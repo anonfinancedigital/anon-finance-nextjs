@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { formatBRL, parseBRL } from "./money";
+import { formatBRL, maskBRLInput, parseBRL } from "./money";
 
 const normalize = (s: string) => s.replace(/\s/g, " ");
 
@@ -57,5 +57,41 @@ describe("formatBRL", () => {
 
   it("formats zero as R$ 0,00", () => {
     expect(normalize(formatBRL(0))).toBe("R$ 0,00");
+  });
+});
+
+describe("maskBRLInput", () => {
+  it("preenche os centavos da direita para a esquerda a cada dígito", () => {
+    const expected = ["0,01", "0,12", "1,23", "12,34", "123,45", "1.234,56"];
+    let text = "";
+    expected.forEach((want, i) => {
+      text = maskBRLInput(text + String(i + 1));
+      expect(text).toBe(want);
+    });
+  });
+
+  it("ignora letras e símbolos", () => {
+    expect(maskBRLInput("1a2")).toBe("0,12");
+  });
+
+  it("preserva o texto atual ao digitar um não dígito", () => {
+    expect(maskBRLInput("1.234,56x")).toBe("1.234,56");
+  });
+
+  it.each([[""], ["abc"], ["0"], ["0,00"]])("retorna vazio para %j", (input) => {
+    expect(maskBRLInput(input)).toBe("");
+  });
+
+  it("corta em 11 dígitos", () => {
+    expect(maskBRLInput("999999999999")).toBe("999.999.999,99");
+  });
+
+  it("remove zeros à esquerda", () => {
+    expect(maskBRLInput("0,05")).toBe("0,05");
+    expect(maskBRLInput("000123")).toBe("1,23");
+  });
+
+  it.each([["1"], ["123456"], ["99999999999"], ["100000"]])("gera texto aceito por parseBRL para %j", (input) => {
+    expect(parseBRL(maskBRLInput(input)).ok).toBe(true);
   });
 });
