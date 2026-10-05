@@ -48,6 +48,14 @@
 - **Trade-off**: Cálculos de meta usam BigInt (`mulDivRound`) porque centavos × 100.000.000 passa de 2^53; migração 0006 multiplica os percentuais existentes por 10.000.
 - **Scope**: Schema `category`, `parsePercent`/`formatPercent`, `allocateCents`, validação e editor de categorias
 - **Date**: 2026-10-04
+- **Status**: superseded by AD-007 (só quanto ao local de armazenamento; a unidade micro-percentual continua)
+
+### AD-007
+- **Decision**: O percentual de categoria vive na tabela de vigência `category_percent` (categoria, mês inicial `date` dia 1, `percent_micro`); o vigente em um mês é a linha de maior mês inicial ≤ o mês. Só mudança real de percentual grava vigência, no mês corrente (America/Sao_Paulo), com upsert. Excluir categoria é lógico (`category.deleted_from`), preservando as metas dos meses passados.
+- **Reason**: Pedido do usuário: meses passados não podem mudar quando os percentuais são editados nem quando categorias são criadas ou excluídas.
+- **Trade-off**: Toda leitura de meta depende de resolver a vigência por mês; nome único vale só entre categorias ativas; categoria excluída continua no banco.
+- **Scope**: Schema `category`/`category_percent`, `categoriesRepo`, `buildMonthlySummary`, resumo mensal e testes de integração
+- **Date**: 2026-10-05
 - **Status**: active
 
 ## Handoff
