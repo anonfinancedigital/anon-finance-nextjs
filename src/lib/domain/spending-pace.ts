@@ -61,3 +61,26 @@ export function buildSpendingPace(input: {
 
   return { points, hasReference, hasSpending, aboveIdeal };
 }
+
+type PaceCategory = { id: string; targetCents: number; isInvestment?: boolean };
+
+/** The pace of consumption only (investment categories left out) and the pace of everything spent. */
+export function buildSpendingPaceViews(input: {
+  month: YearMonth;
+  today: string;
+  categories: PaceCategory[];
+  occurrences: (PaceOccurrence & { categoryId: string | null })[];
+}): { consumption: SpendingPace; total: SpendingPace } {
+  const { categories, occurrences, ...period } = input;
+  const investmentIds = new Set(categories.filter((c) => c.isInvestment === true).map((c) => c.id));
+  const sumTargets = (list: PaceCategory[]) => list.reduce((sum, c) => sum + c.targetCents, 0);
+
+  return {
+    consumption: buildSpendingPace({
+      ...period,
+      totalTargetCents: sumTargets(categories.filter((c) => !investmentIds.has(c.id))),
+      occurrences: occurrences.filter((o) => o.categoryId === null || !investmentIds.has(o.categoryId)),
+    }),
+    total: buildSpendingPace({ ...period, totalTargetCents: sumTargets(categories), occurrences }),
+  };
+}

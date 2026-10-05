@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { buildSpendingPace } from "./spending-pace";
+import { buildSpendingPace, buildSpendingPaceViews } from "./spending-pace";
 
 const expense = (date: string, amountCents: number) => ({ kind: "expense" as const, amountCents, date });
 const income = (date: string, amountCents: number) => ({ kind: "income" as const, amountCents, date });
@@ -208,5 +208,89 @@ describe("buildSpendingPace: flags", () => {
       occurrences: [expense("2026-09-01", 5000)],
     });
     expect(pace.aboveIdeal).toBe(false);
+  });
+});
+
+describe("buildSpendingPaceViews: consumption without investments (PACE-01..03)", () => {
+  const base = { month: { year: 2026, month: 9 }, today: past };
+  const inv = (date: string, amountCents: number) => ({ ...expense(date, amountCents), categoryId: "fii" });
+  const food = (date: string, amountCents: number) => ({ ...expense(date, amountCents), categoryId: "food" });
+  const categories = [
+    { id: "food", targetCents: 300000, isInvestment: false },
+    { id: "fii", targetCents: 300000, isInvestment: true },
+  ];
+
+  it("PACE-02: a R$ 3.000 investment on day 5 does not flag the consumption view, but flags the total view", () => {
+    const { consumption, total } = buildSpendingPaceViews({
+      ...base,
+      categories,
+      occurrences: [inv("2026-09-05", 300000), food("2026-09-10", 100000)],
+    });
+    expect(consumption.aboveIdeal).toBe(false);
+    expect(spent(consumption)[4]).toBe(0);
+    expect(spent(consumption)[29]).toBe(100000);
+    expect(spent(total)[4]).toBe(300000);
+    expect(total.aboveIdeal).toBe(false); // 400000 spent < 600000 target
+  });
+
+  it("PACE-02: the total view flags above ideal when investments push spending past the combined target", () => {
+    const { total } = buildSpendingPaceViews({
+      ...base,
+      categories,
+      occurrences: [inv("2026-09-05", 300000), food("2026-09-10", 350000)],
+    });
+    expect(total.aboveIdeal).toBe(true);
+  });
+
+  it("PACE-02: the ideal line uses only non-investment targets in the consumption view and all targets in the total view", () => {
+    const { consumption, total } = buildSpendingPaceViews({ ...base, categories, occurrences: [food("2026-09-01", 1)] });
+    expect(consumption.points[29].idealCents).toBe(300000);
+    expect(total.points[29].idealCents).toBe(600000);
+  });
+
+  it("PACE-01: an expense without a category counts as consumption", () => {
+    const { consumption } = buildSpendingPaceViews({
+      ...base,
+      categories,
+      occurrences: [{ ...expense("2026-09-02", 5000), categoryId: null }],
+    });
+    expect(spent(consumption)[29]).toBe(5000);
+  });
+
+  it("PACE-01: a category without isInvestment is consumption", () => {
+    const { consumption } = buildSpendingPaceViews({
+      ...base,
+      categories: [{ id: "x", targetCents: 1000 }],
+      occurrences: [{ ...expense("2026-09-02", 700), categoryId: "x" }],
+    });
+    expect(spent(consumption)[29]).toBe(700);
+  });
+
+  it("PACE-03: a month with only investment expenses has no spending in the consumption view, but has in the total view", () => {
+    const { consumption, total } = buildSpendingPaceViews({
+      ...base,
+      categories,
+      occurrences: [inv("2026-09-05", 300000)],
+    });
+    expect(consumption.hasSpending).toBe(false);
+    expect(total.hasSpending).toBe(true);
+  });
+
+  it("PACE-03: zero consumption target removes the ideal line of the consumption view only", () => {
+    const { consumption, total } = buildSpendingPaceViews({
+      ...base,
+      categories: [
+        { id: "food", targetCents: 0, isInvestment: false },
+        { id: "fii", targetCents: 300000, isInvestment: true },
+      ],
+      occurrences: [food("2026-09-02", 1000)],
+    });
+    expect(consumption.hasReference).toBe(false);
+    expect(total.hasReference).toBe(true);
+  });
+
+  it("with only consumption expenses, both views have the same spent curve", () => {
+    const { consumption, total } = buildSpendingPaceViews({ ...base, categories, occurrences: [food("2026-09-03", 4000)] });
+    expect(spent(consumption)).toEqual(spent(total));
   });
 });
