@@ -35,7 +35,7 @@ test("editing the amount and deleting with confirmation are reflected in the lis
   await expect(row).toContainText("R$ 100,00");
 
   await row.getByRole("button", { name: "Editar" }).click();
-  const editForm = page.getByRole("form", { name: "Editar transação" });
+  const editForm = page.getByRole("form", { name: "Editar Lançamento" });
   await expect(editForm.getByLabel("Valor (R$)")).toHaveValue("100,00");
   await editForm.getByLabel("Valor (R$)").fill("150,00");
   await editForm.getByRole("button", { name: "Salvar" }).click();
