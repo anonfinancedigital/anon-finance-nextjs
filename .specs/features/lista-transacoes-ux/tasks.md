@@ -132,10 +132,10 @@ T5 → T6 → T7
 
 **Done when**:
 
-- [ ] A linha não renderiza mais "Editar" nem "Excluir" como botões visíveis
-- [ ] `onEdit` chama `setEditing(t)`; `onDelete` chama `setDeleteError(null)` e `setDeleting(t)`; os diálogos de edição e exclusão continuam fora da linha, sem alteração
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
-- [ ] Contagem de testes unit e int igual à de antes
+- [x] A linha não renderiza mais "Editar" nem "Excluir" como botões visíveis
+- [x] `onEdit` chama `setEditing(t)`; `onDelete` chama `setDeleteError(null)` e `setDeleting(t)`; os diálogos de edição e exclusão continuam fora da linha, sem alteração
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
+- [x] Contagem de testes unit e int igual à de antes
 
 **Tests**: none
 **Gate**: build

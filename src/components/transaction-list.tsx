@@ -4,6 +4,7 @@ import { ArrowDownLeftIcon, ArrowUpRightIcon } from "lucide-react";
 import { useState, useTransition } from "react";
 import { deleteTransaction } from "@/actions/transactions";
 import { TransactionForm } from "@/components/transaction-form";
+import { TransactionRowMenu } from "@/components/transaction-row-menu";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -131,21 +132,13 @@ export function TransactionList({ transactions, categories, filtered = false, se
               >
                 {t.kind === "income" ? "+" : "−"} {formatBRL(t.amountCents)}
               </span>
-              <span className="flex gap-1">
-                <Button variant="ghost" size="sm" onClick={() => setEditing(t)}>
-                  Editar
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => {
-                    setDeleteError(null);
-                    setDeleting(t);
-                  }}
-                >
-                  Excluir
-                </Button>
-              </span>
+              <TransactionRowMenu
+                onEdit={() => setEditing(t)}
+                onDelete={() => {
+                  setDeleteError(null);
+                  setDeleting(t);
+                }}
+              />
             </li>
           );
         })}
