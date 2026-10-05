@@ -113,9 +113,9 @@ T22 → T23 → T24 → T25 → T26 → T27 → T28
 
 **Done when**:
 
-- [ ] Arquivo idêntico ao `docs/vertice_favicon.svg` (`diff` sem saída)
-- [ ] Gate quick: `npm run typecheck && npm run lint && npm run test:unit`
-- [ ] Contagem de testes unit/int igual à anterior (nenhum teste removido)
+- [x] Arquivo idêntico ao `docs/vertice_favicon.svg` (`diff` sem saída)
+- [x] Gate quick: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Contagem de testes unit/int igual à anterior (nenhum teste removido)
 
 **Tests**: none
 **Gate**: quick
