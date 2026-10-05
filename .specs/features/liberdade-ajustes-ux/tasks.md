@@ -117,9 +117,9 @@ T9 → T10 → T11 → T12 → T13 → T14
 
 **Done when**:
 
-- [ ] O `XAxis` usa `ageTicks(first.age, last.age)` do domínio
-- [ ] Gate build passa
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] O `XAxis` usa `ageTicks(first.age, last.age)` do domínio
+- [x] Gate build passa
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
 
 **Tests**: none
 **Gate**: build

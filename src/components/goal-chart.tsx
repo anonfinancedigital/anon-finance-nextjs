@@ -1,6 +1,7 @@
 "use client";
 
 import { Area, AreaChart, CartesianGrid, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { ageTicks } from "@/lib/domain/age-ticks";
 import { chartYMax, compositionShares, type GoalSummary } from "@/lib/domain/freedom";
 import { formatBRL, formatCompactBRL } from "@/lib/domain/money";
 
@@ -17,20 +18,8 @@ const tooltipStyle = {
 const INVESTED = "var(--viz-target)";
 const INTEREST = "var(--viz-spent)";
 
-const MAX_TICKS = 8;
-
 function Swatch({ color }: { color: string }) {
   return <span aria-hidden className="inline-block size-2 shrink-0 rounded-full" style={{ background: color }} />;
-}
-
-/** Whole ages from the first to the last point, thinned to at most `MAX_TICKS` labels. */
-function ageTicks(first: number, last: number): number[] {
-  const from = Math.ceil(first);
-  const to = Math.floor(last);
-  const step = Math.max(1, Math.ceil((to - from) / MAX_TICKS));
-  const ticks: number[] = [];
-  for (let age = from; age <= to; age += step) ticks.push(age);
-  return ticks;
 }
 
 type Row = { age: number; ageYears: number; invested: number; interest: number; total: number };
