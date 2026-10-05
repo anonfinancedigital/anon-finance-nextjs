@@ -9,7 +9,7 @@ Implement these tasks with the `tlc-spec-driven` skill: **activate it by name an
 ---
 
 **Design**: `.specs/features/liberdade-experiencia/design.md`
-**Status**: Draft
+**Status**: Done
 
 **Estratégia de ordem:** cada tarefa deixa `typecheck`, `lint` e os testes verdes. Por isso o domínio muda por adição (T3), os chamadores se ajustam antes de o tipo `Goal` exigir a taxa (T7) e o código antigo (`projectMilestones`) só sai depois de a UI deixar de usá-lo (T16). A T5 deixa `goal-form.tsx` e `page.tsx` com ajustes mínimos de compilação (data em DD/MM/AAAA, taxa `"8"` fixa); a T17 e a T19 trocam isso pelo comportamento final.
 

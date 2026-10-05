@@ -1,7 +1,7 @@
 # Liberdade: Experiência do Objetivo Design
 
 **Spec**: `.specs/features/liberdade-experiencia/spec.md`
-**Status**: Draft
+**Status**: Approved
 
 ---
 

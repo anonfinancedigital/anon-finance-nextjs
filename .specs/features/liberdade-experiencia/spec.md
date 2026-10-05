@@ -189,20 +189,20 @@ Implicit-requirement dimensions: input validation (LEX-05, LEX-09), failure stat
 
 | Requirement ID | Story | Phase | Status |
 | -------------- | ----- | ----- | ------ |
-| LEX-01 | P1: Hero Card (AC 1, 6, 7: alvo, guardado, progresso, falta, prazo, brilho) | Tasks | In Tasks |
-| LEX-02 | P1: Hero Card (AC 2, 3: aporte em destaque e prazo encerrado) | Tasks | In Tasks |
-| LEX-03 | P1: Hero Card (AC 4, 5: selo de renda passiva e taxa) | Tasks | In Tasks |
-| LEX-04 | P1: Taxa (AC 1, 4, 5: presets, persistência e migração) | Tasks | In Tasks |
-| LEX-05 | P1: Taxa (AC 6) e Data (AC 3, 4): validação | Tasks | In Tasks |
-| LEX-06 | P1: Taxa (AC 2, 3: alvo e aporte por taxa) | Tasks | In Tasks |
-| LEX-07 | P1: Data (AC 1, 2: exibição e máscara DD/MM/AAAA) | Tasks | In Tasks |
-| LEX-08 | P1: Simulador (AC 1, 2, 8: slider de idade e taxa segmentada) | Tasks | In Tasks |
-| LEX-09 | P1: Simulador (AC 3, 4, 5: prévia ao vivo e rascunho inválido) | Tasks | In Tasks |
-| LEX-10 | P1: Simulador (AC 6, 7, 9: salvar, cancelar e regras herdadas) | Tasks | In Tasks |
-| LEX-11 | P2: Gráfico (AC 1, 2, 3, 7: camadas, fórmula, pontos e omissão) | Tasks | In Tasks |
-| LEX-12 | P2: Gráfico (AC 4, 5, 6, 8: dica, marcas, frase de rendimentos, acessibilidade) | Tasks | In Tasks |
-| LEX-13 | P2: Checkpoints (AC 1, 2: barra `--income` e 4 checkpoints rotulados) | Tasks | In Tasks |
-| LEX-14 | P2: Checkpoints (AC 3, 4, 5, 6: atingido, previsão, sem previsão, texto) | Tasks | In Tasks |
+| LEX-01 | P1: Hero Card (AC 1, 6, 7: alvo, guardado, progresso, falta, prazo, brilho) | Verified | Verified |
+| LEX-02 | P1: Hero Card (AC 2, 3: aporte em destaque e prazo encerrado) | Verified | Verified |
+| LEX-03 | P1: Hero Card (AC 4, 5: selo de renda passiva e taxa) | Verified | Verified |
+| LEX-04 | P1: Taxa (AC 1, 4, 5: presets, persistência e migração) | Verified | Verified |
+| LEX-05 | P1: Taxa (AC 6) e Data (AC 3, 4): validação | Verified | Verified |
+| LEX-06 | P1: Taxa (AC 2, 3: alvo e aporte por taxa) | Verified | Verified |
+| LEX-07 | P1: Data (AC 1, 2: exibição e máscara DD/MM/AAAA) | Verified | Verified |
+| LEX-08 | P1: Simulador (AC 1, 2, 8: slider de idade e taxa segmentada) | Verified | Verified |
+| LEX-09 | P1: Simulador (AC 3, 4, 5: prévia ao vivo e rascunho inválido) | Verified | Verified |
+| LEX-10 | P1: Simulador (AC 6, 7, 9: salvar, cancelar e regras herdadas) | Verified | Verified |
+| LEX-11 | P2: Gráfico (AC 1, 2, 3, 7: camadas, fórmula, pontos e omissão) | Verified | Verified |
+| LEX-12 | P2: Gráfico (AC 4, 5, 6, 8: dica, marcas, frase de rendimentos, acessibilidade) | Verified | Verified |
+| LEX-13 | P2: Checkpoints (AC 1, 2: barra `--income` e 4 checkpoints rotulados) | Verified | Verified |
+| LEX-14 | P2: Checkpoints (AC 3, 4, 5, 6: atingido, previsão, sem previsão, texto) | Verified | Verified |
 
 **Coverage:** 14 total, 14 mapped to tasks, 0 unmapped
 
