@@ -122,16 +122,18 @@ T10 → T11
 
 **Done when**:
 
-- [ ] `sumWarning(100_005_248, 1_905_400)` = "A soma deve ser 100%. Atual: 100,01% (+R$ 1,00)" com espaço comum, não U+00A0
-- [ ] `sumWarning(99_994_752, 1_905_400)` = "A soma deve ser 100%. Atual: 99,99% (-R$ 1,00)"
-- [ ] `sumWarning(100_005_248, null)` = "A soma deve ser 100%. Atual: 100,01%"
-- [ ] Diferença que arredonda para R$ 0,00 (ex.: soma 100_000_001 com receita 100) omite o trecho entre parênteses
-- [ ] Soma 99_999_999 usa "99,999999%" no texto (herdado de `sumLabel`)
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
-- [ ] Test count: testes novos em `sum-warning.test.ts` passam
+- [x] `sumWarning(100_005_248, 1_905_400)` = "A soma deve ser 100%. Atual: 100,01% (+R$ 1,00)" com espaço comum, não U+00A0
+- [x] `sumWarning(99_994_752, 1_905_400)` = "A soma deve ser 100%. Atual: 99,99% (-R$ 1,00)"
+- [x] `sumWarning(100_005_248, null)` = "A soma deve ser 100%. Atual: 100,01%"
+- [x] Diferença que arredonda para R$ 0,00 (ex.: soma 100_000_001 com receita 100) omite o trecho entre parênteses
+- [x] Soma 99_999_999 usa "99,999999%" no texto (herdado de `sumLabel`)
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Test count: testes novos em `sum-warning.test.ts` passam
 
 **Tests**: unit
 **Gate**: quick
+
+**Status**: ✅ Complete
 
 **Commit**: `feat(percent): add sum warning text`
 
