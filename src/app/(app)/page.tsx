@@ -1,11 +1,11 @@
 import { ArrowDownLeftIcon, ArrowUpRightIcon, WalletIcon } from "lucide-react";
 import type { Metadata } from "next";
 import { BudgetCharts } from "@/components/budget-charts";
+import { CategoryOverview } from "@/components/category-overview";
 import { ContentCard } from "@/components/content-card";
 import { MonthPicker } from "@/components/month-picker";
 import { NewTransactionButton } from "@/components/new-transaction-button";
 import { PageHeader } from "@/components/page-header";
-import { SummaryTable } from "@/components/summary-table";
 import { TransactionFilter } from "@/components/transaction-filter";
 import { TransactionList } from "@/components/transaction-list";
 import { requireSessionForPage } from "@/lib/auth-guard";
@@ -108,9 +108,7 @@ export default async function SummaryPage({ searchParams }: PageProps<"/">) {
         ))}
       </dl>
 
-      <ContentCard title="Gastos por categoria" note={`${summary.rows.length} categorias`}>
-        <SummaryTable rows={summary.rows} />
-      </ContentCard>
+      <CategoryOverview rows={summary.rows} />
 
       <BudgetCharts rows={summary.rows} spentCents={summary.spentCents} />
 

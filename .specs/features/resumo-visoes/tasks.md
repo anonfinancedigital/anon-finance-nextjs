@@ -161,8 +161,8 @@ T5 → T6 → T7 → T8
 
 **Done when**:
 
-- [ ] A página mostra o card com o seletor e a tabela por padrão
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
+- [x] A página mostra o card com o seletor e a tabela por padrão
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
 
 **Tests**: none
 **Gate**: build
