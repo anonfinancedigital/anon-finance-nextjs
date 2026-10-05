@@ -33,11 +33,13 @@ Explicitamente excluído para evitar scope creep.
 | Onde fica a barra de progresso | Rodapé do Hero, separada por uma linha fina | O usuário ofereceu rodapé do Hero ou topo do gráfico; o rodapé junta número e barra no mesmo bloco de leitura | n |
 | Breakpoint das duas colunas | Largura do próprio Hero: 576 px (container query); abaixo disso as colunas empilham (destino, depois plano de ação) | O menu lateral de 218 px e a gaveta aberta tiram largura do conteúdo; a largura da tela não diz quanto espaço o Hero tem (768 px de tela dão só cerca de 486 px de conteúdo) | n |
 | "Sem caixa dentro de caixa" | O plano de ação ocupa a metade direita do próprio Hero, com fundo roxo sutil e sem borda nem cantos arredondados próprios | Remove o card interno sem perder o destaque | n |
-| Textos novos do Hero | "Meta patrimonial", selo "Gera R$ 20.000,00/mês perpétuos a 8% a.a.", contexto "R$ 565.000,00 acumulados (18,8% do alvo)", "Aporte necessário", "R$ 6.794,95 / mês", "11 anos e 11 meses restantes", "Faltam R$ 2.435.000,00" | Textos do pedido, com valores em BRL completo | y |
-| Cópia anterior | "Patrimônio-alvo", "Aporte mensal necessário" e "sem consumir o principal" saem da tela | Substituídas pelos textos acima | y |
-| Botão de edição | "Editar premissas" no topo direito, só com objetivo salvo | Texto do pedido | y |
+| Vocabulário da marca | Os rótulos da `identidade-vertice` já em produção valem: página "Ápice", "Meta Patrimonial", "Aporte Estratégico Mensal", "Distância do Alvo", "Tempo até o Ápice", gráfico "Trajetória dos Juros Compostos", botão "Calibrar Parâmetros" | Evita dois vocabulários no app; o pedido citou "Calibrar Parâmetros" como o botão | y |
+| Textos novos do Hero | Selo "Gera R$ 20.000,00/mês perpétuos a 8% a.a.", contexto "R$ 565.000,00 acumulados (18,8% do alvo)", aporte "R$ 6.794,95 / mês"; prazo e falta como "Tempo até o Ápice: 11 anos e 11 meses" e "Distância do Alvo: R$ 2.435.000,00" | Textos do pedido nos valores novos; os rótulos "restantes" e "Faltam" do pedido cedem aos da marca (pode ser revertido) | n |
+| Cópia anterior | "Patrimônio Acumulado" e "Progresso" como indicadores soltos, e "sem consumir o principal" no selo, saem da tela | O valor acumulado e o percentual passam a uma linha de contexto; o selo ganha o texto do pedido | y |
+| Botão de edição | "Calibrar Parâmetros" no topo direito, só com objetivo salvo; é também o título da gaveta | Rótulo já adotado pela marca | y |
 | Sem objetivo salvo | Cartão de estado vazio com o texto de introdução e o botão "Definir objetivo", que abre a gaveta; sem botão no cabeçalho | Evita abrir a gaveta sozinha, difícil de dispensar | n |
-| Texto de introdução | Sai do topo da página e vira a descrição da gaveta (e do estado vazio) | Libera a tela padrão | n |
+| Texto de introdução | O parágrafo atual da página ("Defina a renda mensal que quer ter, o patrimônio acumulado e a idade do seu ápice patrimonial. …") sai do topo e vira a descrição da gaveta e do estado vazio, sem mudar o texto | Libera a tela padrão | n |
+| Sem objetivo salvo vs. `identidade-vertice` | Esta feature substitui a regra "sem objetivo, formulário aberto na página" de `identidade-vertice`: o estado vazio com "Definir objetivo" ocupa o lugar | O formulário só existe na gaveta | n |
 | Descartar ao fechar | Fechar pelo X ou por Esc equivale a Cancelar: descarta o rascunho | Mesma regra de LEX-10 AC7 | n |
 | Clique fora da gaveta | Não fecha a gaveta | Senão clicar no Hero para ler a prévia descartaria o rascunho | n |
 | Espaço no desktop | A gaveta tem 24rem (384 px) a partir de 1024 px; aberta, a área de conteúdo reserva à direita esses 384 px, sem cobrir o Hero (com tela de 1280 px o Hero fica com cerca de 582 px e mantém as duas colunas) | O plano de ação, a coluna da direita, ficaria escondido | n |
@@ -62,10 +64,10 @@ Implicit-requirement dimensions: failure states (salvar com falha mantém a gave
 
 1. WHILE a largura do Hero for 576 px ou mais the system SHALL exibir o Hero em duas colunas: destino à esquerda e plano de ação à direita.  <!-- state-driven -->
 2. WHILE a largura do Hero for menor que 576 px the system SHALL empilhar as colunas, destino primeiro e plano de ação depois.  <!-- state-driven -->
-3. The system SHALL exibir na coluna do destino o rótulo "Meta patrimonial", o patrimônio-alvo em `font-display`, o selo "Gera R$ 20.000,00/mês perpétuos a 8% a.a." e a linha de contexto "R$ 565.000,00 acumulados (18,8% do alvo)" (ex.: renda R$ 20.000,00, taxa 8%, guardado R$ 565.000,00, alvo R$ 3.000.000,00).  <!-- ubiquitous -->
-4. The system SHALL exibir na coluna do plano de ação o rótulo "Aporte necessário", o aporte no formato "R$ 6.794,95 / mês", o prazo no formato "11 anos e 11 meses restantes" e "Faltam R$ 2.435.000,00" (ex.: alvo R$ 3.000.000,00 e guardado R$ 565.000,00 → faltam R$ 2.435.000,00).  <!-- ubiquitous -->
-5. IF o aporte necessário for nulo (prazo encerrado) THEN the system SHALL exibir "Prazo encerrado" no lugar de "R$ … / mês" e "0 meses restantes" no lugar do prazo.  <!-- unwanted-behavior -->
-6. IF o valor guardado for maior ou igual ao alvo THEN the system SHALL exibir "Faltam R$ 0,00" e a linha de contexto com o percentual real (ex.: "R$ 3.600.000,00 acumulados (120,0% do alvo)").  <!-- unwanted-behavior -->
+3. The system SHALL exibir na coluna do destino o rótulo "Meta Patrimonial", o patrimônio-alvo em `font-display`, o selo "Gera R$ 20.000,00/mês perpétuos a 8% a.a." e a linha de contexto "R$ 565.000,00 acumulados (18,8% do alvo)" (ex.: renda R$ 20.000,00, taxa 8%, guardado R$ 565.000,00, alvo R$ 3.000.000,00).  <!-- ubiquitous -->
+4. The system SHALL exibir na coluna do plano de ação o rótulo "Aporte Estratégico Mensal", o aporte no formato "R$ 6.794,95 / mês", "Tempo até o Ápice: 11 anos e 11 meses" e "Distância do Alvo: R$ 2.435.000,00" (ex.: alvo R$ 3.000.000,00 e guardado R$ 565.000,00 → distância R$ 2.435.000,00).  <!-- ubiquitous -->
+5. IF o aporte necessário for nulo (prazo encerrado) THEN the system SHALL exibir "Prazo encerrado" no lugar de "R$ … / mês" e "Tempo até o Ápice: 0 meses".  <!-- unwanted-behavior -->
+6. IF o valor guardado for maior ou igual ao alvo THEN the system SHALL exibir "Distância do Alvo: R$ 0,00" e a linha de contexto com o percentual real (ex.: "R$ 3.600.000,00 acumulados (120,0% do alvo)").  <!-- unwanted-behavior -->
 7. The system SHALL renderizar o plano de ação como a metade direita do próprio Hero, com fundo roxo sutil, sem borda e sem cantos arredondados próprios, de modo que o Hero não contenha um card interno.  <!-- ubiquitous -->
 8. The system SHALL manter o aporte como o texto de maior peso visual do Hero e o brilho sutil do Hero legível nos temas claro e escuro.  <!-- ubiquitous -->
 
@@ -100,8 +102,8 @@ Implicit-requirement dimensions: failure states (salvar com falha mantém a gave
 
 **Acceptance Criteria**:
 
-1. WHILE o usuário tem objetivo salvo e a gaveta está fechada the system SHALL exibir o botão "Editar premissas" no topo direito e nenhum campo de edição.  <!-- state-driven -->
-2. WHEN o usuário aciona "Editar premissas" THEN the system SHALL abrir à direita uma gaveta com o formulário preenchido com os valores salvos, o texto de introdução como descrição e os botões Salvar e Cancelar.  <!-- event-driven -->
+1. WHILE o usuário tem objetivo salvo e a gaveta está fechada the system SHALL exibir o botão "Calibrar Parâmetros" no topo direito e nenhum campo de edição.  <!-- state-driven -->
+2. WHEN o usuário aciona "Calibrar Parâmetros" THEN the system SHALL abrir à direita uma gaveta com o formulário preenchido com os valores salvos, o texto de introdução da página como descrição e os botões Salvar e Cancelar.  <!-- event-driven -->
 3. WHILE a gaveta está aberta the system SHALL manter a página sem overlay escuro e navegável.  <!-- state-driven -->
 4. WHILE a gaveta está aberta e a largura da tela é 1024 px ou mais the system SHALL reservar na área de conteúdo, à direita, 384 px (a largura da gaveta), sem cobrir nenhum elemento do Hero ou do gráfico.  <!-- state-driven -->
 5. WHILE a largura é menor que 1024 px the system SHALL abrir a gaveta em largura total da tela.  <!-- state-driven -->
@@ -112,9 +114,9 @@ Implicit-requirement dimensions: failure states (salvar com falha mantém a gave
 10. WHILE o usuário não tem objetivo salvo the system SHALL exibir um cartão de estado vazio com o texto de introdução e o botão "Definir objetivo", que abre a gaveta com o formulário vazio, e nenhum botão no cabeçalho.  <!-- state-driven -->
 11. WHILE a gaveta está aberta the system SHALL manter a prévia ao vivo, recalculando o Hero e o gráfico a cada alteração válida, como em LEX-09.  <!-- state-driven -->
 12. WHEN a gaveta abre THEN the system SHALL mover o foco para dentro dela, e WHEN fecha THEN the system SHALL devolver o foco ao botão que a abriu.  <!-- event-driven -->
-13. The system SHALL nomear a gaveta "Editar premissas" para tecnologias assistivas.  <!-- ubiquitous -->
+13. The system SHALL nomear a gaveta "Calibrar Parâmetros" para tecnologias assistivas.  <!-- ubiquitous -->
 
-**Independent Test**: Com objetivo salvo, ver a tela sem campos; clicar em "Editar premissas", arrastar o slider de idade e ver o aporte do Hero mudar ao lado da gaveta, sem tela escura; Esc fecha e restaura.
+**Independent Test**: Com objetivo salvo, ver a tela sem campos; clicar em "Calibrar Parâmetros", arrastar o slider de idade e ver o aporte do Hero mudar ao lado da gaveta, sem tela escura; Esc fecha e restaura.
 
 ---
 
@@ -144,7 +146,7 @@ Implicit-requirement dimensions: failure states (salvar com falha mantém a gave
 
 **Acceptance Criteria**:
 
-1. WHILE a gaveta está aberta the system SHALL exibir no topo dela "Meta patrimonial" e "Aporte necessário" com os valores da prévia atual (ex.: "R$ 3.000.000,00" e "R$ 6.794,95 / mês").  <!-- state-driven -->
+1. WHILE a gaveta está aberta the system SHALL exibir no topo dela "Meta Patrimonial" e "Aporte Estratégico Mensal" com os valores da prévia atual (ex.: "R$ 3.000.000,00" e "R$ 6.794,95 / mês").  <!-- state-driven -->
 2. IF não houver prévia válida THEN the system SHALL exibir "—" no lugar de cada valor.  <!-- unwanted-behavior -->
 3. IF o aporte da prévia for nulo (prazo encerrado) THEN the system SHALL exibir "Prazo encerrado" no lugar do aporte.  <!-- unwanted-behavior -->
 
@@ -165,21 +167,21 @@ Implicit-requirement dimensions: failure states (salvar com falha mantém a gave
 
 | Requirement ID | Story | Phase | Status |
 | -------------- | ----- | ----- | ------ |
-| LAY-01 | P1: Hero (AC 1, 2, 7: duas colunas, empilhar, metade direita sem card interno) | Specify | Pending |
-| LAY-02 | P1: Hero (AC 3, 4, 8: textos do destino e do plano de ação, peso do aporte, brilho) | Specify | Pending |
-| LAY-03 | P1: Hero (AC 5, 6: prazo encerrado e guardado ≥ alvo) | Specify | Pending |
-| LAY-04 | P1: Barra (AC 1, 5, 6: barra no rodapé do Hero, sem seção própria, `--income`) | Specify | Pending |
-| LAY-05 | P1: Barra (AC 2, 3, 4: percentual único, nome acessível, checkpoints) | Specify | Pending |
-| LAY-06 | P1: Gaveta (AC 1, 10: botão e estado vazio) | Specify | Pending |
-| LAY-07 | P1: Gaveta (AC 2, 3, 4, 5: abrir, sem overlay, reserva de espaço, tela cheia no celular) | Specify | Pending |
-| LAY-08 | P1: Gaveta (AC 6, 7, 8: cancelar, X, Esc, clique fora, salvar) | Specify | Pending |
-| LAY-09 | P1: Gaveta (AC 9, 11: erro mantém aberta; prévia ao vivo) | Specify | Pending |
-| LAY-10 | P1: Gaveta (AC 12, 13: foco e nome acessível) | Specify | Pending |
-| LAY-11 | P2: Gráfico (AC 1, 2, 3, 5: selo, sem frase nem marcas, acessibilidade) | Specify | Pending |
-| LAY-12 | P2: Gráfico (AC 4: linha-guia, ponto ativo e tooltip) | Specify | Pending |
-| LAY-13 | P2: Resumo na gaveta (AC 1, 2, 3) | Specify | Pending |
+| LAY-01 | P1: Hero (AC 1, 2, 7: duas colunas, empilhar, metade direita sem card interno) | Tasks | In Tasks |
+| LAY-02 | P1: Hero (AC 3, 4, 8: textos do destino e do plano de ação, peso do aporte, brilho) | Tasks | In Tasks |
+| LAY-03 | P1: Hero (AC 5, 6: prazo encerrado e guardado ≥ alvo) | Tasks | In Tasks |
+| LAY-04 | P1: Barra (AC 1, 5, 6: barra no rodapé do Hero, sem seção própria, `--income`) | Tasks | In Tasks |
+| LAY-05 | P1: Barra (AC 2, 3, 4: percentual único, nome acessível, checkpoints) | Tasks | In Tasks |
+| LAY-06 | P1: Gaveta (AC 1, 10: botão e estado vazio) | Tasks | In Tasks |
+| LAY-07 | P1: Gaveta (AC 2, 3, 4, 5: abrir, sem overlay, reserva de espaço, tela cheia no celular) | Tasks | In Tasks |
+| LAY-08 | P1: Gaveta (AC 6, 7, 8: cancelar, X, Esc, clique fora, salvar) | Tasks | In Tasks |
+| LAY-09 | P1: Gaveta (AC 9, 11: erro mantém aberta; prévia ao vivo) | Tasks | In Tasks |
+| LAY-10 | P1: Gaveta (AC 12, 13: foco e nome acessível) | Tasks | In Tasks |
+| LAY-11 | P2: Gráfico (AC 1, 2, 3, 5: selo, sem frase nem marcas, acessibilidade) | Tasks | In Tasks |
+| LAY-12 | P2: Gráfico (AC 4: linha-guia, ponto ativo e tooltip) | Tasks | In Tasks |
+| LAY-13 | P2: Resumo na gaveta (AC 1, 2, 3) | Tasks | In Tasks |
 
-**Coverage:** 13 total, 0 mapped to tasks, 13 unmapped ⚠️ (tasks ainda não criadas)
+**Coverage:** 13 total, 13 mapped to tasks, 0 unmapped
 
 ---
 

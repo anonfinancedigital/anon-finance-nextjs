@@ -11,7 +11,7 @@ Só apresentação e estado de tela. Segue AD-001 (a página continua Server Com
 
 Três decisões moldam o desenho:
 
-1. **O cabeçalho e o botão passam para dentro do `GoalExperience`.** O botão "Editar premissas" precisa do estado da gaveta, e a reserva de espaço à direita só pode ser aplicada por quem tem esse estado. A página fica só com leitura e `metadata`.
+1. **O cabeçalho e o botão passam para dentro do `GoalExperience`.** O botão "Calibrar Parâmetros" precisa do estado da gaveta, e a reserva de espaço à direita só pode ser aplicada por quem tem esse estado. A página fica só com leitura e `metadata`.
 2. **A gaveta é um `Sheet` não modal sobre o Dialog do Radix.** Sem overlay, sem trava de foco, sem fechar ao clicar fora. Ela vive num portal; o conteúdo da página recebe `lg:pr-96` enquanto ela está aberta (24rem = 384 px, a largura da gaveta).
 3. **O Hero decide colunas pela largura dele, não pela da tela** (container query do Tailwind v4, `@container` e `@xl:`). O menu lateral (218 px) e a gaveta tiram largura do conteúdo, então um breakpoint de tela erraria nos dois casos. A 1280 px de tela com a gaveta aberta o Hero fica com 966 − 384 = 582 px, acima do corte de 576 px (`@xl`).
 
@@ -20,7 +20,7 @@ O fechamento da gaveta descarta o rascunho **desmontando** o formulário: o cont
 ```mermaid
 graph TD
     P[liberdade/page.tsx - Server] -->|saved, initial, nowIso| GE[GoalExperience - Client]
-    GE --> PH[PageHeader + botão Editar premissas = SheetTrigger]
+    GE --> PH[PageHeader + botão Calibrar Parâmetros = SheetTrigger]
     GE -->|summary| GS[GoalSummary]
     GS --> H[GoalHero: 2 colunas + rodapé]
     H --> K[GoalCheckpoints embutido]
@@ -47,7 +47,7 @@ graph TD
 | Dialog do Radix (`radix-ui`) | `src/components/ui/dialog.tsx` | Base do `Sheet`: mesmo padrão de wrappers com `data-slot`; sem o `DialogOverlay` |
 | `PageHeader` (aceita `children` à direita) | `src/components/page-header.tsx` | Título "Liberdade" com o botão no topo direito |
 | `GoalHero`, `GoalCheckpoints`, `GoalChart`, `GoalSummary` | `src/components/goal-*.tsx` | Reescritos no lugar: mesmas props (`summary`) |
-| `GoalForm` | `src/components/goal-form.tsx` | Perde o estado `editing` e o botão "Editar objetivo"; ganha `onSaved` e `onCancel` |
+| `GoalForm` | `src/components/goal-form.tsx` | Perde o estado `editing` e o botão "Calibrar Parâmetros"; ganha `onSaved` e `onCancel` |
 | `GoalExperience` | `src/components/goal-experience.tsx` | Passa a ser dono de `open`, do cabeçalho e do estado vazio |
 | `formatBRL`, `formatShare`, `formatTerm`, `formatCompactBRL` | `money.ts`, `percent.ts`, `goal-hero.tsx` | Textos do Hero e da faixa da gaveta |
 | Tokens `--glow-a`, `--income`, `--viz-*`, `bg-primary/10`, `text-link` | `src/app/globals.css` | Cores do Hero, do plano de ação e do gráfico |
@@ -86,17 +86,17 @@ graph TD
   - `handleOpenChange(next)`: se `next` é falso (X, Esc, Cancelar), faz `setSummary(saved ? summarize(saved, now) : null)` e `setOpen(false)`; se verdadeiro, `setOpen(true)`.
   - `handleSaved()`: `setOpen(false)` **sem** tocar no `summary`.
   - `handleDraft(values)`: igual a hoje, sem o ramo `null` (o descarte vem de `handleOpenChange`).
-  - Layout: `<div className={cn("space-y-6 transition-[padding] duration-200", open && "lg:pr-96")}>` com `PageHeader` (botão `SheetTrigger asChild` "Editar premissas" só quando `saved`), `GoalSummary` quando há `summary`, estado vazio quando `!saved && !summary`, e `Sheet` com `SheetContent` (`modal={false}`).
-  - Dentro da gaveta: `SheetTitle` "Editar premissas", `SheetDescription` com o texto de introdução, `DrawerSummary`, `GoalForm`.
+  - Layout: `<div className={cn("space-y-6 transition-[padding] duration-200", open && "lg:pr-96")}>` com `PageHeader` (botão `SheetTrigger asChild` "Calibrar Parâmetros" só quando `saved`), `GoalSummary` quando há `summary`, estado vazio quando `!saved && !summary`, e `Sheet` com `SheetContent` (`modal={false}`).
+  - Dentro da gaveta: `SheetTitle` "Calibrar Parâmetros", `SheetDescription` com o parágrafo de introdução hoje no topo da página (texto inalterado), `DrawerSummary`, `GoalForm`.
 - **Estado vazio**: cartão `rounded-2xl border border-border bg-card p-6` com o texto de introdução e `SheetTrigger asChild` "Definir objetivo".
-- **DrawerSummary** (função local): `dl` com "Meta patrimonial" (`formatBRL(summary.targetCents)` ou "—") e "Aporte necessário" (`"{formatBRL} / mês"`, "Prazo encerrado" se `monthlyCents` nulo, ou "—" sem prévia).
+- **DrawerSummary** (função local): `dl` com "Meta Patrimonial" (`formatBRL(summary.targetCents)` ou "—") e "Aporte Estratégico Mensal" (`"{formatBRL} / mês"`, "Prazo encerrado" se `monthlyCents` nulo, ou "—" sem prévia).
 - **Dependencies**: `Sheet`, `GoalForm`, `GoalSummary`, `PageHeader`, `summarize`, `goalSchema`.
 
 ### GoalForm (alterado)
 
 - **Purpose**: Só os campos e os botões; a abertura e o fechamento são de quem o hospeda.
 - **Location**: `src/components/goal-form.tsx` (Client)
-- **Interfaces**: `GoalForm({ initial, onDraftChange, onSaved, onCancel, nowIso })`. Remove `editing` e o botão "Editar objetivo". Sucesso do `saveGoal` chama `onSaved()` e `router.refresh()`; Cancelar chama `onCancel()`; o botão Cancelar aparece sempre (inclusive sem objetivo salvo). O `grid` dos campos vira coluna única (a gaveta tem 384 px); os botões ficam num rodapé fixo da gaveta (`sticky bottom-0`). `onDraftChange` continua a receber os valores a cada alteração.
+- **Interfaces**: `GoalForm({ initial, onDraftChange, onSaved, onCancel, nowIso })`. Remove `editing` e o botão "Calibrar Parâmetros" (que passa a ser o gatilho da gaveta). Sucesso do `saveGoal` chama `onSaved()` e `router.refresh()`; Cancelar chama `onCancel()`; o botão Cancelar aparece sempre (inclusive sem objetivo salvo). O `grid` dos campos vira coluna única (a gaveta tem 384 px); os botões ficam num rodapé fixo da gaveta (`sticky bottom-0`). `onDraftChange` continua a receber os valores a cada alteração.
 - **Reuses**: todo o estado, `useTransition` e `fieldErrors` atuais.
 
 ### GoalHero (reescrito)
@@ -106,8 +106,8 @@ graph TD
 - **Interfaces**: `GoalHero({ summary })`; continua exportando `formatTerm`.
 - **Estrutura**: `<section aria-label="Resumo do objetivo" class="@container overflow-hidden rounded-2xl border border-border bg-card shadow-lg" style={glow}>` com
   - `div.grid.@xl:grid-cols-[1.1fr_1fr]`:
-    - **Destino** (`p-5`): "Meta patrimonial"; alvo `font-display text-3xl @xl:text-2xl @3xl:text-3xl`; selo `Gera {renda}/mês perpétuos a {taxa}% a.a.` (pill `bg-income/15 text-income`); linha `{guardado} acumulados ({formatShare} do alvo)`.
-    - **Plano de ação** (`bg-primary/10 p-5`, sem borda nem raio; o `overflow-hidden` do card recorta os cantos): "Aporte necessário" (`text-link`); valor `font-display text-4xl @xl:text-3xl @3xl:text-4xl` seguido de ` / mês` em corpo pequeno, ou "Prazo encerrado"; `{formatTerm(months)} restantes`; `Faltam {formatBRL(remaining)}`.
+    - **Destino** (`p-5`): "Meta Patrimonial"; alvo `font-display text-3xl @xl:text-2xl @3xl:text-3xl`; selo `Gera {renda}/mês perpétuos a {taxa}% a.a.` (pill `bg-income/15 text-income`); linha `{guardado} acumulados ({formatShare} do alvo)`.
+    - **Plano de ação** (`bg-primary/10 p-5`, sem borda nem raio; o `overflow-hidden` do card recorta os cantos): "Aporte Estratégico Mensal" (`text-link`); valor `font-display text-4xl @xl:text-3xl @3xl:text-4xl` seguido de ` / mês` em corpo pequeno, ou "Prazo encerrado"; `Tempo até o Ápice: {formatTerm(months)}`; `Distância do Alvo: {formatBRL(remaining)}`.
   - Rodapé: `div.border-t.border-border.px-5.py-4` com `<GoalCheckpoints summary>`.
 - **Alturas esperadas** (para o critério de 340 px): destino ~170 px; rodapé ~100 px; total ~270 a 300 px.
 - **Reuses**: `glow` atual, `formatTerm`, `formatShare`.
@@ -138,7 +138,7 @@ graph TD
 ### Página /liberdade (alterada)
 
 - **Location**: `src/app/(app)/liberdade/page.tsx`
-- **Comportamento**: lê o objetivo e devolve só `<GoalExperience saved initial nowIso />`; sai o `PageHeader` e o parágrafo, que passam para o `GoalExperience`. `metadata`, `moneyText` e a montagem de `initial` ficam.
+- **Comportamento**: lê o objetivo e devolve só `<GoalExperience saved initial nowIso />`; o `PageHeader` (eyebrow "Independência financeira", título "Ápice") e o parágrafo de introdução passam para o `GoalExperience`, com os mesmos textos. `metadata` ("Ápice") fica. `metadata`, `moneyText` e a montagem de `initial` ficam.
 
 ---
 
@@ -158,7 +158,7 @@ Nenhum. `GoalFormValues`, `Goal` e `GoalSummary` ficam como estão.
 | X ou Esc com rascunho | `handleOpenChange(false)` restaura o resumo salvo | Descarta o rascunho |
 | Clique fora da gaveta | `onInteractOutside` com `preventDefault` | Nada acontece; gaveta fica aberta |
 | Sem objetivo e sem prévia válida | Estado vazio | Cartão com "Definir objetivo" |
-| Prazo 0 | `timeline` vazia, aporte nulo | Hero com "Prazo encerrado" e "0 meses restantes"; gráfico omitido |
+| Prazo 0 | `timeline` vazia, aporte nulo | Hero com "Prazo encerrado" e "Tempo até o Ápice: 0 meses"; gráfico omitido |
 
 ---
 
