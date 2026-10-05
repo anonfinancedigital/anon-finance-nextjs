@@ -61,8 +61,8 @@ test("an expense dated in another month goes to that month, not the displayed on
 
   await login(page);
   await page.goto("/?mes=2026-10");
-  const form = page.getByRole("form", { name: "Nova transação" });
-  await form.getByLabel("Gasto", { exact: true }).check();
+  const form = page.getByRole("form", { name: "Registrar Lançamento" });
+  await form.getByLabel("Saída de Caixa", { exact: true }).check();
   await form.getByLabel("Valor (R$)").fill("80,00");
   await form.getByLabel("Data").fill("2026-09-15");
   await chooseOption(form.getByLabel("Categoria"), "Conforto");
