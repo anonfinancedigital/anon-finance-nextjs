@@ -312,12 +312,14 @@ T8 → T9
 
 **Done when**:
 
-- [ ] `INTRO` descreve a meta como o patrimônio que, na taxa de retirada do cenário, gera a renda desejada, sem prometer renda nem preservação do principal (RET-14 AC4)
-- [ ] `DRAWER_INTRO` e o resto da página inalterados
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] `INTRO` descreve a meta como o patrimônio que, na taxa de retirada do cenário, gera a renda desejada, sem prometer renda nem preservação do principal (RET-14 AC4)
+- [x] `DRAWER_INTRO` e o resto da página inalterados
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
 
 **Tests**: none
 **Gate**: build
+
+**Status**: ✅ Done
 
 **Commit**: `fix(liberdade): drop the principal-preservation claim from the intro`
 

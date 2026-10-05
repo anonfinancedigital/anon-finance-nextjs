@@ -152,7 +152,7 @@ Implicit-requirement dimensions: input validation & bounds (rentabilidade fora d
 | RET-11 | P1: Tela explica (seletor "Rentabilidade real esperada") | Execute | Verified |
 | RET-12 | P1: Tela explica (Hero com rentabilidade, retirada, renda, patrimônio) | Execute | Verified |
 | RET-13 | P1: Tela explica ("Como calculamos?") | Execute | Verified |
-| RET-14 | P1: Tela explica (sem promessa de renda ou retorno; prévia atualiza retirada) | Execute | Implementing |
+| RET-14 | P1: Tela explica (sem promessa de renda ou retorno; prévia atualiza retirada) | Execute | Verified |
 | RET-15 | P2: Regressão (objetivos salvos, contratos, isomorfismo) | Tasks | In Tasks |
 
 **Mapa de critérios:** RET-01 a RET-05 = ACs 1 a 5 da primeira história; RET-06 a RET-10 = ACs 1 a 5 da segunda (os ACs 6 a 8 da segunda e os casos de borda entram em RET-08 e RET-09); RET-11 a RET-14 = ACs 1 a 4 da terceira (o AC 5 entra em RET-14); RET-15 = ACs da P2.

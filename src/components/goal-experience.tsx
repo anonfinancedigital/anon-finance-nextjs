@@ -14,7 +14,7 @@ import { goalSchema } from "@/lib/validation/goal";
 const DRAWER_INTRO = "Simule o ápice: renda, patrimônio e idade.";
 
 const INTRO =
-  "Defina a renda mensal que quer ter, o patrimônio acumulado e a idade do seu ápice patrimonial. A meta é o patrimônio que gera essa renda, sem consumir o principal, na taxa esperada escolhida: a base da sua independência financeira.";
+  "Defina a renda mensal que quer ter, o patrimônio acumulado e a idade do seu ápice patrimonial. A meta é o patrimônio que, na taxa de retirada do cenário de rentabilidade escolhido, gera essa renda: a base da sua independência financeira.";
 
 /** Target and monthly deposit of the current preview, shown on top of the sheet so they stay in view. */
 function DrawerSummary({ summary }: { summary: Summary | null }) {
