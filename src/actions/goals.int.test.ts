@@ -28,6 +28,7 @@ const SAVED = {
   savedCents: 15_000_000,
   birthDate: "1990-06-15",
   retirementAge: 90,
+  annualRateBp: 800,
 };
 
 let userId: string;

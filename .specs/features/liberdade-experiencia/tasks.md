@@ -246,12 +246,12 @@ T16 → T17 → T18 → T19
 
 **Done when**:
 
-- [ ] `upsert` com taxa 600 seguido de `get` devolve `annualRateBp: 600`; novo `upsert` com 1000 substitui na mesma linha (continua uma linha por usuário)
-- [ ] Linha inserida sem informar a taxa (SQL direto) volta com `annualRateBp: 800`
-- [ ] Inserir taxa fora de 600, 800, 1000 pelo banco é recusado pelo CHECK
-- [ ] Isolamento entre usuários preservado (teste existente passa)
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
-- [ ] Test count: testes novos passam, nenhum existente removido
+- [x] `upsert` com taxa 600 seguido de `get` devolve `annualRateBp: 600`; novo `upsert` com 1000 substitui na mesma linha (continua uma linha por usuário)
+- [x] Linha inserida sem informar a taxa (SQL direto) volta com `annualRateBp: 800`
+- [x] Inserir taxa fora de 600, 800, 1000 pelo banco é recusado pelo CHECK
+- [x] Isolamento entre usuários preservado (teste existente passa)
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
+- [x] Test count: testes novos passam, nenhum existente removido
 
 **Tests**: integration
 **Gate**: full

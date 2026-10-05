@@ -12,6 +12,7 @@ const GOAL = {
   savedCents: 15_000_000,
   birthDate: "1990-06-15",
   retirementAge: 60,
+  annualRateBp: 800 as const,
 };
 
 const rowsOf = (userId: string) => db.select().from(financialGoal).where(eq(financialGoal.userId, userId));
@@ -41,11 +42,48 @@ describe("goalsRepo.get", () => {
   });
 });
 
+describe("goalsRepo annual rate", () => {
+  it.each([[600], [800], [1000]] as const)("saves and returns the rate %d", async (annualRateBp) => {
+    const userId = await insertTestUser();
+    await goalsRepo.upsert(userId, { ...GOAL, annualRateBp });
+    expect((await goalsRepo.get(userId))?.annualRateBp).toBe(annualRateBp);
+  });
+
+  it("replaces the rate on a second upsert in the same row", async () => {
+    const userId = await insertTestUser();
+    await goalsRepo.upsert(userId, { ...GOAL, annualRateBp: 600 });
+    await goalsRepo.upsert(userId, { ...GOAL, annualRateBp: 1000 });
+
+    expect((await goalsRepo.get(userId))?.annualRateBp).toBe(1000);
+    expect(await rowsOf(userId)).toHaveLength(1);
+  });
+
+  it("returns 800 for a row inserted without a rate", async () => {
+    const userId = await insertTestUser();
+    const { monthlyIncomeCents, savedCents, birthDate, retirementAge } = GOAL;
+    await db.insert(financialGoal).values({ userId, monthlyIncomeCents, savedCents, birthDate, retirementAge });
+
+    expect((await goalsRepo.get(userId))?.annualRateBp).toBe(800);
+  });
+
+  it("refuses a rate outside 600, 800 and 1000 at the database", async () => {
+    const userId = await insertTestUser();
+    await expect(db.insert(financialGoal).values({ userId, ...GOAL, annualRateBp: 700 })).rejects.toThrow();
+    expect(await goalsRepo.get(userId)).toBeNull();
+  });
+});
+
 describe("goalsRepo.upsert", () => {
   it("replaces the values on a second upsert and keeps a single row", async () => {
     const userId = await insertTestUser();
     await goalsRepo.upsert(userId, GOAL);
-    const replacement = { monthlyIncomeCents: 500_000, savedCents: 0, birthDate: "1985-02-28", retirementAge: 55 };
+    const replacement = {
+      monthlyIncomeCents: 500_000,
+      savedCents: 0,
+      birthDate: "1985-02-28",
+      retirementAge: 55,
+      annualRateBp: 1000 as const,
+    };
     await goalsRepo.upsert(userId, replacement);
 
     expect(await goalsRepo.get(userId)).toEqual(replacement);
