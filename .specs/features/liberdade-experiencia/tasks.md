@@ -394,11 +394,11 @@ T16 → T17 → T18 → T19
 
 **Done when**:
 
-- [ ] `RateToggle({ value, onChange })` com `value` `"6" | "8" | "10"` e `aria-label="Taxa esperada"`
-- [ ] Os três itens exibem exatamente "Conservador · 6%", "Moderado · 8%" e "Agressivo · 10%", com um selecionado
-- [ ] Navegação por setas e foco visível herdados do `RadioGroup`
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
-- [ ] Test count: nenhum teste novo (UI = none); contagem anterior mantida
+- [x] `RateToggle({ value, onChange })` com `value` `"6" | "8" | "10"` e `aria-label="Taxa esperada"`
+- [x] Os três itens exibem exatamente "Conservador · 6%", "Moderado · 8%" e "Agressivo · 10%", com um selecionado
+- [x] Navegação por setas e foco visível herdados do `RadioGroup`
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
+- [x] Test count: nenhum teste novo (UI = none); contagem anterior mantida
 
 **Tests**: none
 **Gate**: build
