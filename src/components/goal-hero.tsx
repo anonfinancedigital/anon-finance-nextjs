@@ -33,7 +33,7 @@ export function GoalHero({ summary }: { summary: GoalSummary }) {
       className="space-y-6 rounded-2xl border border-border bg-card p-6 shadow-lg sm:p-8"
     >
       <div className="space-y-3">
-        <p className="text-sm text-muted-foreground">Patrimônio-alvo</p>
+        <p className="text-sm text-muted-foreground">Meta Patrimonial</p>
         <p className="font-display text-3xl font-bold tracking-tight sm:text-4xl">
           {formatBRL(summary.targetCents)}
         </p>
@@ -45,7 +45,7 @@ export function GoalHero({ summary }: { summary: GoalSummary }) {
 
       <dl className="flex flex-wrap items-baseline gap-x-8 gap-y-2">
         <div>
-          <dt className="text-sm text-muted-foreground">Guardado</dt>
+          <dt className="text-sm text-muted-foreground">Patrimônio Acumulado</dt>
           <dd className="font-display text-2xl font-bold">{formatBRL(summary.savedCents)}</dd>
         </div>
         <div>
@@ -55,7 +55,7 @@ export function GoalHero({ summary }: { summary: GoalSummary }) {
       </dl>
 
       <div className="rounded-xl border border-primary/30 bg-primary/10 p-5">
-        <p className="text-sm font-medium text-link">Aporte mensal necessário</p>
+        <p className="text-sm font-medium text-link">Aporte Estratégico Mensal</p>
         <p className="font-display text-4xl font-bold tracking-tight sm:text-5xl">
           {summary.monthlyCents === null ? "Prazo encerrado" : formatBRL(summary.monthlyCents)}
         </p>
@@ -63,11 +63,11 @@ export function GoalHero({ summary }: { summary: GoalSummary }) {
 
       <dl className="flex flex-wrap gap-x-8 gap-y-1 text-sm">
         <div className="flex gap-2">
-          <dt className="text-muted-foreground">Falta</dt>
+          <dt className="text-muted-foreground">Distância do Alvo</dt>
           <dd className="font-medium">{formatBRL(summary.remainingCents)}</dd>
         </div>
         <div className="flex gap-2">
-          <dt className="text-muted-foreground">Prazo restante</dt>
+          <dt className="text-muted-foreground">Tempo até o Ápice</dt>
           <dd className="font-medium">{formatTerm(summary.months)}</dd>
         </div>
       </dl>
