@@ -512,11 +512,11 @@ T16 → T17 → T18 → T19
 
 **Done when**:
 
-- [ ] Ordem: Hero Card, gráfico, checkpoints; nenhum `dl` de caixas iguais e nenhuma lista "Projeção" a cada 4 anos
-- [ ] `GoalSummary({ summary })` mantém a assinatura (a página atual continua compilando)
-- [ ] `summary.milestones` não é mais lido neste arquivo
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
-- [ ] Test count: nenhum teste novo (UI = none); contagem anterior mantida
+- [x] Ordem: Hero Card, gráfico, checkpoints; nenhum `dl` de caixas iguais e nenhuma lista "Projeção" a cada 4 anos
+- [x] `GoalSummary({ summary })` mantém a assinatura (a página atual continua compilando)
+- [x] `summary.milestones` não é mais lido neste arquivo
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
+- [x] Test count: nenhum teste novo (UI = none); contagem anterior mantida
 
 **Tests**: none
 **Gate**: build
