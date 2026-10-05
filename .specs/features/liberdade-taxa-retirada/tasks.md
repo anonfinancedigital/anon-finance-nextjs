@@ -10,7 +10,7 @@ Implement these tasks with the `tlc-spec-driven` skill: **activate it by name an
 
 **Design**: `.specs/features/liberdade-taxa-retirada/design.md`
 **Spec**: `.specs/features/liberdade-taxa-retirada/spec.md`
-**Status**: In Progress
+**Status**: Done
 
 **Estratégia de ordem:** toda a regra financeira vive em `freedom.ts` e é testada no domínio (AD-008). Os textos saem para `freedom-copy.ts`, também puro e testado, para que a UI só consuma. A UI vem por último e não tem teste automático (AD-005 e AD-008). Cada tarefa deixa `typecheck`, `lint`, build e testes verdes e vira um commit.
 
@@ -340,14 +340,23 @@ T8 → T9
 
 **Done when**:
 
-- [ ] `npm run typecheck && npm run lint && npm run test:unit && npm run test:int` passam; `goal.test.ts`, `goals.int.test.ts` e `repos/goals.int.test.ts` sem alteração de contrato (RET-15)
-- [ ] Varredura sem ocorrências proibidas em `src` (RET-14 AC4); nenhuma alteração em schema, `goalSchema`, `saveGoal` (RET-15)
-- [ ] Resultado da varredura e contagem de testes anotados neste arquivo
+- [x] `npm run typecheck && npm run lint && npm run test:unit && npm run test:int` passam; `goal.test.ts`, `goals.int.test.ts` e `repos/goals.int.test.ts` sem alteração de contrato (RET-15)
+- [x] Varredura sem ocorrências proibidas em `src` (RET-14 AC4); nenhuma alteração em schema, `goalSchema`, `saveGoal` (RET-15)
+- [x] Resultado da varredura e contagem de testes anotados neste arquivo
 
 **Tests**: none
 **Gate**: full
 
+**Status**: ✅ Done
+
 **Commit**: `docs(liberdade-taxa-retirada): record the final regression sweep`
+
+**Resultado (T9):**
+
+- `npm run typecheck`, `npm run lint` e `npm run build` passam; `npm run test:unit`: 17 arquivos, 535 testes passando; `npm run test:int`: 13 arquivos, 285 testes passando, rodado contra o banco privado `orcamento_taxa_retirada_test` (via `DATABASE_URL`), sem tocar em `orcamento_test`.
+- Varredura `perpétu|vitalíc|garantid|Taxa esperada` em `src` e `e2e`: única ocorrência é a lista `FORBIDDEN` do teste `src/lib/domain/freedom-copy.test.ts:54` (padrões proibidos, não texto de tela). Nenhum texto exibido, comentário ou e2e restante.
+- Nenhuma alteração em schema, `goalSchema`, `saveGoal`, `goal.test.ts`, `goals.int.test.ts` e `repos/goals.int.test.ts` (RET-15).
+- UI sem teste automático (AD-005, AD-008); verificação visual dos três cenários não executada nesta rodada.
 
 ---
 
