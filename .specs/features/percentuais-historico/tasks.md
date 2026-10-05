@@ -84,6 +84,7 @@ T9 → T10 → T11
 **Depends on**: None
 **Reuses**: `src/lib/domain/month.ts` (`YearMonth`, `monthRange`)
 **Requirement**: HIST-04, HIST-02
+**Status**: Done
 
 **Tools**:
 
@@ -92,10 +93,10 @@ T9 → T10 → T11
 
 **Done when**:
 
-- [ ] `resolvePercent(versions, monthStart)` devolve o percentual da versão de maior `fromMonth` ≤ `monthStart` e `null` sem versão elegível
-- [ ] `monthStartOf(m)` devolve `AAAA-MM-01` (ex.: `{2026,3}` → `2026-03-01`)
-- [ ] Testes cobrem: sentinela `0001-01-01`, mês igual ao `fromMonth`, mês anterior à primeira versão (`null`), mês futuro usa a última versão, ordem de entrada embaralhada
-- [ ] Gate check passes: `npm run test:unit`
+- [x] `resolvePercent(versions, monthStart)` devolve o percentual da versão de maior `fromMonth` ≤ `monthStart` e `null` sem versão elegível
+- [x] `monthStartOf(m)` devolve `AAAA-MM-01` (ex.: `{2026,3}` → `2026-03-01`)
+- [x] Testes cobrem: sentinela `0001-01-01`, mês igual ao `fromMonth`, mês anterior à primeira versão (`null`), mês futuro usa a última versão, ordem de entrada embaralhada
+- [x] Gate check passes: `npm run test:unit`
 
 **Tests**: unit
 **Gate**: quick
