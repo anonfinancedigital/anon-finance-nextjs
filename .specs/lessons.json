@@ -3,7 +3,7 @@
   "promote_threshold": 2,
   "window_days": 45,
   "quarantine_threshold": 2,
-  "next_id": 17,
+  "next_id": 19,
   "lessons": [
     {
       "id": "L-001",
@@ -294,6 +294,42 @@
       ],
       "created": "2026-10-05T17:31:50Z",
       "last_seen": "2026-10-05T17:31:50Z"
+    },
+    {
+      "id": "L-017",
+      "key": "spec_precision_gap::state forbidden copy rules as an exact list of patterns plus the files they apply to not as a vague phrase class",
+      "text": "State forbidden-copy rules as an exact list of patterns plus the files they apply to, not as a vague phrase class",
+      "signal": "spec_precision_gap",
+      "scope": "copy",
+      "status": "candidate",
+      "features": [
+        "liberdade-taxa-retirada"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "RET-14 AC4; src/lib/domain/freedom-copy.test.ts:62 (copy)"
+      ],
+      "created": "2026-10-05T18:09:34Z",
+      "last_seen": "2026-10-05T18:09:34Z"
+    },
+    {
+      "id": "L-018",
+      "key": "spec_precision_gap::keep spec assumptions consistent with the acceptance criteria on what a ui card shows including repeated values and label punctuation",
+      "text": "Keep spec assumptions consistent with the acceptance criteria on what a UI card shows, including repeated values and label punctuation",
+      "signal": "spec_precision_gap",
+      "scope": "ui",
+      "status": "candidate",
+      "features": [
+        "liberdade-taxa-retirada"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "RET-12; src/components/goal-hero.tsx:43 (ui)"
+      ],
+      "created": "2026-10-05T18:09:34Z",
+      "last_seen": "2026-10-05T18:09:34Z"
     }
   ]
 }

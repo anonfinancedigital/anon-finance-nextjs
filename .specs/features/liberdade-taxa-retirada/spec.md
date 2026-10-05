@@ -139,16 +139,16 @@ Implicit-requirement dimensions: input validation & bounds (rentabilidade fora d
 
 | Requirement ID | Story | Phase | Status |
 | -------------- | ----- | ----- | ------ |
-| RET-01 | P1: Meta pela taxa de retirada (tabela única) | Execute | Implementing |
-| RET-02 | P1: Meta pela taxa de retirada (`getWithdrawalRate` 6/8/10) | Execute | Implementing |
-| RET-03 | P1: Meta pela taxa de retirada (rentabilidade fora da tabela) | Execute | Implementing |
-| RET-04 | P1: Meta pela taxa de retirada (valores para R$ 20.000/mês) | Execute | Implementing |
-| RET-05 | P1: Meta pela taxa de retirada (fórmula e arredondamento) | Execute | Implementing |
-| RET-06 | P1: Aporte, projeção e gráfico (taxa mensal) | Execute | Implementing |
-| RET-07 | P1: Aporte, projeção e gráfico (aporte resolve PMT com a meta nova) | Execute | Implementing |
-| RET-08 | P1: Aporte, projeção e gráfico (resumo único e recálculo por entrada) | Execute | Implementing |
-| RET-09 | P1: Aporte, projeção e gráfico (linha do tempo termina na meta, aporte 0, prazo encerrado) | Execute | Implementing |
-| RET-10 | P1: Aporte, projeção e gráfico (linha "Meta" do gráfico) | Execute | Implementing |
+| RET-01 | P1: Meta pela taxa de retirada (tabela única) | Execute | Verified |
+| RET-02 | P1: Meta pela taxa de retirada (`getWithdrawalRate` 6/8/10) | Execute | Verified |
+| RET-03 | P1: Meta pela taxa de retirada (rentabilidade fora da tabela) | Execute | Verified |
+| RET-04 | P1: Meta pela taxa de retirada (valores para R$ 20.000/mês) | Execute | Verified |
+| RET-05 | P1: Meta pela taxa de retirada (fórmula e arredondamento) | Execute | Verified |
+| RET-06 | P1: Aporte, projeção e gráfico (taxa mensal) | Execute | Verified |
+| RET-07 | P1: Aporte, projeção e gráfico (aporte resolve PMT com a meta nova) | Execute | Verified |
+| RET-08 | P1: Aporte, projeção e gráfico (resumo único e recálculo por entrada) | Execute | Verified |
+| RET-09 | P1: Aporte, projeção e gráfico (linha do tempo termina na meta, aporte 0, prazo encerrado) | Execute | Verified |
+| RET-10 | P1: Aporte, projeção e gráfico (linha "Meta" do gráfico) | Execute | Verified |
 | RET-11 | P1: Tela explica (seletor "Rentabilidade real esperada") | Execute | Verified |
 | RET-12 | P1: Tela explica (Hero com rentabilidade, retirada, renda, patrimônio) | Execute | Verified |
 | RET-13 | P1: Tela explica ("Como calculamos?") | Execute | Verified |

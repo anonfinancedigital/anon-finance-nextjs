@@ -108,6 +108,18 @@ Seen once or not yet corroborated. Tracked, not trusted.
 - evidence: freedom.ts:146 mutant M4 (Math.round to Math.floor in chartYMax) (domain)
 - last seen: 2026-10-05T17:31:50Z
 
+### L-017 - State forbidden-copy rules as an exact list of patterns plus the files they apply to, not as a vague phrase class
+- signal: `spec_precision_gap` · recurrence: 1 feature(s) · scope: `copy` · harmful: 0
+- features: liberdade-taxa-retirada
+- evidence: RET-14 AC4; src/lib/domain/freedom-copy.test.ts:62 (copy)
+- last seen: 2026-10-05T18:09:34Z
+
+### L-018 - Keep spec assumptions consistent with the acceptance criteria on what a UI card shows, including repeated values and label punctuation
+- signal: `spec_precision_gap` · recurrence: 1 feature(s) · scope: `ui` · harmful: 0
+- features: liberdade-taxa-retirada
+- evidence: RET-12; src/components/goal-hero.tsx:43 (ui)
+- last seen: 2026-10-05T18:09:34Z
+
 ## Quarantined (failed when applied - ignore)
 
 A confirmed lesson that recurred alongside failure. Kept for the maintainer to review.
