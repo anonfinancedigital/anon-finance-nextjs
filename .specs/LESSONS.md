@@ -8,7 +8,11 @@
 
 Corroborated across multiple features. Safe to apply as guidance.
 
-_none_
+### L-002 - When an acceptance criterion requires a validation message, state the exact message text in the spec
+- signal: `spec_precision_gap` · recurrence: 2 feature(s) · scope: `validation` · harmful: 0
+- features: orcamento-domestico, liberdade-financeira
+- evidence: CAT AC4/AC5, TRX AC3-AC5; src/actions/transactions.int.test.ts:103 (validation) (+1 more)
+- last seen: 2026-10-04T23:22:57Z
 
 ## Candidates (under observation - do NOT load as guidance yet)
 
@@ -20,17 +24,35 @@ Seen once or not yet corroborated. Tracked, not trusted.
 - evidence: AUTH-03 AC4; src/actions/auth.ts:15-24 (auth)
 - last seen: 2026-10-04T18:35:00Z
 
-### L-002 - When an acceptance criterion requires a validation message, state the exact message text in the spec
-- signal: `spec_precision_gap` · recurrence: 1 feature(s) · scope: `validation` · harmful: 0
-- features: orcamento-domestico
-- evidence: CAT AC4/AC5, TRX AC3-AC5; src/actions/transactions.int.test.ts:103 (validation)
-- last seen: 2026-10-04T18:35:00Z
-
 ### L-003 - When design names a UI component library widget, confirm it before tasks or record native controls as the default to avoid a late deviation
 - signal: `spec_deviation` · recurrence: 1 feature(s) · scope: `ui` · harmful: 0
 - features: orcamento-domestico
 - evidence: SPEC_DEVIATION src/components/transaction-form.tsx:42 (ui)
 - last seen: 2026-10-04T18:35:00Z
+
+### L-004 - With uncommitted work from another feature in the tree, stage hunks selectively and run the gate on a clean checkout of the commit before calling a task done.
+- signal: `gate_fail` · recurrence: 1 feature(s) · scope: `git` · harmful: 0
+- features: gastos-recorrentes
+- evidence: b583b0c src/actions/transactions.int.test.ts:27 (git)
+- last seen: 2026-10-04T23:12:05Z
+
+### L-005 - When an edit can split a row into a new row, assert every copied field on the new row, not only the field the test changed.
+- signal: `surviving_mutant` · recurrence: 1 feature(s) · scope: `src/lib/db/repos` · harmful: 0
+- features: gastos-recorrentes
+- evidence: M9 src/lib/db/repos/transactions.ts:212 (src/lib/db/repos)
+- last seen: 2026-10-04T23:12:05Z
+
+### L-006 - Test non-integer rejection with every decimal separator and notation the parser could accept (dot, comma, exponent), not just the one the current code happens to reject
+- signal: `surviving_mutant` · recurrence: 1 feature(s) · scope: `validation` · harmful: 0
+- features: liberdade-financeira
+- evidence: mutant V9; src/lib/validation/goal.ts:70; src/lib/validation/goal.test.ts:90 (validation)
+- last seen: 2026-10-04T23:22:56Z
+
+### L-007 - When a rule depends on the current calendar day in a fixed timezone, add a test with a clock instant where that timezone and UTC fall on different days
+- signal: `surviving_mutant` · recurrence: 1 feature(s) · scope: `validation` · harmful: 0
+- features: liberdade-financeira
+- evidence: mutant V10; src/lib/validation/goal.ts:10 (validation)
+- last seen: 2026-10-04T23:22:57Z
 
 ## Quarantined (failed when applied - ignore)
 

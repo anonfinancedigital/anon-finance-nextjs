@@ -3,7 +3,7 @@
   "promote_threshold": 2,
   "window_days": 45,
   "quarantine_threshold": 2,
-  "next_id": 4,
+  "next_id": 8,
   "lessons": [
     {
       "id": "L-001",
@@ -29,17 +29,19 @@
       "text": "When an acceptance criterion requires a validation message, state the exact message text in the spec",
       "signal": "spec_precision_gap",
       "scope": "validation",
-      "status": "candidate",
+      "status": "confirmed",
       "features": [
-        "orcamento-domestico"
+        "orcamento-domestico",
+        "liberdade-financeira"
       ],
-      "recurrence": 1,
+      "recurrence": 2,
       "harmful": 0,
       "evidence": [
-        "CAT AC4/AC5, TRX AC3-AC5; src/actions/transactions.int.test.ts:103 (validation)"
+        "CAT AC4/AC5, TRX AC3-AC5; src/actions/transactions.int.test.ts:103 (validation)",
+        "LIB-08/LIB-09 AC1-4; src/lib/validation/goal.test.ts:37 (validation)"
       ],
       "created": "2026-10-04T18:35:00Z",
-      "last_seen": "2026-10-04T18:35:00Z"
+      "last_seen": "2026-10-04T23:22:57Z"
     },
     {
       "id": "L-003",
@@ -58,6 +60,78 @@
       ],
       "created": "2026-10-04T18:35:00Z",
       "last_seen": "2026-10-04T18:35:00Z"
+    },
+    {
+      "id": "L-004",
+      "key": "gate_fail::with uncommitted work from another feature in the tree stage hunks selectively and run the gate on a clean checkout of the commit before calling a task done",
+      "text": "With uncommitted work from another feature in the tree, stage hunks selectively and run the gate on a clean checkout of the commit before calling a task done.",
+      "signal": "gate_fail",
+      "scope": "git",
+      "status": "candidate",
+      "features": [
+        "gastos-recorrentes"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "b583b0c src/actions/transactions.int.test.ts:27 (git)"
+      ],
+      "created": "2026-10-04T23:12:05Z",
+      "last_seen": "2026-10-04T23:12:05Z"
+    },
+    {
+      "id": "L-005",
+      "key": "surviving_mutant::when an edit can split a row into a new row assert every copied field on the new row not only the field the test changed",
+      "text": "When an edit can split a row into a new row, assert every copied field on the new row, not only the field the test changed.",
+      "signal": "surviving_mutant",
+      "scope": "src/lib/db/repos",
+      "status": "candidate",
+      "features": [
+        "gastos-recorrentes"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "M9 src/lib/db/repos/transactions.ts:212 (src/lib/db/repos)"
+      ],
+      "created": "2026-10-04T23:12:05Z",
+      "last_seen": "2026-10-04T23:12:05Z"
+    },
+    {
+      "id": "L-006",
+      "key": "surviving_mutant::test non integer rejection with every decimal separator and notation the parser could accept dot comma exponent not just the one the current code happens to reject",
+      "text": "Test non-integer rejection with every decimal separator and notation the parser could accept (dot, comma, exponent), not just the one the current code happens to reject",
+      "signal": "surviving_mutant",
+      "scope": "validation",
+      "status": "candidate",
+      "features": [
+        "liberdade-financeira"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "mutant V9; src/lib/validation/goal.ts:70; src/lib/validation/goal.test.ts:90 (validation)"
+      ],
+      "created": "2026-10-04T23:22:56Z",
+      "last_seen": "2026-10-04T23:22:56Z"
+    },
+    {
+      "id": "L-007",
+      "key": "surviving_mutant::when a rule depends on the current calendar day in a fixed timezone add a test with a clock instant where that timezone and utc fall on different days",
+      "text": "When a rule depends on the current calendar day in a fixed timezone, add a test with a clock instant where that timezone and UTC fall on different days",
+      "signal": "surviving_mutant",
+      "scope": "validation",
+      "status": "candidate",
+      "features": [
+        "liberdade-financeira"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "mutant V10; src/lib/validation/goal.ts:10 (validation)"
+      ],
+      "created": "2026-10-04T23:22:57Z",
+      "last_seen": "2026-10-04T23:22:57Z"
     }
   ]
 }
