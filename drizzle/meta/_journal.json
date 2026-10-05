@@ -78,6 +78,13 @@
       "when": 1791216064820,
       "tag": "0010_category_is_investment",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1791225629678,
+      "tag": "0011_withdrawal_rate",
+      "breakpoints": true
     }
   ]
 }

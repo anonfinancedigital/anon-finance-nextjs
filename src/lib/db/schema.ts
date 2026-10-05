@@ -160,6 +160,7 @@ export const financialGoal = pgTable(
     birthDate: date("birth_date", { mode: "string" }).notNull(),
     retirementAge: smallint("retirement_age").notNull(),
     annualRateBp: smallint("annual_rate_bp").notNull().default(800),
+    withdrawalRateBp: smallint("withdrawal_rate_bp").notNull(),
     updatedAt: timestamp("updated_at", { withTimezone: true })
       .notNull()
       .default(sql`clock_timestamp()`),
@@ -168,7 +169,11 @@ export const financialGoal = pgTable(
     check("financial_goal_income_range", sql`${t.monthlyIncomeCents} BETWEEN 1 AND 100000000`),
     check("financial_goal_saved_range", sql`${t.savedCents} BETWEEN 0 AND 99999999999`),
     check("financial_goal_retirement_age_range", sql`${t.retirementAge} BETWEEN 1 AND 120`),
-    check("financial_goal_annual_rate", sql`${t.annualRateBp} IN (600, 800, 1000)`),
+    check("financial_goal_annual_rate", sql`${t.annualRateBp} BETWEEN 100 AND 1500`),
+    check(
+      "financial_goal_withdrawal_rate",
+      sql`${t.withdrawalRateBp} BETWEEN 100 AND 1500 AND ${t.withdrawalRateBp} <= ${t.annualRateBp}`,
+    ),
   ],
 );
 

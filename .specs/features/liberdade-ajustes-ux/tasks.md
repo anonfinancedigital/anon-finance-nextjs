@@ -327,10 +327,10 @@ T9 → T10 → T11 → T12 → T13 → T14
 
 **Done when**:
 
-- [ ] Migração em 3 passos aplicada no `orcamento_test` privado (Node 20, `DATABASE_URL` próprio)
-- [ ] Teste de integração: grava e lê `withdrawalRateBp` 450 com 650; linha anterior à migração (rentabilidade 800) ganha retirada 600 (AJL-16); retirada > rentabilidade viola a CHECK
-- [ ] Gate full passa
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
+- [x] Migração em 3 passos aplicada no `orcamento_test` privado (Node 20, `DATABASE_URL` próprio)
+- [x] Teste de integração: grava e lê `withdrawalRateBp` 450 com 650; linha anterior à migração (rentabilidade 800) ganha retirada 600 (AJL-16); retirada > rentabilidade viola a CHECK
+- [x] Gate full passa
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
 
 **Tests**: integration
 **Gate**: full

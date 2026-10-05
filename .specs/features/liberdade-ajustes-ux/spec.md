@@ -205,7 +205,7 @@ Implicit-requirement dimensions: input validation & bounds (taxa personalizada f
 | AJL-18 | P2: Taxa personalizada | - | Pending |
 | AJL-19 | P2: Taxa personalizada | - | Pending |
 | AJL-20 | P2: Taxa personalizada | Execute | Implementing |
-| AJL-16 | P2: Taxa personalizada | - | Pending |
+| AJL-16 | P2: Taxa personalizada | Execute | Implementing |
 | AJL-21 | Edge cases | - | Pending |
 | AJL-22 | Edge cases | - | Pending |
 | AJL-23 | Edge cases | - | Pending |
