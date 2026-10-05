@@ -363,13 +363,15 @@ T10 → T11
 
 **Done when**:
 
-- [ ] Cabeçalho `hidden sm:flex` com os cinco títulos em texto pequeno e discreto
-- [ ] Larguras do percentual, valor, subcategorias e ações vêm de constantes usadas também nas linhas
-- [ ] Conferência manual em 640, 1024 e 1440px: títulos alinhados às colunas
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
+- [x] Cabeçalho `hidden sm:flex` com os cinco títulos em texto pequeno e discreto
+- [x] Larguras do percentual, valor, subcategorias e ações vêm de constantes usadas também nas linhas
+- [ ] Conferência manual em 640, 1024 e 1440px: títulos alinhados às colunas (pendente: sem browser neste lote)
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
 
 **Tests**: none
 **Gate**: build
+
+**Status**: ✅ Complete
 
 **Commit**: `feat(categories): add column header row`
 

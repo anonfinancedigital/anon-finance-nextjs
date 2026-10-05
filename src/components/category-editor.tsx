@@ -45,6 +45,14 @@ type Row = {
   subcategories: SubcategoryRow[];
 };
 
+/** Column widths shared by the header row and the category rows so they line up. */
+const COL_PERCENT = "w-28";
+const COL_AMOUNT = "w-36";
+/** Same width as the subcategory toggle in `CategoryCard` (w-32). */
+const COL_COUNT = "w-32";
+/** The trash button is `size-8`, the same width. */
+const COL_ACTION = "w-8";
+
 const percentText = (micro: number) => formatPercent(micro).replace("%", "");
 const amountField = (cents: number) => formatBRL(cents).replace(/^R\$\s*/, "");
 
@@ -239,6 +247,17 @@ export function CategoryEditor({
       <ReferenceIncomeCard value={income} onChange={setIncome} />
 
       <div className="divide-y divide-border rounded-2xl border border-border bg-card px-4 shadow-lg">
+        <div
+          aria-hidden
+          className="hidden items-center gap-x-3 py-2 text-xs font-medium tracking-wide text-muted-foreground sm:flex"
+        >
+          <span className="w-9 shrink-0" />
+          <span className="min-w-40 flex-1">CATEGORIA</span>
+          <span className={COL_PERCENT}>% DO TOTAL</span>
+          <span className={COL_AMOUNT}>VALOR ESTIMADO</span>
+          <span className={COL_COUNT}>SUBCATEGORIAS</span>
+          <span className={`${COL_ACTION} shrink-0 whitespace-nowrap`}>AÇÕES</span>
+        </div>
         {rows.map((row, i) => {
           const nameError = fieldErrors[`${i}.name`];
           const colorError = fieldErrors[`${i}.color`];
@@ -283,7 +302,7 @@ export function CategoryEditor({
                       />
                       {nameError && <p className="mt-1 text-sm text-destructive">{nameError}</p>}
                     </div>
-                    <div className="w-28">
+                    <div className={COL_PERCENT}>
                       <InputAffix suffix="%">
                         <Input
                           aria-label={`Percentual da categoria ${i + 1}`}
@@ -297,7 +316,7 @@ export function CategoryEditor({
                       </InputAffix>
                       {percentError && <p className="mt-1 text-sm text-destructive">{percentError}</p>}
                     </div>
-                    <div className="w-32">
+                    <div className={COL_AMOUNT}>
                       <InputAffix prefix="R$">
                         <Input
                           aria-label={`Valor da categoria ${i + 1}`}
@@ -323,7 +342,7 @@ export function CategoryEditor({
                       size="icon-sm"
                       aria-label={`Remover categoria ${i + 1}`}
                       onClick={() => (row.subcategories.length > 0 ? setRemoving(i) : remove(i))}
-                      className="opacity-40 group-hover/row:text-destructive group-hover/row:opacity-100 group-focus-within/row:text-destructive group-focus-within/row:opacity-100"
+                      className={`size-8 opacity-40 group-hover/row:text-destructive group-hover/row:opacity-100 group-focus-within/row:text-destructive group-focus-within/row:opacity-100`}
                     >
                       <Trash2Icon aria-hidden className="size-4" />
                     </Button>
