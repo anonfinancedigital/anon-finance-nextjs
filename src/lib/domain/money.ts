@@ -38,6 +38,12 @@ export function formatBRL(cents: number): string {
   return brl.format(cents / 100);
 }
 
+/** Text for the reference-income field from month income: "5.000,00", or "" when there is none or it exceeds the field limit. */
+export function referenceIncomeText(cents: number): string {
+  if (cents <= 0 || cents > MAX_CENTS) return "";
+  return formatBRL(cents).replace(/^R\$\s*/, "");
+}
+
 const MAX_DIGITS = String(MAX_CENTS).length;
 
 /**

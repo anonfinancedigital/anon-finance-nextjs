@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { formatBRL, maskBRLInput, parseBRL } from "./money";
+import { formatBRL, maskBRLInput, parseBRL, referenceIncomeText } from "./money";
 
 const normalize = (s: string) => s.replace(/\s/g, " ");
 
@@ -93,5 +93,20 @@ describe("maskBRLInput", () => {
 
   it.each([["1"], ["123456"], ["99999999999"], ["100000"]])("gera texto aceito por parseBRL para %j", (input) => {
     expect(parseBRL(maskBRLInput(input)).ok).toBe(true);
+  });
+});
+
+describe("referenceIncomeText", () => {
+  it.each([
+    [500000, "5.000,00"], // REFINC-01
+    [1, "0,01"],
+    [99_999_999_999, "999.999.999,99"],
+  ])("formata %d como %j", (cents, text) => {
+    expect(referenceIncomeText(cents)).toBe(text);
+    expect(parseBRL(text).ok).toBe(true);
+  });
+
+  it.each([[0], [-100], [100_000_000_000]])("devolve vazio para %d", (cents) => {
+    expect(referenceIncomeText(cents)).toBe(""); // REFINC-03, REFINC-04
   });
 });
