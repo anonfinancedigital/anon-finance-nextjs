@@ -613,11 +613,11 @@ T22 → T23 → T24 → T25 → T26 → T27 → T28
 
 **Done when**:
 
-- [ ] Rótulos exatamente como no spec
-- [ ] Valores e cores de seleção inalterados
-- [ ] `radiogroup` continua com `aria-label="Tipo"`
-- [ ] Gate quick: `npm run typecheck && npm run lint && npm run test:unit`
-- [ ] Contagem de testes unit/int igual à anterior (nenhum teste removido)
+- [x] Rótulos exatamente como no spec
+- [x] Valores e cores de seleção inalterados
+- [x] `radiogroup` continua com `aria-label="Tipo"`
+- [x] Gate quick: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Contagem de testes unit/int igual à anterior (nenhum teste removido)
 
 **Tests**: none
 **Gate**: quick

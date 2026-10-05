@@ -7,8 +7,8 @@ import { cn } from "cn";
 type Kind = "income" | "expense";
 
 const options = [
-  { kind: "expense", label: "Gasto", checked: "data-[state=checked]:bg-destructive/15 data-[state=checked]:text-destructive" },
-  { kind: "income", label: "Ganho", checked: "data-[state=checked]:bg-success/15 data-[state=checked]:text-success" },
+  { kind: "expense", label: "Saída de Caixa", checked: "data-[state=checked]:bg-destructive/15 data-[state=checked]:text-destructive" },
+  { kind: "income", label: "Entrada de Capital", checked: "data-[state=checked]:bg-success/15 data-[state=checked]:text-success" },
 ] as const;
 
 /** Full-width segmented control for the transaction kind (radiogroup "Tipo"). */
