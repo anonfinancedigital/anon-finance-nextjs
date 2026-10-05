@@ -33,8 +33,8 @@ test("the theme toggle switches and remembers the theme", async ({ page }) => {
 test("the sidebar marks the current page", async ({ page }) => {
   await login(page);
   const nav = page.getByRole("navigation", { name: "Principal" });
-  await expect(nav.getByRole("link", { name: "Resumo" })).toHaveAttribute("aria-current", "page");
-  await nav.getByRole("link", { name: "Categorias" }).click();
+  await expect(nav.getByRole("link", { name: "Cockpit" })).toHaveAttribute("aria-current", "page");
+  await nav.getByRole("link", { name: "Alocação" }).click();
   await expect(page).toHaveURL("/categorias");
-  await expect(nav.getByRole("link", { name: "Categorias" })).toHaveAttribute("aria-current", "page");
+  await expect(nav.getByRole("link", { name: "Alocação" })).toHaveAttribute("aria-current", "page");
 });
