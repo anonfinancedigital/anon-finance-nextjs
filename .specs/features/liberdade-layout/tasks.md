@@ -295,15 +295,15 @@ T5 → T6 → T7 → T8
 
 **Done when**:
 
-- [ ] A página mantém `metadata` ("Ápice"), a leitura do objetivo e a montagem de `initial`, e renderiza só `<GoalExperience saved initial nowIso />`
-- [ ] Cabeçalho e parágrafo aparecem uma vez (vindos do `GoalExperience`)
-- [ ] Verificação manual, com objetivo salvo (renda R$ 20.000,00, guardado R$ 565.000,00, nascimento 18/09/1993, aposentadoria aos 45): tela padrão sem campos de formulário; Hero em duas colunas com os textos da spec; o texto "18,8%" aparece uma vez; o Hero com a barra mede no máximo 340 px de altura com a largura a partir de 576 px
-- [ ] Verificação manual da gaveta em 1280 px: abre sem tela escura, o Hero e o gráfico continuam inteiros visíveis ao lado, arrastar o slider muda o aporte do Hero e o da faixa da gaveta; clique fora não fecha; Esc restaura; Salvar fecha e mantém o resultado
-- [ ] Verificação manual em 390 px: colunas empilhadas, gaveta em tela cheia com a faixa de resumo visível
-- [ ] Verificação manual sem objetivo: cartão de estado vazio com "Definir objetivo"; sem botão no cabeçalho
-- [ ] Tooltip do gráfico por hover mostra o ponto anual com linha-guia e ponto ativo; sem marcas fixas sobre a curva
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
-- [ ] Test count: nenhum teste novo (UI = none); contagem anterior mantida
+- [x] A página mantém `metadata` ("Ápice"), a leitura do objetivo e a montagem de `initial`, e renderiza só `<GoalExperience saved initial nowIso />`
+- [x] Cabeçalho e parágrafo aparecem uma vez (vindos do `GoalExperience`)
+- [x] Verificação manual, com objetivo salvo (renda R$ 20.000,00, guardado R$ 565.000,00, nascimento 18/09/1993, aposentadoria aos 45): tela padrão sem campos de formulário; Hero em duas colunas com os textos da spec; o texto "18,8%" aparece uma vez; o Hero com a barra mede no máximo 340 px de altura com a largura a partir de 576 px
+- [x] Verificação manual da gaveta em 1280 px: abre sem tela escura, o Hero e o gráfico continuam inteiros visíveis ao lado, arrastar o slider muda o aporte do Hero e o da faixa da gaveta; clique fora não fecha; Esc restaura; Salvar fecha e mantém o resultado
+- [x] Verificação manual em 390 px: colunas empilhadas, gaveta em tela cheia com a faixa de resumo visível
+- [x] Verificação manual sem objetivo: cartão de estado vazio com "Definir objetivo"; sem botão no cabeçalho
+- [x] Tooltip do gráfico por hover mostra o ponto anual com linha-guia e ponto ativo; sem marcas fixas sobre a curva
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
+- [x] Test count: nenhum teste novo (UI = none); contagem anterior mantida
 
 **Tests**: none
 **Gate**: build
