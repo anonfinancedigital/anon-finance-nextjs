@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useId, useState, useTransition } from "react";
 import { saveGoal } from "@/actions/goals";
 import { Button } from "@/components/ui/button";
+import { CurrencyInput } from "@/components/currency-input";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RateToggle, type RateValue } from "@/components/rate-toggle";
@@ -92,8 +93,8 @@ export function GoalForm({
     <form onSubmit={submit} className="space-y-3" aria-label="Objetivo de liberdade financeira">
       <div className="grid gap-3">
         <div className="space-y-1">
-          <Label htmlFor={field("monthlyIncome")}>Renda mensal desejada (R$)</Label>
-          <Input
+          <Label htmlFor={field("monthlyIncome")}>Renda mensal desejada</Label>
+          <CurrencyInput
             id={field("monthlyIncome")}
             inputMode="decimal"
             placeholder="10.000,00"
@@ -106,8 +107,8 @@ export function GoalForm({
           )}
         </div>
         <div className="space-y-1">
-          <Label htmlFor={field("saved")}>Valor já guardado (R$)</Label>
-          <Input
+          <Label htmlFor={field("saved")}>Valor já guardado</Label>
+          <CurrencyInput
             id={field("saved")}
             inputMode="decimal"
             placeholder="0,00"

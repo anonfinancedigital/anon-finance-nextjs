@@ -222,10 +222,10 @@ T9 → T10 → T11 → T12 → T13 → T14
 
 **Done when**:
 
-- [ ] Rótulos "Renda mensal desejada" e "Valor já guardado"
-- [ ] O estado `values` continua com texto sem `R$` (AJL-17)
-- [ ] Gate build passa
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] Rótulos "Renda mensal desejada" e "Valor já guardado"
+- [x] O estado `values` continua com texto sem `R$` (AJL-17)
+- [x] Gate build passa
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
 
 **Tests**: none
 **Gate**: build
