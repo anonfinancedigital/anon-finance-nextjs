@@ -481,14 +481,14 @@ T16 → T17 → T18 → T19
 
 **Done when**:
 
-- [ ] `"use client"`; renderiza `AreaChart` com duas `Area` empilhadas "Total investido" (`--viz-target`) e "Rendimentos" (`--viz-spent`) a partir de `summary.timeline`
-- [ ] Eixo X em idade (ticks inteiros) e eixo Y em BRL compacto; tooltip mostra idade, investido, rendimentos e total
-- [ ] `ReferenceDot` para cada checkpoint de 25, 50 e 75% não atingido com previsão
-- [ ] Frase "Rendimentos: X% do patrimônio aos N anos" com `interestSharePct` e a idade de aposentadoria (exemplo da T8: "Rendimentos: 58% do patrimônio aos 60 anos")
-- [ ] `<figure>` com `aria-label` contendo alvo, idade final e participação dos rendimentos; legenda em texto
-- [ ] `timeline` vazia (prazo 0): o componente não renderiza nada
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
-- [ ] Test count: nenhum teste novo (UI = none); contagem anterior mantida
+- [x] `"use client"`; renderiza `AreaChart` com duas `Area` empilhadas "Total investido" (`--viz-target`) e "Rendimentos" (`--viz-spent`) a partir de `summary.timeline`
+- [x] Eixo X em idade (ticks inteiros) e eixo Y em BRL compacto; tooltip mostra idade, investido, rendimentos e total
+- [x] `ReferenceDot` para cada checkpoint de 25, 50 e 75% não atingido com previsão
+- [x] Frase "Rendimentos: X% do patrimônio aos N anos" com `interestSharePct` e a idade de aposentadoria (exemplo da T8: "Rendimentos: 58% do patrimônio aos 60 anos")
+- [x] `<figure>` com `aria-label` contendo alvo, idade final e participação dos rendimentos; legenda em texto
+- [x] `timeline` vazia (prazo 0): o componente não renderiza nada
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
+- [x] Test count: nenhum teste novo (UI = none); contagem anterior mantida
 
 **Tests**: none
 **Gate**: build
