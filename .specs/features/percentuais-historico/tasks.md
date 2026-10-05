@@ -428,3 +428,27 @@ Execução estritamente sequencial. `Depends on: None` em primeira task de fase 
 | HIST-06 | T3, T4, T9, T10, T11 |
 | HIST-07 | T6 |
 | HIST-08 | T3, T5, T7 |
+
+---
+
+## Fix Tasks (Verifier, iteração 1)
+
+### F1: Formulários de lançamento só com categorias ativas
+
+**What**: `page.tsx` passa `categoriesRepo.list(userId)` (ativas) a `TransactionList` e `NewTransactionButton`; o resumo, os gráficos e o filtro seguem com `listForMonth`.
+**Where**: `src/app/(app)/page.tsx`
+**Requirement**: HIST-08 (P2 AC5)
+**Tests**: none (UI; AD-005); `list` exclui excluída e `listForMonth` inclui em `categories.int.test.ts` (T5/T7)
+**Gate**: build
+**Status**: Done
+
+### F2: Teste discriminante do clamp de mês futuro
+
+**What**: Teste com versão iniciando depois do mês corrente, que `listForMonth` ignora para mês futuro.
+**Where**: `src/lib/db/repos/categories-summary.int.test.ts`
+**Requirement**: HIST-04 (P1 AC2)
+**Tests**: integration (mutante M6 morre ao remover o clamp)
+**Gate**: full
+**Status**: Done
+
+**Commit**: `fix(summary): offer only active categories in transaction forms`

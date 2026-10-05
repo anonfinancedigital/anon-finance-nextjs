@@ -30,8 +30,10 @@ export default async function SummaryPage({ searchParams }: PageProps<"/">) {
   const month = parseMonth(typeof mes === "string" ? mes : undefined, new Date());
   const range = monthRange(month);
 
-  const [categories, transactions, totals] = await Promise.all([
+  const [categories, activeCategories, transactions, totals] = await Promise.all([
     categoriesRepo.listForMonth(userId, month),
+    // Forms only accept active categories: one deleted after `month` still shows in the summary.
+    categoriesRepo.list(userId),
     transactionsRepo.listByMonth(userId, range),
     transactionsRepo.monthTotals(userId, range),
   ]);
@@ -119,13 +121,13 @@ export default async function SummaryPage({ searchParams }: PageProps<"/">) {
         </div>
         <TransactionList
           transactions={shown}
-          categories={categories}
+          categories={activeCategories}
           filtered={filter.categoryId !== null}
           searching={search !== ""}
         />
       </ContentCard>
 
-      <NewTransactionButton categories={categories} defaultDate={todayInSaoPaulo()} />
+      <NewTransactionButton categories={activeCategories} defaultDate={todayInSaoPaulo()} />
     </div>
   );
 }

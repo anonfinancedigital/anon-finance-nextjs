@@ -4,7 +4,7 @@ import { insertTestUser, setupTestDb } from "@/test/db";
 import { buildMonthlySummary } from "@/lib/domain/budget";
 import { monthRange, type YearMonth } from "@/lib/domain/month";
 import { db } from "../client";
-import { transaction } from "../schema";
+import { categoryPercent, transaction } from "../schema";
 import { categoriesRepo } from "./categories";
 import { transactionsRepo } from "./transactions";
 
@@ -120,6 +120,19 @@ describe("monthly summary with percent history", () => {
       { name: "A", percentMicro: 40000000, targetCents: 80000 },
       { name: "B", percentMicro: 40000000, targetCents: 80000 },
       { name: "C", percentMicro: 20000000, targetCents: 40000 },
+    ]);
+  });
+
+  it("ignores versions that start after the current month when showing a later month", async () => {
+    const { userId, a } = await seed();
+    await db.insert(categoryPercent).values({
+      categoryId: a.id,
+      fromMonth: "2026-12-01",
+      percentMicro: 10000000,
+    });
+    const dec: YearMonth = { year: 2026, month: 12 };
+    expect(view(await summaryFor(userId, dec, OCT)).map((r) => r.percentMicro)).toEqual([
+      50000000, 50000000,
     ]);
   });
 });
