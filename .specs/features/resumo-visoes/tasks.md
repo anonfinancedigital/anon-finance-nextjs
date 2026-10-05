@@ -186,12 +186,12 @@ T5 → T6 → T7 → T8
 
 **Done when**:
 
-- [ ] Recebe `SpendingPace` e desenha um ponto por dia; a linha de gasto para onde `spentCents` é null
-- [ ] Legenda "Gasto acumulado" e "Ritmo ideal" (a segunda só com referência)
-- [ ] Tooltip com dia, gasto acumulado e ideal em BRL
-- [ ] "Acima do ritmo ideal" aparece só quando `aboveIdeal`
-- [ ] Sem gastos mostra "Sem gastos no mês"
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
+- [x] Recebe `SpendingPace` e desenha um ponto por dia; a linha de gasto para onde `spentCents` é null
+- [x] Legenda "Gasto acumulado" e "Ritmo ideal" (a segunda só com referência)
+- [x] Tooltip com dia, gasto acumulado e ideal em BRL
+- [x] "Acima do ritmo ideal" aparece só quando `aboveIdeal`
+- [x] Sem gastos mostra "Sem gastos no mês"
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
 
 **Tests**: none
 **Gate**: build
