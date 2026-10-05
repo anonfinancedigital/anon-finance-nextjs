@@ -71,7 +71,7 @@ export function CategoryCard({
             aria-controls={id}
             aria-label={`${subcategoryCountLabel(count)} de ${categoryDisplayName(name)}`}
             onClick={onToggle}
-            className="flex h-8 cursor-pointer items-center gap-2 rounded-lg"
+            className="flex h-8 w-32 shrink-0 cursor-pointer items-center justify-between gap-2 rounded-lg"
           >
             {countAndChevron}
           </button>

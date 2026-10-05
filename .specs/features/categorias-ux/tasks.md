@@ -335,12 +335,14 @@ T10 → T11
 
 **Done when**:
 
-- [ ] O botão com `controls` tem largura fixa `w-32` com contagem à esquerda e chevron à direita
-- [ ] O modo sem `controls` (cabeçalho inteiro como botão) não muda
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
+- [x] O botão com `controls` tem largura fixa `w-32` com contagem à esquerda e chevron à direita
+- [x] O modo sem `controls` (cabeçalho inteiro como botão) não muda
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
 
 **Tests**: none
 **Gate**: build
+
+**Status**: ✅ Complete
 
 **Commit**: `refactor(categories): give the subcategory toggle a fixed width`
 
