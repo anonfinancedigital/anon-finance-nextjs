@@ -633,6 +633,8 @@ T14 e T20 não dependem de nada.
 
 ### T18: Lista de usuários do administrador
 
+**Status**: ✅ Complete
+
 **What**: `UserAdminList` com status em `Badge`, ações por `availableActions` e diálogo de confirmação da exclusão.
 **Where**: `src/components/user-admin-list.tsx`
 **Depends on**: T1, T13
@@ -646,13 +648,13 @@ T14 e T20 não dependem de nada.
 
 **Done when**:
 
-- [ ] Linha mostra nome, e-mail, status em português, data do cadastro e só as ações de `availableActions(status)`
-- [ ] Excluir abre o diálogo "Excluir {nome}? Isso apaga todas as categorias, transações e o objetivo dessa pessoa. Não dá para desfazer" com Cancelar e Excluir; nada é chamado antes de confirmar
-- [ ] Erro devolvido pela ação aparece em `role="alert"` na lista
-- [ ] Lista vazia mostra "Nenhum cadastro"
-- [ ] Botões desabilitados durante a transição (`useTransition`)
-- [ ] Gate check passes: build
-- [ ] Test count: igual ao do T17
+- [x] Linha mostra nome, e-mail, status em português, data do cadastro e só as ações de `availableActions(status)`
+- [x] Excluir abre o diálogo "Excluir {nome}? Isso apaga todas as categorias, transações e o objetivo dessa pessoa. Não dá para desfazer" com Cancelar e Excluir; nada é chamado antes de confirmar
+- [x] Erro devolvido pela ação aparece em `role="alert"` na lista
+- [x] Lista vazia mostra "Nenhum cadastro"
+- [x] Botões desabilitados durante a transição (`useTransition`)
+- [x] Gate check passes: build
+- [x] Test count: igual ao do T17
 
 **Tests**: none
 **Gate**: build
