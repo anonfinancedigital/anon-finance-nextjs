@@ -144,6 +144,18 @@ Seen once or not yet corroborated. Tracked, not trusted.
 - evidence: goal.ts:54 (mutante 13, validation.md) (validation)
 - last seen: 2026-10-06T14:15:18Z
 
+### L-023 - Quote UI text in success criteria exactly as the component renders it, naming each separate element instead of joining them into one string
+- signal: `spec_precision_gap` · recurrence: 1 feature(s) · scope: `ui` · harmful: 0
+- features: liberdade-copy-hierarquia
+- evidence: SPG-1 Success Criteria 'R$ 4,8 mi (Meta)'; src/components/goal-checkpoints.tsx:66 (ui)
+- last seen: 2026-10-06T22:02:46Z
+
+### L-024 - When a spec goal lists acceptance-scenario numbers, turn each into a numbered AC so a test pins it
+- signal: `spec_precision_gap` · recurrence: 1 feature(s) · scope: `domain` · harmful: 0
+- features: liberdade-copy-hierarquia
+- evidence: SPG-2 Goals/Success Criteria R$ 9.027,19 and 11,8%; src/lib/domain/freedom-copy.test.ts:27 (domain)
+- last seen: 2026-10-06T22:02:46Z
+
 ## Quarantined (failed when applied - ignore)
 
 A confirmed lesson that recurred alongside failure. Kept for the maintainer to review.

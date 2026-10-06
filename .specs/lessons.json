@@ -3,7 +3,7 @@
   "promote_threshold": 2,
   "window_days": 45,
   "quarantine_threshold": 2,
-  "next_id": 23,
+  "next_id": 25,
   "lessons": [
     {
       "id": "L-001",
@@ -402,6 +402,42 @@
       ],
       "created": "2026-10-06T14:15:18Z",
       "last_seen": "2026-10-06T14:15:18Z"
+    },
+    {
+      "id": "L-023",
+      "key": "spec_precision_gap::quote ui text in success criteria exactly as the component renders it naming each separate element instead of joining them into one string",
+      "text": "Quote UI text in success criteria exactly as the component renders it, naming each separate element instead of joining them into one string",
+      "signal": "spec_precision_gap",
+      "scope": "ui",
+      "status": "candidate",
+      "features": [
+        "liberdade-copy-hierarquia"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "SPG-1 Success Criteria 'R$ 4,8 mi (Meta)'; src/components/goal-checkpoints.tsx:66 (ui)"
+      ],
+      "created": "2026-10-06T22:02:46Z",
+      "last_seen": "2026-10-06T22:02:46Z"
+    },
+    {
+      "id": "L-024",
+      "key": "spec_precision_gap::when a spec goal lists acceptance scenario numbers turn each into a numbered ac so a test pins it",
+      "text": "When a spec goal lists acceptance-scenario numbers, turn each into a numbered AC so a test pins it",
+      "signal": "spec_precision_gap",
+      "scope": "domain",
+      "status": "candidate",
+      "features": [
+        "liberdade-copy-hierarquia"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "SPG-2 Goals/Success Criteria R$ 9.027,19 and 11,8%; src/lib/domain/freedom-copy.test.ts:27 (domain)"
+      ],
+      "created": "2026-10-06T22:02:46Z",
+      "last_seen": "2026-10-06T22:02:46Z"
     }
   ]
 }
