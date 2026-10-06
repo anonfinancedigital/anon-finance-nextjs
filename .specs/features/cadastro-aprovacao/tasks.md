@@ -791,6 +791,8 @@ T22 → T24
 
 ### T23: Ações de rejeitar e revogar usam a decisão atômica
 
+**Status**: ✅ Complete
+
 **What**: `decide` passa `revokeSessions: true` a `transition` em rejeitar e revogar e deixa de chamar `revokeSessions` à parte; o spec explicita que a exclusão das sessões faz parte da decisão.
 **Where**: `src/actions/admin-users.ts`
 **Depends on**: T22
@@ -804,13 +806,13 @@ T22 → T24
 
 **Done when**:
 
-- [ ] `rejectUser` e `revokeUser` com falha na exclusão das sessões devolvem "Não foi possível salvar. Tente novamente" e o status no banco continua `pending` e `approved`, respectivamente
-- [ ] Testes de falha de banco existentes de aprovar e rejeitar seguem passando sem alteração
-- [ ] Os testes atuais de rejeitar e revogar (sessões apagadas, `decided_at`) seguem passando sem alteração
-- [ ] `spec.md` AC 11 da decisão já cita a exclusão das sessões (editado pelo orquestrador)
-- [ ] Testes novos em `admin-users.int.test.ts` passam
-- [ ] Gate check passes: full
-- [ ] Test count: anterior + os novos
+- [x] `rejectUser` e `revokeUser` com falha na exclusão das sessões devolvem "Não foi possível salvar. Tente novamente" e o status no banco continua `pending` e `approved`, respectivamente
+- [x] Testes de falha de banco existentes de aprovar e rejeitar seguem passando sem alteração
+- [x] Os testes atuais de rejeitar e revogar (sessões apagadas, `decided_at`) seguem passando sem alteração
+- [x] `spec.md` AC 11 da decisão já cita a exclusão das sessões (editado pelo orquestrador)
+- [x] Testes novos em `admin-users.int.test.ts` passam
+- [x] Gate check passes: full
+- [x] Test count: anterior + os novos
 
 **Tests**: integration
 **Gate**: full

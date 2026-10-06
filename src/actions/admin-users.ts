@@ -18,20 +18,19 @@ async function isAdminTarget(id: string): Promise<boolean> {
   return target !== null && isAdminEmail(target.email);
 }
 
-/** Applies the admin decision; rejecting and revoking also end the user's sessions. */
+/** Applies the admin decision; rejecting and revoking also end the user's sessions, all or nothing. */
 async function decide(id: string, action: UserAction): Promise<ActionResult> {
   const admin = await requireAdminForAction();
   if (!admin.ok) return admin;
 
   try {
     if (action === "revoke" && (await isAdminTarget(id))) return { ok: false, error: ADMIN_TARGET };
-    const result = await usersRepo.transition(id, action);
+    const result = await usersRepo.transition(id, action, { revokeSessions: action !== "approve" });
     if (result === "not_found") return { ok: false, error: NOT_FOUND };
     // Approving an approved user is a no-op `ok`, so only reject and revoke reach the wrong state.
     if (result === "wrong_state") {
       return { ok: false, error: action === "revoke" ? NOT_APPROVED : NOT_PENDING };
     }
-    if (action !== "approve") await usersRepo.revokeSessions(id);
   } catch (error) {
     console.error(`${action}User`, error);
     return { ok: false, error: SAVE_FAILED };

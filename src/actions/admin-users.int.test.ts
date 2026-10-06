@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { account, session, user } from "@/lib/db/auth-schema";
 import { db } from "@/lib/db/client";
@@ -280,6 +280,40 @@ describe("deleteUser", () => {
 
     expect(await userRow(userId)).toBeDefined();
     expect(await dataCounts(userId)).toEqual([1, 1, 1]);
+    expect(revalidatePath).not.toHaveBeenCalled();
+  });
+});
+
+/** Runs `fn` while every DELETE on `session` raises, dropping the trigger afterwards. */
+async function withFailingSessionDelete<T>(fn: () => Promise<T>): Promise<T> {
+  await db.execute(
+    sql.raw(`CREATE FUNCTION fail_delete() RETURNS trigger LANGUAGE plpgsql AS $$
+      BEGIN RAISE EXCEPTION 'injected delete failure'; END $$`),
+  );
+  await db.execute(
+    sql.raw(`CREATE TRIGGER fail_delete BEFORE DELETE ON "session"
+      FOR EACH STATEMENT EXECUTE FUNCTION fail_delete()`),
+  );
+  try {
+    return await fn();
+  } finally {
+    await db.execute(sql.raw(`DROP TRIGGER fail_delete ON "session"`));
+    await db.execute(sql.raw("DROP FUNCTION fail_delete()"));
+  }
+}
+
+describe("reject and revoke when ending the sessions fails", () => {
+  it.each([
+    ["rejectUser", "pending", rejectUser],
+    ["revokeUser", "approved", revokeUser],
+  ] as const)("%s returns the save error and keeps the %s status", async (_, status, decide) => {
+    const { userId } = await target(status);
+    vi.spyOn(console, "error").mockImplementation(() => {});
+
+    expect(await withFailingSessionDelete(() => decide(userId))).toEqual(SAVE_FAILED);
+
+    expect(await userRow(userId)).toMatchObject({ status, decidedAt: DECIDED_AT });
+    expect(await sessionsOf(userId)).toBe(1);
     expect(revalidatePath).not.toHaveBeenCalled();
   });
 });
