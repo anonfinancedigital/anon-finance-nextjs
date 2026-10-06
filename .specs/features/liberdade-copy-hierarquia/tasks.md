@@ -284,17 +284,18 @@ T5 → T6 → T7 → T8
 
 **Done when**:
 
-- [ ] `blank.annualRate` e `blank.withdrawalRate` vêm de `DEFAULT_ANNUAL_RATE_BP` e `DEFAULT_WITHDRAWAL_RATE_BP` ("8" e "5")
-- [ ] `RateToggle` recebe `value = presetOf(values)` sempre e `customActive = presetOf(values) === null`; o estado `custom` só controla se os campos de taxa estão visíveis
-- [ ] Os comentários "6 → 4, 8 → 6, 10 → 7" e "Definir taxas personalizadas" em `goal-form.tsx` estão corrigidos
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
-- [ ] Test count: a suíte unitária completa passa com o mesmo número de testes da task anterior
+- [x] `blank.annualRate` e `blank.withdrawalRate` vêm de `DEFAULT_ANNUAL_RATE_BP` e `DEFAULT_WITHDRAWAL_RATE_BP` ("8" e "5")
+- [x] `RateToggle` recebe `value = presetOf(values)` sempre e `customActive = presetOf(values) === null`; o estado `custom` só controla se os campos de taxa estão visíveis
+- [x] Os comentários "6 → 4, 8 → 6, 10 → 7" e "Definir taxas personalizadas" em `goal-form.tsx` estão corrigidos
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] Test count: a suíte unitária completa passa com o mesmo número de testes da task anterior
 - [ ] Conferência manual no app, anotada no commit ou no `validation.md`: sem objetivo salvo, Moderado marcado e botão sem destaque; digitar retirada 6 com 8%: nenhum cenário e botão realçado; digitar 5: Moderado de volta; objetivo salvo 8% e 6%: abre sem cenário marcado; cenário de aceite mostra R$ 4.800.000,00, R$ 9.027,19 / mês, "para alcançar R$ 4,8 mi aos 48 anos" e "R$ 4,8 mi (Meta)"; gaveta sem rolagem horizontal em 320 px
 
 **Tests**: none
 **Gate**: build
 
 **Commit**: `feat(liberdade): derive the custom state from the typed rates and default to the moderate preset`
+**Status**: ⚠️ Partial
 
 ---
 

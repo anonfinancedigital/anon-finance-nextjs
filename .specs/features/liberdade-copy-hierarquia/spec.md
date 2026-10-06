@@ -155,8 +155,8 @@ Implicit-requirement dimensions: failure states (months = 0, LCH-05; total zero 
 | LCH-06 | P1: Indicador de rendimentos (AC 1 a 4) | Specify | Implemented |
 | LCH-07 | P2: Gaveta (cenários e quebra de linha, AC 1 e 7) | Specify | Implemented |
 | LCH-08 | P2: Gaveta (rótulo do botão e legenda, AC 2 e 6) | Specify | Implemented |
-| LCH-09 | P2: Gaveta (estado personalizado, AC 3 e 4) | Specify | Pending |
-| LCH-10 | P2: Gaveta (valor inicial 8% → 5%, AC 5) | Specify | In Progress |
+| LCH-09 | P2: Gaveta (estado personalizado, AC 3 e 4) | Specify | Implemented |
+| LCH-10 | P2: Gaveta (valor inicial 8% → 5%, AC 5) | Specify | Implemented |
 | LCH-11 | P2: Linguagem protegida por teste (AC 1) | Specify | Implemented |
 | LCH-12 | P2: Linguagem protegida por teste (matemática preservada, AC 2) | Specify | Implemented |
 

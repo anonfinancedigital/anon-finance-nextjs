@@ -11,7 +11,13 @@ import { RateToggle, type RateValue } from "@/components/rate-toggle";
 import { Slider } from "@/components/ui/slider";
 import type { ActionResult } from "@/lib/action-result";
 import { brToIso, maskDateInput } from "@/lib/domain/date-br";
-import { ageOn, PRESET_RATES, presetFor } from "@/lib/domain/freedom";
+import {
+  ageOn,
+  DEFAULT_ANNUAL_RATE_BP,
+  DEFAULT_WITHDRAWAL_RATE_BP,
+  PRESET_RATES,
+  presetFor,
+} from "@/lib/domain/freedom";
 import { RATE_HINT, RATE_TITLE } from "@/lib/domain/freedom-copy";
 import { parseRate, today } from "@/lib/validation/goal";
 
@@ -36,8 +42,8 @@ const blank: GoalFormValues = {
   saved: "",
   birthDate: "",
   retirementAge: "",
-  annualRate: "8",
-  withdrawalRate: "6",
+  annualRate: String(DEFAULT_ANNUAL_RATE_BP / 100),
+  withdrawalRate: String(DEFAULT_WITHDRAWAL_RATE_BP / 100),
 };
 
 /** The preset whose pair matches the typed rates, as the selector value; `null` for any other pair. */
@@ -69,7 +75,9 @@ export function GoalForm({
   const uid = useId();
   const router = useRouter();
   const [values, setValues] = useState<GoalFormValues>(initial ?? blank);
-  // Custom mode opens when the saved pair matches no preset, or when the user picks "Definir taxas personalizadas".
+  // Only the visibility of the rate fields: they open when the initial pair matches no preset or on
+  // "Personalizar premissas", and close when a scenario is chosen. The selected scenario and the
+  // highlighted button derive from the typed rates.
   const [custom, setCustom] = useState(() => presetOf(initial ?? blank) === null);
   const [result, setResult] = useState<ActionResult | null>(null);
   const [pending, startTransition] = useTransition();
@@ -94,7 +102,7 @@ export function GoalForm({
     update({ ...values, [key]: value });
   }
 
-  // A preset writes both rates from the table: 6 → 4, 8 → 6, 10 → 7.
+  // A preset writes both rates from the table: 6 → 4, 8 → 5, 10 → 6.
   function choosePreset(rate: RateValue) {
     const preset = PRESET_RATES.find((p) => String(p.annualBp / 100) === rate)!;
     setCustom(false);
@@ -190,10 +198,10 @@ export function GoalForm({
         <p className="text-sm font-medium">{RATE_TITLE}</p>
         <p className="text-xs text-muted-foreground">{RATE_HINT}</p>
         <RateToggle
-          value={custom ? null : presetOf(values)}
+          value={presetOf(values)}
           onChange={choosePreset}
           onCustom={() => setCustom(true)}
-          customActive={custom}
+          customActive={presetOf(values) === null}
         />
         {custom ? (
           <div className="grid grid-cols-2 gap-3 pt-2">
