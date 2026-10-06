@@ -221,6 +221,8 @@ T14 e T20 não dependem de nada.
 
 ### T5: Helpers de teste criam usuário com status
 
+**Status**: ✅ Complete
+
 **What**: `insertCredentialUser` e `createSignedInUser` aceitam `status`, com padrão `approved`.
 **Where**: `src/test/auth.ts`
 **Depends on**: T4
@@ -234,11 +236,11 @@ T14 e T20 não dependem de nada.
 
 **Done when**:
 
-- [ ] Sem o argumento, o usuário criado é `approved`
-- [ ] Com `status`, grava o status pedido
-- [ ] Todos os testes de integração existentes continuam passando sem alteração
-- [ ] Gate check passes: full
-- [ ] Test count: igual ao do T4
+- [x] Sem o argumento, o usuário criado é `approved`
+- [x] Com `status`, grava o status pedido
+- [x] Todos os testes de integração existentes continuam passando sem alteração
+- [x] Gate check passes: full
+- [x] Test count: igual ao do T4
 
 **Tests**: none (helper; coberto pelo gate Full inteiro)
 **Gate**: full

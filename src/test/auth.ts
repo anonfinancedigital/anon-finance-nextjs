@@ -1,15 +1,21 @@
 import { randomUUID } from "node:crypto";
 import { hashPassword } from "better-auth/crypto";
+import { eq } from "drizzle-orm";
 import { auth } from "@/lib/auth";
 import { account, user } from "@/lib/db/auth-schema";
 import { db } from "@/lib/db/client";
+import type { UserStatus } from "@/lib/domain/user-status";
 
 export const TEST_PASSWORD = "senha-de-teste-123";
 
-/** Inserts a user with an e-mail/password credential and returns its id. */
-export async function insertCredentialUser(email: string, password = TEST_PASSWORD) {
+/** Inserts a user (approved unless told otherwise) with an e-mail/password credential and returns its id. */
+export async function insertCredentialUser(
+  email: string,
+  password = TEST_PASSWORD,
+  status: UserStatus = "approved",
+) {
   const id = randomUUID();
-  await db.insert(user).values({ id, name: "Teste", email });
+  await db.insert(user).values({ id, name: "Teste", email, status });
   await db.insert(account).values({
     id: randomUUID(),
     userId: id,
@@ -28,8 +34,17 @@ export async function signInCookie(email: string, password = TEST_PASSWORD) {
   return setCookie.split(";")[0];
 }
 
-/** Creates a credential user, signs it in and returns its id and session cookie. */
-export async function createSignedInUser(email = `${randomUUID()}@example.com`) {
+/**
+ * Creates a credential user, signs it in and returns its id and session cookie. With a status other
+ * than approved, the status is set after the sign-in: the session stays open, as when the user loses
+ * access while signed in.
+ */
+export async function createSignedInUser(
+  email = `${randomUUID()}@example.com`,
+  status: UserStatus = "approved",
+) {
   const userId = await insertCredentialUser(email);
-  return { userId, email, cookie: await signInCookie(email) };
+  const cookie = await signInCookie(email);
+  if (status !== "approved") await db.update(user).set({ status }).where(eq(user.id, userId));
+  return { userId, email, cookie };
 }
