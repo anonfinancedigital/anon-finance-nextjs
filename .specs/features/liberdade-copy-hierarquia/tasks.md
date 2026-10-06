@@ -198,16 +198,17 @@ T5 → T6 → T7 → T8
 
 **Done when**:
 
-- [ ] Sob o valor aparecem, nesta ordem, "para alcançar…" (apoio) e "Você chega ao Ápice em: …" (`font-medium`); `{ reached: true }` mostra "Meta alcançada" em `text-income`; `null` não mostra linha
-- [ ] "Distância do Alvo" e "Tempo até o Ápice" não existem mais no arquivo nem em `src` (busca por texto sem resultado)
-- [ ] Nenhum import de `formatTerm` quebra (`grep formatTerm src` só aponta para o módulo de copy)
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
-- [ ] Test count: a suíte unitária completa passa com o mesmo número de testes de antes da task
+- [x] Sob o valor aparecem, nesta ordem, "para alcançar…" (apoio) e "Você chega ao Ápice em: …" (`font-medium`); `{ reached: true }` mostra "Meta alcançada" em `text-income`; `null` não mostra linha
+- [x] "Distância do Alvo" e "Tempo até o Ápice" não existem mais no arquivo nem em `src` (busca por texto sem resultado)
+- [x] Nenhum import de `formatTerm` quebra (`grep formatTerm src` só aponta para o módulo de copy)
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] Test count: a suíte unitária completa passa com o mesmo número de testes de antes da task
 
 **Tests**: none
 **Gate**: build
 
 **Commit**: `feat(liberdade): reorder the monthly deposit card and drop distance to target`
+**Status**: ✅ Done
 
 ---
 

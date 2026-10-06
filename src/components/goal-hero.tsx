@@ -2,20 +2,9 @@ import { Info } from "lucide-react";
 import { GoalCheckpoints } from "@/components/goal-checkpoints";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import type { GoalSummary } from "@/lib/domain/freedom";
-import { HOW_DISCLAIMER, HOW_TITLE, heroPill, howWeCalculate } from "@/lib/domain/freedom-copy";
+import { HOW_DISCLAIMER, HOW_TITLE, heroPill, howWeCalculate, PLAN_REACHED, planLines } from "@/lib/domain/freedom-copy";
 import { formatBRL } from "@/lib/domain/money";
 import { formatShare } from "@/lib/domain/percent";
-
-const plural = (n: number, one: string, many: string) => `${n} ${n === 1 ? one : many}`;
-
-/** "1 ano e 2 meses", "3 anos", "5 meses"; "0 meses" when there is no time left. */
-export function formatTerm(months: number): string {
-  const years = Math.floor(months / 12);
-  const rest = months % 12;
-  if (years === 0) return plural(rest, "mês", "meses");
-  if (rest === 0) return plural(years, "ano", "anos");
-  return `${plural(years, "ano", "anos")} e ${plural(rest, "mês", "meses")}`;
-}
 
 // Soft violet glow from the top corner and an emerald one from the bottom, both from theme tokens.
 const glow = {
@@ -25,10 +14,11 @@ const glow = {
 
 /**
  * Top card of the goal. Two columns when the card is wide enough: the destination (target, what is
- * saved) on the left and the plan (monthly deposit, time and distance left) on the right; the
+ * saved) on the left and the plan (monthly deposit, target and time to the apex) on the right; the
  * progress bar with the checkpoints closes the card.
  */
 export function GoalHero({ summary }: { summary: GoalSummary }) {
+  const plan = planLines(summary);
   return (
     <section
       aria-label="Resumo do objetivo"
@@ -70,16 +60,14 @@ export function GoalHero({ summary }: { summary: GoalSummary }) {
               </>
             )}
           </p>
-          <dl className="space-y-0.5 text-sm">
-            <div className="flex flex-wrap gap-x-2">
-              <dt className="text-muted-foreground">Tempo até o Ápice:</dt>
-              <dd className="font-medium">{formatTerm(summary.months)}</dd>
-            </div>
-            <div className="flex flex-wrap gap-x-2">
-              <dt className="text-muted-foreground">Distância do Alvo:</dt>
-              <dd className="font-medium">{formatBRL(summary.remainingCents)}</dd>
-            </div>
-          </dl>
+          {plan && "reached" in plan ? (
+            <p className="text-sm text-income">{PLAN_REACHED}</p>
+          ) : plan ? (
+            <>
+              <p className="text-sm text-muted-foreground">{plan.reach}</p>
+              <p className="text-sm font-medium">{plan.term}</p>
+            </>
+          ) : null}
         </div>
       </div>
 
