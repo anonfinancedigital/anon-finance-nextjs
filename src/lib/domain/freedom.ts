@@ -3,13 +3,13 @@ import { currentMonth, type YearMonth } from "./month";
 export type YearMonthDay = { year: number; month: number; day: number };
 
 /**
- * Presets do seletor, em pontos-base: conservador 6% → retirada 4%, moderado 8% → 6%,
- * agressivo 10% → 7%.
+ * Presets do seletor, em pontos-base: conservador 6% → retirada 4%, moderado 8% → 5%,
+ * agressivo 10% → 6%.
  */
 export const PRESET_RATES = [
   { annualBp: 600, withdrawalBp: 400 },
-  { annualBp: 800, withdrawalBp: 600 },
-  { annualBp: 1000, withdrawalBp: 700 },
+  { annualBp: 800, withdrawalBp: 500 },
+  { annualBp: 1000, withdrawalBp: 600 },
 ] as const;
 export type PresetAnnualBp = (typeof PRESET_RATES)[number]["annualBp"];
 export const DEFAULT_ANNUAL_RATE_BP: PresetAnnualBp = 800;

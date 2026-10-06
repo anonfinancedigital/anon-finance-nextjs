@@ -20,18 +20,18 @@ import {
 import type { Goal } from "./freedom";
 
 describe("PRESET_RATES e presetFor", () => {
-  it("os presets são 6% → retirada 4%, 8% → 6% e 10% → 7%", () => {
+  it("os presets são 6% → retirada 4%, 8% → 5% e 10% → 6%", () => {
     expect(PRESET_RATES).toEqual([
       { annualBp: 600, withdrawalBp: 400 },
-      { annualBp: 800, withdrawalBp: 600 },
-      { annualBp: 1000, withdrawalBp: 700 },
+      { annualBp: 800, withdrawalBp: 500 },
+      { annualBp: 1000, withdrawalBp: 600 },
     ]);
   });
 
   it.each([
     [600, 400, 600],
-    [800, 600, 800],
-    [1000, 700, 1000],
+    [800, 500, 800],
+    [1000, 600, 1000],
   ])("o par (%d, %d) é o preset %d", (annualBp, withdrawalBp, expected) => {
     expect(presetFor(annualBp, withdrawalBp)).toBe(expected);
   });
@@ -41,6 +41,8 @@ describe("PRESET_RATES e presetFor", () => {
     [600, 500],
     [700, 600],
     [800, 400],
+    [800, 600],
+    [1000, 700],
   ])("o par (%d, %d) não coincide com nenhum preset", (annualBp, withdrawalBp) => {
     expect(presetFor(annualBp, withdrawalBp)).toBeNull();
   });
