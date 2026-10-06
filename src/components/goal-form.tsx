@@ -158,7 +158,7 @@ export function GoalForm({
           )}
         </div>
         <div className="space-y-1">
-          <Label htmlFor={field("retirementAge")}>Idade de aposentadoria</Label>
+          <Label htmlFor={field("retirementAge")}>Idade da independência</Label>
           <Input
             id={field("retirementAge")}
             inputMode="numeric"
@@ -168,7 +168,7 @@ export function GoalForm({
             onChange={(e) => set("retirementAge", e.target.value)}
           />
           <Slider
-            aria-label="Idade de aposentadoria (controle deslizante)"
+            aria-label="Idade da independência (controle deslizante)"
             min={sliderMin}
             max={MAX_SLIDER_AGE}
             step={1}

@@ -267,15 +267,16 @@ T5 → T6 → T7 → T8
 
 **Done when**:
 
-- [ ] O rótulo é "Idade da independência" e o slider tem o nome "Idade da independência (controle deslizante)"
-- [ ] O subtítulo segue "De N a 90 anos"
-- [ ] `grep -ri aposentadoria src/components` não encontra nada na gaveta
-- [ ] Gate build passa
-- [ ] Test count: testes existentes inalterados
+- [x] O rótulo é "Idade da independência" e o slider tem o nome "Idade da independência (controle deslizante)"
+- [x] O subtítulo segue "De N a 90 anos"
+- [x] `grep -ri aposentadoria src/components` não encontra nada na gaveta
+- [x] Gate build passa
+- [x] Test count: testes existentes inalterados
 
 **Tests**: none
 **Gate**: build
 **Commit**: `feat(liberdade): label the age field as independence age`
+**Status**: ✅ Done
 
 ---
 
