@@ -14,13 +14,13 @@ const TITLES = ["Conservador", "Moderado", "Agressivo"] as const;
 const options = PRESET_RATES.map((preset, i) => ({
   value: String(preset.annualBp / 100) as RateValue,
   title: TITLES[i],
-  rate: `${formatRate(preset.annualBp)} a.a.`,
+  rate: `${formatRate(preset.annualBp)} real a.a.`,
   withdrawal: `Retirada: ${formatRate(preset.withdrawalBp)} a.a.`,
 }));
 
 /**
- * Three equal profile buttons (radiogroup named by RATE_TITLE) with the accumulation rate and the
- * withdrawal rate, plus the "Definir taxas personalizadas" text button below. With the custom option active no
+ * Three equal profile buttons (radiogroup named by RATE_TITLE) with the real accumulation rate and
+ * the withdrawal rate, plus the "Personalizar premissas" text button below. With the custom option active no
  * profile is highlighted.
  */
 export function RateToggle({
@@ -67,7 +67,7 @@ export function RateToggle({
         )}
       >
         <Settings aria-hidden className="size-4" />
-        Definir taxas personalizadas
+        Personalizar premissas
       </button>
     </div>
   );

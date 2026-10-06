@@ -255,16 +255,17 @@ T5 → T6 → T7 → T8
 
 **Done when**:
 
-- [ ] As três opções mostram título, "6% real a.a.", "8% real a.a.", "10% real a.a." e "Retirada: 4% a.a.", "Retirada: 5% a.a.", "Retirada: 6% a.a."
-- [ ] O botão se chama "Personalizar premissas"; "Definir taxas personalizadas" não existe mais em `src`
-- [ ] O comentário de documentação do componente descreve o botão novo
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
-- [ ] Test count: a suíte unitária completa passa com o mesmo número de testes da task anterior
+- [x] As três opções mostram título, "6% real a.a.", "8% real a.a.", "10% real a.a." e "Retirada: 4% a.a.", "Retirada: 5% a.a.", "Retirada: 6% a.a."
+- [x] O botão se chama "Personalizar premissas"; "Definir taxas personalizadas" não existe mais em `src`
+- [x] O comentário de documentação do componente descreve o botão novo
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] Test count: a suíte unitária completa passa com o mesmo número de testes da task anterior
 
 **Tests**: none
 **Gate**: build
 
 **Commit**: `feat(liberdade): label scenarios as real rates and rename the custom button`
+**Status**: ✅ Done
 
 ---
 
