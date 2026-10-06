@@ -92,6 +92,15 @@ T20 → T21
 
 T14 e T20 não dependem de nada.
 
+### Phase 4: Correções do Verifier (iteração 1)
+
+Gaps do `validation.md`: decisão sem atomicidade com a exclusão das sessões (AC 11 da decisão) e teste de exclusão que não discrimina (AC 17 da decisão, mutante M19).
+
+```
+T22 → T23
+T22 → T24
+```
+
 ---
 
 ## Task Breakdown
@@ -749,9 +758,96 @@ T14 e T20 não dependem de nada.
 
 ---
 
+### T22: Decisão atômica com exclusão das sessões
+
+**What**: `transition` aceita revogar as sessões na mesma transação da mudança de status, para rejeitar e revogar serem tudo ou nada.
+**Where**: `src/lib/db/repos/users.ts`
+**Depends on**: None
+**Reuses**: `db.transaction` de `remove` no mesmo arquivo; `transition` e `revokeSessions` atuais
+**Requirement**: SIGNUP-05, SIGNUP-08
+
+**Tools**:
+
+- MCP: NONE
+- Skill: NONE
+
+**Done when**:
+
+- [ ] `transition(id, action, { revokeSessions: true })` grava o status, `decided_at` e apaga as sessões do usuário na mesma transação
+- [ ] Se a exclusão das sessões falhar, o status e `decided_at` ficam como antes (teste com falha injetada na segunda escrita, afirmando o status no banco)
+- [ ] Sem a opção, o comportamento atual não muda; `revokeSessions` isolado continua exportado
+- [ ] Testes novos em `users.int.test.ts` passam
+- [ ] Gate check passes: full
+- [ ] Test count: anterior + os novos
+
+**Tests**: integration
+**Gate**: full
+
+**Commit**: `fix(cadastro): make reject and revoke atomic with ending the sessions`
+
+---
+
+### T23: Ações de rejeitar e revogar usam a decisão atômica
+
+**What**: `decide` passa `revokeSessions: true` a `transition` em rejeitar e revogar e deixa de chamar `revokeSessions` à parte; o spec explicita que a exclusão das sessões faz parte da decisão.
+**Where**: `src/actions/admin-users.ts`
+**Depends on**: T22
+**Reuses**: `decide` atual
+**Requirement**: SIGNUP-05, SIGNUP-08
+
+**Tools**:
+
+- MCP: NONE
+- Skill: NONE
+
+**Done when**:
+
+- [ ] `rejectUser` e `revokeUser` com falha na exclusão das sessões devolvem "Não foi possível salvar. Tente novamente" e o status no banco continua `pending` e `approved`, respectivamente
+- [ ] Testes de falha de banco existentes de aprovar e rejeitar seguem passando sem alteração
+- [ ] Os testes atuais de rejeitar e revogar (sessões apagadas, `decided_at`) seguem passando sem alteração
+- [ ] `spec.md` AC 11 da decisão já cita a exclusão das sessões (editado pelo orquestrador)
+- [ ] Testes novos em `admin-users.int.test.ts` passam
+- [ ] Gate check passes: full
+- [ ] Test count: anterior + os novos
+
+**Tests**: integration
+**Gate**: full
+
+**Commit**: `fix(cadastro): decide reject and revoke in one write`
+
+---
+
+### T24: Teste da exclusão atômica
+
+**What**: Teste de repositório que falha uma escrita dentro da transação de `remove` e prova que usuário e dados continuam (mata o mutante M19).
+**Where**: `src/lib/db/repos/users.int.test.ts`
+**Depends on**: T22
+**Reuses**: `remove` atual; helpers de `src/test/db.ts`
+**Requirement**: SIGNUP-09
+
+**Tools**:
+
+- MCP: NONE
+- Skill: NONE
+
+**Done when**:
+
+- [ ] Com uma falha injetada na limpeza de `login_attempt` (ex.: trigger temporário no banco de teste, removido no `afterEach` ou no próprio teste), `remove` rejeita e o usuário, a conta e as categorias e transações dele continuam no banco
+- [ ] O teste falha se a transação de `remove` for removida (verificado manualmente tirando `db.transaction` e confirmando a falha, depois restaurando)
+- [ ] O teste não deixa trigger nem estado para os outros testes
+- [ ] Gate check passes: full
+- [ ] Test count: anterior + 1
+
+**Tests**: integration
+**Gate**: full
+
+**Commit**: `test(cadastro): prove user deletion is all or nothing`
+
+---
+
 ## Phase Execution Map
 
-Fase 1 (T1 a T7), depois Fase 2 (T8 a T13), depois Fase 3 (T14 a T21). Execução estritamente sequencial, uma tarefa por vez, na ordem numérica; as setas de cada fase estão no Execution Plan.
+Fase 1 (T1 a T7), depois Fase 2 (T8 a T13), depois Fase 3 (T14 a T21), depois Fase 4 de correções (T22 a T24). Execução estritamente sequencial, uma tarefa por vez, na ordem numérica; as setas de cada fase estão no Execution Plan.
 
 ---
 

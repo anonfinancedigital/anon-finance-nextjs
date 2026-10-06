@@ -103,7 +103,7 @@ Hoje o cadastro público está desligado e a única conta nasce de seed (`ADMIN_
 8. WHEN o administrador visita `/admin/cadastros` sem ser administrador (sessão aprovada de outro usuário) THEN the system SHALL redirecionar para `/`.  <!-- event-driven -->
 9. IF um usuário que não é administrador (ou sem sessão) chamar a ação de aprovar, rejeitar, revogar ou excluir THEN the system SHALL retornar `UNAUTHORIZED` sem alterar dados.  <!-- unwanted, auth -->
 10. WHERE o usuário logado é o administrador, the system SHALL mostrar o item "Cadastros" no menu lateral; para os demais usuários o item SHALL não aparecer.  <!-- optional-feature -->
-11. IF o banco falhar ao gravar a decisão THEN the system SHALL manter o status anterior e retornar "Não foi possível salvar. Tente novamente".  <!-- unwanted, failure -->
+11. IF o banco falhar ao gravar a decisão, incluindo a exclusão das sessões em rejeitar e revogar, THEN the system SHALL manter o status anterior e retornar "Não foi possível salvar. Tente novamente".  <!-- unwanted, failure -->
 12. WHEN o administrador decide, revoga ou exclui um cadastro THEN the system SHALL atualizar a lista sem recarregar a página manualmente, mostrando o novo status ou removendo a linha excluída.  <!-- event-driven -->
 13. WHEN o administrador revoga um usuário `approved` THEN the system SHALL mudar o status para `revoked`, gravar `decided_at`, apagar as sessões dele e manter os dados dele intactos.  <!-- event-driven -->
 14. IF o administrador revogar um usuário que não está `approved` THEN the system SHALL manter o status e retornar "Este usuário não está aprovado".  <!-- unwanted -->

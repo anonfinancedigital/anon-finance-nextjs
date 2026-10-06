@@ -3,7 +3,7 @@
   "promote_threshold": 2,
   "window_days": 45,
   "quarantine_threshold": 2,
-  "next_id": 25,
+  "next_id": 28,
   "lessons": [
     {
       "id": "L-001",
@@ -438,6 +438,60 @@
       ],
       "created": "2026-10-06T22:02:46Z",
       "last_seen": "2026-10-06T22:02:46Z"
+    },
+    {
+      "id": "L-025",
+      "key": "ac_gap::when an action performs several writes that the spec treats as one decision run them in one database transaction and test a failure of the last write",
+      "text": "When an action performs several writes that the spec treats as one decision, run them in one database transaction and test a failure of the last write",
+      "signal": "ac_gap",
+      "scope": "actions",
+      "status": "candidate",
+      "features": [
+        "cadastro-aprovacao"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "src/actions/admin-users.ts:28,34 (decisão AC 11) (actions)"
+      ],
+      "created": "2026-10-06T23:48:10Z",
+      "last_seen": "2026-10-06T23:48:10Z"
+    },
+    {
+      "id": "L-026",
+      "key": "surviving_mutant::to test that an operation is atomic make a write inside the transaction fail and assert nothing changed instead of mocking the whole repository method",
+      "text": "To test that an operation is atomic, make a write inside the transaction fail and assert nothing changed, instead of mocking the whole repository method",
+      "signal": "surviving_mutant",
+      "scope": "repo-layer",
+      "status": "candidate",
+      "features": [
+        "cadastro-aprovacao"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "M19 src/lib/db/repos/users.ts:108 (decisão AC 17) (repo-layer)"
+      ],
+      "created": "2026-10-06T23:48:10Z",
+      "last_seen": "2026-10-06T23:48:10Z"
+    },
+    {
+      "id": "L-027",
+      "key": "spec_precision_gap::when a failure criterion says the previous state is kept list every write that belongs to the operation including side effects such as session deletion",
+      "text": "When a failure criterion says the previous state is kept, list every write that belongs to the operation, including side effects such as session deletion",
+      "signal": "spec_precision_gap",
+      "scope": "spec",
+      "status": "candidate",
+      "features": [
+        "cadastro-aprovacao"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "spec.md decisão AC 11 (spec)"
+      ],
+      "created": "2026-10-06T23:48:10Z",
+      "last_seen": "2026-10-06T23:48:10Z"
     }
   ]
 }

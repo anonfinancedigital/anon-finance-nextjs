@@ -156,6 +156,24 @@ Seen once or not yet corroborated. Tracked, not trusted.
 - evidence: SPG-2 Goals/Success Criteria R$ 9.027,19 and 11,8%; src/lib/domain/freedom-copy.test.ts:27 (domain)
 - last seen: 2026-10-06T22:02:46Z
 
+### L-025 - When an action performs several writes that the spec treats as one decision, run them in one database transaction and test a failure of the last write
+- signal: `ac_gap` · recurrence: 1 feature(s) · scope: `actions` · harmful: 0
+- features: cadastro-aprovacao
+- evidence: src/actions/admin-users.ts:28,34 (decisão AC 11) (actions)
+- last seen: 2026-10-06T23:48:10Z
+
+### L-026 - To test that an operation is atomic, make a write inside the transaction fail and assert nothing changed, instead of mocking the whole repository method
+- signal: `surviving_mutant` · recurrence: 1 feature(s) · scope: `repo-layer` · harmful: 0
+- features: cadastro-aprovacao
+- evidence: M19 src/lib/db/repos/users.ts:108 (decisão AC 17) (repo-layer)
+- last seen: 2026-10-06T23:48:10Z
+
+### L-027 - When a failure criterion says the previous state is kept, list every write that belongs to the operation, including side effects such as session deletion
+- signal: `spec_precision_gap` · recurrence: 1 feature(s) · scope: `spec` · harmful: 0
+- features: cadastro-aprovacao
+- evidence: spec.md decisão AC 11 (spec)
+- last seen: 2026-10-06T23:48:10Z
+
 ## Quarantined (failed when applied - ignore)
 
 A confirmed lesson that recurred alongside failure. Kept for the maintainer to review.
