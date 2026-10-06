@@ -694,6 +694,8 @@ T14 e T20 não dependem de nada.
 
 ### T20: Item "Cadastros" na navegação
 
+**Status**: ✅ Complete
+
 **What**: `AppNav` recebe `isAdmin` e soma o item "Cadastros" (ícone `UsersIcon`) só para o administrador.
 **Where**: `src/components/app-nav.tsx`
 **Depends on**: None
@@ -707,10 +709,10 @@ T14 e T20 não dependem de nada.
 
 **Done when**:
 
-- [ ] Com `isAdmin` verdadeiro o item aponta para `/admin/cadastros` e marca ativo em qualquer subcaminho
-- [ ] Com `isAdmin` falso o item não é renderizado
-- [ ] Gate check passes: build
-- [ ] Test count: igual ao do T19
+- [x] Com `isAdmin` verdadeiro o item aponta para `/admin/cadastros` e marca ativo em qualquer subcaminho
+- [x] Com `isAdmin` falso o item não é renderizado
+- [x] Gate check passes: build
+- [x] Test count: igual ao do T19
 
 **Tests**: none
 **Gate**: build
