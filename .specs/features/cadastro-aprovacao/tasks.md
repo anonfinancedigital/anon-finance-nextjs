@@ -518,6 +518,8 @@ T14 e T20 não dependem de nada.
 
 ### T14: Proxy libera `/cadastro`
 
+**Status**: ✅ Complete
+
 **What**: Incluir `cadastro` na exclusão do matcher do proxy.
 **Where**: `src/proxy.ts`
 **Depends on**: None
@@ -531,9 +533,9 @@ T14 e T20 não dependem de nada.
 
 **Done when**:
 
-- [ ] Visitante sem cookie abre `/cadastro` sem redirecionamento; demais rotas continuam redirecionando para `/login`
-- [ ] Gate check passes: build
-- [ ] Test count: igual ao do T13
+- [x] Visitante sem cookie abre `/cadastro` sem redirecionamento; demais rotas continuam redirecionando para `/login`
+- [x] Gate check passes: build
+- [x] Test count: igual ao do T13
 
 **Tests**: none
 **Gate**: build
