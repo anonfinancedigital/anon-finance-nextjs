@@ -153,6 +153,51 @@ describe("signInAction", () => {
   });
 });
 
+describe("signInAction for a user who is not approved", () => {
+  const ANA = "ana@x.com";
+
+  it.each([
+    ["pending", "Sua conta está aguardando aprovação do administrador"],
+    ["rejected", "Seu cadastro não foi aprovado"],
+    ["revoked", "Seu acesso foi revogado"],
+  ] as const)(
+    "with the right password tells a %s user its status, without a session or a recorded failure",
+    async (status, message) => {
+      const anaId = await insertCredentialUser(ANA, TEST_PASSWORD, status);
+
+      expect(await signIn(ANA, TEST_PASSWORD)).toEqual({ ok: false, error: message });
+
+      expect(redirect).not.toHaveBeenCalled();
+      expect(await sessionsOf(anaId)).toBe(0);
+      expect(await loginAttemptsRepo.countRecentFailures(ANA, new Date(0))).toBe(0);
+    },
+  );
+
+  it.each([["pending"], ["rejected"], ["revoked"]] as const)(
+    "with a wrong password records the failure and answers like any wrong password (%s)",
+    async (status) => {
+      const anaId = await insertCredentialUser(ANA, TEST_PASSWORD, status);
+
+      expect(await signIn(ANA, "senha-errada-000")).toEqual(INVALID);
+
+      expect(await sessionsOf(anaId)).toBe(0);
+      expect(await loginAttemptsRepo.countRecentFailures(ANA, new Date(0))).toBe(1);
+    },
+  );
+
+  it("locks a pending account for 15 minutes after 5 wrong passwords", async () => {
+    vi.useFakeTimers({ toFake: ["Date"] });
+    vi.setSystemTime(new Date("2026-10-04T12:00:00Z"));
+    await insertCredentialUser(ANA, TEST_PASSWORD, "pending");
+    for (let i = 0; i < 5; i++) expect(await signIn(ANA, "senha-errada-000")).toEqual(INVALID);
+
+    expect(await signIn(ANA, TEST_PASSWORD)).toEqual({
+      ok: false,
+      error: "Muitas tentativas. Tente novamente em 15 minutos",
+    });
+  });
+});
+
 describe("signOutAction", () => {
   it("ends the session", async () => {
     const { cookie } = await createSignedInUser();

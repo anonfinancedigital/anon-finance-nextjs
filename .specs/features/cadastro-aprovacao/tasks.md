@@ -382,6 +382,8 @@ T14 e T20 não dependem de nada.
 
 ### T10: Login com mensagens por status
 
+**Status**: ✅ Complete
+
 **What**: `signInAction` revela o status só com a senha correta e não registra falha nesse caso.
 **Where**: `src/actions/auth.ts`
 **Depends on**: T7, T8
@@ -395,13 +397,13 @@ T14 e T20 não dependem de nada.
 
 **Done when**:
 
-- [ ] `pending`, `rejected` e `revoked` com senha correta: retorna a mensagem de `LOGIN_BLOCK_MESSAGE`, não cria sessão e não grava em `login_attempt`
-- [ ] Os três com senha incorreta: grava falha e retorna "E-mail ou senha inválidos"
-- [ ] Cinco senhas erradas em conta `pending` ainda bloqueiam o e-mail por 15 minutos como hoje
-- [ ] `approved` e e-mail inexistente mantêm o comportamento atual
-- [ ] Testes novos em `auth.int.test.ts` passam; os existentes seguem iguais
-- [ ] Gate check passes: full
-- [ ] Test count: anterior + os novos
+- [x] `pending`, `rejected` e `revoked` com senha correta: retorna a mensagem de `LOGIN_BLOCK_MESSAGE`, não cria sessão e não grava em `login_attempt`
+- [x] Os três com senha incorreta: grava falha e retorna "E-mail ou senha inválidos"
+- [x] Cinco senhas erradas em conta `pending` ainda bloqueiam o e-mail por 15 minutos como hoje
+- [x] `approved` e e-mail inexistente mantêm o comportamento atual
+- [x] Testes novos em `auth.int.test.ts` passam; os existentes seguem iguais
+- [x] Gate check passes: full
+- [x] Test count: anterior + os novos
 
 **Tests**: integration
 **Gate**: full
