@@ -482,6 +482,8 @@ T14 e T20 não dependem de nada.
 
 ### T13: Ações de revogar e excluir
 
+**Status**: ✅ Complete
+
 **What**: `revokeUser` e `deleteUser` com proteção do administrador, apagando sessões ou todos os dados.
 **Where**: `src/actions/admin-users.ts`
 **Depends on**: T12
@@ -495,17 +497,17 @@ T14 e T20 não dependem de nada.
 
 **Done when**:
 
-- [ ] Revogar `approved` resulta em `revoked`, grava `decided_at`, apaga as sessões e mantém categorias e transações
-- [ ] Revogar não `approved` devolve "Este usuário não está aprovado"
-- [ ] Excluir em qualquer status apaga o usuário e todos os dados dele, libera o e-mail para novo `signUpAction` e preserva outro usuário
-- [ ] Excluir id inexistente devolve "Cadastro não encontrado"
-- [ ] Revogar ou excluir a conta do administrador (chamada direta) devolve "Não é possível revogar ou excluir o administrador" e nada muda
-- [ ] Não administrador recebe `UNAUTHORIZED` sem alterar dados
-- [ ] Falha de banco na exclusão não apaga nada e devolve "Não foi possível salvar. Tente novamente"
-- [ ] Usuário revogado com sessão aberta recebe `UNAUTHORIZED` na próxima ação protegida (AC 19)
-- [ ] Testes em `admin-users.int.test.ts` passam
-- [ ] Gate check passes: full
-- [ ] Test count: anterior + os novos
+- [x] Revogar `approved` resulta em `revoked`, grava `decided_at`, apaga as sessões e mantém categorias e transações
+- [x] Revogar não `approved` devolve "Este usuário não está aprovado"
+- [x] Excluir em qualquer status apaga o usuário e todos os dados dele, libera o e-mail para novo `signUpAction` e preserva outro usuário
+- [x] Excluir id inexistente devolve "Cadastro não encontrado"
+- [x] Revogar ou excluir a conta do administrador (chamada direta) devolve "Não é possível revogar ou excluir o administrador" e nada muda
+- [x] Não administrador recebe `UNAUTHORIZED` sem alterar dados
+- [x] Falha de banco na exclusão não apaga nada e devolve "Não foi possível salvar. Tente novamente"
+- [x] Usuário revogado com sessão aberta recebe `UNAUTHORIZED` na próxima ação protegida (AC 19)
+- [x] Testes em `admin-users.int.test.ts` passam
+- [x] Gate check passes: full
+- [x] Test count: anterior + os novos
 
 **Tests**: integration
 **Gate**: full
