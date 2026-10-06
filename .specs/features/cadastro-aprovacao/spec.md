@@ -164,7 +164,7 @@ Hoje o cadastro público está desligado e a única conta nasce de seed (`ADMIN_
 | SIGNUP-01 | P1: Cadastro e bloqueio (AC 1-8, 14-15) | Execute | In Progress |
 | SIGNUP-02 | P1: Cadastro e bloqueio (AC 9-12) | Execute | In Progress |
 | SIGNUP-03 | P1: Cadastro e bloqueio (AC 13-14) | Specify | Pending |
-| SIGNUP-04 | P1: Cadastro e bloqueio (AC 17-18) | Execute | In Progress |
+| SIGNUP-04 | P1: Cadastro e bloqueio (AC 17-18) | Execute | Implemented |
 | SIGNUP-05 | P1: Administrador decide (AC 1-7, 11-12) | Specify | Pending |
 | SIGNUP-06 | P1: Administrador decide (AC 8-10, 18) | Execute | In Progress |
 | SIGNUP-08 | P1: Administrador decide (AC 13-14, 19) | Specify | Pending |

@@ -2,6 +2,7 @@ import { verifyPassword } from "better-auth/crypto";
 import { eq } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
 import { auth } from "@/lib/auth";
+import { insertCredentialUser } from "@/test/auth";
 import { setupTestDb } from "@/test/db";
 import { account, user } from "./auth-schema";
 import { db } from "./client";
@@ -54,4 +55,30 @@ describe("seedUser", () => {
       auth.api.signInEmail({ body: { email: "dono@example.com", password: "senha-antiga-123" } }),
     ).rejects.toThrow("Invalid email or password");
   });
+});
+
+describe("seedUser status", () => {
+  it("creates the user as approved", async () => {
+    const userId = await seedUser("dono@example.com", "senha-dono-123");
+
+    const [row] = await db.select().from(user).where(eq(user.id, userId));
+    expect(row.status).toBe("approved");
+  });
+
+  it.each([["pending"], ["rejected"], ["revoked"]] as const)(
+    "turns an existing %s user with the same e-mail into approved and records decided_at",
+    async (status) => {
+      const before = new Date(Date.now() - 1000);
+      const existingId = await insertCredentialUser("dono@example.com", "senha-velha-123", status);
+
+      const userId = await seedUser("  Dono@Example.com ", "senha-dono-123");
+
+      expect(userId).toBe(existingId);
+      const [row] = await db.select().from(user).where(eq(user.id, userId));
+      expect(row.status).toBe("approved");
+      expect(row.decidedAt).not.toBeNull();
+      expect(row.decidedAt!.getTime()).toBeGreaterThanOrEqual(before.getTime());
+      expect(await db.$count(user)).toBe(1);
+    },
+  );
 });

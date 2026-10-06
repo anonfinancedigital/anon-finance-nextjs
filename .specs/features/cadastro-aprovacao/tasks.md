@@ -251,6 +251,8 @@ T14 e T20 não dependem de nada.
 
 ### T6: Seed do administrador grava `approved`
 
+**Status**: ✅ Complete
+
 **What**: `seedUser` grava `status: approved` ao criar e ao redefinir senha de conta existente em qualquer status.
 **Where**: `src/lib/db/seed-user.ts`
 **Depends on**: T5
@@ -264,11 +266,11 @@ T14 e T20 não dependem de nada.
 
 **Done when**:
 
-- [ ] Seed novo cria usuário `approved`
-- [ ] Seed sobre usuário `pending`, `rejected` ou `revoked` com o mesmo e-mail o deixa `approved` e grava `decided_at`
-- [ ] Testes de integração em `seed-user.int.test.ts` cobrem os dois casos (AC 18 do cadastro)
-- [ ] Gate check passes: full
-- [ ] Test count: anterior + os novos
+- [x] Seed novo cria usuário `approved`
+- [x] Seed sobre usuário `pending`, `rejected` ou `revoked` com o mesmo e-mail o deixa `approved` e grava `decided_at`
+- [x] Testes de integração em `seed-user.int.test.ts` cobrem os dois casos (AC 18 do cadastro)
+- [x] Gate check passes: full
+- [x] Test count: anterior + os novos
 
 **Tests**: integration
 **Gate**: full
