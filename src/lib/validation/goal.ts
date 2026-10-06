@@ -43,7 +43,7 @@ const isoOf = ({ year, month, day }: YearMonthDay) =>
 
 /**
  * Formulário do objetivo (textos) → valores de domínio. É função de `now` porque a idade atual
- * entra nas regras de nascimento e de idade de aposentadoria.
+ * entra nas regras de nascimento e de idade da independência.
  */
 export function goalSchema(now: Date) {
   return z
@@ -51,7 +51,7 @@ export function goalSchema(now: Date) {
       monthlyIncome: z.string({ error: "Informe a renda mensal desejada" }),
       saved: z.string({ error: "Informe o valor já guardado" }),
       birthDate: z.string({ error: "Informe a data de nascimento" }),
-      retirementAge: z.string({ error: "Informe a idade de aposentadoria" }),
+      retirementAge: z.string({ error: "Informe a idade da independência" }),
       annualRate: z.string({ error: RATE_FORMAT_MESSAGE }),
       withdrawalRate: z.string({ error: RATE_FORMAT_MESSAGE }),
     })
@@ -87,14 +87,14 @@ export function goalSchema(now: Date) {
 
       const ageText = input.retirementAge.trim();
       let retirementAge: number | null = null;
-      if (ageText === "") fail("retirementAge", "Informe a idade de aposentadoria");
-      else if (!/^\d+$/.test(ageText)) fail("retirementAge", "A idade de aposentadoria deve ser um número inteiro");
+      if (ageText === "") fail("retirementAge", "Informe a idade da independência");
+      else if (!/^\d+$/.test(ageText)) fail("retirementAge", "A idade da independência deve ser um número inteiro");
       else {
         const age = Number(ageText);
         if (age < 1 || age > MAX_AGE) {
-          fail("retirementAge", `A idade de aposentadoria deve estar entre 1 e ${MAX_AGE}`);
+          fail("retirementAge", `A idade da independência deve estar entre 1 e ${MAX_AGE}`);
         } else if (currentAge !== null && age <= currentAge) {
-          fail("retirementAge", `A idade de aposentadoria deve ser maior que a idade atual (${currentAge})`);
+          fail("retirementAge", `A idade da independência deve ser maior que a idade atual (${currentAge})`);
         } else retirementAge = age;
       }
 

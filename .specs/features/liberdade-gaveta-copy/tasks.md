@@ -225,11 +225,11 @@ T5 → T6 → T7 → T8
 
 ### T7: Mensagens de validação da idade
 
-**What**: Trocar "aposentadoria" por "independência" nas três mensagens de idade e atualizar os testes com o texto exato.
+**What**: Trocar "aposentadoria" por "independência" nas quatro mensagens de idade e atualizar os testes com o texto exato.
 **Where**: `src/lib/validation/goal.ts`
 **Depends on**: T6
 **Reuses**: testes de `goal.test.ts`
-**Requirement**: LGC-14, LGC-15, LGC-16
+**Requirement**: LGC-14, LGC-15, LGC-16, LGC-17
 
 **Tools**:
 
@@ -238,15 +238,17 @@ T5 → T6 → T7 → T8
 
 **Done when**:
 
-- [ ] Vazio retorna "Informe a idade da independência"
-- [ ] Fora de 1 a 90 retorna "A idade da independência deve estar entre 1 e 90"
-- [ ] Idade menor ou igual à atual retorna "A idade da independência deve ser maior que a idade atual (N)"
-- [ ] `grep -i aposentadoria` em `src/lib/validation` não encontra nada; gate quick passa
-- [ ] Test count: mesmo número de testes, com as asserções atualizadas
+- [x] Vazio retorna "Informe a idade da independência"
+- [x] Fora de 1 a 120 retorna "A idade da independência deve estar entre 1 e 120"
+- [x] Não inteiro retorna "A idade da independência deve ser um número inteiro"
+- [x] Idade menor ou igual à atual retorna "A idade da independência deve ser maior que a idade atual (N)"
+- [x] `grep -i aposentadoria` em `src/lib/validation` não encontra nada; gate quick passa
+- [x] Test count: mesmo número de testes, com as asserções atualizadas
 
 **Tests**: unit
 **Gate**: quick
 **Commit**: `feat(liberdade): rename retirement age to independence age in validation`
+**Status**: ✅ Done
 
 ---
 

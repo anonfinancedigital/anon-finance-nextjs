@@ -212,17 +212,23 @@ describe("goalSchema", () => {
     });
   });
 
-  describe("idade de aposentadoria", () => {
+  describe("idade da independência", () => {
     it.each([[""], ["60,5"], ["60.5"], ["1e2"], ["abc"], ["-3"], ["0"], ["121"]])("rejeita %j no campo retirementAge", (retirementAge) => {
       expect(errors({ retirementAge }).retirementAge?.length).toBeGreaterThan(0);
     });
 
+    it("mensagens exatas de vazio, fora da faixa e não inteiro", () => {
+      expect(errors({ retirementAge: "" }).retirementAge).toBe("Informe a idade da independência");
+      expect(errors({ retirementAge: "121" }).retirementAge).toBe("A idade da independência deve estar entre 1 e 120");
+      expect(errors({ retirementAge: "60,5" }).retirementAge).toBe("A idade da independência deve ser um número inteiro");
+    });
+
     it("rejeita idade igual ou menor que a atual (36)", () => {
       expect(errors({ retirementAge: "36" }).retirementAge).toBe(
-        "A idade de aposentadoria deve ser maior que a idade atual (36)",
+        "A idade da independência deve ser maior que a idade atual (36)",
       );
       expect(errors({ retirementAge: "30" }).retirementAge).toBe(
-        "A idade de aposentadoria deve ser maior que a idade atual (36)",
+        "A idade da independência deve ser maior que a idade atual (36)",
       );
     });
 

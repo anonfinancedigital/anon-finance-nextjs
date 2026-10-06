@@ -44,7 +44,7 @@ Em `/liberdade`, abrir o "Como calculamos?" expande um `<details>` dentro da col
 
 **Open questions:** none - all resolved or logged above.
 
-Implicit-requirement dimensions: state-transition integrity (abrir/fechar popover, alternar Personalizada, LGC-01, LGC-05, LGC-09, LGC-11); input validation (mensagens de idade, LGC-14 a LGC-16); failure states (resumo sem prazo, Edge Cases). Idempotency, auth, concurrency, data lifecycle, observability e external-dependency failure N/A because a feature só muda apresentação e texto, sem dados, rede ou permissões.
+Implicit-requirement dimensions: state-transition integrity (abrir/fechar popover, alternar Personalizada, LGC-01, LGC-05, LGC-09, LGC-11); input validation (mensagens de idade, LGC-14 a LGC-17); failure states (resumo sem prazo, Edge Cases). Idempotency, auth, concurrency, data lifecycle, observability e external-dependency failure N/A because a feature só muda apresentação e texto, sem dados, rede ou permissões.
 
 ---
 
@@ -98,8 +98,9 @@ Implicit-requirement dimensions: state-transition integrity (abrir/fechar popove
 1. The system SHALL rotular o campo de idade na gaveta como "Idade da independência" e o slider com o nome acessível "Idade da independência (controle deslizante)".
 2. The system SHALL manter o subtítulo do slider no formato "De N a 90 anos".
 3. IF a idade da independência está vazia THEN the system SHALL retornar "Informe a idade da independência".
-4. IF a idade não é um inteiro de 1 a 90 THEN the system SHALL retornar "A idade da independência deve estar entre 1 e 90".
-5. IF a idade é menor ou igual à atual (N) THEN the system SHALL retornar "A idade da independência deve ser maior que a idade atual (N)".
+4. IF a idade é um inteiro fora de 1 a 120 THEN the system SHALL retornar "A idade da independência deve estar entre 1 e 120".
+5. IF a idade não é um número inteiro THEN the system SHALL retornar "A idade da independência deve ser um número inteiro".
+6. IF a idade é menor ou igual à atual (N) THEN the system SHALL retornar "A idade da independência deve ser maior que a idade atual (N)".
 
 **Independent Test**: Salvar com o campo vazio e ler a mensagem; conferir o rótulo e o nome acessível do slider.
 
@@ -132,8 +133,9 @@ Implicit-requirement dimensions: state-transition integrity (abrir/fechar popove
 | LGC-14 | P3: Idade da independência | Specify | Pending |
 | LGC-15 | P3: Idade da independência | Specify | Pending |
 | LGC-16 | P3: Idade da independência | Specify | Pending |
+| LGC-17 | P3: Idade da independência | Specify | Pending |
 
-**Coverage:** 16 total, 0 mapped to tasks, 16 unmapped ⚠️
+**Coverage:** 17 total, 0 mapped to tasks, 17 unmapped ⚠️
 
 ---
 
