@@ -129,15 +129,16 @@ T5 → T6 → T7 → T8
 
 **Done when**:
 
-- [ ] O botão abre o popover com o conteúdo de `howWeCalculate`; Esc e clique fora fecham e devolvem o foco ao botão
-- [ ] A altura do hero é igual com o popover aberto e fechado
-- [ ] Em 360 px o popover fica dentro da tela, sem rolagem horizontal
-- [ ] Gate build passa
-- [ ] Test count: testes existentes inalterados
+- [x] O botão abre o popover com o conteúdo de `howWeCalculate`; Esc e clique fora fecham e devolvem o foco ao botão
+- [x] A altura do hero é igual com o popover aberto e fechado
+- [x] Em 360 px o popover fica dentro da tela, sem rolagem horizontal
+- [x] Gate build passa
+- [x] Test count: testes existentes inalterados
 
 **Tests**: none
 **Gate**: build
 **Commit**: `feat(liberdade): show how-we-calculate in a popover`
+**Status**: ✅ Done
 
 ---
 

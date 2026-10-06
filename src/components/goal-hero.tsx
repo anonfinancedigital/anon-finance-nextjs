@@ -1,6 +1,8 @@
+import { Info } from "lucide-react";
 import { GoalCheckpoints } from "@/components/goal-checkpoints";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import type { GoalSummary } from "@/lib/domain/freedom";
-import { HOW_WE_CALCULATE, heroFacts, heroPill } from "@/lib/domain/freedom-copy";
+import { HOW_DISCLAIMER, HOW_TITLE, heroPill, howWeCalculate } from "@/lib/domain/freedom-copy";
 import { formatBRL } from "@/lib/domain/money";
 import { formatShare } from "@/lib/domain/percent";
 
@@ -43,24 +45,17 @@ export function GoalHero({ summary }: { summary: GoalSummary }) {
           <p className="text-sm text-muted-foreground">
             {formatBRL(summary.savedCents)} acumulados ({formatShare(summary.progressBp)} do alvo)
           </p>
-          <details className="text-sm text-muted-foreground">
-            <summary className="w-fit cursor-pointer rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-primary/30">
+          <Popover>
+            <PopoverTrigger className="inline-flex w-fit cursor-pointer items-center gap-1.5 rounded-sm text-sm text-muted-foreground outline-none hover:text-foreground focus-visible:ring-2 focus-visible:ring-primary/30">
+              <Info aria-hidden className="size-4" />
               Como calculamos?
-            </summary>
-            <div className="mt-2 space-y-2">
-              <dl className="space-y-0.5">
-                {heroFacts(summary).map((fact) => (
-                  <div key={fact.label} className="flex flex-wrap gap-x-2">
-                    <dt>{fact.label}:</dt>
-                    <dd className="font-medium text-foreground">{fact.value}</dd>
-                  </div>
-                ))}
-              </dl>
-              {HOW_WE_CALCULATE.map((paragraph) => (
-                <p key={paragraph}>{paragraph}</p>
-              ))}
-            </div>
-          </details>
+            </PopoverTrigger>
+            <PopoverContent className="space-y-2">
+              <p className="font-medium">{HOW_TITLE}</p>
+              <p>{howWeCalculate(summary)}</p>
+              <p className="text-xs text-muted-foreground">{HOW_DISCLAIMER}</p>
+            </PopoverContent>
+          </Popover>
         </div>
 
         <div className="space-y-2 bg-primary/10 p-5">
