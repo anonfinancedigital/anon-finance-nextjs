@@ -65,3 +65,14 @@ export function planLines(summary: GoalSummary): { reach: string; term: string }
   }
   return summary.monthlyCents === 0 ? { reached: true } : null;
 }
+
+/**
+ * Pílula do gráfico: rendimentos do último ponto (compacto) e a participação deles no patrimônio
+ * final; só o valor quando não há percentual; `null` sem linha do tempo.
+ */
+export function interestBadge(summary: GoalSummary): string | null {
+  const last = summary.timeline.at(-1);
+  if (!last) return null;
+  const amount = `${formatCompactBRL(last.interestCents)} vêm dos rendimentos`;
+  return summary.interestSharePct === null ? amount : `${amount} · ${summary.interestSharePct}% do patrimônio final`;
+}

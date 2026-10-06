@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { summarize, type Checkpoint } from "./freedom";
+import { formatCompactBRL } from "./money";
 import {
   checkpointLabel,
   formatRate,
@@ -8,6 +9,7 @@ import {
   HOW_DISCLAIMER,
   HOW_TITLE,
   howWeCalculate,
+  interestBadge,
   PLAN_REACHED,
   planLines,
   RATE_HINT,
@@ -178,5 +180,46 @@ describe("planLines", () => {
     expect(summary.months).toBe(0);
     expect(summary.monthlyCents).toBeNull();
     expect(planLines(summary)).toBeNull();
+  });
+});
+
+describe("interestBadge", () => {
+  const expected = (summary: ReturnType<typeof summarize>) =>
+    `${normalize(formatCompactBRL(summary.timeline.at(-1)!.interestCents))} vêm dos rendimentos · ${summary.interestSharePct}% do patrimônio final`;
+
+  it("cenário de aceite: rendimentos do último ponto e participação no patrimônio final", () => {
+    const badge = interestBadge(acceptance);
+    expect(badge).not.toBeNull();
+    expect(normalize(badge!)).toBe(expected(acceptance));
+    expect(normalize(badge!)).toBe("R$ 2,6 mi vêm dos rendimentos · 55% do patrimônio final");
+  });
+
+  it("outro prazo muda o valor e o percentual", () => {
+    const later = summarize(
+      { monthlyIncomeCents: 2_000_000, savedCents: 56_500_000, birthDate: "1993-05-10", retirementAge: 55, annualRateBp: 800, withdrawalRateBp: 500 },
+      now,
+    );
+    const badge = normalize(interestBadge(later)!);
+    expect(badge).toBe(expected(later));
+    expect(later.interestSharePct).not.toBe(acceptance.interestSharePct);
+    expect(later.timeline.at(-1)!.interestCents).not.toBe(acceptance.timeline.at(-1)!.interestCents);
+    expect(badge).not.toBe(normalize(interestBadge(acceptance)!));
+  });
+
+  it("sem percentual: só o valor, sem separador", () => {
+    const badge = interestBadge({ ...acceptance, interestSharePct: null });
+    expect(normalize(badge!)).toBe(
+      `${normalize(formatCompactBRL(acceptance.timeline.at(-1)!.interestCents))} vêm dos rendimentos`,
+    );
+    expect(badge).not.toContain(" · ");
+  });
+
+  it("sem linha do tempo: nenhum texto", () => {
+    const summary = summarize(
+      { ...goal, savedCents: 56_500_000, birthDate: "1978-06-20", retirementAge: 48, annualRateBp: 800, withdrawalRateBp: 500 },
+      now,
+    );
+    expect(summary.timeline).toEqual([]);
+    expect(interestBadge(summary)).toBeNull();
   });
 });

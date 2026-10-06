@@ -168,17 +168,18 @@ T5 → T6 → T7 → T8
 
 **Done when**:
 
-- [ ] Para o cenário de aceite, devolve "R$ 2,6 mi vêm dos rendimentos · 55% do patrimônio final", com o valor igual ao `interestCents` do último ponto (o teste calcula a expectativa a partir do resumo, não de um literal solto)
-- [ ] Mudar o prazo muda o valor e o percentual (prova que nada é fixo)
-- [ ] `interestSharePct` null: devolve só "{valor} vêm dos rendimentos", sem " · "
-- [ ] Timeline vazia: devolve `null`
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
-- [ ] Test count: os testes anteriores mais os novos de `interestBadge` passam
+- [x] Para o cenário de aceite, devolve "R$ 2,6 mi vêm dos rendimentos · 55% do patrimônio final", com o valor igual ao `interestCents` do último ponto (o teste calcula a expectativa a partir do resumo, não de um literal solto)
+- [x] Mudar o prazo muda o valor e o percentual (prova que nada é fixo)
+- [x] `interestSharePct` null: devolve só "{valor} vêm dos rendimentos", sem " · "
+- [x] Timeline vazia: devolve `null`
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Test count: os testes anteriores mais os novos de `interestBadge` passam
 
 **Tests**: unit
 **Gate**: quick
 
 **Commit**: `feat(liberdade): add interest share badge copy`
+**Status**: ✅ Done
 
 ---
 
