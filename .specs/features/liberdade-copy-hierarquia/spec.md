@@ -30,7 +30,7 @@ A tela `/liberdade` (Ápice) ainda usa linguagem que soa como promessa ("taxa de
 | 1, 16, 17, 20 (regras, sem "8% − 5%", arquitetura, matemática) | `PRESET_RATES` em `src/lib/domain/freedom.ts`; nenhuma explicação de diferença de taxas; mesma estrutura de componentes |
 | 5 (sem "Patrimônio necessário") | `goal-hero.tsx` mostra só "acumulados (x% do alvo)" |
 | 9 (marcos dinâmicos) | `buildCheckpoints` com 25/50/75/100% da meta e "(Meta)" no último (`checkpointLabel`) |
-| 12 (legenda "real") | `RATE_HINT` = "Taxa real estimada (descontada da inflação)" |
+| 12 (legenda "real") | `RATE_HINT` = "Taxa real estimada (descontada a inflação)" |
 | 15 (popover recolhido) | `Popover` do Radix, fechado por padrão |
 
 ---
@@ -112,7 +112,7 @@ Implicit-requirement dimensions: failure states (months = 0, LCH-05; total zero 
 3. WHEN the typed rentabilidade and retirada pair equals a preset pair THEN the system SHALL mark that scenario as selected and SHALL NOT highlight the "Personalizar premissas" button.
 4. WHEN the typed pair matches no preset THEN the system SHALL mark no scenario and SHALL highlight the "Personalizar premissas" button.
 5. WHEN the user opens the form with no saved goal THEN the system SHALL start with rentabilidade 8 and retirada 5 and mark the Moderado scenario.
-6. The system SHALL keep the legend "Taxa real estimada (descontada da inflação)" above the scenarios.
+6. The system SHALL keep the legend "Taxa real estimada (descontada a inflação)" above the scenarios.
 7. The system SHALL render each scenario option in three lines (título, rentabilidade, retirada) without clipping text or causing horizontal scroll at a 320 px viewport.
 
 **Independent Test**: Abrir "Definir objetivo" sem objetivo salvo: Moderado marcado, "Personalizar premissas" sem destaque; digitar retirada 6 com 8%: nenhum cenário marcado e botão realçado; digitar 5: Moderado volta a ser marcado.
