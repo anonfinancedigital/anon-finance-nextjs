@@ -349,6 +349,8 @@ T14 e T20 não dependem de nada.
 
 ### T9: Guards com status e variantes de administrador
 
+**Status**: ✅ Complete
+
 **What**: `requireSessionForPage/Action` tratam status != `approved` como sem sessão e devolvem `isAdmin`; novos `requireAdminForPage` e `requireAdminForAction`.
 **Where**: `src/lib/auth-guard.ts`
 **Depends on**: T3, T8
@@ -362,14 +364,14 @@ T14 e T20 não dependem de nada.
 
 **Done when**:
 
-- [ ] Sessão válida de usuário que passa a `revoked`, `rejected` ou `pending` depois do login: guard de página redireciona a `/login`; guard de ação devolve `UNAUTHORIZED` (AC 13 e AC 19)
-- [ ] Usuário `approved` comum: `requireSessionForPage` devolve `isAdmin: false`; administrador devolve `true`
-- [ ] `requireAdminForAction` devolve `UNAUTHORIZED` para não administrador e sem sessão
-- [ ] `requireAdminForPage` redireciona a `/` para aprovado não administrador e a `/login` sem sessão
-- [ ] Sem `ADMIN_EMAIL`, ninguém passa nos guards de administrador
-- [ ] Testes novos em `auth-guard.int.test.ts` passam; os existentes seguem iguais
-- [ ] Gate check passes: full
-- [ ] Test count: anterior + os novos
+- [x] Sessão válida de usuário que passa a `revoked`, `rejected` ou `pending` depois do login: guard de página redireciona a `/login`; guard de ação devolve `UNAUTHORIZED` (AC 13 e AC 19)
+- [x] Usuário `approved` comum: `requireSessionForPage` devolve `isAdmin: false`; administrador devolve `true`
+- [x] `requireAdminForAction` devolve `UNAUTHORIZED` para não administrador e sem sessão
+- [x] `requireAdminForPage` redireciona a `/` para aprovado não administrador e a `/login` sem sessão
+- [x] Sem `ADMIN_EMAIL`, ninguém passa nos guards de administrador
+- [x] Testes novos em `auth-guard.int.test.ts` passam; os existentes seguem iguais
+- [x] Gate check passes: full
+- [x] Test count: anterior + os novos
 
 **Tests**: integration
 **Gate**: full
