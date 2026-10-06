@@ -3,6 +3,7 @@
 import { Area, AreaChart, CartesianGrid, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { ageTicks } from "@/lib/domain/age-ticks";
 import { chartYMax, compositionShares, type GoalSummary } from "@/lib/domain/freedom";
+import { interestBadge } from "@/lib/domain/freedom-copy";
 import { formatBRL, formatCompactBRL } from "@/lib/domain/money";
 
 const tick = { fill: "var(--muted-foreground)", fontSize: 12 };
@@ -61,19 +62,20 @@ export function GoalChart({ summary }: { summary: GoalSummary }) {
   }));
   const first = timeline[0];
   const last = timeline[timeline.length - 1];
-  const share = summary.interestSharePct;
-  const summaryText = `Rendimentos: ${share}% do patrimônio aos ${last.ageYears} anos`;
+  const badge = interestBadge(summary);
 
   return (
     <figure
       data-testid="goal-chart"
-      aria-label={`Trajetória dos Juros Compostos: alvo ${formatBRL(summary.targetCents)} aos ${last.ageYears} anos. ${summaryText}`}
+      aria-label={`Trajetória dos Juros Compostos: alvo ${formatBRL(summary.targetCents)} aos ${last.ageYears} anos.${badge ? ` ${badge}` : ""}`}
       className="space-y-3 rounded-2xl border border-border bg-card p-6 shadow-lg"
     >
       <figcaption className="flex flex-wrap items-center justify-between gap-2">
         <span className="text-sm font-medium">Trajetória dos Juros Compostos</span>
         <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-          <span className="rounded-full bg-income/15 px-3 py-1 text-xs font-medium text-income">{summaryText}</span>
+          {badge && (
+            <span className="rounded-full bg-income/15 px-3 py-1 text-xs font-medium text-income">{badge}</span>
+          )}
           <ul className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
             <li className="flex items-center gap-1.5">
               <Swatch color={INVESTED} /> Total investido

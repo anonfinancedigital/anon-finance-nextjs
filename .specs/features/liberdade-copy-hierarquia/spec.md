@@ -152,7 +152,7 @@ Implicit-requirement dimensions: failure states (months = 0, LCH-05; total zero 
 | LCH-03 | P1: Copy e hierarquia (card de aporte, AC 4) | Specify | Implemented |
 | LCH-04 | P1: Copy e hierarquia (itens removidos, AC 8) | Specify | Implemented |
 | LCH-05 | P1: Copy e hierarquia (months = 0, AC 5 a 7) | Specify | Implemented |
-| LCH-06 | P1: Indicador de rendimentos (AC 1 a 4) | Specify | In Progress |
+| LCH-06 | P1: Indicador de rendimentos (AC 1 a 4) | Specify | Implemented |
 | LCH-07 | P2: Gaveta (cenários e quebra de linha, AC 1 e 7) | Specify | Pending |
 | LCH-08 | P2: Gaveta (rótulo do botão e legenda, AC 2 e 6) | Specify | Pending |
 | LCH-09 | P2: Gaveta (estado personalizado, AC 3 e 4) | Specify | Pending |

@@ -227,15 +227,16 @@ T5 → T6 → T7 → T8
 
 **Done when**:
 
-- [ ] A pílula e o `aria-label` do `figure` usam o texto de `interestBadge`; sem texto (`null`), a pílula não é renderizada
-- [ ] O texto "Rendimentos: N% do patrimônio aos N anos" não existe mais em `src`
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
-- [ ] Test count: a suíte unitária completa passa com o mesmo número de testes da task anterior
+- [x] A pílula e o `aria-label` do `figure` usam o texto de `interestBadge`; sem texto (`null`), a pílula não é renderizada
+- [x] O texto "Rendimentos: N% do patrimônio aos N anos" não existe mais em `src`
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] Test count: a suíte unitária completa passa com o mesmo número de testes da task anterior
 
 **Tests**: none
 **Gate**: build
 
 **Commit**: `feat(liberdade): show interest amount and share in the chart header`
+**Status**: ✅ Done
 
 ---
 
