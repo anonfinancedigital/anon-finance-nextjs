@@ -76,16 +76,17 @@ T5 → T6 → T7 → T8
 
 **Done when**:
 
-- [ ] `summarize(goal, now).retirementAge` é igual a `goal.retirementAge` (teste novo em `freedom.test.ts`)
-- [ ] `DEFAULT_WITHDRAWAL_RATE_BP` vale 500 e `presetFor(DEFAULT_ANNUAL_RATE_BP, DEFAULT_WITHDRAWAL_RATE_BP)` devolve 800 (teste novo)
-- [ ] Todas as expectativas numéricas existentes de `freedom.test.ts` seguem passando sem edição (LCH-12)
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
-- [ ] Test count: os testes anteriores de `freedom.test.ts` mais os 2 novos passam (nenhum removido)
+- [x] `summarize(goal, now).retirementAge` é igual a `goal.retirementAge` (teste novo em `freedom.test.ts`)
+- [x] `DEFAULT_WITHDRAWAL_RATE_BP` vale 500 e `presetFor(DEFAULT_ANNUAL_RATE_BP, DEFAULT_WITHDRAWAL_RATE_BP)` devolve 800 (teste novo)
+- [x] Todas as expectativas numéricas existentes de `freedom.test.ts` seguem passando sem edição (LCH-12)
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Test count: os testes anteriores de `freedom.test.ts` mais os 2 novos passam (nenhum removido)
 
 **Tests**: unit
 **Gate**: quick
 
 **Commit**: `feat(liberdade): expose independence age and default withdrawal rate in the domain`
+**Status**: ✅ Done
 
 ---
 

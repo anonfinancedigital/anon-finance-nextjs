@@ -5,6 +5,7 @@ import {
   chartYMax,
   compositionShares,
   DEFAULT_ANNUAL_RATE_BP,
+  DEFAULT_WITHDRAWAL_RATE_BP,
   interestSharePct,
   monthlyRate,
   presetFor,
@@ -252,12 +253,25 @@ describe("summarize", () => {
     };
     expect(summarize(goal, new Date("2026-07-15T15:00:00Z")).months).toBe(239);
   });
+
+  it("expõe a idade do ápice do objetivo", () => {
+    const summary = summarize(
+      { monthlyIncomeCents: 2_000_000, savedCents: 56_500_000, birthDate: "1993-05-10", retirementAge: 48, annualRateBp: 800, withdrawalRateBp: 500 },
+      now,
+    );
+    expect(summary.retirementAge).toBe(48);
+  });
 });
 
 describe("taxa anual como parâmetro", () => {
   it("oferece as taxas 6%, 8% e 10%, com 8% como padrão", () => {
     expect(PRESET_RATES.map((p) => p.annualBp)).toEqual([600, 800, 1000]);
     expect(DEFAULT_ANNUAL_RATE_BP).toBe(800);
+  });
+
+  it("a retirada padrão é a do preset moderado: 5% com 8%", () => {
+    expect(DEFAULT_WITHDRAWAL_RATE_BP).toBe(500);
+    expect(presetFor(DEFAULT_ANNUAL_RATE_BP, DEFAULT_WITHDRAWAL_RATE_BP)).toBe(800);
   });
 
   it.each([

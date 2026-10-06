@@ -13,6 +13,10 @@ export const PRESET_RATES = [
 ] as const;
 export type PresetAnnualBp = (typeof PRESET_RATES)[number]["annualBp"];
 export const DEFAULT_ANNUAL_RATE_BP: PresetAnnualBp = 800;
+/** Retirada do preset da rentabilidade padrão (8% → 5%), valor inicial do formulário vazio. */
+export const DEFAULT_WITHDRAWAL_RATE_BP: number = PRESET_RATES.find(
+  (p) => p.annualBp === DEFAULT_ANNUAL_RATE_BP,
+)!.withdrawalBp;
 
 /** O preset cujo par (rentabilidade, retirada) coincide com o informado; `null` se nenhum coincide. */
 export function presetFor(annualBp: number, withdrawalBp: number): PresetAnnualBp | null {
@@ -238,6 +242,8 @@ export type GoalSummary = {
   timeline: TimelinePoint[];
   interestSharePct: number | null;
   checkpoints: Checkpoint[];
+  /** Idade do ápice, copiada do objetivo só para exibição. */
+  retirementAge: number;
 };
 
 /** Resumo calculado na leitura a partir do objetivo salvo e de `now`. */
@@ -286,5 +292,6 @@ export function summarize(goal: Goal, now: Date): GoalSummary {
       retirementAge: goal.retirementAge,
       annualRateBp: goal.annualRateBp,
     }),
+    retirementAge: goal.retirementAge,
   };
 }
