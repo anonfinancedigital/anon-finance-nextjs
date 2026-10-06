@@ -546,6 +546,8 @@ T14 e T20 não dependem de nada.
 
 ### T15: Formulário de cadastro
 
+**Status**: ✅ Complete
+
 **What**: `SignupForm` (nome, e-mail, senha) com erros por campo e mensagem de envio após sucesso.
 **Where**: `src/app/cadastro/signup-form.tsx`
 **Depends on**: T11
@@ -559,11 +561,11 @@ T14 e T20 não dependem de nada.
 
 **Done when**:
 
-- [ ] Três campos com `autoComplete` adequado (`name`, `username`, `new-password`) e `fieldErrors` sob cada campo
-- [ ] Em sucesso troca o formulário por "Cadastro enviado. Você poderá entrar quando o administrador aprová-lo"
-- [ ] Botão desabilitado enquanto envia
-- [ ] Gate check passes: build
-- [ ] Test count: igual ao do T14
+- [x] Três campos com `autoComplete` adequado (`name`, `username`, `new-password`) e `fieldErrors` sob cada campo
+- [x] Em sucesso troca o formulário por "Cadastro enviado. Você poderá entrar quando o administrador aprová-lo"
+- [x] Botão desabilitado enquanto envia
+- [x] Gate check passes: build
+- [x] Test count: igual ao do T14
 
 **Tests**: none
 **Gate**: build
