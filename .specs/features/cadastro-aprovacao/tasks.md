@@ -723,6 +723,8 @@ T14 e T20 não dependem de nada.
 
 ### T21: Layout passa `isAdmin` à navegação
 
+**Status**: ✅ Complete
+
 **What**: Ler `isAdmin` de `requireSessionForPage` e repassar a `AppNav`.
 **Where**: `src/app/(app)/layout.tsx`
 **Depends on**: T9, T20
@@ -736,9 +738,9 @@ T14 e T20 não dependem de nada.
 
 **Done when**:
 
-- [ ] Administrador vê "Cadastros" no menu; usuário comum não vê
-- [ ] Gate check passes: build
-- [ ] Test count: igual ao do T20
+- [x] Administrador vê "Cadastros" no menu; usuário comum não vê
+- [x] Gate check passes: build
+- [x] Test count: igual ao do T20
 
 **Tests**: none
 **Gate**: build

@@ -8,13 +8,13 @@ import { requireSessionForPage } from "@/lib/auth-guard";
 
 /** Shell of the signed-in area: sidebar (top bar on mobile) with navigation and sign-out. Pages still guard their own data. */
 export default async function AppLayout({ children }: LayoutProps<"/">) {
-  await requireSessionForPage();
+  const { isAdmin } = await requireSessionForPage();
 
   return (
     <div className="flex flex-1 flex-col md:flex-row">
       <aside className="sticky top-0 z-30 flex items-center gap-3 border-b border-border bg-background/95 px-4 py-3 md:fixed md:inset-y-0 md:left-0 md:w-[218px] md:flex-col md:items-stretch md:gap-6 md:border-r md:border-b-0 md:bg-sidebar md:p-3">
         <Logo className="md:px-1 md:pt-2" />
-        <AppNav />
+        <AppNav isAdmin={isAdmin} />
         <div className="ml-auto flex items-center gap-1 md:mt-auto md:ml-0 md:flex-col md:items-stretch">
           <ThemeToggle className="md:w-full md:justify-start" />
           <form action={signOutAction}>

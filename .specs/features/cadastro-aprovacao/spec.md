@@ -166,7 +166,7 @@ Hoje o cadastro público está desligado e a única conta nasce de seed (`ADMIN_
 | SIGNUP-03 | P1: Cadastro e bloqueio (AC 13-14) | Execute | Implemented |
 | SIGNUP-04 | P1: Cadastro e bloqueio (AC 17-18) | Execute | Implemented |
 | SIGNUP-05 | P1: Administrador decide (AC 1-7, 11-12) | Execute | Implemented |
-| SIGNUP-06 | P1: Administrador decide (AC 8-10, 18) | Execute | In Progress |
+| SIGNUP-06 | P1: Administrador decide (AC 8-10, 18) | Execute | Implemented |
 | SIGNUP-08 | P1: Administrador decide (AC 13-14, 19) | Execute | Implemented |
 | SIGNUP-09 | P1: Administrador decide (AC 15-17, 20) | Execute | Implemented |
 | SIGNUP-07 | P2: Isolamento (AC 1-2) | Execute | Implemented |
