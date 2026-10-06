@@ -102,14 +102,15 @@ T5 → T6 → T7 → T8
 
 **Done when**:
 
-- [ ] Exporta `Popover`, `PopoverTrigger` e `PopoverContent` (portal, `sideOffset`, colisão com a borda)
-- [ ] Esc e clique fora fecham, comportamento nativo do Radix
-- [ ] Gate build passa
-- [ ] Test count: testes existentes inalterados
+- [x] Exporta `Popover`, `PopoverTrigger` e `PopoverContent` (portal, `sideOffset`, colisão com a borda)
+- [x] Esc e clique fora fecham, comportamento nativo do Radix
+- [x] Gate build passa
+- [x] Test count: testes existentes inalterados
 
 **Tests**: none
 **Gate**: build
 **Commit**: `feat(ui): add the popover component`
+**Status**: ✅ Done
 
 ---
 
