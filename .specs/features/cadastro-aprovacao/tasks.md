@@ -446,6 +446,8 @@ T14 e T20 não dependem de nada.
 
 ### T12: Ações de aprovar e rejeitar
 
+**Status**: ✅ Complete
+
 **What**: `approveUser` e `rejectUser` com guard de administrador, transição, remoção de sessões na rejeição e `revalidatePath`.
 **Where**: `src/actions/admin-users.ts`
 **Depends on**: T7, T9
@@ -459,17 +461,17 @@ T14 e T20 não dependem de nada.
 
 **Done when**:
 
-- [ ] Aprovar `pending`, `rejected` e `revoked` resulta em `approved` com `decided_at`
-- [ ] Rejeitar `pending` resulta em `rejected` e apaga as sessões do usuário (AC 13 do cadastro)
-- [ ] Rejeitar usuário não `pending` devolve "Este cadastro não está pendente" sem alterar
-- [ ] Aprovar `approved` devolve ok sem alterar `decided_at`
-- [ ] Id inexistente e id do administrador devolvem "Cadastro não encontrado"
-- [ ] Não administrador ou sem sessão recebem `UNAUTHORIZED` sem alterar dados
-- [ ] Falha de banco devolve "Não foi possível salvar. Tente novamente" e mantém o status
-- [ ] `revalidatePath("/admin/cadastros")` chamado nos sucessos
-- [ ] Testes em `admin-users.int.test.ts` passam
-- [ ] Gate check passes: full
-- [ ] Test count: anterior + os novos
+- [x] Aprovar `pending`, `rejected` e `revoked` resulta em `approved` com `decided_at`
+- [x] Rejeitar `pending` resulta em `rejected` e apaga as sessões do usuário (AC 13 do cadastro)
+- [x] Rejeitar usuário não `pending` devolve "Este cadastro não está pendente" sem alterar
+- [x] Aprovar `approved` devolve ok sem alterar `decided_at`
+- [x] Id inexistente e id do administrador devolvem "Cadastro não encontrado"
+- [x] Não administrador ou sem sessão recebem `UNAUTHORIZED` sem alterar dados
+- [x] Falha de banco devolve "Não foi possível salvar. Tente novamente" e mantém o status
+- [x] `revalidatePath("/admin/cadastros")` chamado nos sucessos
+- [x] Testes em `admin-users.int.test.ts` passam
+- [x] Gate check passes: full
+- [x] Test count: anterior + os novos
 
 **Tests**: integration
 **Gate**: full
