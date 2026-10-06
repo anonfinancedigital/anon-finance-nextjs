@@ -19,6 +19,7 @@ import {
   presetFor,
 } from "@/lib/domain/freedom";
 import { RATE_HINT, RATE_TITLE } from "@/lib/domain/freedom-copy";
+import { maskBRLInput } from "@/lib/domain/money";
 import { parseRate, today } from "@/lib/validation/goal";
 
 export type GoalFormValues = {
@@ -133,7 +134,7 @@ export function GoalForm({
             placeholder="10.000,00"
             value={values.monthlyIncome}
             aria-invalid={!!fieldErrors.monthlyIncome}
-            onChange={(e) => set("monthlyIncome", e.target.value)}
+            onChange={(e) => set("monthlyIncome", maskBRLInput(e.target.value))}
           />
           {fieldErrors.monthlyIncome && (
             <p className="text-sm text-destructive">{fieldErrors.monthlyIncome}</p>
@@ -147,7 +148,7 @@ export function GoalForm({
             placeholder="0,00"
             value={values.saved}
             aria-invalid={!!fieldErrors.saved}
-            onChange={(e) => set("saved", e.target.value)}
+            onChange={(e) => set("saved", maskBRLInput(e.target.value))}
           />
           {fieldErrors.saved && <p className="text-sm text-destructive">{fieldErrors.saved}</p>}
         </div>

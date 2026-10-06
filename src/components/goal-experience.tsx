@@ -31,7 +31,7 @@ function DrawerSummary({ summary }: { summary: Summary | null }) {
         <dd className="font-display font-bold">{summary ? formatBRL(summary.targetCents) : "—"}</dd>
       </div>
       <div>
-        <dt className="text-muted-foreground">Aporte Estratégico Mensal</dt>
+        <dt className="text-muted-foreground">Aporte Mensal</dt>
         <dd className="font-display font-bold">{deposit}</dd>
       </div>
     </dl>
