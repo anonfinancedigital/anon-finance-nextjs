@@ -66,4 +66,12 @@
 - **Date**: 2026-10-05
 - **Status**: active
 
+### AD-009
+- **Decision**: O acesso ao app depende de `user.status = approved` (`pending`, `approved`, `rejected`, `revoked`), conferido na criação da sessão (hook `databaseHooks.session.create.before` do Better Auth) e em todo guard de página e ação. O administrador é a conta cujo e-mail é `ADMIN_EMAIL`, decidido em tempo de execução, sem papel no banco.
+- **Reason**: Pedido do usuário: ninguém usa a aplicação sem autorização do administrador, que também pode revogar e excluir usuários.
+- **Trade-off**: Quem cria usuário ou sessão fora do fluxo padrão precisa informar o status; `auth-schema.ts` (gerado pelo Better Auth) ganha coluna manual que uma regeneração apagaria.
+- **Scope**: `user` (schema), `auth.ts`, `auth-guard.ts`, `seed-user.ts`, helpers de teste e telas de cadastro e administração
+- **Date**: 2026-10-06
+- **Status**: active
+
 ## Handoff
