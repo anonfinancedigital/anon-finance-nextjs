@@ -147,8 +147,8 @@ Implicit-requirement dimensions: failure states (months = 0, LCH-05; total zero 
 
 | Requirement ID | Story | Phase | Status |
 | -------------- | ----- | ----- | ------ |
-| LCH-01 | P1: Copy e hierarquia (pílula do Hero, AC 1) | Specify | Pending |
-| LCH-02 | P1: Copy e hierarquia ("Como calculamos?", AC 2 e 3) | Specify | Pending |
+| LCH-01 | P1: Copy e hierarquia (pílula do Hero, AC 1) | Specify | Implemented |
+| LCH-02 | P1: Copy e hierarquia ("Como calculamos?", AC 2 e 3) | Specify | Implemented |
 | LCH-03 | P1: Copy e hierarquia (card de aporte, AC 4) | Specify | Pending |
 | LCH-04 | P1: Copy e hierarquia (itens removidos, AC 8) | Specify | Pending |
 | LCH-05 | P1: Copy e hierarquia (months = 0, AC 5 a 7) | Specify | Pending |
@@ -157,7 +157,7 @@ Implicit-requirement dimensions: failure states (months = 0, LCH-05; total zero 
 | LCH-08 | P2: Gaveta (rótulo do botão e legenda, AC 2 e 6) | Specify | Pending |
 | LCH-09 | P2: Gaveta (estado personalizado, AC 3 e 4) | Specify | Pending |
 | LCH-10 | P2: Gaveta (valor inicial 8% → 5%, AC 5) | Specify | In Progress |
-| LCH-11 | P2: Linguagem protegida por teste (AC 1) | Specify | Pending |
+| LCH-11 | P2: Linguagem protegida por teste (AC 1) | Specify | Implemented |
 | LCH-12 | P2: Linguagem protegida por teste (matemática preservada, AC 2) | Specify | Implemented |
 
 **Coverage:** 12 total, 0 mapped to tasks, 12 unmapped ⚠️ (tasks vêm depois do Specify)

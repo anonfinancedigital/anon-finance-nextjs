@@ -105,18 +105,19 @@ T5 → T6 → T7 → T8
 
 **Done when**:
 
-- [ ] `heroPill` devolve "Renda de R$ 20.000,00/mês · retirada inicial de 5% a.a." para o cenário de aceite (8% real, retirada 5%)
-- [ ] `howWeCalculate` devolve "Com uma renda de R$ 20.000,00/mês (R$ 240.000,00/ano) e uma taxa de retirada inicial de 5% a.a., o patrimônio-alvo é de R$ 4.800.000,00." para o mesmo cenário, e usa "6,5%" com retirada de 650 pb
-- [ ] `HOW_DISCLAIMER` é exatamente "A simulação utiliza rentabilidade real, já descontada da inflação. Os valores são projeções e não representam garantia de rentabilidade ou de renda futura."
-- [ ] Os testes antigos que fixavam "Gera…", "segura…" e o aviso antigo são reescritos para os textos novos (não apagados)
-- [ ] O teste `FORBIDDEN` cobre "segur", "perpétu", "garantid", "vitalíc", "consumir", "principal" e "vai gerar" em pílula, frase do popover, `RATE_TITLE` e `RATE_HINT`; o aviso do popover é checado só contra as raízes exceto "garantid" (contém "garantia", a negação permitida)
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
-- [ ] Test count: mesmos casos de `freedom-copy.test.ts` (reescritos) mais os da lista ampliada passam (nenhum removido sem substituto)
+- [x] `heroPill` devolve "Renda de R$ 20.000,00/mês · retirada inicial de 5% a.a." para o cenário de aceite (8% real, retirada 5%)
+- [x] `howWeCalculate` devolve "Com uma renda de R$ 20.000,00/mês (R$ 240.000,00/ano) e uma taxa de retirada inicial de 5% a.a., o patrimônio-alvo é de R$ 4.800.000,00." para o mesmo cenário, e usa "6,5%" com retirada de 650 pb
+- [x] `HOW_DISCLAIMER` é exatamente "A simulação utiliza rentabilidade real, já descontada da inflação. Os valores são projeções e não representam garantia de rentabilidade ou de renda futura."
+- [x] Os testes antigos que fixavam "Gera…", "segura…" e o aviso antigo são reescritos para os textos novos (não apagados)
+- [x] O teste `FORBIDDEN` cobre "segur", "perpétu", "garantid", "vitalíc", "consumir", "principal" e "vai gerar" em pílula, frase do popover, `RATE_TITLE` e `RATE_HINT`; o aviso do popover é checado só contra as raízes exceto "garantid" (contém "garantia", a negação permitida)
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Test count: mesmos casos de `freedom-copy.test.ts` (reescritos) mais os da lista ampliada passam (nenhum removido sem substituto)
 
 **Tests**: unit
 **Gate**: quick
 
 **Commit**: `feat(liberdade): rewrite hero pill and popover copy as projection language`
+**Status**: ✅ Done
 
 ---
 

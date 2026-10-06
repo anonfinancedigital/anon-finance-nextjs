@@ -8,6 +8,13 @@ const normalize = (s: string) => s.replace(/\s/g, " ");
 const now = new Date("2026-06-15T15:00:00Z");
 const goal = { monthlyIncomeCents: 2_000_000, savedCents: 0, birthDate: "1986-06-15", retirementAge: 60 };
 
+// Cenário de aceite: renda R$ 20.000,00, guardado R$ 565.000,00, 8% real, retirada 5%, ápice aos 48
+// (179 meses = 14 anos e 11 meses a partir de 2026-06).
+const acceptance = summarize(
+  { monthlyIncomeCents: 2_000_000, savedCents: 56_500_000, birthDate: "1993-05-10", retirementAge: 48, annualRateBp: 800, withdrawalRateBp: 500 },
+  now,
+);
+
 describe("rótulos do seletor", () => {
   it("título e legenda da rentabilidade real", () => {
     expect(RATE_TITLE).toBe("Rentabilidade real esperada");
@@ -16,12 +23,16 @@ describe("rótulos do seletor", () => {
 });
 
 describe("sem promessa de renda ou retorno", () => {
-  const FORBIDDEN = ["perpétu", "garantid", "vitalíc"];
-  const summary = summarize({ ...goal, annualRateBp: 800, withdrawalRateBp: 600 }, now);
-  const texts = [RATE_TITLE, RATE_HINT, heroPill(summary)];
+  const FORBIDDEN = ["segur", "perpétu", "garantid", "vitalíc", "consumir", "principal", "vai gerar"];
+  const texts = [RATE_TITLE, RATE_HINT, heroPill(acceptance), howWeCalculate(acceptance)];
 
   it.each(FORBIDDEN)("nenhum texto contém \"%s\"", (root) => {
-    for (const t of texts) expect(t.toLowerCase()).not.toContain(root);
+    for (const t of texts) expect(normalize(t).toLowerCase()).not.toContain(root);
+  });
+
+  // O aviso nega a garantia ("não representam garantia"); só "garantid" fica de fora.
+  it.each(FORBIDDEN.filter((root) => root !== "garantid"))("o aviso do popover não contém \"%s\"", (root) => {
+    expect(HOW_DISCLAIMER.toLowerCase()).not.toContain(root);
   });
 });
 
@@ -65,30 +76,33 @@ describe("formatRate", () => {
 });
 
 describe("heroPill", () => {
-  it("renda R$ 20.000 e retirada 6% a.a.", () => {
-    const summary = summarize({ ...goal, annualRateBp: 800, withdrawalRateBp: 600 }, now);
-    expect(normalize(heroPill(summary))).toBe("Gera R$ 20.000,00/mês com retirada de 6% a.a.");
+  it("renda R$ 20.000 e retirada inicial de 5% a.a.", () => {
+    expect(normalize(heroPill(acceptance))).toBe("Renda de R$ 20.000,00/mês · retirada inicial de 5% a.a.");
+  });
+
+  it("retirada de 650 pb sai com vírgula decimal", () => {
+    const summary = summarize({ ...goal, annualRateBp: 800, withdrawalRateBp: 650 }, now);
+    expect(normalize(heroPill(summary))).toBe("Renda de R$ 20.000,00/mês · retirada inicial de 6,5% a.a.");
   });
 });
 
 describe("howWeCalculate", () => {
-  it("renda R$ 20.000, retirada 6% e meta R$ 4.000.000", () => {
-    const summary = summarize({ ...goal, annualRateBp: 800, withdrawalRateBp: 600 }, now);
-    expect(summary.targetCents).toBe(400_000_000);
-    expect(normalize(howWeCalculate(summary))).toBe(
-      "Com uma renda de R$ 20.000,00/mês (R$ 240.000,00/ano) e uma taxa de retirada segura de 6% a.a., seu patrimônio precisa ser de R$ 4.000.000,00 para perpetuar a renda sem consumir o principal investido.",
+  it("renda R$ 20.000, retirada inicial de 5% e meta R$ 4.800.000", () => {
+    expect(acceptance.targetCents).toBe(480_000_000);
+    expect(normalize(howWeCalculate(acceptance))).toBe(
+      "Com uma renda de R$ 20.000,00/mês (R$ 240.000,00/ano) e uma taxa de retirada inicial de 5% a.a., o patrimônio-alvo é de R$ 4.800.000,00.",
     );
   });
 
   it("retirada de 650 pb sai com vírgula decimal", () => {
     const summary = summarize({ ...goal, annualRateBp: 800, withdrawalRateBp: 650 }, now);
-    expect(howWeCalculate(summary)).toContain("taxa de retirada segura de 6,5% a.a.");
+    expect(howWeCalculate(summary)).toContain("taxa de retirada inicial de 6,5% a.a.");
   });
 
   it("título e aviso do popover", () => {
     expect(HOW_TITLE).toBe("Como chegamos a esse número:");
     expect(HOW_DISCLAIMER).toBe(
-      "Simulação com base em rentabilidade real (líquida de inflação). Não representa garantia de rendimentos.",
+      "A simulação utiliza rentabilidade real, já descontada da inflação. Os valores são projeções e não representam garantia de rentabilidade ou de renda futura.",
     );
   });
 });

@@ -12,7 +12,7 @@ export const HOW_TITLE = "Como chegamos a esse número:";
 
 /** Aviso do popover do "Como calculamos?". */
 export const HOW_DISCLAIMER =
-  "Simulação com base em rentabilidade real (líquida de inflação). Não representa garantia de rendimentos.";
+  "A simulação utiliza rentabilidade real, já descontada da inflação. Os valores são projeções e não representam garantia de rentabilidade ou de renda futura.";
 
 /** Taxa em pt-BR, sem zeros à direita: 600 -> "6%", 650 -> "6,5%". */
 export function formatRate(bp: number): string {
@@ -21,9 +21,9 @@ export function formatRate(bp: number): string {
 
 const perYear = (bp: number) => `${formatRate(bp)} a.a.`;
 
-/** Pílula do card de Meta: a renda que o patrimônio gera e a retirada usada. */
+/** Pílula do card de Meta: a renda desejada e a retirada inicial usada. */
 export function heroPill(summary: GoalSummary): string {
-  return `Gera ${formatBRL(summary.monthlyIncomeCents)}/mês com retirada de ${perYear(summary.withdrawalRateBp)}`;
+  return `Renda de ${formatBRL(summary.monthlyIncomeCents)}/mês · retirada inicial de ${perYear(summary.withdrawalRateBp)}`;
 }
 
 /** Rótulo curto do marco: "Atingido", "Sem previsão", "Aos N anos" e, no último, "Aos N anos (Meta)". */
@@ -33,7 +33,7 @@ export function checkpointLabel(checkpoint: Checkpoint, isLast: boolean): string
   return isLast ? `Aos ${checkpoint.ageYears} anos (Meta)` : `Aos ${checkpoint.ageYears} anos`;
 }
 
-/** Frase do popover: renda mensal e anual, retirada e o patrimônio necessário, todos do resumo. */
+/** Frase do popover: renda mensal e anual, retirada inicial e o patrimônio-alvo, todos do resumo. */
 export function howWeCalculate(summary: GoalSummary): string {
-  return `Com uma renda de ${formatBRL(summary.monthlyIncomeCents)}/mês (${formatBRL(summary.monthlyIncomeCents * 12)}/ano) e uma taxa de retirada segura de ${perYear(summary.withdrawalRateBp)}, seu patrimônio precisa ser de ${formatBRL(summary.targetCents)} para perpetuar a renda sem consumir o principal investido.`;
+  return `Com uma renda de ${formatBRL(summary.monthlyIncomeCents)}/mês (${formatBRL(summary.monthlyIncomeCents * 12)}/ano) e uma taxa de retirada inicial de ${perYear(summary.withdrawalRateBp)}, o patrimônio-alvo é de ${formatBRL(summary.targetCents)}.`;
 }
