@@ -665,6 +665,8 @@ T14 e T20 não dependem de nada.
 
 ### T19: Página `/admin/cadastros`
 
+**Status**: ✅ Complete
+
 **What**: Página protegida por `requireAdminForPage` que lista os usuários com `UserAdminList`.
 **Where**: `src/app/(app)/admin/cadastros/page.tsx`
 **Depends on**: T7, T9, T18
@@ -678,10 +680,10 @@ T14 e T20 não dependem de nada.
 
 **Done when**:
 
-- [ ] Título "Cadastros"; dados vêm de `usersRepo.listForAdmin`
-- [ ] Não administrador é redirecionado a `/`
-- [ ] Gate check passes: build
-- [ ] Test count: igual ao do T18
+- [x] Título "Cadastros"; dados vêm de `usersRepo.listForAdmin`
+- [x] Não administrador é redirecionado a `/`
+- [x] Gate check passes: build
+- [x] Test count: igual ao do T18
 
 **Tests**: none
 **Gate**: build
