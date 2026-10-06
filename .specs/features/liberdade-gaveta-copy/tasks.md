@@ -211,14 +211,15 @@ T5 → T6 → T7 → T8
 
 **Done when**:
 
-- [ ] Ao acionar o botão aparecem dois inputs lado a lado com os rótulos novos
-- [ ] Escolher um perfil oculta os inputs e grava as taxas da tabela
-- [ ] Gate build passa
-- [ ] Test count: testes existentes inalterados
+- [x] Ao acionar o botão aparecem dois inputs lado a lado com os rótulos novos
+- [x] Escolher um perfil oculta os inputs e grava as taxas da tabela
+- [x] Gate build passa
+- [x] Test count: testes existentes inalterados
 
 **Tests**: none
 **Gate**: build
 **Commit**: `feat(liberdade): relabel the custom rate inputs`
+**Status**: ✅ Done
 
 ---
 

@@ -69,7 +69,7 @@ export function GoalForm({
   const uid = useId();
   const router = useRouter();
   const [values, setValues] = useState<GoalFormValues>(initial ?? blank);
-  // Custom mode opens when the saved pair matches no preset, or when the user picks "Personalizada".
+  // Custom mode opens when the saved pair matches no preset, or when the user picks "Definir taxas personalizadas".
   const [custom, setCustom] = useState(() => presetOf(initial ?? blank) === null);
   const [result, setResult] = useState<ActionResult | null>(null);
   const [pending, startTransition] = useTransition();
@@ -199,14 +199,14 @@ export function GoalForm({
           <div className="grid grid-cols-2 gap-3 pt-2">
             <RateInput
               id={field("annualRate")}
-              label="Rentabilidade real (% a.a.)"
+              label="Rentabilidade real ao ano (%)"
               value={values.annualRate}
               error={fieldErrors.annualRate}
               onChange={(text) => set("annualRate", text)}
             />
             <RateInput
               id={field("withdrawalRate")}
-              label="Taxa de retirada (% a.a.)"
+              label="Taxa de retirada anual (%)"
               value={values.withdrawalRate}
               error={fieldErrors.withdrawalRate}
               onChange={(text) => set("withdrawalRate", text)}
