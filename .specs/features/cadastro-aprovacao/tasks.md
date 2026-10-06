@@ -281,6 +281,8 @@ T14 e T20 não dependem de nada.
 
 ### T7: Repositório de usuários
 
+**Status**: ✅ Complete
+
 **What**: `usersRepo` com `createPending`, `findByEmail`, `findById`, `listForAdmin`, `transition`, `revokeSessions` e `remove`.
 **Where**: `src/lib/db/repos/users.ts`
 **Depends on**: T3, T5
@@ -294,17 +296,17 @@ T14 e T20 não dependem de nada.
 
 **Done when**:
 
-- [ ] `createPending` grava `user` `pending` e `account` com hash salgado (não a senha) na mesma transação; e-mail normalizado
-- [ ] Dois `createPending` simultâneos com o mesmo e-mail (com caixa diferente) resultam em exatamente um usuário e um `duplicate` (AC 8)
-- [ ] `createPending` com e-mail de usuário em qualquer status devolve `duplicate` sem alterar o existente (AC 7)
-- [ ] `listForAdmin` exclui o administrador, ordena `pending` primeiro e depois por `created_at` crescente
-- [ ] `transition` respeita `fromStatuses`, grava `decided_at`, devolve `wrong_state` e `not_found`; aprovar um `approved` devolve `ok` sem mudar `decided_at`
-- [ ] `revokeSessions` apaga só as sessões do usuário
-- [ ] `remove` apaga usuário, sessões, contas, categorias, `category_percent`, subcategorias, transações e objetivo dele, preserva os de outro usuário, e apaga `login_attempt` do e-mail; devolve `not_found` para id inexistente
-- [ ] Novo usuário aprovado vê vazios `categoriesRepo.list`, `transactionsRepo` e `goalsRepo` enquanto outro usuário tem dados (SIGNUP-07)
-- [ ] Teste de integração `users.int.test.ts` passa
-- [ ] Gate check passes: full
-- [ ] Test count: anterior + os novos
+- [x] `createPending` grava `user` `pending` e `account` com hash salgado (não a senha) na mesma transação; e-mail normalizado
+- [x] Dois `createPending` simultâneos com o mesmo e-mail (com caixa diferente) resultam em exatamente um usuário e um `duplicate` (AC 8)
+- [x] `createPending` com e-mail de usuário em qualquer status devolve `duplicate` sem alterar o existente (AC 7)
+- [x] `listForAdmin` exclui o administrador, ordena `pending` primeiro e depois por `created_at` crescente
+- [x] `transition` respeita `fromStatuses`, grava `decided_at`, devolve `wrong_state` e `not_found`; aprovar um `approved` devolve `ok` sem mudar `decided_at`
+- [x] `revokeSessions` apaga só as sessões do usuário
+- [x] `remove` apaga usuário, sessões, contas, categorias, `category_percent`, subcategorias, transações e objetivo dele, preserva os de outro usuário, e apaga `login_attempt` do e-mail; devolve `not_found` para id inexistente
+- [x] Novo usuário aprovado vê vazios `categoriesRepo.list`, `transactionsRepo` e `goalsRepo` enquanto outro usuário tem dados (SIGNUP-07)
+- [x] Teste de integração `users.int.test.ts` passa
+- [x] Gate check passes: full
+- [x] Test count: anterior + os novos
 
 **Tests**: integration
 **Gate**: full
