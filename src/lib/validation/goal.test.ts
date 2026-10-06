@@ -219,6 +219,7 @@ describe("goalSchema", () => {
 
     it("mensagens exatas de vazio, fora da faixa e não inteiro", () => {
       expect(errors({ retirementAge: "" }).retirementAge).toBe("Informe a idade da independência");
+      expect(errors({ retirementAge: undefined }).retirementAge).toBe("Informe a idade da independência");
       expect(errors({ retirementAge: "121" }).retirementAge).toBe("A idade da independência deve estar entre 1 e 120");
       expect(errors({ retirementAge: "60,5" }).retirementAge).toBe("A idade da independência deve ser um número inteiro");
     });

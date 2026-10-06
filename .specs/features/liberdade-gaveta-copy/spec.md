@@ -117,25 +117,25 @@ Implicit-requirement dimensions: state-transition integrity (abrir/fechar popove
 
 | Requirement ID | Story | Phase | Status |
 | -------------- | ----- | ----- | ------ |
-| LGC-01 | P1: Explicação em popover | Specify | Pending |
-| LGC-02 | P1: Explicação em popover | Specify | Pending |
-| LGC-03 | P1: Explicação em popover | Specify | Pending |
-| LGC-04 | P1: Explicação em popover | Specify | Pending |
-| LGC-05 | P1: Explicação em popover | Specify | Pending |
-| LGC-06 | P1: Explicação em popover | Specify | Pending |
-| LGC-07 | P1: Explicação em popover | Specify | Pending |
-| LGC-08 | P2: Taxas personalizadas | Specify | Pending |
-| LGC-09 | P2: Taxas personalizadas | Specify | Pending |
-| LGC-10 | P2: Taxas personalizadas | Specify | Pending |
-| LGC-11 | P2: Taxas personalizadas | Specify | Pending |
-| LGC-12 | P3: Idade da independência | Specify | Pending |
-| LGC-13 | P3: Idade da independência | Specify | Pending |
-| LGC-14 | P3: Idade da independência | Specify | Pending |
-| LGC-15 | P3: Idade da independência | Specify | Pending |
-| LGC-16 | P3: Idade da independência | Specify | Pending |
-| LGC-17 | P3: Idade da independência | Specify | Pending |
+| LGC-01 | P1: Explicação em popover | Specify | Verified |
+| LGC-02 | P1: Explicação em popover | Specify | Verified |
+| LGC-03 | P1: Explicação em popover | Specify | Verified |
+| LGC-04 | P1: Explicação em popover | Specify | Verified |
+| LGC-05 | P1: Explicação em popover | Specify | Verified |
+| LGC-06 | P1: Explicação em popover | Specify | Verified |
+| LGC-07 | P1: Explicação em popover | Specify | Verified |
+| LGC-08 | P2: Taxas personalizadas | Specify | Verified |
+| LGC-09 | P2: Taxas personalizadas | Specify | Verified |
+| LGC-10 | P2: Taxas personalizadas | Specify | Verified |
+| LGC-11 | P2: Taxas personalizadas | Specify | Verified |
+| LGC-12 | P3: Idade da independência | Specify | Verified |
+| LGC-13 | P3: Idade da independência | Specify | Verified |
+| LGC-14 | P3: Idade da independência | Specify | Verified |
+| LGC-15 | P3: Idade da independência | Specify | Verified |
+| LGC-16 | P3: Idade da independência | Specify | Verified |
+| LGC-17 | P3: Idade da independência | Specify | Verified |
 
-**Coverage:** 17 total, 0 mapped to tasks, 17 unmapped ⚠️
+**Coverage:** 17 total, 17 mapped to tasks, 0 unmapped
 
 ---
 

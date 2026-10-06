@@ -138,6 +138,12 @@ Seen once or not yet corroborated. Tracked, not trusted.
 - evidence: validation.md AJL-24 vs Independent Test (rate-toggle.tsx:55 wraps at 360 px) (ui)
 - last seen: 2026-10-05T20:49:13Z
 
+### L-022 - Assert the missing-field (undefined) error message of every validated field, not only its empty-string message
+- signal: `surviving_mutant` · recurrence: 1 feature(s) · scope: `validation` · harmful: 0
+- features: liberdade-gaveta-copy
+- evidence: goal.ts:54 (mutante 13, validation.md) (validation)
+- last seen: 2026-10-06T14:15:18Z
+
 ## Quarantined (failed when applied - ignore)
 
 A confirmed lesson that recurred alongside failure. Kept for the maintainer to review.
