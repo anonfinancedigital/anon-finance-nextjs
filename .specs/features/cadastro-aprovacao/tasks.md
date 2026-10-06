@@ -191,6 +191,8 @@ T14 e T20 não dependem de nada.
 
 ### T4: Coluna `status` em `user` com migração
 
+**Status**: ✅ Complete
+
 **What**: Colunas `status` (padrão `pending`, CHECK nos 4 valores) e `decided_at` em `user`, e migração que marca os usuários existentes como `approved`.
 **Where**: `src/lib/db/auth-schema.ts` (a migração em `drizzle/` é gerada por `npm run db:generate` e editada para incluir o `UPDATE`)
 **Depends on**: T1
@@ -204,11 +206,11 @@ T14 e T20 não dependem de nada.
 
 **Done when**:
 
-- [ ] Comentário no arquivo avisa que a coluna é manual e que regenerar o schema do Better Auth a apagaria
-- [ ] Migração contém `ALTER TABLE ... ADD status`, `ADD decided_at` e `UPDATE "user" SET status = 'approved'` antes de qualquer inserção nova
-- [ ] Teste de integração em `schema.int.test.ts`: usuário inserido sem status fica `pending`; status fora dos 4 valores é rejeitado pelo banco
-- [ ] Gate check passes: full
-- [ ] Test count: contagem anterior + os novos, nenhum removido
+- [x] Comentário no arquivo avisa que a coluna é manual e que regenerar o schema do Better Auth a apagaria
+- [x] Migração contém `ALTER TABLE ... ADD status`, `ADD decided_at` e `UPDATE "user" SET status = 'approved'` antes de qualquer inserção nova
+- [x] Teste de integração em `schema.int.test.ts`: usuário inserido sem status fica `pending`; status fora dos 4 valores é rejeitado pelo banco
+- [x] Gate check passes: full
+- [x] Test count: contagem anterior + os novos, nenhum removido
 
 **Tests**: integration
 **Gate**: full

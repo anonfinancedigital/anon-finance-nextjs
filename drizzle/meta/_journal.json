@@ -85,6 +85,13 @@
       "when": 1791225629678,
       "tag": "0011_withdrawal_rate",
       "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1791326427379,
+      "tag": "0012_user_status",
+      "breakpoints": true
     }
   ]
 }

@@ -455,3 +455,89 @@ describe("category soft delete name reuse", () => {
     expect(await db.$count(category, eq(category.userId, userId))).toBe(2);
   });
 });
+
+describe("user status", () => {
+  it("defaults to pending when a user is inserted without status", async () => {
+    const id = randomUUID();
+    await pool.query(`INSERT INTO "user" ("id", "name", "email") VALUES ($1, 'Teste', $2)`, [
+      id,
+      `${id}@example.com`,
+    ]);
+    const [row] = await db.select().from(user).where(eq(user.id, id));
+    expect(row.status).toBe("pending");
+    expect(row.decidedAt).toBeNull();
+  });
+
+  it("accepts each of the four statuses", async () => {
+    for (const status of ["pending", "approved", "rejected", "revoked"] as const) {
+      const id = randomUUID();
+      await db.insert(user).values({ id, name: "Teste", email: `${id}@example.com`, status });
+    }
+    const statuses = (await db.select({ status: user.status }).from(user)).map((r) => r.status);
+    expect(statuses.sort()).toEqual(["approved", "pending", "rejected", "revoked"]);
+  });
+
+  it("rejects a status outside the four values", async () => {
+    const id = randomUUID();
+    const query = pool.query(
+      `INSERT INTO "user" ("id", "name", "email", "status") VALUES ($1, 'Teste', $2, 'banned')`,
+      [id, `${id}@example.com`],
+    );
+    expect(await pgErrorCode(query)).toBe(CHECK_VIOLATION);
+    expect(await db.$count(user)).toBe(0);
+  });
+});
+
+describe("migration 0012 user status", () => {
+  const scratch = "migration_0012_test";
+  const journal: { entries: { tag: string }[] } = JSON.parse(
+    readFileSync("drizzle/meta/_journal.json", "utf8"),
+  );
+  const statementsOf = (tag: string) =>
+    readFileSync(`drizzle/${tag}.sql`, "utf8")
+      .replaceAll('"public".', `"${scratch}".`)
+      .split("--> statement-breakpoint")
+      .map((s) => s.trim())
+      .filter(Boolean);
+  const tags = journal.entries.map((e) => e.tag);
+  const target = tags.indexOf("0012_user_status");
+
+  it("marks every existing user as approved and leaves new inserts pending", async () => {
+    const client = await pool.connect();
+    try {
+      await client.query(`DROP SCHEMA IF EXISTS "${scratch}" CASCADE`);
+      await client.query(`CREATE SCHEMA "${scratch}"`);
+      await client.query(`SET search_path TO "${scratch}"`);
+      for (const tag of tags.slice(0, target)) {
+        for (const statement of statementsOf(tag)) await client.query(statement);
+      }
+      for (const email of ["a@example.com", "b@example.com"]) {
+        await client.query(`INSERT INTO "user" (id, name, email) VALUES ($1, 'Antigo', $2)`, [
+          randomUUID(),
+          email,
+        ]);
+      }
+
+      for (const statement of statementsOf(tags[target])) await client.query(statement);
+
+      const existing = await client.query<{ status: string; decided_at: Date | null }>(
+        `SELECT status, decided_at FROM "user"`,
+      );
+      expect(existing.rows).toEqual([
+        { status: "approved", decided_at: null },
+        { status: "approved", decided_at: null },
+      ]);
+      await client.query(`INSERT INTO "user" (id, name, email) VALUES ($1, 'Novo', 'c@example.com')`, [
+        randomUUID(),
+      ]);
+      const { rows } = await client.query<{ status: string }>(
+        `SELECT status FROM "user" WHERE email = 'c@example.com'`,
+      );
+      expect(rows[0].status).toBe("pending");
+    } finally {
+      await client.query(`DROP SCHEMA IF EXISTS "${scratch}" CASCADE`);
+      await client.query("SET search_path TO DEFAULT");
+      client.release();
+    }
+  });
+});
