@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useActionState } from "react";
 import { signInAction } from "@/actions/auth";
 import { Button } from "@/components/ui/button";
@@ -33,6 +34,11 @@ export function LoginForm() {
       <Button type="submit" className="w-full" disabled={pending}>
         Entrar
       </Button>
+      <p className="text-center text-sm">
+        <Link href="/cadastro" className="text-link hover:underline">
+          Criar conta
+        </Link>
+      </p>
     </form>
   );
 }

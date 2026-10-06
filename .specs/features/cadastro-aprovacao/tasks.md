@@ -605,6 +605,8 @@ T14 e T20 não dependem de nada.
 
 ### T17: Link "Criar conta" no login
 
+**Status**: ✅ Complete
+
 **What**: Adicionar o link "Criar conta" para `/cadastro` abaixo do botão Entrar.
 **Where**: `src/app/login/login-form.tsx`
 **Depends on**: T16
@@ -618,9 +620,9 @@ T14 e T20 não dependem de nada.
 
 **Done when**:
 
-- [ ] Link "Criar conta" visível no login e aponta para `/cadastro`
-- [ ] Gate check passes: build
-- [ ] Test count: igual ao do T16
+- [x] Link "Criar conta" visível no login e aponta para `/cadastro`
+- [x] Gate check passes: build
+- [x] Test count: igual ao do T16
 
 **Tests**: none
 **Gate**: build

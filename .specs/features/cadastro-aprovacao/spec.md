@@ -161,7 +161,7 @@ Hoje o cadastro público está desligado e a única conta nasce de seed (`ADMIN_
 
 | Requirement ID | Story | Phase | Status |
 | -------------- | ----- | ----- | ------ |
-| SIGNUP-01 | P1: Cadastro e bloqueio (AC 1-8, 14-15) | Execute | In Progress |
+| SIGNUP-01 | P1: Cadastro e bloqueio (AC 1-8, 14-15) | Execute | Implemented |
 | SIGNUP-02 | P1: Cadastro e bloqueio (AC 9-12) | Execute | Implemented |
 | SIGNUP-03 | P1: Cadastro e bloqueio (AC 13-14) | Execute | Implemented |
 | SIGNUP-04 | P1: Cadastro e bloqueio (AC 17-18) | Execute | Implemented |
