@@ -80,17 +80,26 @@ async function listForAdmin(adminEmail: string): Promise<AdminUserRow[]> {
 /**
  * Applies the admin decision when the user is in a valid origin status, stamping `decided_at`.
  * The admin is not a target (`not_found`). Approving an approved user is a no-op `ok`.
+ * With `revokeSessions`, the user's sessions end in the same transaction as the status change.
  */
-async function transition(id: string, action: UserAction): Promise<"ok" | "not_found" | "wrong_state"> {
+async function transition(
+  id: string,
+  action: UserAction,
+  options: { revokeSessions?: boolean } = {},
+): Promise<"ok" | "not_found" | "wrong_state"> {
   const current = await findById(id);
   if (!current || isAdminEmail(current.email)) return "not_found";
 
-  const updated = await db
-    .update(user)
-    .set({ status: targetStatus(action), decidedAt: new Date() })
-    .where(and(eq(user.id, id), inArray(user.status, fromStatuses(action))))
-    .returning({ id: user.id });
-  if (updated.length > 0) return "ok";
+  const updated = await db.transaction(async (tx) => {
+    const rows = await tx
+      .update(user)
+      .set({ status: targetStatus(action), decidedAt: new Date() })
+      .where(and(eq(user.id, id), inArray(user.status, fromStatuses(action))))
+      .returning({ id: user.id });
+    if (rows.length > 0 && options.revokeSessions) await tx.delete(session).where(eq(session.userId, id));
+    return rows.length > 0;
+  });
+  if (updated) return "ok";
 
   // No row matched: re-read, since the status may have changed since the first read.
   const now = await findById(id);

@@ -760,6 +760,8 @@ T22 → T24
 
 ### T22: Decisão atômica com exclusão das sessões
 
+**Status**: ✅ Complete
+
 **What**: `transition` aceita revogar as sessões na mesma transação da mudança de status, para rejeitar e revogar serem tudo ou nada.
 **Where**: `src/lib/db/repos/users.ts`
 **Depends on**: None
@@ -773,12 +775,12 @@ T22 → T24
 
 **Done when**:
 
-- [ ] `transition(id, action, { revokeSessions: true })` grava o status, `decided_at` e apaga as sessões do usuário na mesma transação
-- [ ] Se a exclusão das sessões falhar, o status e `decided_at` ficam como antes (teste com falha injetada na segunda escrita, afirmando o status no banco)
-- [ ] Sem a opção, o comportamento atual não muda; `revokeSessions` isolado continua exportado
-- [ ] Testes novos em `users.int.test.ts` passam
-- [ ] Gate check passes: full
-- [ ] Test count: anterior + os novos
+- [x] `transition(id, action, { revokeSessions: true })` grava o status, `decided_at` e apaga as sessões do usuário na mesma transação
+- [x] Se a exclusão das sessões falhar, o status e `decided_at` ficam como antes (teste com falha injetada na segunda escrita, afirmando o status no banco)
+- [x] Sem a opção, o comportamento atual não muda; `revokeSessions` isolado continua exportado
+- [x] Testes novos em `users.int.test.ts` passam
+- [x] Gate check passes: full
+- [x] Test count: anterior + os novos
 
 **Tests**: integration
 **Gate**: full

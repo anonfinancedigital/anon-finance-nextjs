@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { verifyPassword } from "better-auth/crypto";
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
 import type { UserStatus } from "@/lib/domain/user-status";
 import { monthRange } from "@/lib/domain/month";
@@ -198,6 +198,73 @@ describe("usersRepo.transition", () => {
 
     expect(await usersRepo.transition(id, "revoke")).toBe("not_found");
     expect(await userRow(id)).toEqual(before);
+  });
+});
+
+/** Runs `fn` while every DELETE on `table` raises, dropping the trigger afterwards. */
+async function withFailingDelete<T>(table: string, fn: () => Promise<T>): Promise<T> {
+  await db.execute(
+    sql.raw(`CREATE FUNCTION fail_delete() RETURNS trigger LANGUAGE plpgsql AS $$
+      BEGIN RAISE EXCEPTION 'injected delete failure'; END $$`),
+  );
+  await db.execute(
+    sql.raw(`CREATE TRIGGER fail_delete BEFORE DELETE ON "${table}"
+      FOR EACH STATEMENT EXECUTE FUNCTION fail_delete()`),
+  );
+  try {
+    return await fn();
+  } finally {
+    await db.execute(sql.raw(`DROP TRIGGER fail_delete ON "${table}"`));
+    await db.execute(sql.raw("DROP FUNCTION fail_delete()"));
+  }
+}
+
+describe("usersRepo.transition with revokeSessions", () => {
+  it.each([
+    ["pending", "reject", "rejected"],
+    ["approved", "revoke", "revoked"],
+  ] as const)(
+    "moves %s through %s to %s, stamps decided_at and ends only that user's sessions",
+    async (status, action, to) => {
+      const before = new Date(Date.now() - 1000);
+      const target = await createSignedInUser(undefined, status);
+      const other = await createSignedInUser();
+
+      expect(await usersRepo.transition(target.userId, action, { revokeSessions: true })).toBe("ok");
+
+      const row = await userRow(target.userId);
+      expect(row.status).toBe(to);
+      expect(row.decidedAt!.getTime()).toBeGreaterThanOrEqual(before.getTime());
+      expect(await db.$count(session, eq(session.userId, target.userId))).toBe(0);
+      expect(await db.$count(session, eq(session.userId, other.userId))).toBe(1);
+    },
+  );
+
+  it.each([
+    ["pending", "reject"],
+    ["approved", "revoke"],
+  ] as const)(
+    "keeps the %s status, decided_at and sessions when ending the sessions fails on %s",
+    async (status, action) => {
+      const target = await createSignedInUser(undefined, status);
+      const before = await userRow(target.userId);
+
+      await withFailingDelete("session", () =>
+        expect(usersRepo.transition(target.userId, action, { revokeSessions: true })).rejects.toThrow(),
+      );
+
+      expect(await userRow(target.userId)).toEqual(before);
+      expect(await db.$count(session, eq(session.userId, target.userId))).toBe(1);
+    },
+  );
+
+  it("keeps the sessions without the option", async () => {
+    const target = await createSignedInUser(undefined, "pending");
+
+    expect(await usersRepo.transition(target.userId, "reject")).toBe("ok");
+
+    expect((await userRow(target.userId)).status).toBe("rejected");
+    expect(await db.$count(session, eq(session.userId, target.userId))).toBe(1);
   });
 });
 
