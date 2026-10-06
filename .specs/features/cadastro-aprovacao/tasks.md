@@ -98,6 +98,8 @@ T14 e T20 não dependem de nada.
 
 ### T1: Domínio de status do usuário
 
+**Status**: ✅ Complete
+
 **What**: Tipos `UserStatus` e `UserAction`, transições válidas, `availableActions` e mensagens de bloqueio do login.
 **Where**: `src/lib/domain/user-status.ts`
 **Depends on**: None
@@ -111,12 +113,12 @@ T14 e T20 não dependem de nada.
 
 **Done when**:
 
-- [ ] `fromStatuses`/`targetStatus` seguem as transições do spec (approve: pending, rejected, revoked → approved; reject: pending → rejected; revoke: approved → revoked)
-- [ ] `availableActions` devolve: approved → revoke, delete; pending → approve, reject, delete; rejected e revoked → approve, delete
-- [ ] `LOGIN_BLOCK_MESSAGE` tem os textos exatos: "Sua conta está aguardando aprovação do administrador", "Seu cadastro não foi aprovado", "Seu acesso foi revogado"
-- [ ] Teste unitário `user-status.test.ts` cobre cada status e cada ação, incluindo origem inválida
-- [ ] Gate check passes: quick
-- [ ] Test count: testes do arquivo novo passam (nenhum teste existente removido)
+- [x] `fromStatuses`/`targetStatus` seguem as transições do spec (approve: pending, rejected, revoked → approved; reject: pending → rejected; revoke: approved → revoked)
+- [x] `availableActions` devolve: approved → revoke, delete; pending → approve, reject, delete; rejected e revoked → approve, delete
+- [x] `LOGIN_BLOCK_MESSAGE` tem os textos exatos: "Sua conta está aguardando aprovação do administrador", "Seu cadastro não foi aprovado", "Seu acesso foi revogado"
+- [x] Teste unitário `user-status.test.ts` cobre cada status e cada ação, incluindo origem inválida
+- [x] Gate check passes: quick
+- [x] Test count: testes do arquivo novo passam (nenhum teste existente removido)
 
 **Tests**: unit
 **Gate**: quick
