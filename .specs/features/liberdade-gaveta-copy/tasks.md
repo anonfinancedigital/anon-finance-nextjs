@@ -157,14 +157,15 @@ T5 → T6 → T7 → T8
 
 **Done when**:
 
-- [ ] `grep` por `HOW_WE_CALCULATE` e `heroFacts` em `src` não encontra nada
-- [ ] Os testes que apontavam só para o código removido saem junto; os de `howWeCalculate` seguem
-- [ ] Gate quick passa
-- [ ] Test count: queda igual ao número de testes removidos de `HOW_WE_CALCULATE`/`heroFacts`, informada no commit
+- [x] `grep` por `HOW_WE_CALCULATE` e `heroFacts` em `src` não encontra nada
+- [x] Os testes que apontavam só para o código removido saem junto; os de `howWeCalculate` seguem
+- [x] Gate quick passa
+- [x] Test count: 624 → 618 (6 testes removidos: 3 de `heroFacts` e 3 de `HOW_WE_CALCULATE`)
 
 **Tests**: unit
 **Gate**: quick
 **Commit**: `refactor(liberdade): drop the old how-we-calculate copy`
+**Status**: ✅ Done
 
 ---
 
