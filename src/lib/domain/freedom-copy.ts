@@ -1,5 +1,5 @@
 import type { Checkpoint, GoalSummary } from "./freedom";
-import { formatBRL } from "./money";
+import { formatBRL, formatCompactBRL } from "./money";
 
 /** Título do seletor de cenários e nome acessível do radiogroup. */
 export const RATE_TITLE = "Rentabilidade real esperada";
@@ -36,4 +36,32 @@ export function checkpointLabel(checkpoint: Checkpoint, isLast: boolean): string
 /** Frase do popover: renda mensal e anual, retirada inicial e o patrimônio-alvo, todos do resumo. */
 export function howWeCalculate(summary: GoalSummary): string {
   return `Com uma renda de ${formatBRL(summary.monthlyIncomeCents)}/mês (${formatBRL(summary.monthlyIncomeCents * 12)}/ano) e uma taxa de retirada inicial de ${perYear(summary.withdrawalRateBp)}, o patrimônio-alvo é de ${formatBRL(summary.targetCents)}.`;
+}
+
+const plural = (n: number, one: string, many: string) => `${n} ${n === 1 ? one : many}`;
+
+/** "1 ano e 2 meses", "3 anos", "5 meses"; "0 meses" quando não resta prazo. */
+export function formatTerm(months: number): string {
+  const years = Math.floor(months / 12);
+  const rest = months % 12;
+  if (years === 0) return plural(rest, "mês", "meses");
+  if (rest === 0) return plural(years, "ano", "anos");
+  return `${plural(years, "ano", "anos")} e ${plural(rest, "mês", "meses")}`;
+}
+
+/** Linha do card de aporte quando o prazo acabou com o guardado na meta. */
+export const PLAN_REACHED = "Meta alcançada";
+
+/**
+ * Linhas sob o aporte mensal. Com prazo: a meta compacta com a idade do ápice e o tempo até lá.
+ * Sem prazo: `{ reached: true }` se o aporte é 0 (meta alcançada); `null` no prazo encerrado.
+ */
+export function planLines(summary: GoalSummary): { reach: string; term: string } | { reached: true } | null {
+  if (summary.months > 0) {
+    return {
+      reach: `para alcançar ${formatCompactBRL(summary.targetCents)} aos ${summary.retirementAge} anos`,
+      term: `Você chega ao Ápice em: ${formatTerm(summary.months)}`,
+    };
+  }
+  return summary.monthlyCents === 0 ? { reached: true } : null;
 }

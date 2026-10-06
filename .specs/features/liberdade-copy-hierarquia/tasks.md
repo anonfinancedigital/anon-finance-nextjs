@@ -136,19 +136,20 @@ T5 → T6 → T7 → T8
 
 **Done when**:
 
-- [ ] Cenário de aceite (`months` > 0): `planLines` devolve `reach` = "para alcançar R$ 4,8 mi aos 48 anos" e `term` = "Você chega ao Ápice em: 14 anos e 11 meses"
-- [ ] `months` = 12: `term` = "Você chega ao Ápice em: 1 ano"
-- [ ] `months` = 0 e `monthlyCents` = 0: devolve `{ reached: true }`; `PLAN_REACHED` = "Meta alcançada"
-- [ ] `months` = 0 e `monthlyCents` = null: devolve `null`
-- [ ] Meta alcançada com `months` > 0 (aporte R$ 0,00): devolve as duas linhas normais (edge case da spec)
-- [ ] `formatTerm` exportada do módulo de copy, com testes para "1 ano e 2 meses", "3 anos", "5 meses", "0 meses"
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
-- [ ] Test count: os testes anteriores mais os novos de `planLines` e `formatTerm` passam
+- [x] Cenário de aceite (`months` > 0): `planLines` devolve `reach` = "para alcançar R$ 4,8 mi aos 48 anos" e `term` = "Você chega ao Ápice em: 14 anos e 11 meses"
+- [x] `months` = 12: `term` = "Você chega ao Ápice em: 1 ano"
+- [x] `months` = 0 e `monthlyCents` = 0: devolve `{ reached: true }`; `PLAN_REACHED` = "Meta alcançada"
+- [x] `months` = 0 e `monthlyCents` = null: devolve `null`
+- [x] Meta alcançada com `months` > 0 (aporte R$ 0,00): devolve as duas linhas normais (edge case da spec)
+- [x] `formatTerm` exportada do módulo de copy, com testes para "1 ano e 2 meses", "3 anos", "5 meses", "0 meses"
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Test count: os testes anteriores mais os novos de `planLines` e `formatTerm` passam
 
 **Tests**: unit
 **Gate**: quick
 
 **Commit**: `feat(liberdade): add plan lines copy for the monthly deposit card`
+**Status**: ✅ Done
 
 ---
 
