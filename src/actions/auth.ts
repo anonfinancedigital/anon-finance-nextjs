@@ -4,15 +4,17 @@ import { APIError } from "better-auth/api";
 import { verifyPassword } from "better-auth/crypto";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import type { ActionResult } from "@/lib/action-result";
+import { type ActionResult, invalidInput, SAVE_FAILED } from "@/lib/action-result";
 import { auth } from "@/lib/auth";
 import { loginAttemptsRepo } from "@/lib/db/repos/login-attempts";
 import { usersRepo } from "@/lib/db/repos/users";
 import { LOGIN_BLOCK_MESSAGE } from "@/lib/domain/user-status";
+import { signupSchema } from "@/lib/validation/signup";
 
 const MAX_FAILURES = 5;
 const WINDOW_MS = 15 * 60_000;
 const INVALID_CREDENTIALS = "E-mail ou senha inválidos";
+const DUPLICATE_EMAIL = "Este e-mail já está cadastrado";
 
 /**
  * Minutes until the e-mail is released, or 0 when it is not locked.
@@ -72,6 +74,28 @@ export async function signInAction(
 
   await loginAttemptsRepo.clear(email);
   redirect("/");
+}
+
+/** Signup form action (useActionState): creates a pending user, with no session. */
+export async function signUpAction(
+  _prev: ActionResult | undefined,
+  formData: FormData,
+): Promise<ActionResult> {
+  const parsed = signupSchema.safeParse({
+    name: formData.get("name") ?? "",
+    email: formData.get("email") ?? "",
+    password: formData.get("password") ?? "",
+  });
+  if (!parsed.success) return invalidInput(parsed.error);
+
+  try {
+    const result = await usersRepo.createPending(parsed.data);
+    if (!result.ok) return { ok: false, error: DUPLICATE_EMAIL, fieldErrors: { email: DUPLICATE_EMAIL } };
+  } catch (error) {
+    console.error("signUpAction", error);
+    return { ok: false, error: SAVE_FAILED };
+  }
+  return { ok: true };
 }
 
 export async function signOutAction(): Promise<void> {

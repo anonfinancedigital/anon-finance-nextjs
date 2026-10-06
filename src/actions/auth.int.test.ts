@@ -1,12 +1,13 @@
 import { eq } from "drizzle-orm";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { auth } from "@/lib/auth";
-import { session } from "@/lib/db/auth-schema";
+import { session, user } from "@/lib/db/auth-schema";
 import { db } from "@/lib/db/client";
 import { loginAttemptsRepo } from "@/lib/db/repos/login-attempts";
+import { usersRepo } from "@/lib/db/repos/users";
 import { createSignedInUser, insertCredentialUser, TEST_PASSWORD } from "@/test/auth";
 import { setupTestDb } from "@/test/db";
-import { signInAction, signOutAction } from "./auth";
+import { signInAction, signOutAction, signUpAction } from "./auth";
 
 const request = vi.hoisted(() => ({ headers: new Headers() }));
 
@@ -195,6 +196,76 @@ describe("signInAction for a user who is not approved", () => {
       ok: false,
       error: "Muitas tentativas. Tente novamente em 15 minutos",
     });
+  });
+});
+
+describe("signUpAction", () => {
+  const DUPLICATE = "Este e-mail já está cadastrado";
+  const VALID = { name: "  Ana  ", email: " Ana@X.com ", password: "12345678" };
+
+  function signupForm(input: { name: string; email: string; password: string }) {
+    const data = new FormData();
+    data.set("name", input.name);
+    data.set("email", input.email);
+    data.set("password", input.password);
+    return data;
+  }
+
+  const signUp = (input: Partial<typeof VALID> = {}) =>
+    signUpAction(undefined, signupForm({ ...VALID, ...input }));
+
+  const usersWith = (email: string) => db.select().from(user).where(eq(user.email, email));
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it("creates a pending user without a session and returns ok", async () => {
+    expect(await signUp()).toEqual({ ok: true });
+
+    const [created] = await usersWith("ana@x.com");
+    expect(created).toMatchObject({ name: "Ana", email: "ana@x.com", status: "pending" });
+    expect(await sessionsOf(created.id)).toBe(0);
+    expect(redirect).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    ["name", { name: "   " }, "Informe seu nome"],
+    ["name", { name: "a".repeat(81) }, "O nome deve ter no máximo 80 caracteres"],
+    ["email", { email: "ana@" }, "Informe um e-mail válido"],
+    ["password", { password: "1234567" }, "A senha deve ter pelo menos 8 caracteres"],
+    ["password", { password: "1".repeat(129) }, "A senha deve ter no máximo 128 caracteres"],
+  ] as const)("rejects an invalid %s with %j and creates no user", async (field, input, message) => {
+    expect(await signUp(input)).toEqual({ ok: false, error: message, fieldErrors: { [field]: message } });
+
+    expect(await db.$count(user)).toBe(1); // only the user created in beforeEach
+  });
+
+  it.each([["pending"], ["approved"], ["rejected"], ["revoked"]] as const)(
+    "rejects an e-mail already used by a %s user, in another case, without changing it",
+    async (status) => {
+      const existingId = await insertCredentialUser("ana@x.com", TEST_PASSWORD, status);
+      const [before] = await usersWith("ana@x.com");
+
+      expect(await signUp({ name: "Outra", email: "ANA@x.COM" })).toEqual({
+        ok: false,
+        error: DUPLICATE,
+        fieldErrors: { email: DUPLICATE },
+      });
+
+      const after = await usersWith("ana@x.com");
+      expect(after).toEqual([before]);
+      expect(after[0].id).toBe(existingId);
+    },
+  );
+
+  it("returns the save error on a database failure and creates no user", async () => {
+    vi.spyOn(usersRepo, "createPending").mockRejectedValueOnce(new Error("connection refused"));
+    vi.spyOn(console, "error").mockImplementation(() => {});
+
+    expect(await signUp()).toEqual({ ok: false, error: "Não foi possível salvar. Tente novamente" });
+
+    expect(await usersWith("ana@x.com")).toEqual([]);
   });
 });
 

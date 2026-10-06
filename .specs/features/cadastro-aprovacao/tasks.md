@@ -414,6 +414,8 @@ T14 e T20 não dependem de nada.
 
 ### T11: Ação de cadastro
 
+**Status**: ✅ Complete
+
 **What**: `signUpAction` valida, cria o usuário `pending` e devolve sucesso ou erros por campo.
 **Where**: `src/actions/auth.ts`
 **Depends on**: T2, T7, T10
@@ -427,13 +429,13 @@ T14 e T20 não dependem de nada.
 
 **Done when**:
 
-- [ ] Entrada válida cria usuário `pending`, não cria sessão e devolve `{ ok: true }`
-- [ ] Cada erro de validação devolve a mensagem exata do spec em `fieldErrors` do campo certo e não cria usuário
-- [ ] E-mail já existente (qualquer status, outra caixa) devolve "Este e-mail já está cadastrado" em `fieldErrors.email`, sem alterar o usuário
-- [ ] Falha de banco devolve "Não foi possível salvar. Tente novamente"
-- [ ] Testes novos em `auth.int.test.ts` passam
-- [ ] Gate check passes: full
-- [ ] Test count: anterior + os novos
+- [x] Entrada válida cria usuário `pending`, não cria sessão e devolve `{ ok: true }`
+- [x] Cada erro de validação devolve a mensagem exata do spec em `fieldErrors` do campo certo e não cria usuário
+- [x] E-mail já existente (qualquer status, outra caixa) devolve "Este e-mail já está cadastrado" em `fieldErrors.email`, sem alterar o usuário
+- [x] Falha de banco devolve "Não foi possível salvar. Tente novamente"
+- [x] Testes novos em `auth.int.test.ts` passam
+- [x] Gate check passes: full
+- [x] Test count: anterior + os novos
 
 **Tests**: integration
 **Gate**: full
