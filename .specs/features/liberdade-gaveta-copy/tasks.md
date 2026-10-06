@@ -184,14 +184,15 @@ T5 → T6 → T7 → T8
 
 **Done when**:
 
-- [ ] A gaveta mostra o ícone e "Definir taxas personalizadas", sem a palavra solta "Personalizada"
-- [ ] Com Personalizada ativa, nenhum perfil fica marcado e o botão tem `aria-pressed="true"`
-- [ ] Gate build passa
-- [ ] Test count: testes existentes inalterados
+- [x] A gaveta mostra o ícone e "Definir taxas personalizadas", sem a palavra solta "Personalizada"
+- [x] Com Personalizada ativa, nenhum perfil fica marcado e o botão tem `aria-pressed="true"`
+- [x] Gate build passa
+- [x] Test count: testes existentes inalterados
 
 **Tests**: none
 **Gate**: build
 **Commit**: `feat(liberdade): turn Personalizada into a clear settings button`
+**Status**: ✅ Done
 
 ---
 

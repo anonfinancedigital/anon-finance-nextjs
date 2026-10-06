@@ -1,5 +1,6 @@
 "use client";
 
+import { Settings } from "lucide-react";
 import { RadioGroup as RadioGroupPrimitive } from "radix-ui";
 import { RadioGroup } from "@/components/ui/radio-group";
 import { PRESET_RATES } from "@/lib/domain/freedom";
@@ -19,7 +20,7 @@ const options = PRESET_RATES.map((preset, i) => ({
 
 /**
  * Three equal profile buttons (radiogroup named by RATE_TITLE) with the accumulation rate and the
- * withdrawal rate, plus the "Personalizada" text button below. With the custom option active no
+ * withdrawal rate, plus the "Definir taxas personalizadas" text button below. With the custom option active no
  * profile is highlighted.
  */
 export function RateToggle({
@@ -61,11 +62,12 @@ export function RateToggle({
         aria-pressed={customActive}
         onClick={onCustom}
         className={cn(
-          "cursor-pointer rounded-md text-sm text-muted-foreground underline-offset-4 outline-none hover:underline focus-visible:ring-2 focus-visible:ring-primary/30",
+          "inline-flex cursor-pointer items-center gap-1.5 rounded-md text-sm text-muted-foreground underline-offset-4 outline-none hover:underline focus-visible:ring-2 focus-visible:ring-primary/30",
           customActive && "font-medium text-link",
         )}
       >
-        Personalizada
+        <Settings aria-hidden className="size-4" />
+        Definir taxas personalizadas
       </button>
     </div>
   );
