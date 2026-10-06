@@ -160,6 +160,8 @@ T14 e T20 não dependem de nada.
 
 ### T3: Identidade do administrador
 
+**Status**: ✅ Complete
+
 **What**: `isAdminEmail(email)` comparando com `ADMIN_EMAIL` normalizado.
 **Where**: `src/lib/admin.ts`
 **Depends on**: None
@@ -173,12 +175,12 @@ T14 e T20 não dependem de nada.
 
 **Done when**:
 
-- [ ] Igual ao `ADMIN_EMAIL` ignorando caixa e espaços → true
-- [ ] E-mail diferente → false
-- [ ] `ADMIN_EMAIL` ausente ou vazio → false para qualquer e-mail (edge case do spec)
-- [ ] Teste unitário `admin.test.ts` passa
-- [ ] Gate check passes: quick
-- [ ] Test count: testes do arquivo novo passam
+- [x] Igual ao `ADMIN_EMAIL` ignorando caixa e espaços → true
+- [x] E-mail diferente → false
+- [x] `ADMIN_EMAIL` ausente ou vazio → false para qualquer e-mail (edge case do spec)
+- [x] Teste unitário `admin.test.ts` passa
+- [x] Gate check passes: quick
+- [x] Test count: testes do arquivo novo passam
 
 **Tests**: unit
 **Gate**: quick
