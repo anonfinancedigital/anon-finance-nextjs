@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { summarize, type Checkpoint } from "./freedom";
-import { checkpointLabel, formatRate, heroFacts, heroPill, HOW_WE_CALCULATE, RATE_HINT, RATE_TITLE } from "./freedom-copy";
+import { checkpointLabel, formatRate, heroFacts, heroPill, HOW_DISCLAIMER, HOW_TITLE, HOW_WE_CALCULATE, howWeCalculate, RATE_HINT, RATE_TITLE } from "./freedom-copy";
 
 const normalize = (s: string) => s.replace(/\s/g, " ");
 
@@ -109,5 +109,27 @@ describe("heroPill", () => {
   it("renda R$ 20.000 e retirada 6% a.a.", () => {
     const summary = summarize({ ...goal, annualRateBp: 800, withdrawalRateBp: 600 }, now);
     expect(normalize(heroPill(summary))).toBe("Gera R$ 20.000,00/mês com retirada de 6% a.a.");
+  });
+});
+
+describe("howWeCalculate", () => {
+  it("renda R$ 20.000, retirada 6% e meta R$ 4.000.000", () => {
+    const summary = summarize({ ...goal, annualRateBp: 800, withdrawalRateBp: 600 }, now);
+    expect(summary.targetCents).toBe(400_000_000);
+    expect(normalize(howWeCalculate(summary))).toBe(
+      "Com uma renda de R$ 20.000,00/mês (R$ 240.000,00/ano) e uma taxa de retirada segura de 6% a.a., seu patrimônio precisa ser de R$ 4.000.000,00 para perpetuar a renda sem consumir o principal investido.",
+    );
+  });
+
+  it("retirada de 650 pb sai com vírgula decimal", () => {
+    const summary = summarize({ ...goal, annualRateBp: 800, withdrawalRateBp: 650 }, now);
+    expect(howWeCalculate(summary)).toContain("taxa de retirada segura de 6,5% a.a.");
+  });
+
+  it("título e aviso do popover", () => {
+    expect(HOW_TITLE).toBe("Como chegamos a esse número:");
+    expect(HOW_DISCLAIMER).toBe(
+      "Simulação com base em rentabilidade real (líquida de inflação). Não representa garantia de rendimentos.",
+    );
   });
 });
