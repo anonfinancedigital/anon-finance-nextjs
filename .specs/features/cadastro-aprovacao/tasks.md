@@ -823,6 +823,8 @@ T22 → T24
 
 ### T24: Teste da exclusão atômica
 
+**Status**: ✅ Complete
+
 **What**: Teste de repositório que falha uma escrita dentro da transação de `remove` e prova que usuário e dados continuam (mata o mutante M19).
 **Where**: `src/lib/db/repos/users.int.test.ts`
 **Depends on**: T22
@@ -836,11 +838,11 @@ T22 → T24
 
 **Done when**:
 
-- [ ] Com uma falha injetada na limpeza de `login_attempt` (ex.: trigger temporário no banco de teste, removido no `afterEach` ou no próprio teste), `remove` rejeita e o usuário, a conta e as categorias e transações dele continuam no banco
-- [ ] O teste falha se a transação de `remove` for removida (verificado manualmente tirando `db.transaction` e confirmando a falha, depois restaurando)
-- [ ] O teste não deixa trigger nem estado para os outros testes
-- [ ] Gate check passes: full
-- [ ] Test count: anterior + 1
+- [x] Com uma falha injetada na limpeza de `login_attempt` (ex.: trigger temporário no banco de teste, removido no `afterEach` ou no próprio teste), `remove` rejeita e o usuário, a conta e as categorias e transações dele continuam no banco
+- [x] O teste falha se a transação de `remove` for removida (verificado manualmente tirando `db.transaction` e confirmando a falha, depois restaurando)
+- [x] O teste não deixa trigger nem estado para os outros testes
+- [x] Gate check passes: full
+- [x] Test count: anterior + 1
 
 **Tests**: integration
 **Gate**: full

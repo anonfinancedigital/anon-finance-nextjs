@@ -349,6 +349,26 @@ describe("usersRepo.remove", () => {
     expect(await usersRepo.createPending(ana)).toEqual({ ok: true });
   });
 
+  it("deletes nothing when a write inside the deletion fails", async () => {
+    const { userId, categoryId } = await userWithData("ana@x.com");
+    await signInCookie("ana@x.com");
+    await loginAttemptsRepo.recordFailure("ana@x.com");
+
+    await withFailingDelete("login_attempt", () => expect(usersRepo.remove(userId)).rejects.toThrow());
+
+    expect([
+      await db.$count(user, eq(user.id, userId)),
+      await db.$count(session, eq(session.userId, userId)),
+      await db.$count(account, eq(account.userId, userId)),
+      await db.$count(category, eq(category.userId, userId)),
+      await db.$count(categoryPercent, eq(categoryPercent.categoryId, categoryId)),
+      await db.$count(subcategory, eq(subcategory.userId, userId)),
+      await db.$count(transaction, eq(transaction.userId, userId)),
+      await db.$count(financialGoal, eq(financialGoal.userId, userId)),
+      await db.$count(loginAttempt, eq(loginAttempt.email, "ana@x.com")),
+    ]).toEqual([1, 1, 1, 1, 1, 1, 1, 1, 1]);
+  });
+
   it("returns not_found for an unknown id, deleting nothing", async () => {
     await userWithData("ana@x.com");
     expect(await usersRepo.remove(randomUUID())).toBe("not_found");
