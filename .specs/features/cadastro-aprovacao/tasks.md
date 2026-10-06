@@ -317,6 +317,8 @@ T14 e T20 não dependem de nada.
 
 ### T8: Configuração do Better Auth com status e hook de sessão
 
+**Status**: ✅ Complete
+
 **What**: `additionalFields.status` no usuário e hook `session.create.before` que recusa sessão de quem não está `approved`.
 **Where**: `src/lib/auth.ts`
 **Depends on**: T4, T7
@@ -330,13 +332,13 @@ T14 e T20 não dependem de nada.
 
 **Done when**:
 
-- [ ] `auth.api.signInEmail` direto (sem a nossa ação) com senha correta falha para `pending`, `rejected` e `revoked` e não cria linha em `session`
-- [ ] O mesmo para `approved` cria a sessão
-- [ ] `getSession` devolve o `status` do usuário
-- [ ] `disableSignUp` continua `true` (teste: `auth.api.signUpEmail` falha)
-- [ ] Testes de integração em `src/lib/auth.int.test.ts` passam
-- [ ] Gate check passes: full
-- [ ] Test count: anterior + os novos
+- [x] `auth.api.signInEmail` direto (sem a nossa ação) com senha correta falha para `pending`, `rejected` e `revoked` e não cria linha em `session`
+- [x] O mesmo para `approved` cria a sessão
+- [x] `getSession` devolve o `status` do usuário
+- [x] `disableSignUp` continua `true` (teste: `auth.api.signUpEmail` falha)
+- [x] Testes de integração em `src/lib/auth.int.test.ts` passam
+- [x] Gate check passes: full
+- [x] Test count: anterior + os novos
 
 **Tests**: integration
 **Gate**: full
