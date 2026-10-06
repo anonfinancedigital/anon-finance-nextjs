@@ -576,6 +576,8 @@ T14 e T20 não dependem de nada.
 
 ### T16: Página `/cadastro`
 
+**Status**: ✅ Complete
+
 **What**: Página pública com logo, `SignupForm` e link "Já tenho conta" para `/login`.
 **Where**: `src/app/cadastro/page.tsx`
 **Depends on**: T15
@@ -589,10 +591,10 @@ T14 e T20 não dependem de nada.
 
 **Done when**:
 
-- [ ] Título da aba "Cadastrar"; mesmo cartão e logo do login
-- [ ] Link "Já tenho conta" leva a `/login`
-- [ ] Gate check passes: build
-- [ ] Test count: igual ao do T15
+- [x] Título da aba "Cadastrar"; mesmo cartão e logo do login
+- [x] Link "Já tenho conta" leva a `/login`
+- [x] Gate check passes: build
+- [x] Test count: igual ao do T15
 
 **Tests**: none
 **Gate**: build
