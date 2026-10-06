@@ -129,6 +129,8 @@ T14 e T20 não dependem de nada.
 
 ### T2: Validação do cadastro
 
+**Status**: ✅ Complete
+
 **What**: `signupSchema` com nome 1-80 (trim), e-mail válido normalizado e senha 8-128, com as mensagens exatas.
 **Where**: `src/lib/validation/signup.ts`
 **Depends on**: None
@@ -142,12 +144,12 @@ T14 e T20 não dependem de nada.
 
 **Done when**:
 
-- [ ] Mensagens: "Informe seu nome", "O nome deve ter no máximo 80 caracteres", "Informe um e-mail válido", "A senha deve ter pelo menos 8 caracteres", "A senha deve ter no máximo 128 caracteres"
-- [ ] Limites testados nas bordas: nome de 80 e 81 caracteres, só espaços; senha de 7, 8, 128 e 129
-- [ ] E-mail com maiúsculas e espaços nas pontas sai normalizado
-- [ ] Teste unitário `signup.test.ts` passa
-- [ ] Gate check passes: quick
-- [ ] Test count: testes do arquivo novo passam
+- [x] Mensagens: "Informe seu nome", "O nome deve ter no máximo 80 caracteres", "Informe um e-mail válido", "A senha deve ter pelo menos 8 caracteres", "A senha deve ter no máximo 128 caracteres"
+- [x] Limites testados nas bordas: nome de 80 e 81 caracteres, só espaços; senha de 7, 8, 128 e 129
+- [x] E-mail com maiúsculas e espaços nas pontas sai normalizado
+- [x] Teste unitário `signup.test.ts` passa
+- [x] Gate check passes: quick
+- [x] Test count: testes do arquivo novo passam
 
 **Tests**: unit
 **Gate**: quick
