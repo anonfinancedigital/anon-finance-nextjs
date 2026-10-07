@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { formatBRL, formatCompactBRL, maskBRLInput, parseBRL, referenceIncomeText } from "./money";
+import { formatBRL, formatCompactBRL, formatWholeBRL, maskBRLInput, parseBRL, referenceIncomeText } from "./money";
 
 const normalize = (s: string) => s.replace(/\s/g, " ");
 
@@ -118,5 +118,23 @@ describe("formatCompactBRL", () => {
     [150_000_000, "R$ 1,5 mi"],
   ])("%d centavos viram %j", (cents, expected) => {
     expect(normalize(formatCompactBRL(cents))).toBe(expected);
+  });
+});
+
+describe("formatWholeBRL", () => {
+  it("arredonda ao real: 902719 centavos viram R$ 9.027", () => {
+    expect(normalize(formatWholeBRL(902719))).toBe("R$ 9.027");
+  });
+
+  it("meio real sobe: 902750 centavos viram R$ 9.028", () => {
+    expect(normalize(formatWholeBRL(902750))).toBe("R$ 9.028");
+  });
+
+  it("zero vira R$ 0", () => {
+    expect(normalize(formatWholeBRL(0))).toBe("R$ 0");
+  });
+
+  it("valores de milhão usam separador de milhar", () => {
+    expect(normalize(formatWholeBRL(123456789))).toBe("R$ 1.234.568");
   });
 });

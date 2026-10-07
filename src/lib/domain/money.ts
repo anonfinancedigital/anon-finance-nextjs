@@ -6,6 +6,12 @@ export const MAX_CENTS = 99_999_999_999;
 const BRL_PATTERN = /^(\d+|\d{1,3}(?:\.\d{3})+)(?:,(\d{1,2}))?$/;
 
 const brl = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" });
+const wholeBrl = new Intl.NumberFormat("pt-BR", {
+  style: "currency",
+  currency: "BRL",
+  minimumFractionDigits: 0,
+  maximumFractionDigits: 0,
+});
 const compactBrl = new Intl.NumberFormat("pt-BR", {
   style: "currency",
   currency: "BRL",
@@ -43,6 +49,11 @@ export function parseBRL(input: string, { allowZero = false }: { allowZero?: boo
 /** Formats integer cents as BRL, e.g. 123456 → "R$ 1.234,56". */
 export function formatBRL(cents: number): string {
   return brl.format(cents / 100);
+}
+
+/** Formats integer cents rounded to whole reais (half up), e.g. 902719 → "R$ 9.027". */
+export function formatWholeBRL(cents: number): string {
+  return wholeBrl.format(Math.round(cents / 100));
 }
 
 /** Formats integer cents as compact BRL, e.g. 112500000 → "R$ 1,1 mi", 37500000 → "R$ 375 mil". */

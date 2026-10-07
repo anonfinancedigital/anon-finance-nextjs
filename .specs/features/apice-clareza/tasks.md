@@ -147,15 +147,16 @@ T21 → T22 → T23 → T24 → T25 → T26
 
 **Done when**:
 
-- [ ] `formatWholeBRL(902719)` devolve "R$ 9.027"; `902750` devolve "R$ 9.028"; `0` devolve "R$ 0"
-- [ ] Valores de milhão usam separador de milhar ("R$ 1.234.568" para 123456789 centavos)
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
-- [ ] Test count: os testes anteriores de `money.test.ts` mais os novos passam
+- [x] `formatWholeBRL(902719)` devolve "R$ 9.027"; `902750` devolve "R$ 9.028"; `0` devolve "R$ 0"
+- [x] Valores de milhão usam separador de milhar ("R$ 1.234.568" para 123456789 centavos)
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Test count: os testes anteriores de `money.test.ts` mais os novos passam
 
 **Tests**: unit
 **Gate**: quick
 
 **Commit**: `feat(apice): add whole-real currency formatting`
+**Status**: ✅ Done
 
 ---
 
