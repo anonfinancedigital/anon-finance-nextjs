@@ -184,6 +184,8 @@ T8 → T9 → T10 → T11 → T12
 
 ### T5: Dar ênfase configurável ao botão de nova transação
 
+**Status**: ✅ Done
+
 **What**: Prop `emphasis?: "primary" | "secondary"` (secundário = `outline`); FAB `md:hidden`; novo `variant: "inline"` com rótulo `Registrar transação`, visível em todas as larguras.
 **Where**: `src/components/new-transaction-button.tsx`
 **Depends on**: T4
@@ -197,10 +199,10 @@ T8 → T9 → T10 → T11 → T12
 
 **Done when**:
 
-- [ ] Sem `emphasis`, o comportamento atual é mantido (preenchido)
-- [ ] `emphasis="secondary"` usa `outline` nos três formatos
-- [ ] FAB com `md:hidden`; formato `header` continua `hidden md:inline-flex`
-- [ ] Gate build passa: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
+- [x] Sem `emphasis`, o comportamento atual é mantido (preenchido)
+- [x] `emphasis="secondary"` usa `outline` nos três formatos
+- [x] FAB com `md:hidden`; formato `header` continua `hidden md:inline-flex`
+- [x] Gate build passa: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
 
 **Tests**: none
 **Gate**: build

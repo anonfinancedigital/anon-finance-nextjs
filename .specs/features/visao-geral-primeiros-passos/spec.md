@@ -149,8 +149,8 @@ Um usuário novo cai na Visão Geral (`/`) com três cards "R$ 0,00" em cores fo
 | VG-07 | P1: Estados vazios e hierarquia | Specify | Implementing |
 | VG-08 | P1: Estados vazios e hierarquia | Specify | Implementing |
 | VG-09 | P1: Estados vazios e hierarquia | Specify | Implementing |
-| VG-10 | P1: Estados vazios e hierarquia | Specify | Pending |
-| VG-11 | P1: Estados vazios e hierarquia | Specify | Pending |
+| VG-10 | P1: Estados vazios e hierarquia | Specify | Implementing |
+| VG-11 | P1: Estados vazios e hierarquia | Specify | Implementing |
 | VG-12 | P1: Estados vazios e hierarquia | Specify | Pending |
 | VG-13 | P2: Cards neutros e sem ruído | Specify | Implementing |
 | VG-14 | P2: Cards neutros e sem ruído | Specify | Implementing |
