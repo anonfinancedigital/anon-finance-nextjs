@@ -222,6 +222,44 @@ describe("chartYAxis", () => {
     });
   });
 
+  describe("com o patrimônio final real de summarize (APICE-08.2, 08.4)", () => {
+    const now = new Date("2026-07-15T15:00:00Z");
+    const scenario = (monthlyIncomeCents: number) =>
+      summarize(
+        { monthlyIncomeCents, savedCents: 0, birthDate: "1993-05-10", retirementAge: 48, annualRateBp: 600, withdrawalRateBp: 600 },
+        now,
+      );
+    const axisOf = (summary: ReturnType<typeof summarize>) =>
+      chartYAxis(summary.targetCents, summary.timeline[summary.timeline.length - 1].totalCents);
+
+    it("meta de R$ 500 mil: o final passa a meta por centavos e os ticks seguem 0 a 500 mil", () => {
+      const summary = scenario(reais(2_500));
+      expect(summary.targetCents).toBe(reais(500_000));
+      const final = summary.timeline[summary.timeline.length - 1].totalCents;
+      expect(final).toBeGreaterThan(summary.targetCents);
+      expect(axisOf(summary)).toEqual({
+        max: reais(500_000),
+        ticks: [0, 100_000, 200_000, 300_000, 400_000, 500_000].map(reais),
+      });
+    });
+
+    it("meta de R$ 20 mi: o final passa a meta por centavos e os ticks seguem 0 a 20 mi", () => {
+      const summary = scenario(reais(100_000));
+      expect(summary.targetCents).toBe(reais(20_000_000));
+      const final = summary.timeline[summary.timeline.length - 1].totalCents;
+      expect(final).toBeGreaterThan(summary.targetCents);
+      expect(axisOf(summary)).toEqual({
+        max: reais(20_000_000),
+        ticks: [0, 5_000_000, 10_000_000, 15_000_000, 20_000_000].map(reais),
+      });
+    });
+
+    it("excesso de até 0,1% da meta é ignorado; acima disso o final define o máximo", () => {
+      expect(chartYAxis(reais(500_000), reais(500_000) + reais(500)).max).toBe(reais(500_000));
+      expect(chartYAxis(reais(500_000), reais(500_000) + reais(500) + 1).max).toBe(reais(600_000));
+    });
+  });
+
   it("de 50 mil a 50 mi: de 4 a 6 ticks igualmente espaçados, começando em 0 e cobrindo o maior valor", () => {
     for (let raw = reais(50_000); raw <= reais(50_000_000); raw = Math.ceil(raw * 1.07)) {
       const { max, ticks } = chartYAxis(raw, Math.round(raw / 2));
@@ -481,7 +519,10 @@ describe("summarize com a meta pela taxa de retirada", () => {
       expect(last).toBe(projectedCents({ savedCents: 0, monthlyCents: summary.monthlyCents!, annualRateBp }, 240));
       expect(last).toBeGreaterThanOrEqual(target);
       expect(last - target).toBeLessThanOrEqual(projectedCents({ savedCents: 0, monthlyCents: 1, annualRateBp }, 240));
-      expect(chartYAxis(summary.targetCents, last).max).toBeGreaterThanOrEqual(Math.max(target, last));
+      // o teto cobre a meta; o excesso de arredondamento do aporte (centavos) pode ficar acima do teto (APICE-08)
+      const { max } = chartYAxis(summary.targetCents, last);
+      expect(max).toBeGreaterThanOrEqual(target);
+      expect(last - max).toBeLessThanOrEqual(target * 0.001);
       expect(summary.checkpoints.at(-1)?.valueCents).toBe(summary.targetCents);
     },
   );

@@ -167,6 +167,7 @@ export function compositionShares(
 }
 
 const AXIS_MAX_INTERVALS = 5;
+const FINAL_OVERSHOOT_TOLERANCE = 0.001;
 
 /**
  * Eixo Y do gráfico: ticks igualmente espaçados a partir de 0, num passo 1, 2 ou 5 × 10ⁿ (centavos)
@@ -174,7 +175,9 @@ const AXIS_MAX_INTERVALS = 5;
  * e o patrimônio final.
  */
 export function chartYAxis(targetCents: number, finalCents: number): { max: number; ticks: number[] } {
-  const raw = Math.max(targetCents, finalCents);
+  // O aporte arredondado para cima deixa o patrimônio final alguns centavos acima da meta; só um
+  // excesso acima da tolerância (0,1% da meta) conta como "realmente maior" e define o máximo.
+  const raw = finalCents - targetCents > targetCents * FINAL_OVERSHOOT_TOLERANCE ? finalCents : targetCents;
   for (let magnitude = 1; ; magnitude *= 10) {
     const step = [1, 2, 5].map((m) => m * magnitude).find((s) => Math.ceil(raw / s) <= AXIS_MAX_INTERVALS);
     if (step !== undefined) {

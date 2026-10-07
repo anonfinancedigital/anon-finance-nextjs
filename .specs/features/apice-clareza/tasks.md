@@ -843,7 +843,7 @@ T21 → T22 → T23 → T24 → T25 → T26
 
 ## Phase 5: Correções da verificação
 
-Gaps do `validation.md` (Verifier reprovou): APICE-14.1 (Major), APICE-19.4 (Major), APICE-19.3 e APICE-04.4 (Minor) e limpezas sem risco. Execução sequencial T27 → T28 → T29 → T30 → T31 → T32.
+Gaps do `validation.md` (Verifier reprovou): APICE-14.1 (Major), APICE-19.4 (Major), APICE-19.3 e APICE-04.4 (Minor) e limpezas sem risco; T33 a T35 vêm da iteração 3 (Gaps A e B e spec). Execução sequencial T27 → T28 → T29 → T30 → T31 → T32 → T33 → T34 → T35.
 
 ### T27: Resumo da gaveta fixo ao rolar
 
@@ -1016,6 +1016,90 @@ Gaps do `validation.md` (Verifier reprovou): APICE-14.1 (Major), APICE-19.4 (Maj
 
 ---
 
+### T33: Eixo Y ignora o excesso de arredondamento do patrimônio final
+
+**What**: Em `chartYAxis`, só considerar o patrimônio final como maior que a meta quando o excede em mais de 0,1% da meta; o aporte arredondado para cima deixa o final centavos acima da meta e subia o eixo um passo em R$ 500 mil e R$ 20 mi (Gap A do `validation.md`).
+**Where**: `src/lib/domain/freedom.ts`, `src/lib/domain/freedom.test.ts`
+**Depends on**: T32
+**Reuses**: `summarize`, `chartYAxis`
+**Requirement**: APICE-08
+
+**Tools**:
+
+- MCP: NONE
+- Skill: NONE
+
+**Done when**:
+
+- [x] Com o patrimônio final real de `summarize` (renda R$ 2.500 e R$ 100.000, 6% a.a. e retirada de 6%), os ticks são 0…500 mil e 0…20 mi
+- [x] Patrimônio final realmente maior que a meta (acima de 0,1%) continua definindo o máximo; os testes existentes seguem, exceto o do teto da linha do tempo, que passou a aceitar o excesso de arredondamento acima do teto
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Test count: os testes anteriores mais os novos passam
+
+**Tests**: unit
+**Gate**: quick
+
+**Commit**: `fix(apice): ignore final patrimony rounding overshoot on the Y axis`
+**Status**: ✅ Done
+
+---
+
+### T34: Primeiro tick do eixo X é a idade inteira atual
+
+**What**: `ageTicks` passa a começar em `Math.floor(first)` e o domínio do eixo X em `Math.floor(first.age)`, para o primeiro tick coincidir com `currentAge` (Gap B do `validation.md`: idade fracionária do primeiro ponto dava 34 com idade atual 33).
+**Where**: `src/lib/domain/age-ticks.ts`, `src/lib/domain/age-ticks.test.ts`, `src/components/goal-chart.tsx`
+**Depends on**: T33
+**Reuses**: `summarize`
+**Requirement**: APICE-10
+
+**Tools**:
+
+- MCP: NONE
+- Skill: NONE
+
+**Done when**:
+
+- [ ] Com a idade fracionária real do pipeline (`summarize`), o primeiro tick é `summary.currentAge`
+- [ ] O domínio do eixo X inclui o primeiro tick
+- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [ ] Test count: os testes anteriores mais os novos passam
+
+**Tests**: unit
+**Gate**: build
+
+**Commit**: `fix(apice): start the X axis at the current whole age`
+**Status**: ⏳ Pending
+
+---
+
+### T35: Limpeza de lint e precisão da spec
+
+**What**: Remover o import `PLAN_REACHED` sem uso de `freedom-copy.test.ts` e registrar na `spec.md` as regras pendentes (guardado vazio vale R$ 0, placeholder de 19.5 também sem data de nascimento, frase com `monthlyCents = 0`) e a regra do eixo Y de 08.1.
+**Where**: `src/lib/domain/freedom-copy.test.ts`, `.specs/features/apice-clareza/spec.md`, `.specs/features/apice-clareza/design.md`
+**Depends on**: T34
+**Reuses**: n/a
+**Requirement**: APICE-02, APICE-08, APICE-19
+
+**Tools**:
+
+- MCP: NONE
+- Skill: NONE
+
+**Done when**:
+
+- [ ] `npm run lint` sem avisos
+- [ ] `spec.md` descreve as quatro regras
+- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [ ] Test count: todos os testes existentes passam
+
+**Tests**: none (limpeza e documentação)
+**Gate**: quick
+
+**Commit**: `docs(apice): record pending spec rules and drop an unused import`
+**Status**: ⏳ Pending
+
+---
+
 ## Phase Execution Map
 
 ```
@@ -1025,7 +1109,7 @@ Phase 1:  T1 → T2 → T3 → T4 → T5 → T6 → T7
 Phase 2:  T8 → T9 → T10 → T11 → T12 → T13 → T14
 Phase 3:  T15 → T16 → T17 → T18 → T19 → T20
 Phase 4:  T21 → T22 → T23 → T24 → T25 → T26
-Phase 5:  T27 → T28 → T29 → T30 → T31 → T32
+Phase 5:  T27 → T28 → T29 → T30 → T31 → T32 → T33 → T34 → T35
 ```
 
 Execução estritamente sequencial. Com 26 tasks, o empacotamento dá 4 lotes (~7 tasks, fases inteiras); a oferta de sub-agentes é feita no Execute.
@@ -1037,15 +1121,15 @@ Execução estritamente sequencial. Com 26 tasks, o empacotamento dá 4 lotes (~
 | Requirement | Tasks |
 | ----------- | ----- |
 | APICE-01 | T4, T9, T24 |
-| APICE-02 | T3, T4, T17, T26, T30 |
+| APICE-02 | T3, T4, T17, T26, T30, T35 |
 | APICE-03 | T4, T17, T24 |
 | APICE-04 | T5, T15, T18, T23, T29 |
 | APICE-05 | T5, T12, T15 |
 | APICE-06 | T1, T5, T16 |
 | APICE-07 | T16, T17 |
-| APICE-08 | T2, T19, T25 |
+| APICE-08 | T2, T19, T25, T33, T35 |
 | APICE-09 | T19 |
-| APICE-10 | T6, T19 |
+| APICE-10 | T6, T19, T34 |
 | APICE-11 | T20 |
 | APICE-12 | T20 |
 | APICE-13 | T8, T17, T20 |
@@ -1054,6 +1138,6 @@ Execução estritamente sequencial. Com 26 tasks, o empacotamento dá 4 lotes (~
 | APICE-16 | T11, T13 |
 | APICE-17 | T12, T32 |
 | APICE-18 | T14, T22, T24, T31, T32 |
-| APICE-19 | T7, T10, T13, T23, T24, T28, T29 |
+| APICE-19 | T7, T10, T13, T23, T24, T28, T29, T35 |
 
 Cobertura: 19 de 19 requisitos mapeados.
