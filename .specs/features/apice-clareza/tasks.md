@@ -297,15 +297,16 @@ T21 → T22 → T23 → T24 → T25 → T26
 
 **Done when**:
 
-- [ ] Os três tokens existem nos temas claro e escuro; `--color-invested` = `--viz-target` e `--color-returns` = `--viz-spent`; `--color-progress` tem valor próprio distinto dos dois
-- [ ] Classes `bg-progress`, `text-progress`, `text-returns` e `animate-flash` utilizáveis; `animate-flash` não anima com `prefers-reduced-motion`
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
-- [ ] Test count: a suíte unit existente passa sem alteração
+- [x] Os três tokens existem nos temas claro e escuro; `--color-invested` = `--viz-target` e `--color-returns` = `--viz-spent`; `--color-progress` tem valor próprio distinto dos dois
+- [x] Classes `bg-progress`, `text-progress`, `text-returns` e `animate-flash` utilizáveis; `animate-flash` não anima com `prefers-reduced-motion`
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] Test count: a suíte unit existente passa sem alteração
 
 **Tests**: none
 **Gate**: build
 
 **Commit**: `feat(apice): add color tokens with single meanings and a flash animation`
+**Status**: ✅ Done
 
 ---
 

@@ -30,6 +30,9 @@
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
   --color-income: var(--income);
+  --color-invested: var(--viz-target);
+  --color-returns: var(--viz-spent);
+  --color-progress: var(--progress);
   --color-success: var(--success);
   --color-success-foreground: var(--success-foreground);
   --color-warning: var(--warning);
@@ -180,6 +183,10 @@
   --viz-8: oklch(0.6 0.2 20);
   --viz-other: oklch(0.65 0.02 270);
   --viz-grid: oklch(0 0 0 / 8%);
+  /* Single meanings: invested = money contributed, returns = earnings, progress = goal progress. */
+  --color-invested: var(--viz-target);
+  --color-returns: var(--viz-spent);
+  --progress: oklch(0.6 0.12 215);
 }
 
 .dark {
@@ -196,6 +203,24 @@
   --viz-8: oklch(0.68 0.19 20);
   --viz-other: oklch(0.6 0.02 270);
   --viz-grid: oklch(1 0 0 / 8%);
+  --progress: oklch(0.76 0.11 215);
+}
+
+@keyframes flash {
+  from {
+    background-color: var(--accent);
+  }
+  to {
+    background-color: transparent;
+  }
+}
+
+@utility animate-flash {
+  animation: flash 300ms ease-out;
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
 }
 
 @layer base {
