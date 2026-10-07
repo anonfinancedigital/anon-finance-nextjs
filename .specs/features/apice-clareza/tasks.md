@@ -561,18 +561,19 @@ T21 → T22 → T23 → T24 → T25 → T26
 
 **Done when**:
 
-- [ ] A renda é o maior valor numérico (`text-4xl`); patrimônio e aporte têm o mesmo tamanho (`text-2xl`) e ficam lado a lado
-- [ ] O prazo "em 14 anos e 11 meses" aparece junto ao aporte quando `months` > 0
-- [ ] O card de aporte não usa verde de rendimentos; usa a cor neutra do card
-- [ ] A pílula verde de renda e o texto "acumulados (… do alvo)" não existem
-- [ ] `GoalHero` aceita `onAdjust` e `preview` e mostra "Prévia" quando `preview` é verdadeiro
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
-- [ ] Test count: a suíte unit existente passa sem alteração
+- [x] A renda é o maior valor numérico (`text-4xl`); patrimônio e aporte têm o mesmo tamanho (`text-2xl`) e ficam lado a lado
+- [x] O prazo "em 14 anos e 11 meses" aparece junto ao aporte quando `months` > 0
+- [x] O card de aporte não usa verde de rendimentos; usa a cor neutra do card
+- [x] A pílula verde de renda e o texto "acumulados (… do alvo)" não existem
+- [x] `GoalHero` aceita `onAdjust` e `preview` e mostra "Prévia" quando `preview` é verdadeiro
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] Test count: a suíte unit existente passa sem alteração
 
 **Tests**: none
 **Gate**: build
 
 **Commit**: `feat(apice): make desired income the hero of the summary card`
+**Status**: ✅ Done
 
 ---
 
