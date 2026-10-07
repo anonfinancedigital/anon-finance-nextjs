@@ -619,17 +619,18 @@ T21 → T22 → T23 → T24 → T25 → T26
 
 **Done when**:
 
-- [ ] Os ticks do eixo Y vêm de `chartYAxis` (metas de 500 mil, 4,8 mi e 20 mi dão os ticks da spec)
-- [ ] O eixo X tem o título "Idade" e a idade atual no primeiro tick
-- [ ] "Meta: {valor}" aparece à esquerda da linha, com fundo da cor do card, sem tocar a curva
-- [ ] `chartYMax` deixa de ser importado
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
-- [ ] Test count: a suíte unit existente passa sem alteração
+- [x] Os ticks do eixo Y vêm de `chartYAxis` (metas de 500 mil, 4,8 mi e 20 mi dão os ticks da spec)
+- [x] O eixo X tem o título "Idade" e a idade atual no primeiro tick
+- [x] "Meta: {valor}" aparece à esquerda da linha, com fundo da cor do card, sem tocar a curva
+- [x] `chartYMax` deixa de ser importado
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] Test count: a suíte unit existente passa sem alteração
 
 **Tests**: none
 **Gate**: build
 
 **Commit**: `feat(apice): regular axes and a clear target label in the chart`
+**Status**: ✅ Done
 
 ---
 

@@ -2,7 +2,7 @@
 
 import { Area, AreaChart, CartesianGrid, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { ageTicks } from "@/lib/domain/age-ticks";
-import { chartYMax, compositionShares, type GoalSummary } from "@/lib/domain/freedom";
+import { chartYAxis, compositionShares, type GoalSummary } from "@/lib/domain/freedom";
 import { interestBadge } from "@/lib/domain/freedom-copy";
 import { formatBRL, formatCompactBRL } from "@/lib/domain/money";
 
@@ -18,6 +18,21 @@ const tooltipStyle = {
 
 const INVESTED = "var(--viz-target)";
 const INTEREST = "var(--viz-spent)";
+
+/** "Meta: X" above the left end of the target line, on a card-colored plate so the line does not cross the text. */
+function TargetLabel({ viewBox, value }: { viewBox?: { x?: number; y?: number }; value: string }) {
+  const x = (viewBox?.x ?? 0) + 8;
+  const y = viewBox?.y ?? 0;
+  const width = value.length * 7 + 12;
+  return (
+    <g>
+      <rect x={x} y={y - 24} width={width} height={20} rx={4} fill="var(--card)" />
+      <text x={x + 6} y={y - 10} fill="var(--muted-foreground)" fontSize={12}>
+        {value}
+      </text>
+    </g>
+  );
+}
 
 function Swatch({ color }: { color: string }) {
   return <span aria-hidden className="inline-block size-2 shrink-0 rounded-full" style={{ background: color }} />;
@@ -63,6 +78,7 @@ export function GoalChart({ summary }: { summary: GoalSummary }) {
   const first = timeline[0];
   const last = timeline[timeline.length - 1];
   const badge = interestBadge(summary);
+  const yAxis = chartYAxis(summary.targetCents, last.totalCents);
 
   return (
     <figure
@@ -89,7 +105,7 @@ export function GoalChart({ summary }: { summary: GoalSummary }) {
 
       <div className="h-64 sm:h-80">
         <ResponsiveContainer width="100%" height="100%">
-          <AreaChart data={rows} margin={{ top: 12, right: 12, bottom: 4, left: 4 }}>
+          <AreaChart data={rows} margin={{ top: 28, right: 12, bottom: 4, left: 4 }}>
             <CartesianGrid vertical={false} stroke="var(--viz-grid)" />
             <XAxis
               type="number"
@@ -100,12 +116,14 @@ export function GoalChart({ summary }: { summary: GoalSummary }) {
               tickFormatter={(v: number) => `${v}`}
               axisLine={false}
               tickLine={false}
+              height={40}
+              label={{ value: "Idade", position: "insideBottom", offset: 0, fill: "var(--muted-foreground)", fontSize: 12 }}
             />
             <YAxis
               tick={tick}
               width={64}
-              tickCount={4}
-              domain={[0, chartYMax(summary.targetCents, last.totalCents)]}
+              ticks={yAxis.ticks}
+              domain={[0, yAxis.max]}
               tickFormatter={(v: number) => formatCompactBRL(v)}
               axisLine={false}
               tickLine={false}
@@ -116,12 +134,7 @@ export function GoalChart({ summary }: { summary: GoalSummary }) {
               strokeDasharray="4 4"
               strokeOpacity={0.7}
               ifOverflow="extendDomain"
-              label={{
-                value: `Meta: ${formatCompactBRL(summary.targetCents)}`,
-                position: "insideTopRight",
-                fill: "var(--muted-foreground)",
-                fontSize: 12,
-              }}
+              label={<TargetLabel value={`Meta: ${formatCompactBRL(summary.targetCents)}`} />}
             />
             <Tooltip content={<ChartTooltip />} cursor={{ stroke: "var(--muted-foreground)", strokeWidth: 1 }} />
             <Area
