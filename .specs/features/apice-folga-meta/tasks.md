@@ -507,16 +507,16 @@ T16 → T17
 
 **Done when**:
 
-- [ ] `drawer-summary.tsx` mostra "R$ 0" com aporte 0 e a variação contra o salvo continua correta
-- [ ] `goal-empty-state.tsx` mostra a frase e o indicador novos sem o bloco de folga
-- [ ] Evidência por inspeção de código (`file:line`); se nada precisar mudar, a task fecha sem commit de código e o status vai no commit da T16
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] `drawer-summary.tsx` mostra "R$ 0" com aporte 0 e a variação contra o salvo continua correta
+- [x] `goal-empty-state.tsx` mostra a frase e o indicador novos sem o bloco de folga
+- [x] Evidência por inspeção de código (`file:line`); se nada precisar mudar, a task fecha sem commit de código e o status vai no commit da T16
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
 
 **Tests**: none
 **Gate**: build
 
 **Commit**: `fix(apice): keep the drawer summary coherent with the zero deposit copy`
-**Status**: Pending
+**Status**: ✅ Done
 
 ---
 
@@ -535,17 +535,17 @@ T16 → T17
 
 **Done when**:
 
-- [ ] Referência: marco de R$ 1,2 mi a cerca de 67% da barra, trecho final em cor de rendimentos e rótulo final com o patrimônio e a idade-alvo
-- [ ] Sem `reach` o componente fica como hoje (marcos em 25/50/75/100%)
-- [ ] Os rótulos continuam sem sobreposição (grade 2×2 abaixo de `@xl`, posições absolutas acima)
-- [ ] Evidência por inspeção de código (`file:line`)
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] Referência: marco de R$ 1,2 mi a cerca de 67% da barra, trecho final em cor de rendimentos e rótulo final com o patrimônio e a idade-alvo
+- [x] Sem `reach` o componente fica como hoje (marcos em 25/50/75/100%)
+- [x] Os rótulos continuam sem sobreposição (grade 2×2 abaixo de `@xl`, posições absolutas acima)
+- [x] Evidência por inspeção de código (`file:line`)
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
 
 **Tests**: none
 **Gate**: build
 
 **Commit**: `feat(apice): draw the slack stretch on the checkpoints bar`
-**Status**: Pending
+**Status**: ✅ Done
 
 ---
 
