@@ -3,13 +3,13 @@
 import { useState } from "react";
 import { GoalForm, type GoalFormValues } from "@/components/goal-form";
 import { GoalSummary } from "@/components/goal-summary";
+import { useGoalDraft } from "@/components/use-goal-draft";
 import { PageHeader } from "@/components/page-header";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetDescription, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import { type Goal, type GoalSummary as Summary, summarize } from "@/lib/domain/freedom";
+import type { Goal, GoalSummary as Summary } from "@/lib/domain/freedom";
 import { formatBRL } from "@/lib/domain/money";
 import { cn } from "@/lib/utils";
-import { goalSchema } from "@/lib/validation/goal";
 
 const DRAWER_INTRO = "Simule o ápice: renda, patrimônio e idade.";
 
@@ -53,18 +53,16 @@ export function GoalExperience({
   initial?: GoalFormValues;
   nowIso: string;
 }) {
-  const now = new Date(nowIso);
   const [open, setOpen] = useState(false);
-  const [summary, setSummary] = useState<Summary | null>(saved ? summarize(saved, now) : null);
+  // SPEC_DEVIATION: goal-experience.tsx is touched in T14 (planned for T24) only so GoalForm, which
+  // now receives the draft from its host, keeps compiling; T24 completes the orchestration.
+  // Reason: GoalForm takes the host-owned draft (needed for dirty/discard in T24) instead of keeping its own state.
+  const draft = useGoalDraft({ saved, initial, nowIso });
+  const summary = draft.summary;
 
   function handleOpenChange(next: boolean) {
     setOpen(next);
-    if (!next) setSummary(saved ? summarize(saved, now) : null);
-  }
-
-  function handleDraft(values: GoalFormValues) {
-    const parsed = goalSchema(now).safeParse(values);
-    if (parsed.success) setSummary(summarize(parsed.data, now));
+    if (!next) draft.reset();
   }
 
   return (
@@ -99,8 +97,7 @@ export function GoalExperience({
         </div>
         <DrawerSummary summary={summary} />
         <GoalForm
-          initial={initial}
-          onDraftChange={handleDraft}
+          draft={draft}
           onSaved={() => setOpen(false)}
           onCancel={() => handleOpenChange(false)}
           nowIso={nowIso}
