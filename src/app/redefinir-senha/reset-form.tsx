@@ -1,10 +1,12 @@
 "use client";
 
+import Link from "next/link";
 import { useActionState, useState } from "react";
 import { resetPasswordAction } from "@/actions/password-reset";
 import { PasswordInput } from "@/components/password-input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { INVALID_LINK_MESSAGE } from "@/lib/validation/password-reset";
 import { PASSWORD_MISMATCH_MESSAGE } from "@/lib/validation/signup";
 
 export function ResetForm({ token }: { token: string }) {
@@ -55,6 +57,13 @@ export function ResetForm({ token }: { token: string }) {
       {generalError && (
         <p role="alert" className="text-sm text-destructive">
           {generalError}
+        </p>
+      )}
+      {generalError === INVALID_LINK_MESSAGE && (
+        <p className="text-sm">
+          <Link href="/esqueci-senha" className="text-link hover:underline">
+            Pedir outro link
+          </Link>
         </p>
       )}
       <Button type="submit" className="w-full" disabled={pending || mismatch}>

@@ -89,6 +89,12 @@ T10 → T17
 T6 → T17
 ```
 
+### Phase 5: Correções do Verifier (iteração 1)
+
+```
+T16 → T18
+```
+
 ---
 
 ## Task Breakdown
@@ -586,6 +592,30 @@ T6 → T17
 
 ---
 
+### T18: Link para pedir outro link também no erro do formulário
+
+**What**: Quando a ação devolve "Link inválido ou expirado", o formulário mostra o link "Pedir outro link" para `/esqueci-senha` (gap do Verifier: P1 "Definir a nova senha", AC 8).
+**Where**: `src/app/redefinir-senha/reset-form.tsx`
+**Depends on**: T16
+**Reuses**: O link "Pedir outro link" de `src/app/redefinir-senha/page.tsx`
+**Requirement**: SENHA-09
+
+**Tools**:
+
+- MCP: NONE
+- Skill: NONE
+
+**Done when**:
+
+- [x] Erro igual a `INVALID_LINK_MESSAGE` mostra o link "Pedir outro link" para `/esqueci-senha`; outros erros não mostram
+- [x] Build gate passa: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
+
+**Tests**: none
+**Gate**: build
+**Commit**: `fix(senha): offer a new link when the form reports an invalid link`
+
+---
+
 ## Lotes de execução
 
 Execução estritamente sequencial, sem paralelismo dentro da fase. Com 17 tarefas, as fases inteiras se empacotam em três lotes: Fases 1 e 2 (7 tarefas), Fase 3 (4) e Fase 4 (6).
@@ -604,5 +634,5 @@ Execução estritamente sequencial, sem paralelismo dentro da fase. Com 17 taref
 | SENHA-06 | T7, T9, T16, T17 |
 | SENHA-07 | T7 |
 | SENHA-08 | T4, T9, T16 |
-| SENHA-09 | T7, T9, T11, T17 |
+| SENHA-09 | T7, T9, T11, T17, T18 |
 | SENHA-10 | T10, T12, T14, T15, T16, T17 |
