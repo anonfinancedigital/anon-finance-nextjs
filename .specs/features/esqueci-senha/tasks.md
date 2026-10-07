@@ -305,6 +305,8 @@ T6 → T17
 
 ### T8: Criar a ação de pedido de redefinição
 
+**Status**: ✅ Complete
+
 **What**: `requestPasswordResetAction` que valida o e-mail, emite o token e agenda o envio em `after()`, sempre com a mesma resposta.
 **Where**: `src/actions/password-reset.ts`
 **Depends on**: T3, T4, T5, T6
@@ -318,14 +320,14 @@ T6 → T17
 
 **Done when**:
 
-- [ ] E-mail de conta aprovada: um `sendMail` com `to` normalizado, assunto "Redefinir sua senha" e link `…/redefinir-senha?token=…` com token que o repo reconhece; retorna `{ ok: true }`
-- [ ] E-mail inexistente e de conta `pending`, `rejected`, `revoked`: nenhum `sendMail` e o mesmo retorno `{ ok: true }` do caso aprovado
-- [ ] E-mail vazio e mal formado: `{ ok: false }` com "Informe um e-mail válido" e nenhum `sendMail`
-- [ ] `sendMail` que rejeita: `console.error` chamado e retorno continua `{ ok: true }`
-- [ ] Erro do repo (forçado): `console.error` chamado e retorno `{ ok: true }`
-- [ ] Dois pedidos seguidos: o primeiro link deixa de valer (`isValid` falso) e o segundo vale
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
-- [ ] Test count: ≥8 tests pass (no silent deletions)
+- [x] E-mail de conta aprovada: um `sendMail` com `to` normalizado, assunto "Redefinir sua senha" e link `…/redefinir-senha?token=…` com token que o repo reconhece; retorna `{ ok: true }`
+- [x] E-mail inexistente e de conta `pending`, `rejected`, `revoked`: nenhum `sendMail` e o mesmo retorno `{ ok: true }` do caso aprovado
+- [x] E-mail vazio e mal formado: `{ ok: false }` com "Informe um e-mail válido" e nenhum `sendMail`
+- [x] `sendMail` que rejeita: `console.error` chamado e retorno continua `{ ok: true }`
+- [x] Erro do repo (forçado): `console.error` chamado e retorno `{ ok: true }`
+- [x] Dois pedidos seguidos: o primeiro link deixa de valer (`isValid` falso) e o segundo vale
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
+- [x] Test count: ≥8 tests pass (no silent deletions)
 
 **Tests**: integration
 **Gate**: full

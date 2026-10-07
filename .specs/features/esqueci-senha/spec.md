@@ -129,10 +129,10 @@ Quem esquece a senha não consegue entrar, e hoje só o administrador, mexendo n
 | Requirement ID | Story | Phase | Status |
 | -------------- | ----- | ----- | ------ |
 | SENHA-01 | P1: Pedir o link pelo login (AC 1) | Design | Pending |
-| SENHA-02 | P1: Pedir o link pelo login (AC 2, 3, 10) | Design | Pending |
+| SENHA-02 | P1: Pedir o link pelo login (AC 2, 3, 10) | Execute | Implemented |
 | SENHA-03 | P1: Pedir o link pelo login (AC 4, 5, 7) | Design | Pending |
 | SENHA-04 | P1: Pedir o link pelo login (AC 6) | Design | Pending |
-| SENHA-05 | P1: Pedir o link pelo login (AC 8, 9) | Design | Pending |
+| SENHA-05 | P1: Pedir o link pelo login (AC 8, 9) | Execute | Implemented |
 | SENHA-06 | P1: Definir a nova senha (AC 1, 2, 5) | Design | Pending |
 | SENHA-07 | P1: Definir a nova senha (AC 3, 4) | Execute | Implemented |
 | SENHA-08 | P1: Definir a nova senha (AC 6, 7) | Design | Pending |
