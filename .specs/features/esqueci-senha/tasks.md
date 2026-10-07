@@ -147,6 +147,8 @@ T6 → T17
 
 ### T3: Criar o montador do e-mail de redefinição
 
+**Status**: ✅ Complete
+
 **What**: Função pura que monta destinatário, assunto "Redefinir sua senha" e texto com o link e a validade de 30 minutos; exporta `RESET_TOKEN_TTL_MINUTES = 30`.
 **Where**: `src/lib/domain/password-reset-email.ts`
 **Depends on**: None
@@ -160,11 +162,13 @@ T6 → T17
 
 **Done when**:
 
-- [ ] `buildPasswordResetEmail({ to, token, baseUrl })` devolve `subject` exato "Redefinir sua senha" e `to` igual ao informado
-- [ ] O texto contém `${baseUrl}/redefinir-senha?token=<token>` com o token em `encodeURIComponent` e a frase "30 minutos"
-- [ ] Baseado em `RESET_TOKEN_TTL_MINUTES`: alterar a constante muda o texto (teste prova)
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
-- [ ] Test count: ≥4 tests pass (no silent deletions)
+- [x] `buildPasswordResetEmail({ to, token, baseUrl })` devolve `subject` exato "Redefinir sua senha" e `to` igual ao informado
+- [x] O texto contém `${baseUrl}/redefinir-senha?token=<token>` com o token em `encodeURIComponent` e a frase "30 minutos"
+- [x] Baseado em `RESET_TOKEN_TTL_MINUTES`: alterar a constante muda o texto (teste prova)
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Test count: ≥4 tests pass (no silent deletions)
+
+> SPEC_DEVIATION: `buildPasswordResetEmail` aceita `ttlMinutes` opcional (padrão `RESET_TOKEN_TTL_MINUTES`) para o teste provar que o texto segue o valor da validade.
 
 **Tests**: unit
 **Gate**: quick
