@@ -75,6 +75,12 @@ T9 → T10 → T11 → T12 → T13 → T14 → T15
 T16 → T17
 ```
 
+### Phase 4: Fix tasks (iteração 1 do Verifier)
+
+```
+T18 → T19 → T20
+```
+
 ---
 
 ## Task Breakdown
@@ -537,7 +543,7 @@ T16 → T17
 
 - [x] Referência: marco de R$ 1,2 mi a cerca de 67% da barra, trecho final em cor de rendimentos e rótulo final com o patrimônio e a idade-alvo
 - [x] Sem `reach` o componente fica como hoje (marcos em 25/50/75/100%)
-- [x] Os rótulos continuam sem sobreposição (grade 2×2 abaixo de `@xl`, posições absolutas acima)
+- [x] Os rótulos continuam sem sobreposição (grade 2×2 abaixo de `@xl`, posições absolutas acima; com folga, sempre a grade 2×2, ver T20)
 - [x] Evidência por inspeção de código (`file:line`)
 - [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
 
@@ -578,14 +584,103 @@ T16 → T17
 
 ---
 
+## Fix tasks (iteração 1 do Verifier)
+
+### T18: Fix F1, Mutantes sobreviventes do domínio
+
+**What**: Cobrir com testes as fronteiras que os mutantes M3, M8 e M9 do Verifier deixaram passar e a borda "renda extra aplicada"; só mexe no código se um teste revelar bug.
+**Where**: `src/lib/domain/freedom.test.ts`, `src/lib/domain/slack.test.ts`
+**Depends on**: None (fase 3 concluída)
+**Reuses**: -
+**Requirement**: APF-02, APF-10, APF-11
+
+**Tools**:
+
+- MCP: NONE
+- Skill: NONE
+
+**Done when**:
+
+- [x] `retirementAgeReaching` com `reachMonths` 119 no cenário de referência dá 43 (prazo igual ao alcance cobre)
+- [x] Renda extra bruta de R$ 7.420,50 (`finalCents` 178.092.000) dá 742.000 (piso, não arredondamento)
+- [x] Renda extra exatamente 5% acima da desejada (`finalCents` 176.400.000, renda R$ 7.000,00) é oferecida (735.000)
+- [x] Aplicar a renda extra leva `slackOptions` a `{ extraIncomeCents: null, earlierAge: null }`
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Test count: os testes anteriores mais os novos passam (nenhum removido)
+
+**Tests**: unit
+**Gate**: quick
+
+**Commit**: `test(apice): cover the reach age, floor and threshold boundaries`
+**Status**: ✅ Done
+
+---
+
+### T19: Fix F2, Ações da folga obrigatórias
+
+**What**: `onApplyIncome` e `onApplyAge` passam a props obrigatórias em `GoalHero` e `GoalSummary`; sai o guarda que escondia `GoalSlack` quando faltavam.
+**Where**: `src/components/goal-hero.tsx`, `src/components/goal-summary.tsx`
+**Depends on**: T18
+**Reuses**: -
+**Requirement**: APF-11
+
+**Tools**:
+
+- MCP: NONE
+- Skill: NONE
+
+**Done when**:
+
+- [ ] As duas props são obrigatórias nos dois componentes e todos os consumidores já as passam
+- [ ] O bloco de folga não depende mais de checagem das props
+- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [ ] Evidência por inspeção de código (`file:line`)
+
+**Tests**: none
+**Gate**: build
+
+**Commit**: `refactor(apice): require the slack actions on the hero and summary`
+**Status**: ⏳ Pending
+
+---
+
+### T20: Fix F3, Rótulos da barra em grade com folga
+
+**What**: Com `reach`, `GoalCheckpoints` usa sempre a grade 2×2 para os rótulos (os marcos ficam em 5/10/15/20% da barra com folga grande e os rótulos centrados se sobrepõem); sem `reach` o layout não muda; `cn` volta ao import `"cn"` da convenção do repositório.
+**Where**: `src/components/goal-checkpoints.tsx`
+**Depends on**: T19
+**Reuses**: -
+**Requirement**: APF-15
+
+**Tools**:
+
+- MCP: NONE
+- Skill: NONE
+
+**Done when**:
+
+- [ ] Com `reach` os rótulos usam sempre a grade 2×2; sem `reach` o layout é o de antes (`@xl`)
+- [ ] `import { cn } from "cn"`
+- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [ ] Evidência por inspeção de código (`file:line`)
+
+**Tests**: none
+**Gate**: build
+
+**Commit**: `fix(apice): keep the checkpoint labels in a grid when there is slack`
+**Status**: ⏳ Pending
+
+---
+
 ## Phase Execution Map
 
 ```
-Phase 1 → Phase 2 → Phase 3
+Phase 1 → Phase 2 → Phase 3 → Phase 4
 
 Phase 1:  T1 ------→ T2 ------→ T3 ------→ T4 ------→ T5 ------→ T6 ------→ T7 ------→ T8
 Phase 2:  T9 ------→ T10 -----→ T11 -----→ T12 -----→ T13 -----→ T14 -----→ T15
 Phase 3:  T16 -----→ T17
+Phase 4:  T18 -----→ T19 -----→ T20
 ```
 
 Execução estritamente sequencial. São 17 tasks em 3 fases: a skill oferece sub-agentes em lotes de cerca de 7 tasks com fases inteiras (lote 1: fase 1 com 8 tasks; lote 2: fases 2 e 3 com 9 tasks).

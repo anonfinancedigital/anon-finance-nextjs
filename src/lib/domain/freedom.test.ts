@@ -355,6 +355,11 @@ describe("retirementAgeReaching", () => {
     expect(retirementAgeReaching({ ...reference, reachMonths: 179 })).toBe(48);
   });
 
+  it("alcance de 119 meses, exatamente o prazo da idade 43, ainda dá 43 (prazo igual cobre o alcance)", () => {
+    expect(retirementAgeReaching({ ...reference, reachMonths: 119 })).toBe(43);
+    expect(retirementAgeReaching({ ...reference, reachMonths: 120 })).toBe(44);
+  });
+
   it("nunca devolve idade menor que a atual + 1", () => {
     expect(retirementAgeReaching({ ...reference, reachMonths: 1 })).toBe(34);
     expect(retirementAgeReaching({ ...reference, reachMonths: 0 })).toBe(34);

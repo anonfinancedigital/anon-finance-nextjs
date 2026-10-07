@@ -29,6 +29,21 @@ describe("slackOptions", () => {
     expect(optionsOf({ monthlyIncomeCents: 706_666 }).extraIncomeCents).toBe(742_000);
   });
 
+  // A renda extra bruta é de R$ 7.420,50 (178.092.000 × 5% ÷ 12): vale o piso, R$ 7.420,00, e não R$ 7.421,00.
+  it("renda extra com fração de R$ 0,50 ou mais arredonda para baixo em reais inteiros", () => {
+    const summary = summarize(reference, now);
+    const withFinal = (finalCents: number, monthlyIncomeCents: number) =>
+      slackOptions({ ...summary, monthlyIncomeCents, reach: { ...summary.reach!, finalCents } });
+    expect(withFinal(178_092_000, reference.monthlyIncomeCents).extraIncomeCents).toBe(742_000);
+  });
+
+  // 176.400.000 × 5% ÷ 12 = R$ 7.350,00 exatos; a renda desejada de R$ 7.000,00 deixa a extra em +5,00% justos.
+  it("renda extra exatamente 5% acima da desejada é oferecida (pelo menos 5%)", () => {
+    const summary = summarize(reference, now);
+    const options = slackOptions({ ...summary, monthlyIncomeCents: 700_000, reach: { ...summary.reach!, finalCents: 176_400_000 } });
+    expect(options.extraIncomeCents).toBe(735_000);
+  });
+
   it("sem antecipação quando a meta só chega na idade-alvo (R$ 400.000,00 guardados, N = 48)", () => {
     const summary = summarize({ ...reference, savedCents: 40_000_000 }, now);
     expect(summary.reach?.ageYears).toBe(48);
@@ -47,7 +62,10 @@ describe("slackOptions", () => {
 
   it("aplicar a renda extra ao objetivo de referência mantém o aporte necessário em 0", () => {
     const { extraIncomeCents } = optionsOf();
-    expect(summarize({ ...reference, monthlyIncomeCents: extraIncomeCents! }, now).monthlyCents).toBe(0);
+    const applied = summarize({ ...reference, monthlyIncomeCents: extraIncomeCents! }, now);
+    expect(applied.monthlyCents).toBe(0);
+    // Renda extra aplicada: a antecipação some (N volta à idade-alvo) e a renda não é maior que ela mesma.
+    expect(slackOptions(applied)).toEqual({ extraIncomeCents: null, earlierAge: null });
   });
 });
 
