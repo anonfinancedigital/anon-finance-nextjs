@@ -267,17 +267,18 @@ T21 → T22 → T23 → T24 → T25 → T26
 
 **Done when**:
 
-- [ ] Valores válidos devolvem `summary` igual a `summarize` do mesmo objetivo e `errors` vazio
-- [ ] Valores inválidos mantêm o `summary` anterior (`previous`) e devolvem o erro do campo com o texto do `goalSchema` (ex.: "A data de nascimento não pode ser futura")
-- [ ] `dirty` é `false` quando os valores são iguais aos salvos (inclusive depois de digitar e desfazer) e `true` quando um campo difere
-- [ ] Sem objetivo salvo (`saved` null) e com renda ou idade vazias: `summary` é `null` e `dirty` é `true` só se algum campo foi preenchido
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
-- [ ] Test count: os testes anteriores mais os novos de `goal-draft.test.ts` passam
+- [x] Valores válidos devolvem `summary` igual a `summarize` do mesmo objetivo e `errors` vazio
+- [x] Valores inválidos mantêm o `summary` anterior (`previous`) e devolvem o erro do campo com o texto do `goalSchema` (ex.: "A data de nascimento não pode ser futura")
+- [x] `dirty` é `false` quando os valores são iguais aos salvos (inclusive depois de digitar e desfazer) e `true` quando um campo difere
+- [x] Sem objetivo salvo (`saved` null) e com renda ou idade vazias: `summary` é `null` e `dirty` é `true` só se algum campo foi preenchido
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Test count: os testes anteriores mais os novos de `goal-draft.test.ts` passam
 
 **Tests**: unit
 **Gate**: quick
 
 **Commit**: `feat(apice): evaluate the goal draft with validation and dirty state`
+**Status**: ✅ Done
 
 ---
 

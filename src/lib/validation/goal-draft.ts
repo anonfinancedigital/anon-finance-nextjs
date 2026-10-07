@@ -1,0 +1,49 @@
+import type { GoalFormValues } from "@/components/goal-form";
+import { DEFAULT_ANNUAL_RATE_BP, DEFAULT_WITHDRAWAL_RATE_BP, summarize, type GoalSummary } from "@/lib/domain/freedom";
+import { goalSchema } from "./goal";
+
+/** Valores do formulário sem objetivo salvo: campos vazios e o cenário Moderado (8% real, retirada 5%). */
+export const BLANK_GOAL_VALUES: GoalFormValues = {
+  monthlyIncome: "",
+  saved: "",
+  birthDate: "",
+  retirementAge: "",
+  annualRate: String(DEFAULT_ANNUAL_RATE_BP / 100),
+  withdrawalRate: String(DEFAULT_WITHDRAWAL_RATE_BP / 100),
+};
+
+export type GoalDraft = {
+  /** Resumo do rascunho; ver `evaluateDraft` para o que acontece com valores inválidos. */
+  summary: GoalSummary | null;
+  /** Mensagem do `goalSchema` por campo inválido; cabe à tela mostrar só os campos tocados. */
+  errors: Partial<Record<keyof GoalFormValues, string>>;
+  /** Os valores diferem dos salvos (ou do formulário em branco, sem objetivo salvo), comparados por valor. */
+  dirty: boolean;
+};
+
+const FIELDS = Object.keys(BLANK_GOAL_VALUES) as (keyof GoalFormValues)[];
+
+/**
+ * Avalia o rascunho do objetivo com o mesmo `goalSchema` e `summarize` do servidor. Valores válidos
+ * dão o resumo novo. Inválidos mantêm o resumo anterior quando há objetivo salvo e o descartam
+ * (`null`) quando não há, para a tela vazia voltar ao aviso de preenchimento.
+ */
+export function evaluateDraft(
+  values: GoalFormValues,
+  saved: GoalFormValues | null,
+  now: Date,
+  previous: GoalSummary | null,
+): GoalDraft {
+  const baseline = saved ?? BLANK_GOAL_VALUES;
+  const dirty = FIELDS.some((field) => values[field] !== baseline[field]);
+
+  const parsed = goalSchema(now).safeParse(values);
+  if (parsed.success) return { summary: summarize(parsed.data, now), errors: {}, dirty };
+
+  const errors: GoalDraft["errors"] = {};
+  for (const issue of parsed.error.issues) {
+    const field = issue.path[0] as keyof GoalFormValues;
+    errors[field] ??= issue.message;
+  }
+  return { summary: saved === null ? null : previous, errors, dirty };
+}
