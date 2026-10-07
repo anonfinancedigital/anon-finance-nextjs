@@ -441,19 +441,20 @@ T21 → T22 → T23 → T24 → T25 → T26
 
 **Done when**:
 
-- [ ] A data mantém a máscara dd/mm/aaaa e mostra a idade ("33 anos") ao lado quando válida
-- [ ] Data inválida mostra "Data de nascimento inválida"; futura mostra "A data de nascimento não pode ser futura"; nesses casos não mostra a idade
-- [ ] O mínimo do slider e do campo de idade é a idade atual + 1
-- [ ] Campo e slider da idade ficam sincronizados nos dois sentidos
-- [ ] Na variante `inline` os rótulos são "Renda mensal desejada", "Quanto você já tem guardado", "Com que idade quer chegar lá" e "Data de nascimento", sem seletor de cenários
-- [ ] Erros só aparecem em campos tocados
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
-- [ ] Test count: a suíte unit existente passa sem alteração
+- [x] A data mantém a máscara dd/mm/aaaa e mostra a idade ("33 anos") ao lado quando válida
+- [x] Data inválida mostra "Data de nascimento inválida"; futura mostra "A data de nascimento não pode ser futura"; nesses casos não mostra a idade
+- [x] O mínimo do slider e do campo de idade é a idade atual + 1
+- [x] Campo e slider da idade ficam sincronizados nos dois sentidos
+- [x] Na variante `inline` os rótulos são "Renda mensal desejada", "Quanto você já tem guardado", "Com que idade quer chegar lá" e "Data de nascimento", sem seletor de cenários
+- [x] Erros só aparecem em campos tocados
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] Test count: a suíte unit existente passa sem alteração
 
 **Tests**: none
 **Gate**: build
 
 **Commit**: `feat(apice): extract reusable goal fields with a birth date age`
+**Status**: ✅ Done
 
 ---
 
