@@ -1,48 +1,35 @@
 "use client";
 
 import { useState } from "react";
+import { DiscardDialog } from "@/components/discard-dialog";
+import { DrawerSummary } from "@/components/drawer-summary";
+import { GoalEmptyState } from "@/components/goal-empty-state";
 import { GoalForm, type GoalFormValues } from "@/components/goal-form";
 import { GoalSummary } from "@/components/goal-summary";
 import { useGoalDraft } from "@/components/use-goal-draft";
 import { PageHeader } from "@/components/page-header";
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetDescription, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import type { Goal, GoalSummary as Summary } from "@/lib/domain/freedom";
-import { formatBRL } from "@/lib/domain/money";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import type { Goal } from "@/lib/domain/freedom";
+import {
+  ADJUST_LABEL,
+  DRAWER_INTRO,
+  SUBTITLE,
+} from "@/lib/domain/freedom-copy";
 import { cn } from "@/lib/utils";
-
-const DRAWER_INTRO = "Simule o ápice: renda, patrimônio e idade.";
-
-const INTRO =
-  "Defina a renda mensal que quer ter, o patrimônio acumulado e a idade do seu ápice patrimonial. A meta é o patrimônio que, na taxa de retirada do cenário de rentabilidade escolhido, gera essa renda: a base da sua independência financeira.";
-
-/** Target and monthly deposit of the current preview, shown on top of the sheet so they stay in view. */
-function DrawerSummary({ summary }: { summary: Summary | null }) {
-  const deposit = !summary
-    ? "—"
-    : summary.monthlyCents === null
-      ? "Prazo encerrado"
-      : `${formatBRL(summary.monthlyCents)} / mês`;
-
-  return (
-    <dl className="grid grid-cols-2 gap-3 rounded-xl border border-border bg-card p-3 text-sm">
-      <div>
-        <dt className="text-muted-foreground">Meta Patrimonial</dt>
-        <dd className="font-display font-bold">{summary ? formatBRL(summary.targetCents) : "—"}</dd>
-      </div>
-      <div>
-        <dt className="text-muted-foreground">Aporte Mensal</dt>
-        <dd className="font-display font-bold">{deposit}</dd>
-      </div>
-    </dl>
-  );
-}
 
 /**
  * Page of the goal: summary on the screen and the form in a side sheet. While the sheet is open
  * every valid draft recomputes the summary in the browser (same schema and formulas as the
- * server); an invalid draft keeps the last valid result, and closing without saving goes back to
- * the saved goal. On wide screens the page makes room for the sheet instead of sitting under it.
+ * server) and the page shows "Prévia"; an invalid draft keeps the last valid result. Leaving the
+ * sheet with unapplied changes asks before discarding them. Without a saved goal the page is the
+ * inline simulation. On wide screens the page makes room for the sheet instead of sitting under it.
  */
 export function GoalExperience({
   saved,
@@ -54,55 +41,84 @@ export function GoalExperience({
   nowIso: string;
 }) {
   const [open, setOpen] = useState(false);
-  // SPEC_DEVIATION: goal-experience.tsx is touched in T14 (planned for T24) only so GoalForm, which
-  // now receives the draft from its host, keeps compiling; T24 completes the orchestration.
-  // Reason: GoalForm takes the host-owned draft (needed for dirty/discard in T24) instead of keeping its own state.
+  const [confirmingDiscard, setConfirmingDiscard] = useState(false);
   const draft = useGoalDraft({ saved, initial, nowIso });
-  const summary = draft.summary;
+  const { summary } = draft;
 
-  function handleOpenChange(next: boolean) {
-    setOpen(next);
-    if (!next) draft.reset();
+  /** Closing with unapplied changes asks first; without changes it closes right away. */
+  function requestClose() {
+    if (draft.dirty) setConfirmingDiscard(true);
+    else setOpen(false);
+  }
+
+  function discard() {
+    draft.reset();
+    setConfirmingDiscard(false);
+    setOpen(false);
   }
 
   return (
-    <Sheet open={open} onOpenChange={handleOpenChange} modal={false}>
-      <div className={cn("space-y-6 transition-[padding] duration-200", open && "lg:pr-96")}>
-        <PageHeader title="Ápice">
+    <Sheet
+      open={open}
+      onOpenChange={(next) => (next ? setOpen(true) : requestClose())}
+      modal={false}
+    >
+      <div
+        className={cn(
+          "space-y-6 transition-[padding] duration-200",
+          open && "lg:pr-96",
+        )}
+      >
+        <PageHeader title="Ápice" subtitle={SUBTITLE}>
           {saved && (
             <SheetTrigger asChild>
               <Button type="button" variant="outline">
-                Calibrar Parâmetros
+                {ADJUST_LABEL}
               </Button>
             </SheetTrigger>
           )}
         </PageHeader>
 
-        {summary && <GoalSummary summary={summary} />}
-
-        {!saved && !summary && (
-          <section className="space-y-4 rounded-2xl border border-border bg-card p-6 shadow-lg">
-            <p className="text-sm text-muted-foreground">{INTRO}</p>
-            <SheetTrigger asChild>
-              <Button type="button">Definir objetivo</Button>
-            </SheetTrigger>
-          </section>
+        {saved ? (
+          summary && (
+            <GoalSummary
+              summary={summary}
+              onAdjust={() => setOpen(true)}
+              preview={draft.dirty}
+            />
+          )
+        ) : (
+          <GoalEmptyState
+            draft={draft}
+            onAdjust={() => setOpen(true)}
+            nowIso={nowIso}
+          />
         )}
       </div>
 
       <SheetContent onInteractOutside={(event) => event.preventDefault()}>
         <div className="space-y-2 pr-8">
-          <SheetTitle>Calibrar Parâmetros</SheetTitle>
+          <SheetTitle>{ADJUST_LABEL}</SheetTitle>
           <SheetDescription>{DRAWER_INTRO}</SheetDescription>
         </div>
-        <DrawerSummary summary={summary} />
+        <DrawerSummary
+          summary={summary}
+          savedSummary={draft.savedSummary}
+          dirty={draft.dirty}
+        />
         <GoalForm
           draft={draft}
           onSaved={() => setOpen(false)}
-          onCancel={() => handleOpenChange(false)}
+          onCancel={requestClose}
           nowIso={nowIso}
         />
       </SheetContent>
+
+      <DiscardDialog
+        open={confirmingDiscard}
+        onDiscard={discard}
+        onKeepEditing={() => setConfirmingDiscard(false)}
+      />
     </Sheet>
   );
 }

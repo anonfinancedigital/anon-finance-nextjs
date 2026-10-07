@@ -12,7 +12,7 @@ export function GoalSummary({
   preview,
 }: {
   summary: Summary;
-  onAdjust?: () => void;
+  onAdjust: () => void;
   preview?: boolean;
 }) {
   return (

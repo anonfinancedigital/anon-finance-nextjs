@@ -768,19 +768,20 @@ T21 → T22 → T23 → T24 → T25 → T26
 
 **Done when**:
 
-- [ ] O título "Ápice" tem o subtítulo nos estados vazio e preenchido
-- [ ] O botão e o título da gaveta são "Ajustar objetivo" e a descrição é "Altere os valores e veja o aporte mensal mudar na hora."
-- [ ] "Cancelar" e "X" com alterações abrem "Descartar alterações?"; sem alterações fecham direto; "Descartar" restaura a página ao salvo
-- [ ] A página por trás da gaveta reflete a prévia e mostra "Prévia" enquanto `dirty`
-- [ ] Sem objetivo salvo mostra `GoalEmptyState`; depois de "Salvar objetivo" mostra o estado preenchido sem abrir a gaveta
-- [ ] "Ajustar" nos chips abre a gaveta
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
-- [ ] Test count: a suíte unit existente passa sem alteração
+- [x] O título "Ápice" tem o subtítulo nos estados vazio e preenchido
+- [x] O botão e o título da gaveta são "Ajustar objetivo" e a descrição é "Altere os valores e veja o aporte mensal mudar na hora."
+- [x] "Cancelar" e "X" com alterações abrem "Descartar alterações?"; sem alterações fecham direto; "Descartar" restaura a página ao salvo
+- [x] A página por trás da gaveta reflete a prévia e mostra "Prévia" enquanto `dirty`
+- [x] Sem objetivo salvo mostra `GoalEmptyState`; depois de "Salvar objetivo" mostra o estado preenchido sem abrir a gaveta
+- [x] "Ajustar" nos chips abre a gaveta
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] Test count: a suíte unit existente passa sem alteração
 
 **Tests**: none
 **Gate**: build
 
 **Commit**: `feat(apice): wire the goal page with the draft, empty state and discard flow`
+**Status**: ✅ Done
 
 ---
 
