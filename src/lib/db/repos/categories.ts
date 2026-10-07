@@ -26,6 +26,7 @@ const columns = {
   name: category.name,
   color: category.color,
   isInvestment: category.isInvestment,
+  deletedFrom: category.deletedFrom,
 };
 
 function expensesMessage(n: number) {
@@ -82,10 +83,11 @@ async function listForMonth(
   for (const { categoryId, ...version } of versions) {
     versionsOf.set(categoryId, [...(versionsOf.get(categoryId) ?? []), version]);
   }
-  return categories.map((c) => {
+  return categories.map(({ deletedFrom, ...c }) => {
     const percent = resolvePercent(versionsOf.get(c.id) ?? [], resolveAt);
     return {
       ...c,
+      deleted: deletedFrom !== null,
       percentMicro: percent ?? 0,
       hasPercent: percent !== null,
       subcategories: byCategory.get(c.id) ?? [],

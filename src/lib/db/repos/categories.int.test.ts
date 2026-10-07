@@ -481,6 +481,20 @@ describe("categoriesRepo.listForMonth", () => {
     expect(await names({ year: 2026, month: 11 })).toEqual(["Fica"]);
   });
 
+  it("flags a category deleted after the month shown as deleted, without leaking deletedFrom", async () => {
+    const userId = await insertTestUser();
+    await insertCategory(userId, { name: "Fica", percentMicro: 50000000, color: 1 });
+    const gone = await insertCategory(userId, { name: "Sai", percentMicro: 50000000, color: 2 });
+    await db.update(category).set({ deletedFrom: "2026-10-01" }).where(eq(category.id, gone.id));
+
+    const sep = await categoriesRepo.listForMonth(userId, { year: 2026, month: 9 }, NOW);
+    expect(sep.map((c) => [c.name, c.deleted])).toEqual([
+      ["Fica", false],
+      ["Sai", true],
+    ]);
+    expect(sep.every((c) => !("deletedFrom" in c))).toBe(true);
+  });
+
   it("list is the month of now and omits deleted categories", async () => {
     const userId = await insertTestUser();
     const a = await insertCategory(userId, { name: "A", percentMicro: 50000000, color: 1 });

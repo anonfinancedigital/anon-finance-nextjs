@@ -174,10 +174,11 @@ T1 → T2 → T3 → T4 → T5 → T6
 
 **What**: `listForMonth` devolve `deleted: true` quando a categoria tem `deleted_from` não nulo.
 **Where**: `src/lib/db/repos/categories.ts`
-**Test files**: `src/lib/db/repos/categories.int.test.ts`
+**Test files**: `src/lib/db/repos/categories.int.test.ts`, `src/lib/db/repos/categories-summary.int.test.ts` (asserção de omissão/estouro atualizada à regra nova)
 **Depends on**: T4
 **Reuses**: `columns`, teste existente "shows a deleted category before deleted_from"
 **Requirement**: CATMES-05
+**Status**: Done
 
 **Tools**:
 
@@ -186,9 +187,9 @@ T1 → T2 → T3 → T4 → T5 → T6
 
 **Done when**:
 
-- [ ] Teste (AC 8): categoria com `deleted_from` posterior ao mês vem com `deleted: true`; categoria ativa vem com `deleted` false
-- [ ] `deletedFrom` não aparece no objeto devolvido
-- [ ] Gate check passes: `npm run test:unit && npm run test:int` (com `DATABASE_URL` privado `*_test`)
+- [x] Teste (AC 8): categoria com `deleted_from` posterior ao mês vem com `deleted: true`; categoria ativa vem com `deleted` false
+- [x] `deletedFrom` não aparece no objeto devolvido
+- [x] Gate check passes: `npm run test:unit && npm run test:int` (com `DATABASE_URL` privado `*_test`)
 
 **Tests**: integration
 **Gate**: full

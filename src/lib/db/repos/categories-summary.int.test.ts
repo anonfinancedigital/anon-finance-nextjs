@@ -84,7 +84,7 @@ describe("monthly summary with percent history", () => {
     ]);
   });
 
-  it("shows spending before a category existed at 0% with target 0, and omits it without spending", async () => {
+  it("shows a category before it existed with no target, never overspent, and keeps the other targets summing to income", async () => {
     const { userId, a, b } = await seed();
     await categoriesRepo.replaceSet(
       userId,
@@ -97,21 +97,26 @@ describe("monthly summary with percent history", () => {
     );
     const [, , c] = await categoriesRepo.list(userId, OCT);
 
-    // September has no spending in C: C is omitted and the remaining targets still sum to income.
+    // September has no spending in C: C is listed without target and the targets still sum to income.
     const sepClean = await summaryFor(userId, SEP, OCT);
-    expect(sepClean.rows.map((r) => r.name)).toEqual(["A", "B"]);
+    expect(sepClean.rows.map((r) => r.name)).toEqual(["A", "B", "C"]);
+    expect(sepClean.rows.find((r) => r.name === "C")).toMatchObject({
+      hasPercent: false,
+      targetCents: 0,
+      overspent: false,
+    });
     expect(sepClean.rows.reduce((t, r) => t + r.targetCents, 0)).toBe(100000);
     expect(sepClean.rows.reduce((t, r) => t + r.percentMicro, 0)).toBe(100000000);
 
-    // Spending in C in September (before C existed) keeps the row with 0% and target 0.
+    // Spending in C in September (before C existed) keeps the row with no target and no overspend.
     await addTx(userId, "2026-09-20", "expense", 7000, c.id);
     const sep = await summaryFor(userId, SEP, OCT);
     expect(sep.rows.find((r) => r.name === "C")).toMatchObject({
       percentMicro: 0,
       targetCents: 0,
       spentCents: 7000,
-      overspent: true,
-      overspentCents: 7000,
+      overspent: false,
+      overspentCents: 0,
     });
     expect(sep.spentCents).toBe(7000);
 
