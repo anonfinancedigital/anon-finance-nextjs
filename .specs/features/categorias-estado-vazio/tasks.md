@@ -382,12 +382,14 @@ T10 → T11
 
 **Done when**:
 
-- [ ] Os seletores das linhas 12, 184, 284 e 295 usam `/Adicionar (primeira )?categoria/`
-- [ ] Nenhum teste e2e novo (AD-005); specs de Rebalancear continuam com 3 categorias
-- [ ] Gate check passes: `npm run typecheck && npm run lint`
+- [x] Os seletores das linhas 12, 184, 284 e 295 usam `/Adicionar (primeira )?categoria/`
+- [x] Nenhum teste e2e novo (AD-005); specs de Rebalancear continuam com 3 categorias
+- [x] Gate check passes: `npm run typecheck && npm run lint`
 
 **Tests**: none
 **Gate**: quick
+
+**Status**: ✅ Complete
 
 **Commit**: `test(categorias): accept the first-category button label in e2e selectors`
 

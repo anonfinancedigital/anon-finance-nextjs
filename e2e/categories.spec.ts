@@ -9,7 +9,7 @@ const percent = (page: Page, n: number) =>
 
 async function addCategories(page: Page, cats: [string, string][]) {
   for (const [i, [catName, catPercent]] of cats.entries()) {
-    await page.getByRole("button", { name: "Adicionar categoria" }).click();
+    await page.getByRole("button", { name: /Adicionar (primeira )?categoria/ }).click();
     await name(page, i + 1).fill(catName);
     await percent(page, i + 1).fill(catPercent);
   }
@@ -181,7 +181,7 @@ test("a row without a valid percentage shows a dash; removing a row recalculates
   await page.goto("/categorias");
   await setIncome(page, "5000");
 
-  await page.getByRole("button", { name: "Adicionar categoria" }).click();
+  await page.getByRole("button", { name: /Adicionar (primeira )?categoria/ }).click();
   await expect(amount(page, 7)).toHaveValue("");
   await percent(page, 7).fill("abc");
   await expect(amount(page, 7)).toHaveValue("");
@@ -281,7 +281,7 @@ test("a new category preselects the first palette color not in use", async ({ pa
   await login(page);
   await page.goto("/categorias");
 
-  await page.getByRole("button", { name: "Adicionar categoria" }).click();
+  await page.getByRole("button", { name: /Adicionar (primeira )?categoria/ }).click();
   await expect(colorButton(page, 3)).toHaveAccessibleName("Cor da categoria 3: Verde");
 });
 
@@ -292,7 +292,7 @@ test("all 8 colors in use make a new category preselect color 1", async ({ page 
   await login(page);
   await page.goto("/categorias");
 
-  await page.getByRole("button", { name: "Adicionar categoria" }).click();
+  await page.getByRole("button", { name: /Adicionar (primeira )?categoria/ }).click();
   await expect(colorButton(page, 9)).toHaveAccessibleName("Cor da categoria 9: Azul");
 });
 
