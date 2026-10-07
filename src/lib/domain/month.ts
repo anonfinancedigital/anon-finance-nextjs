@@ -51,3 +51,29 @@ export function monthHref(current: URLSearchParams | string, month: string): str
   next.set("mes", month);
   return `/?${next.toString()}`;
 }
+
+/** Moves `m` by `delta` months, crossing year boundaries. */
+export function shiftMonth({ year, month }: YearMonth, delta: number): YearMonth {
+  const index = year * 12 + (month - 1) + delta;
+  return { year: Math.floor(index / 12), month: (index % 12) + 1 };
+}
+
+const monthNames = [
+  "Janeiro",
+  "Fevereiro",
+  "Março",
+  "Abril",
+  "Maio",
+  "Junho",
+  "Julho",
+  "Agosto",
+  "Setembro",
+  "Outubro",
+  "Novembro",
+  "Dezembro",
+];
+
+/** The 12 month names in pt-BR, capitalized, January first. */
+export function monthNamesPtBR(): string[] {
+  return [...monthNames];
+}

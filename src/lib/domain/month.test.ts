@@ -1,5 +1,13 @@
 import { describe, expect, it } from "vitest";
-import { currentMonth, isValidCalendarDate, monthHref, monthRange, parseMonth } from "./month";
+import {
+  currentMonth,
+  isValidCalendarDate,
+  monthHref,
+  monthNamesPtBR,
+  monthRange,
+  parseMonth,
+  shiftMonth,
+} from "./month";
 
 describe("currentMonth", () => {
   it("uses America/Sao_Paulo: 2026-02-01T02:30Z is 23:30 on Jan 31, so January", () => {
@@ -64,5 +72,28 @@ describe("monthHref", () => {
 
   it("adds mes when the URL has none", () => {
     expect(monthHref("", "2026-11")).toBe("/?mes=2026-11");
+  });
+});
+
+describe("shiftMonth", () => {
+  it("crosses into the next year from December", () => {
+    expect(shiftMonth({ year: 2026, month: 12 }, 1)).toEqual({ year: 2027, month: 1 });
+  });
+
+  it("crosses into the previous year from January", () => {
+    expect(shiftMonth({ year: 2026, month: 1 }, -1)).toEqual({ year: 2025, month: 12 });
+  });
+
+  it("returns the same month for delta 0", () => {
+    expect(shiftMonth({ year: 2026, month: 6 }, 0)).toEqual({ year: 2026, month: 6 });
+  });
+});
+
+describe("monthNamesPtBR", () => {
+  it("lists the 12 months from Janeiro to Dezembro", () => {
+    const names = monthNamesPtBR();
+    expect(names).toHaveLength(12);
+    expect(names[0]).toBe("Janeiro");
+    expect(names[11]).toBe("Dezembro");
   });
 });
