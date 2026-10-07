@@ -947,16 +947,16 @@ Gaps do `validation.md` (Verifier reprovou): APICE-14.1 (Major), APICE-19.4 (Maj
 
 **Done when**:
 
-- [ ] `goal-draft.ts` não importa de `@/components/*`; o tipo `GoalFormValues` é definido em `src/lib/validation/goal-draft.ts` e os consumidores importam dele
-- [ ] `grep` não encontra o export `blank` nem `planLines` sem consumidor em `src/`
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
-- [ ] Test count: só saem os testes de `planLines`, se removido; os demais passam
+- [x] `goal-draft.ts` não importa de `@/components/*`; o tipo `GoalFormValues` é definido em `src/lib/validation/goal-draft.ts` e os consumidores importam dele
+- [x] `grep` não encontra o export `blank` nem `planLines` sem consumidor em `src/`
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] Test count: só saem os testes de `planLines`, se removido; os demais passam
 
 **Tests**: unit
 **Gate**: build
 
 **Commit**: `refactor(apice): move the goal form values type out of the component layer`
-**Status**: ⏳ Pending
+**Status**: ✅ Done
 
 ---
 

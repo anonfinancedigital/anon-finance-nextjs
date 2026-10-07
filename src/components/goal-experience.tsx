@@ -4,7 +4,7 @@ import { useState } from "react";
 import { DiscardDialog } from "@/components/discard-dialog";
 import { DrawerSummary } from "@/components/drawer-summary";
 import { GoalEmptyState } from "@/components/goal-empty-state";
-import { GoalForm, type GoalFormValues } from "@/components/goal-form";
+import { GoalForm } from "@/components/goal-form";
 import { GoalSummary } from "@/components/goal-summary";
 import { useGoalDraft } from "@/components/use-goal-draft";
 import { PageHeader } from "@/components/page-header";
@@ -23,6 +23,7 @@ import {
   SUBTITLE,
 } from "@/lib/domain/freedom-copy";
 import { cn } from "@/lib/utils";
+import type { GoalFormValues } from "@/lib/validation/goal-draft";
 
 /**
  * Page of the goal: summary on the screen and the form in a side sheet. While the sheet is open

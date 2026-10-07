@@ -1,6 +1,19 @@
-import type { GoalFormValues } from "@/components/goal-form";
 import { DEFAULT_ANNUAL_RATE_BP, DEFAULT_WITHDRAWAL_RATE_BP, summarize, type GoalSummary } from "@/lib/domain/freedom";
 import { goalSchema } from "./goal";
+
+export type GoalFormValues = {
+  /** pt-BR text, e.g. "10.000,00". */
+  monthlyIncome: string;
+  /** pt-BR text, e.g. "150.000,00". */
+  saved: string;
+  /** DD/MM/AAAA. */
+  birthDate: string;
+  retirementAge: string;
+  /** Real return in % a.a., pt-BR text, e.g. "8" or "6,5". */
+  annualRate: string;
+  /** Withdrawal rate in % a.a., pt-BR text, e.g. "6" or "4,5". */
+  withdrawalRate: string;
+};
 
 /** Valores do formulário sem objetivo salvo: campos vazios e o cenário Moderado (8% real, retirada 5%). */
 export const BLANK_GOAL_VALUES: GoalFormValues = {

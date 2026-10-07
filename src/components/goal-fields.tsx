@@ -3,7 +3,7 @@
 import { useId, useState } from "react";
 import { AgeSlider } from "@/components/age-slider";
 import { CurrencyInput } from "@/components/currency-input";
-import type { GoalFormValues } from "@/components/goal-form";
+import type { GoalFormValues } from "@/lib/validation/goal-draft";
 import { RateToggle, type RateValue } from "@/components/rate-toggle";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";

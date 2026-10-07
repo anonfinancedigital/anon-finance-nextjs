@@ -150,20 +150,6 @@ export function formatTerm(months: number): string {
 export const PLAN_REACHED = "Meta alcançada";
 
 /**
- * Linhas sob o aporte mensal. Com prazo: a meta compacta com a idade do ápice e o tempo até lá.
- * Sem prazo: `{ reached: true }` se o aporte é 0 (meta alcançada); `null` no prazo encerrado.
- */
-export function planLines(summary: GoalSummary): { reach: string; term: string } | { reached: true } | null {
-  if (summary.months > 0) {
-    return {
-      reach: `para alcançar ${formatCompactBRL(summary.targetCents)} aos ${summary.retirementAge} anos`,
-      term: `Você chega ao Ápice em: ${formatTerm(summary.months)}`,
-    };
-  }
-  return summary.monthlyCents === 0 ? { reached: true } : null;
-}
-
-/**
  * Pílula do gráfico: rendimentos do último ponto (compacto) e a participação deles no patrimônio
  * final; só o valor quando não há percentual; `null` sem linha do tempo.
  */

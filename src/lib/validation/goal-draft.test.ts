@@ -1,7 +1,6 @@
 import { describe, expect, it } from "vitest";
-import type { GoalFormValues } from "@/components/goal-form";
 import { summarize } from "@/lib/domain/freedom";
-import { BLANK_GOAL_VALUES, evaluateDraft, withZeroSaved } from "./goal-draft";
+import { BLANK_GOAL_VALUES, evaluateDraft, type GoalFormValues, withZeroSaved } from "./goal-draft";
 
 // 2026-06-15 12:00 em São Paulo; cenário de aceite: nascido em 10/05/1993 (33 anos), ápice aos 48.
 const now = new Date("2026-06-15T15:00:00Z");

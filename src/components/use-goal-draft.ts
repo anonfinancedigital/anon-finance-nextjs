@@ -1,9 +1,8 @@
 "use client";
 
 import { useCallback, useMemo, useState } from "react";
-import type { GoalFormValues } from "@/components/goal-form";
 import { type Goal, type GoalSummary, summarize } from "@/lib/domain/freedom";
-import { BLANK_GOAL_VALUES, evaluateDraft } from "@/lib/validation/goal-draft";
+import { BLANK_GOAL_VALUES, evaluateDraft, type GoalFormValues } from "@/lib/validation/goal-draft";
 
 type FieldName = keyof GoalFormValues;
 

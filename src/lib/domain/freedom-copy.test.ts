@@ -17,7 +17,6 @@ import {
   incomeHeadline,
   interestBadge,
   PLAN_REACHED,
-  planLines,
   RATE_HINT,
   RATE_TITLE,
   scenarioName,
@@ -391,57 +390,6 @@ describe("formatTerm", () => {
     [0, "0 meses"],
   ])("%d meses vira %s", (months, text) => {
     expect(formatTerm(months)).toBe(text);
-  });
-});
-
-describe("planLines", () => {
-  it("cenário de aceite: meta compacta, idade do ápice e prazo", () => {
-    expect(acceptance.months).toBe(179);
-    const lines = planLines(acceptance);
-    expect(lines).not.toBeNull();
-    expect(lines).not.toHaveProperty("reached");
-    const { reach, term } = lines as { reach: string; term: string };
-    expect(normalize(reach)).toBe("para alcançar R$ 4,8 mi aos 48 anos");
-    expect(normalize(term)).toBe("Você chega ao Ápice em: 14 anos e 11 meses");
-  });
-
-  it("um ano restante: Você chega ao Ápice em: 1 ano", () => {
-    const summary = summarize({ ...goal, birthDate: "1979-06-10", retirementAge: 48, annualRateBp: 800, withdrawalRateBp: 500 }, now);
-    expect(summary.months).toBe(12);
-    expect(planLines(summary)).toEqual({ reach: expect.any(String), term: "Você chega ao Ápice em: 1 ano" });
-  });
-
-  it("meta alcançada com prazo: aporte 0 e as duas linhas normais", () => {
-    const summary = summarize(
-      { ...goal, savedCents: 500_000_000, birthDate: "1993-05-10", retirementAge: 48, annualRateBp: 800, withdrawalRateBp: 500 },
-      now,
-    );
-    expect(summary.months).toBe(179);
-    expect(summary.monthlyCents).toBe(0);
-    const { reach, term } = planLines(summary) as { reach: string; term: string };
-    expect(normalize(reach)).toBe("para alcançar R$ 4,8 mi aos 48 anos");
-    expect(normalize(term)).toBe("Você chega ao Ápice em: 14 anos e 11 meses");
-  });
-
-  it("prazo encerrado com o guardado na meta: Meta alcançada", () => {
-    const summary = summarize(
-      { ...goal, savedCents: 480_000_000, birthDate: "1978-06-20", retirementAge: 48, annualRateBp: 800, withdrawalRateBp: 500 },
-      now,
-    );
-    expect(summary.months).toBe(0);
-    expect(summary.monthlyCents).toBe(0);
-    expect(planLines(summary)).toEqual({ reached: true });
-    expect(PLAN_REACHED).toBe("Meta alcançada");
-  });
-
-  it("prazo encerrado sem alcançar a meta: nenhuma linha", () => {
-    const summary = summarize(
-      { ...goal, savedCents: 56_500_000, birthDate: "1978-06-20", retirementAge: 48, annualRateBp: 800, withdrawalRateBp: 500 },
-      now,
-    );
-    expect(summary.months).toBe(0);
-    expect(summary.monthlyCents).toBeNull();
-    expect(planLines(summary)).toBeNull();
   });
 });
 
