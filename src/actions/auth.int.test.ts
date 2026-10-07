@@ -258,9 +258,9 @@ describe("signUpAction", () => {
   });
 
   it("rejects a form without confirmPassword and creates no user", async () => {
-    const { confirmPassword: _omitted, ...withoutConfirm } = VALID;
+    const { name, email, password } = VALID;
 
-    expect(await signUpAction(undefined, signupForm(withoutConfirm))).toEqual({
+    expect(await signUpAction(undefined, signupForm({ name, email, password }))).toEqual({
       ok: false,
       error: MISMATCH,
       fieldErrors: { confirmPassword: MISMATCH },

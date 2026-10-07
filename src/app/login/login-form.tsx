@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useActionState } from "react";
 import { signInAction } from "@/actions/auth";
 import { Button } from "@/components/ui/button";
+import { PasswordInput } from "@/components/password-input";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
@@ -18,13 +19,7 @@ export function LoginForm() {
       </div>
       <div className="space-y-2">
         <Label htmlFor="password">Senha</Label>
-        <Input
-          id="password"
-          name="password"
-          type="password"
-          autoComplete="current-password"
-          required
-        />
+        <PasswordInput id="password" name="password" autoComplete="current-password" required />
       </div>
       {state && !state.ok && (
         <p role="alert" className="text-sm text-destructive">

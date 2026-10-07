@@ -98,7 +98,7 @@ Os campos de senha do login e do cadastro não permitem conferir o que foi digit
 
 | Requirement ID | Story | Phase | Status |
 | -------------- | ----- | ----- | ------ |
-| PWD-01 | P1: Mostrar e ocultar senha (critérios 1-6) | Execute | Pending |
+| PWD-01 | P1: Mostrar e ocultar senha (critérios 1-6) | Execute | Implementing |
 | PWD-02 | P1: Confirmar senha (critério 1, UI) | Execute | Pending |
 | PWD-03 | P1: Confirmar senha (critérios 2-3, 6, edge de espaço) | Execute | Implementing |
 | PWD-04 | P1: Confirmar senha (critérios 4-5, edge de 128) | Execute | Implementing |

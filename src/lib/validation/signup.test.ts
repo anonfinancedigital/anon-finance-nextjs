@@ -75,8 +75,8 @@ describe("signupSchema", () => {
     });
 
     it("rejects a missing confirmPassword", () => {
-      const { confirmPassword: _omitted, ...withoutConfirm } = valid;
-      expect(issues(withoutConfirm)).toEqual([{ path: "confirmPassword", message: MISMATCH }]);
+      const { name, email, password } = valid;
+      expect(issues({ name, email, password })).toEqual([{ path: "confirmPassword", message: MISMATCH }]);
     });
 
     it("accepts 128 identical characters", () => {
