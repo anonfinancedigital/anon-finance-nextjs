@@ -155,6 +155,8 @@ T8 → T9 → T10 → T11 → T12
 
 ### T4: Extrair os cards de totais com estado neutro
 
+**Status**: ✅ Done
+
 **What**: Componente `SummaryCards` (Receita, Gasto, Saldo) com prop `empty`: cor neutra e legendas `Registre receitas para ver aqui`, `Registre gastos para ver aqui`, `Receitas menos gastos do mês`; cores atuais quando `empty` é falso.
 **Where**: `src/components/summary-cards.tsx`
 **Depends on**: None
@@ -168,10 +170,10 @@ T8 → T9 → T10 → T11 → T12
 
 **Done when**:
 
-- [ ] `empty` verdadeiro: nenhuma das classes `text-income`, `text-destructive`, `text-link` no valor nem nos ícones; valor `R$ 0,00`; legenda visível
-- [ ] `empty` falso: cores idênticas às de hoje, Saldo vermelho se negativo
-- [ ] `data-testid` `total-income`, `total-spent`, `total-balance` preservados
-- [ ] Gate build passa: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
+- [x] `empty` verdadeiro: nenhuma das classes `text-income`, `text-destructive`, `text-link` no valor nem nos ícones; valor `R$ 0,00`; legenda visível
+- [x] `empty` falso: cores idênticas às de hoje, Saldo vermelho se negativo
+- [x] `data-testid` `total-income`, `total-spent`, `total-balance` preservados
+- [x] Gate build passa: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
 
 **Tests**: none
 **Gate**: build
