@@ -272,6 +272,8 @@ T6 → T17
 
 ### T7: Consumir o token e trocar a senha de forma atômica
 
+**Status**: ✅ Complete
+
 **What**: `passwordResetsRepo.consume(token, password)` que, em uma transação, consome o token, troca a senha da conta credential e apaga as sessões.
 **Where**: `src/lib/db/repos/password-resets.ts` (modify)
 **Depends on**: T6
@@ -285,15 +287,15 @@ T6 → T17
 
 **Done when**:
 
-- [ ] Token vigente devolve `ok`; o login com a nova senha funciona e com a antiga falha (via `signInEmail`)
-- [ ] Todas as sessões do usuário somem; as de outro usuário permanecem; nenhuma sessão nova é aberta
-- [ ] O token não existe mais: segundo `consume` devolve `invalid` e a senha continua a primeira nova
-- [ ] Token desconhecido, expirado, substituído por novo pedido e de usuário excluído devolvem `invalid` sem alterar nenhuma senha
-- [ ] Dono `pending`, `rejected` ou `revoked` devolve `invalid`, a senha fica intacta e o token foi apagado
-- [ ] Dois `consume` simultâneos do mesmo token: exatamente um `ok` e um `invalid`
-- [ ] Falha forçada após o delete do token (hash que lança) faz rollback: senha antiga vale, sessões continuam, token continua válido
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
-- [ ] Test count: ≥15 tests pass in total in this file (no silent deletions)
+- [x] Token vigente devolve `ok`; o login com a nova senha funciona e com a antiga falha (via `signInEmail`)
+- [x] Todas as sessões do usuário somem; as de outro usuário permanecem; nenhuma sessão nova é aberta
+- [x] O token não existe mais: segundo `consume` devolve `invalid` e a senha continua a primeira nova
+- [x] Token desconhecido, expirado, substituído por novo pedido e de usuário excluído devolvem `invalid` sem alterar nenhuma senha
+- [x] Dono `pending`, `rejected` ou `revoked` devolve `invalid`, a senha fica intacta e o token foi apagado
+- [x] Dois `consume` simultâneos do mesmo token: exatamente um `ok` e um `invalid`
+- [x] Falha forçada após o delete do token (hash que lança) faz rollback: senha antiga vale, sessões continuam, token continua válido
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
+- [x] Test count: ≥15 tests pass in total in this file (no silent deletions)
 
 **Tests**: integration
 **Gate**: full

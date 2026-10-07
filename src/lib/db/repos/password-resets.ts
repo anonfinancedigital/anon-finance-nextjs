@@ -1,7 +1,8 @@
 import { createHash, randomBytes, randomUUID } from "node:crypto";
+import { hashPassword } from "better-auth/crypto";
 import { and, eq, gt, like, lte, or } from "drizzle-orm";
 import { RESET_TOKEN_TTL_MINUTES } from "@/lib/domain/password-reset-email";
-import { user, verification } from "../auth-schema";
+import { account, session, user, verification } from "../auth-schema";
 import { db } from "../client";
 import { usersRepo } from "./users";
 
@@ -58,4 +59,32 @@ async function isValid(token: string): Promise<boolean> {
   return rows.length > 0;
 }
 
-export const passwordResetsRepo = { issue, isValid };
+/**
+ * Consumes the token and sets the new password in one transaction: deletes the token if current,
+ * then, for an approved owner, replaces the credential password and ends every session.
+ * `invalid` when the token is unknown, expired, already used, replaced or the owner is not approved
+ * (the token is deleted anyway). Any error rolls back, and the token stays valid.
+ * Of two concurrent uses, the delete lets only one find the row.
+ */
+async function consume(token: string, password: string): Promise<"ok" | "invalid"> {
+  return db.transaction(async (tx) => {
+    const [row] = await tx
+      .delete(verification)
+      .where(and(eq(verification.identifier, identifierOf(token)), gt(verification.expiresAt, new Date())))
+      .returning({ userId: verification.value });
+    if (!row) return "invalid";
+
+    const [owner] = await tx.select({ status: user.status }).from(user).where(eq(user.id, row.userId));
+    if (owner?.status !== "approved") return "invalid";
+
+    const hash = await hashPassword(password);
+    await tx
+      .update(account)
+      .set({ password: hash })
+      .where(and(eq(account.userId, row.userId), eq(account.providerId, "credential")));
+    await tx.delete(session).where(eq(session.userId, row.userId));
+    return "ok";
+  });
+}
+
+export const passwordResetsRepo = { issue, isValid, consume };

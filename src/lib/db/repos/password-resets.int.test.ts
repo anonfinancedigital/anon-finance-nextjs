@@ -1,11 +1,19 @@
 import { createHash } from "node:crypto";
-import { eq } from "drizzle-orm";
+import { hashPassword } from "better-auth/crypto";
+import { asc, eq } from "drizzle-orm";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { insertCredentialUser } from "@/test/auth";
+import { auth } from "@/lib/auth";
+import { createSignedInUser, insertCredentialUser, signInCookie, TEST_PASSWORD } from "@/test/auth";
 import { setupTestDb } from "@/test/db";
-import { user, verification } from "../auth-schema";
+import { account, session, user, verification } from "../auth-schema";
 import { db } from "../client";
 import { passwordResetsRepo } from "./password-resets";
+
+// Real hashing, wrapped so a test can force one call to fail.
+vi.mock("better-auth/crypto", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("better-auth/crypto")>();
+  return { ...actual, hashPassword: vi.fn(actual.hashPassword) };
+});
 
 setupTestDb();
 
@@ -154,5 +162,148 @@ describe("passwordResetsRepo.isValid", () => {
     await db.delete(user).where(eq(user.id, id));
 
     expect(await passwordResetsRepo.isValid(issued!.token)).toBe(false);
+  });
+});
+
+describe("passwordResetsRepo.consume", () => {
+  const NEW_PASSWORD = "nova-senha-456";
+
+  const sessionsOf = (userId: string) => db.$count(session, eq(session.userId, userId));
+  const accounts = () => db.select().from(account).orderBy(asc(account.id));
+
+  /** Whether Better Auth signs the e-mail in with the password. */
+  async function signsIn(email: string, password: string) {
+    try {
+      await auth.api.signInEmail({ body: { email, password } });
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  it("returns ok and replaces the password: the new one signs in and the old one does not", async () => {
+    await insertCredentialUser("ana@x.com");
+    const { token } = (await passwordResetsRepo.issue("ana@x.com"))!;
+
+    expect(await passwordResetsRepo.consume(token, NEW_PASSWORD)).toBe("ok");
+
+    expect(await signsIn("ana@x.com", TEST_PASSWORD)).toBe(false);
+    expect(await signsIn("ana@x.com", NEW_PASSWORD)).toBe(true);
+  });
+
+  it("deletes every session of the user, keeps the sessions of other users and opens none", async () => {
+    const { userId, email } = await createSignedInUser("ana@x.com");
+    await signInCookie(email);
+    const other = await createSignedInUser("bia@x.com");
+    expect(await sessionsOf(userId)).toBe(2);
+    const { token } = (await passwordResetsRepo.issue(email))!;
+
+    expect(await passwordResetsRepo.consume(token, NEW_PASSWORD)).toBe("ok");
+
+    expect(await sessionsOf(userId)).toBe(0);
+    expect(await sessionsOf(other.userId)).toBe(1);
+  });
+
+  it("consumes the token: a second use is invalid and keeps the first new password", async () => {
+    await insertCredentialUser("ana@x.com");
+    const { token } = (await passwordResetsRepo.issue("ana@x.com"))!;
+    await passwordResetsRepo.consume(token, NEW_PASSWORD);
+
+    expect(await passwordResetsRepo.consume(token, "outra-senha-789")).toBe("invalid");
+
+    expect(await db.$count(verification)).toBe(0);
+    expect(await signsIn("ana@x.com", "outra-senha-789")).toBe(false);
+    expect(await signsIn("ana@x.com", NEW_PASSWORD)).toBe(true);
+  });
+
+  it("returns invalid for an unknown token without changing any password", async () => {
+    await insertCredentialUser("ana@x.com");
+    await passwordResetsRepo.issue("ana@x.com");
+    const before = await accounts();
+
+    expect(await passwordResetsRepo.consume("token-desconhecido", NEW_PASSWORD)).toBe("invalid");
+
+    expect(await accounts()).toEqual(before);
+  });
+
+  it("returns invalid for an expired token without changing any password", async () => {
+    freezeClock();
+    await insertCredentialUser("ana@x.com");
+    const { token } = (await passwordResetsRepo.issue("ana@x.com"))!;
+    const before = await accounts();
+    advanceClock(30 * MINUTE);
+
+    expect(await passwordResetsRepo.consume(token, NEW_PASSWORD)).toBe("invalid");
+
+    expect(await accounts()).toEqual(before);
+  });
+
+  it("returns invalid for a token replaced by a newer request without changing any password", async () => {
+    await insertCredentialUser("ana@x.com");
+    const older = (await passwordResetsRepo.issue("ana@x.com"))!;
+    const newer = (await passwordResetsRepo.issue("ana@x.com"))!;
+    const before = await accounts();
+
+    expect(await passwordResetsRepo.consume(older.token, NEW_PASSWORD)).toBe("invalid");
+
+    expect(await accounts()).toEqual(before);
+    expect(await passwordResetsRepo.isValid(newer.token)).toBe(true);
+  });
+
+  it("returns invalid for a token of a deleted user without changing any password", async () => {
+    const id = await insertCredentialUser("ana@x.com");
+    await insertCredentialUser("bia@x.com");
+    const { token } = (await passwordResetsRepo.issue("ana@x.com"))!;
+    await db.delete(user).where(eq(user.id, id));
+    const before = await accounts();
+
+    expect(await passwordResetsRepo.consume(token, NEW_PASSWORD)).toBe("invalid");
+
+    expect(await accounts()).toEqual(before);
+  });
+
+  it.each(NOT_APPROVED)(
+    "returns invalid when the owner became %s, keeping the password and deleting the token",
+    async (status) => {
+      const id = await insertCredentialUser("ana@x.com");
+      const { token } = (await passwordResetsRepo.issue("ana@x.com"))!;
+      await db.update(user).set({ status }).where(eq(user.id, id));
+      const before = await accounts();
+
+      expect(await passwordResetsRepo.consume(token, NEW_PASSWORD)).toBe("invalid");
+
+      expect(await accounts()).toEqual(before);
+      expect(await db.$count(verification)).toBe(0);
+    },
+  );
+
+  it("accepts exactly one of two simultaneous uses of the same token", async () => {
+    await insertCredentialUser("ana@x.com");
+    const { token } = (await passwordResetsRepo.issue("ana@x.com"))!;
+
+    const results = await Promise.all([
+      passwordResetsRepo.consume(token, "primeira-senha-1"),
+      passwordResetsRepo.consume(token, "segunda-senha-2"),
+    ]);
+
+    expect([...results].sort()).toEqual(["invalid", "ok"]);
+    const winner = results[0] === "ok" ? "primeira-senha-1" : "segunda-senha-2";
+    const loser = results[0] === "ok" ? "segunda-senha-2" : "primeira-senha-1";
+    expect(await signsIn("ana@x.com", loser)).toBe(false);
+    expect(await signsIn("ana@x.com", winner)).toBe(true);
+  });
+
+  it("rolls everything back when hashing fails after the token is deleted", async () => {
+    const { userId, email } = await createSignedInUser("ana@x.com");
+    const { token } = (await passwordResetsRepo.issue(email))!;
+    const before = await accounts();
+    vi.mocked(hashPassword).mockRejectedValueOnce(new Error("hash falhou"));
+
+    await expect(passwordResetsRepo.consume(token, NEW_PASSWORD)).rejects.toThrow("hash falhou");
+
+    expect(await accounts()).toEqual(before);
+    expect(await sessionsOf(userId)).toBe(1);
+    expect(await passwordResetsRepo.isValid(token)).toBe(true);
+    expect(await signsIn(email, TEST_PASSWORD)).toBe(true);
   });
 });
