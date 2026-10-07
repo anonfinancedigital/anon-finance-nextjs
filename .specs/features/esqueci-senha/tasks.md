@@ -209,6 +209,8 @@ T6 → T17
 
 ### T5: Criar o mailer SMTP
 
+**Status**: ✅ Complete
+
 **What**: `sendMail` que cria o transporte do `nodemailer` na primeira chamada a partir de `SMTP_*` e envia texto simples.
 **Where**: `src/lib/mailer.ts`
 **Depends on**: T1
@@ -222,12 +224,12 @@ T6 → T17
 
 **Done when**:
 
-- [ ] `sendMail({ to, subject, text })` chama `sendMail` do transporte com `from = SMTP_FROM`, `to`, `subject` e `text`
-- [ ] O transporte é criado com host, porta numérica e credenciais de `SMTP_*`
-- [ ] Cada variável ausente (cinco casos) rejeita com `Error("<NOME> não configurado")`
-- [ ] Erro do transporte propaga a quem chamou
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
-- [ ] Test count: ≥8 tests pass (no silent deletions)
+- [x] `sendMail({ to, subject, text })` chama `sendMail` do transporte com `from = SMTP_FROM`, `to`, `subject` e `text`
+- [x] O transporte é criado com host, porta numérica e credenciais de `SMTP_*`
+- [x] Cada variável ausente (cinco casos) rejeita com `Error("<NOME> não configurado")`
+- [x] Erro do transporte propaga a quem chamou
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Test count: ≥8 tests pass (no silent deletions)
 
 **Tests**: unit
 **Gate**: quick
