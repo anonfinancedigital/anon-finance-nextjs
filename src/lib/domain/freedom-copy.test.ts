@@ -11,7 +11,6 @@ import {
   DRAWER_INTRO,
   formatRate,
   formatTerm,
-  heroPill,
   HOW_DISCLAIMER,
   HOW_TITLE,
   howWeCalculate,
@@ -54,7 +53,6 @@ describe("sem promessa de renda ou retorno", () => {
   const texts = [
     RATE_TITLE,
     RATE_HINT,
-    heroPill(acceptance),
     howWeCalculate(acceptance),
     SUBTITLE,
     DRAWER_INTRO,
@@ -337,17 +335,6 @@ describe("formatRate", () => {
     [675, "6,75%"],
   ])("%d pb vira %s", (bp, text) => {
     expect(formatRate(bp)).toBe(text);
-  });
-});
-
-describe("heroPill", () => {
-  it("renda R$ 20.000 e retirada inicial de 5% a.a.", () => {
-    expect(normalize(heroPill(acceptance))).toBe("Renda de R$ 20.000,00/mês · retirada inicial de 5% a.a.");
-  });
-
-  it("retirada de 650 pb sai com vírgula decimal", () => {
-    const summary = summarize({ ...goal, annualRateBp: 800, withdrawalRateBp: 650 }, now);
-    expect(normalize(heroPill(summary))).toBe("Renda de R$ 20.000,00/mês · retirada inicial de 6,5% a.a.");
   });
 });
 

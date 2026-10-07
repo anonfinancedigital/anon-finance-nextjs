@@ -37,11 +37,6 @@ export function formatRate(bp: number): string {
 
 const perYear = (bp: number) => `${formatRate(bp)} a.a.`;
 
-/** Pílula do card de Meta: a renda desejada e a retirada inicial usada. */
-export function heroPill(summary: GoalSummary): string {
-  return `Renda de ${formatBRL(summary.monthlyIncomeCents)}/mês · retirada inicial de ${perYear(summary.withdrawalRateBp)}`;
-}
-
 /** Renda desejada do card principal: "R$ 20 mil/mês aos 48 anos". */
 export function incomeHeadline(summary: GoalSummary): string {
   return `${formatCompactBRL(summary.monthlyIncomeCents)}/mês aos ${summary.retirementAge} anos`;

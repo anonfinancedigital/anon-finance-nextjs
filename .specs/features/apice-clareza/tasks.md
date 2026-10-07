@@ -828,15 +828,16 @@ T21 → T22 → T23 → T24 → T25 → T26
 
 **Done when**:
 
-- [ ] `grep` não encontra `heroPill` em `src/`
-- [ ] Nenhum texto de `freedom-copy.ts` contém "Renda de" seguido de "retirada inicial de" em formato de pílula
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
-- [ ] Test count: os testes de `heroPill` removidos e todos os demais passam
+- [x] `grep` não encontra `heroPill` em `src/`
+- [x] Nenhum texto de `freedom-copy.ts` contém "Renda de" seguido de "retirada inicial de" em formato de pílula
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] Test count: os testes de `heroPill` removidos e todos os demais passam
 
 **Tests**: unit
 **Gate**: build
 
 **Commit**: `refactor(apice): remove the superseded hero pill copy`
+**Status**: ✅ Done
 
 ---
 
