@@ -506,6 +506,8 @@ T6 → T17
 
 ### T15: Criar a página de pedido
 
+**Status**: ✅ Complete
+
 **What**: Página `/esqueci-senha` com cartão e logo, o formulário, o link "Voltar ao login" e o redirecionamento de quem já está logado.
 **Where**: `src/app/esqueci-senha/page.tsx`
 **Depends on**: T14, T10
@@ -519,9 +521,9 @@ T6 → T17
 
 **Done when**:
 
-- [ ] A página renderiza o formulário e o link "Voltar ao login" para `/login`, com `metadata.title`
-- [ ] Usuário aprovado logado é redirecionado a `/`
-- [ ] Build gate passa: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
+- [x] A página renderiza o formulário e o link "Voltar ao login" para `/login`, com `metadata.title`
+- [x] Usuário aprovado logado é redirecionado a `/`
+- [x] Build gate passa: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
 
 **Tests**: none
 **Gate**: build
