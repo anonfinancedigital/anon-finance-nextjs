@@ -86,9 +86,9 @@ Regra de `replaceSet` (mês `F` = primeiro dia do mês corrente de `now`):
 
 ### `buildMonthlySummary` (ajuste)
 
-- **Purpose**: Omitir categorias sem vigência no mês e sem gasto (HIST-05).
+- **Purpose**: Calcular a linha de cada categoria; a que não tem vigência no mês fica com meta 0 (HIST-05). A omissão original foi substituída pela feature `categorias-meses-anteriores`.
 - **Location**: `src/lib/domain/budget.ts`
-- **Interfaces**: `Category` ganha `hasPercent?: boolean` (omitido = `true`). `rows` exclui a categoria quando `hasPercent === false` e `spentCents === 0`; com gasto fica com meta 0 e `overspent` verdadeiro.
+- **Interfaces**: `Category` ganha `hasPercent?: boolean` (omitido = `true`). `rows` inclui a categoria com `hasPercent === false`, com meta 0; sem gasto não há estouro, com gasto fica `overspent` verdadeiro. A tabela exibe "Sem meta".
 - **Dependencies**: nenhuma nova
 - **Reuses**: o cálculo atual de `allocateCents` e `consumedPct`
 
@@ -143,7 +143,7 @@ export const categoryPercent = pgTable("category_percent", {
 | Muitos testes inserem `category` direto com `percentMicro` | `src/lib/db/schema.int.test.ts:35`, `src/lib/db/repos/*.int.test.ts`, `src/actions/*.int.test.ts` | Quebram com a coluna removida | Helper `insertCategory` em `src/test/db.ts` que grava categoria + vigência sentinela; trocar os inserts |
 | Migração de dados irreversível (drop de coluna) | `drizzle/0007_*.sql` | Perda do percentual se o backfill falhar | Backfill e drop na mesma migração; teste de integração do backfill; sem push/deploy sem go-ahead |
 | Categoria criada e excluída no mesmo mês deixa linhas invisíveis | `categories.ts` (soft delete) | Acúmulo mínimo de linhas | Aceito; nunca aparece em nenhum mês (mês inicial = mês de exclusão) |
-| `Category.hasPercent` opcional pode ser esquecido por quem monta categorias | `src/lib/domain/budget.ts:75` | Linha com 0% aparece sem gasto | Só `listForMonth` define `false`; teste unitário de omissão |
+| `Category.hasPercent` opcional pode ser esquecido por quem monta categorias | `src/lib/domain/budget.ts:75` | Linha sem meta aparece com "Sem meta" (comportamento desejado desde `categorias-meses-anteriores`) | Só `listForMonth` define `false`; teste unitário de omissão do campo |
 | `truncateAll` pode não conhecer a tabela nova | `src/test/db-reset.ts` | Vazamento de dados entre testes | Conferir na task da migração; o cascade a partir de `category` já limpa se a lista usar CASCADE |
 
 ---

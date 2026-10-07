@@ -9,7 +9,7 @@ Implement these tasks with the `tlc-spec-driven` skill: **activate it by name an
 ---
 
 **Design**: `.specs/features/categorias-meses-anteriores/design.md`
-**Status**: Draft
+**Status**: Done
 
 Antes de qualquer comando: `export PATH=$HOME/.nvm/versions/node/v20.20.2/bin:$PATH`. A árvore tem alterações não commitadas de outras features (`.specs/LESSONS.md`, `e2e/transaction-form.spec.ts`, `src/components/transaction-form.tsx`, `data-nascimento`, `apice-clareza`): cada commit adiciona só os arquivos da própria task (`git add <arquivos>`, nunca `-A`).
 
@@ -118,6 +118,7 @@ T1 → T2 → T3
 **Depends on**: T2
 **Reuses**: texto atual da seção `buildMonthlySummary (ajuste)`
 **Requirement**: CATMES-03
+**Status**: Done
 
 **Tools**:
 
@@ -126,9 +127,9 @@ T1 → T2 → T3
 
 **Done when**:
 
-- [ ] A seção `buildMonthlySummary (ajuste)` diz que `rows` inclui a categoria com `hasPercent === false`, com meta 0, e aponta para `categorias-meses-anteriores`
-- [ ] Nenhuma outra linha do design contradiz a regra nova
-- [ ] Gate check passes: `npm run test:unit`
+- [x] A seção `buildMonthlySummary (ajuste)` diz que `rows` inclui a categoria com `hasPercent === false`, com meta 0, e aponta para `categorias-meses-anteriores`
+- [x] Nenhuma outra linha do design contradiz a regra nova
+- [x] Gate check passes: `npm run test:unit`
 
 **Tests**: none
 **Gate**: quick
