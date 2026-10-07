@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   ageOn,
   annualIncomeCents,
+  chartYAxis,
   chartYMax,
   compositionShares,
   DEFAULT_ANNUAL_RATE_BP,
@@ -180,6 +181,60 @@ describe("requiredMonthlyCents", () => {
     expect(future).toBeGreaterThanOrEqual(targetCents - 1e-3);
     // arredondado para cima: sobra menos que 1 centavo de aporte capitalizado
     expect(future - targetCents).toBeLessThan((growth - 1) / i);
+  });
+});
+
+describe("chartYAxis", () => {
+  const reais = (n: number) => n * 100;
+
+  it("meta de R$ 500 mil: ticks de 100 em 100 mil até 500 mil", () => {
+    expect(chartYAxis(reais(500_000), reais(500_000))).toEqual({
+      max: reais(500_000),
+      ticks: [0, 100_000, 200_000, 300_000, 400_000, 500_000].map(reais),
+    });
+  });
+
+  it("meta de R$ 4,8 mi com patrimônio final até 4,8 mi: ticks de 1 em 1 mi até 5 mi", () => {
+    expect(chartYAxis(reais(4_800_000), reais(4_800_000))).toEqual({
+      max: reais(5_000_000),
+      ticks: [0, 1_000_000, 2_000_000, 3_000_000, 4_000_000, 5_000_000].map(reais),
+    });
+    expect(chartYAxis(reais(4_800_000), reais(4_700_000)).max).toBe(reais(5_000_000));
+  });
+
+  it("meta de R$ 20 mi: ticks de 5 em 5 mi até 20 mi", () => {
+    expect(chartYAxis(reais(20_000_000), reais(20_000_000))).toEqual({
+      max: reais(20_000_000),
+      ticks: [0, 5_000_000, 10_000_000, 15_000_000, 20_000_000].map(reais),
+    });
+  });
+
+  it("patrimônio final maior que a meta define o máximo", () => {
+    expect(chartYAxis(reais(500_000), reais(650_000))).toEqual({
+      max: reais(800_000),
+      ticks: [0, 200_000, 400_000, 600_000, 800_000].map(reais),
+    });
+  });
+
+  it("um centavo acima de 5 passos sobe para o próximo passo", () => {
+    expect(chartYAxis(reais(500_000) + 1, reais(100))).toEqual({
+      max: reais(600_000),
+      ticks: [0, 200_000, 400_000, 600_000].map(reais),
+    });
+  });
+
+  it("de 50 mil a 50 mi: de 4 a 6 ticks igualmente espaçados, começando em 0 e cobrindo o maior valor", () => {
+    for (let raw = reais(50_000); raw <= reais(50_000_000); raw = Math.ceil(raw * 1.07)) {
+      const { max, ticks } = chartYAxis(raw, Math.round(raw / 2));
+      expect(ticks.length, `raw ${raw}`).toBeGreaterThanOrEqual(4);
+      expect(ticks.length, `raw ${raw}`).toBeLessThanOrEqual(6);
+      expect(ticks[0]).toBe(0);
+      expect(ticks.at(-1)).toBe(max);
+      expect(max).toBeGreaterThanOrEqual(raw);
+      const step = ticks[1] - ticks[0];
+      expect(ticks.every((t, i) => t === i * step), `raw ${raw}`).toBe(true);
+      expect(max - step, `raw ${raw}`).toBeLessThan(raw);
+    }
   });
 });
 

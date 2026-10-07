@@ -117,17 +117,18 @@ T21 → T22 → T23 → T24 → T25 → T26
 
 **Done when**:
 
-- [ ] Meta R$ 500 mil: ticks 0, 100 mil, 200 mil, 300 mil, 400 mil, 500 mil (em centavos) e `max` = 500 mil
-- [ ] Meta R$ 4,8 mi (patrimônio final até 4,8 mi): ticks 0, 1 mi, 2 mi, 3 mi, 4 mi, 5 mi e `max` = 5 mi
-- [ ] Meta R$ 20 mi: ticks 0, 5 mi, 10 mi, 15 mi, 20 mi
-- [ ] Patrimônio final maior que a meta define o `max`; os ticks ficam igualmente espaçados e sempre de 4 a 6 itens para entradas de 50 mil a 50 mi
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
-- [ ] Test count: os testes anteriores mais os novos de `chartYAxis` passam
+- [x] Meta R$ 500 mil: ticks 0, 100 mil, 200 mil, 300 mil, 400 mil, 500 mil (em centavos) e `max` = 500 mil
+- [x] Meta R$ 4,8 mi (patrimônio final até 4,8 mi): ticks 0, 1 mi, 2 mi, 3 mi, 4 mi, 5 mi e `max` = 5 mi
+- [x] Meta R$ 20 mi: ticks 0, 5 mi, 10 mi, 15 mi, 20 mi
+- [x] Patrimônio final maior que a meta define o `max`; os ticks ficam igualmente espaçados e sempre de 4 a 6 itens para entradas de 50 mil a 50 mi
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Test count: os testes anteriores mais os novos de `chartYAxis` passam
 
 **Tests**: unit
 **Gate**: quick
 
 **Commit**: `feat(apice): add a regular-step y axis for the trajectory chart`
+**Status**: ✅ Done
 
 ---
 

@@ -171,6 +171,24 @@ export function chartYMax(targetCents: number, finalCents: number): number {
   return Math.round((Math.max(targetCents, finalCents) * 107) / 100);
 }
 
+const AXIS_MAX_INTERVALS = 5;
+
+/**
+ * Eixo Y do gráfico: ticks igualmente espaçados a partir de 0, num passo 1, 2 ou 5 × 10ⁿ (centavos)
+ * que dê no máximo 5 intervalos; o máximo é o menor múltiplo do passo que cobre o maior entre o alvo
+ * e o patrimônio final.
+ */
+export function chartYAxis(targetCents: number, finalCents: number): { max: number; ticks: number[] } {
+  const raw = Math.max(targetCents, finalCents);
+  for (let magnitude = 1; ; magnitude *= 10) {
+    const step = [1, 2, 5].map((m) => m * magnitude).find((s) => Math.ceil(raw / s) <= AXIS_MAX_INTERVALS);
+    if (step !== undefined) {
+      const intervals = Math.ceil(raw / step);
+      return { max: intervals * step, ticks: Array.from({ length: intervals + 1 }, (_, i) => i * step) };
+    }
+  }
+}
+
 export type Checkpoint = {
   /** Fração do alvo em pontos-base: 2500, 5000, 7500 ou 10000. */
   fractionBp: number;
