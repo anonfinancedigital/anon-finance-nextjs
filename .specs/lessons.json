@@ -3,7 +3,7 @@
   "promote_threshold": 2,
   "window_days": 45,
   "quarantine_threshold": 2,
-  "next_id": 30,
+  "next_id": 31,
   "lessons": [
     {
       "id": "L-001",
@@ -528,6 +528,24 @@
       ],
       "created": "2026-10-07T09:23:55Z",
       "last_seen": "2026-10-07T09:23:55Z"
+    },
+    {
+      "id": "L-030",
+      "key": "ac_gap::when an ac requires a link next to an error message render the link on every path that shows that message including the error returned by the server action not only on the page",
+      "text": "When an AC requires a link next to an error message, render the link on every path that shows that message, including the error returned by the Server Action, not only on the page.",
+      "signal": "ac_gap",
+      "scope": "ui/forms",
+      "status": "candidate",
+      "features": [
+        "esqueci-senha"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "P1 Definir a nova senha AC 8 / reset-form.tsx (ui/forms)"
+      ],
+      "created": "2026-10-07T09:52:50Z",
+      "last_seen": "2026-10-07T09:52:50Z"
     }
   ]
 }

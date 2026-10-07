@@ -186,6 +186,12 @@ Seen once or not yet corroborated. Tracked, not trusted.
 - evidence: PWD-01 AC3/AC6, PWD-02 AC1; M8 M9 M10 (ui)
 - last seen: 2026-10-07T09:23:55Z
 
+### L-030 - When an AC requires a link next to an error message, render the link on every path that shows that message, including the error returned by the Server Action, not only on the page.
+- signal: `ac_gap` · recurrence: 1 feature(s) · scope: `ui/forms` · harmful: 0
+- features: esqueci-senha
+- evidence: P1 Definir a nova senha AC 8 / reset-form.tsx (ui/forms)
+- last seen: 2026-10-07T09:52:50Z
+
 ## Quarantined (failed when applied - ignore)
 
 A confirmed lesson that recurred alongside failure. Kept for the maintainer to review.
