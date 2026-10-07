@@ -266,13 +266,15 @@ T10 → T11
 
 **Done when**:
 
-- [ ] Com 0 linhas: aparece o texto `Você ainda não tem categorias. Crie a primeira para começar a distribuir sua receita.` e o botão primário `Adicionar primeira categoria`; não há cabeçalhos, linha Soma, aviso, select, Rebalancear nem Salvar
-- [ ] O botão do estado vazio cria uma linha vazia e a tabela substitui o bloco; remover a última linha volta ao estado vazio
-- [ ] Com 1+ linhas e soma ≠ 100%, o Salvar fica desabilitado com `title="Some 100% para salvar"` e `aria-describedby` para um `span sr-only` com o mesmo texto; com soma 100% fica habilitado sem `title`
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
+- [x] Com 0 linhas: aparece o texto `Você ainda não tem categorias. Crie a primeira para começar a distribuir sua receita.` e o botão primário `Adicionar primeira categoria`; não há cabeçalhos, linha Soma, aviso, select, Rebalancear nem Salvar
+- [x] O botão do estado vazio cria uma linha vazia e a tabela substitui o bloco; remover a última linha volta ao estado vazio
+- [x] Com 1+ linhas e soma ≠ 100%, o Salvar fica desabilitado com `title="Some 100% para salvar"` e `aria-describedby` para um `span sr-only` com o mesmo texto; com soma 100% fica habilitado sem `title`
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
 
 **Tests**: none
 **Gate**: build
+
+**Status**: ✅ Complete
 
 **Commit**: `feat(categorias): show an empty state when there are no categories`
 

@@ -2,7 +2,7 @@
 
 import { Trash2Icon } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState, useTransition } from "react";
+import { useId, useState, useTransition } from "react";
 import { saveCategories } from "@/actions/categories";
 import { AdjustSumBar } from "@/components/adjust-sum-bar";
 import { CategorySquare } from "@/components/category-card";
@@ -21,6 +21,7 @@ import { Input } from "@/components/ui/input";
 import { ReferenceIncomeCard } from "@/components/reference-income-card";
 import { SubcategoryEditor, type SubcategoryRow } from "@/components/subcategory-editor";
 import type { ActionResult } from "@/lib/action-result";
+import { allocationView } from "@/lib/domain/allocation-view";
 import { allocateCents, type Category } from "@/lib/domain/budget";
 import { categoryDisplayName } from "@/lib/domain/category-label";
 import { CATEGORY_COLORS, colorVar, nextFreeColor } from "@/lib/domain/color";
@@ -133,6 +134,20 @@ function ColorPicker({
   );
 }
 
+/** Shown instead of the table when there are no category rows. */
+function EmptyAllocation({ onAdd }: { onAdd: () => void }) {
+  return (
+    <div className="space-y-4 rounded-2xl border border-border bg-card px-4 py-6 shadow-lg">
+      <p className="text-sm text-muted-foreground">
+        Você ainda não tem categorias. Crie a primeira para começar a distribuir sua receita.
+      </p>
+      <Button type="button" onClick={onAdd}>
+        Adicionar primeira categoria
+      </Button>
+    </div>
+  );
+}
+
 /**
  * Editable category set with a live sum; saving is blocked until the sum is exactly 100%.
  * A reference income (starts from `initialIncome`; local state only, never saved) previews each category's amount in R$.
@@ -156,6 +171,7 @@ export function CategoryEditor({
   // Row waiting for the removal confirmation dialog.
   const [removing, setRemoving] = useState<number | null>(null);
   const [pending, startTransition] = useTransition();
+  const saveHintId = useId();
 
   // After a save the server sends the set again (with ids of new categories): start from it.
   const [shown, setShown] = useState(categories);
@@ -167,6 +183,7 @@ export function CategoryEditor({
   const parsed = rows.map((r) => (r.percent.trim() === "" ? null : parsePercent(r.percent)));
   const sumMicro = parsed.reduce((sum, p) => sum + (p?.ok ? p.value : 0), 0);
   const sumOk = sumMicro === TOTAL_MICRO;
+  const view = allocationView(rows.length, sumMicro);
   const parsedIncome = income.trim() === "" ? null : parseBRL(income);
   const incomeCents = parsedIncome?.ok ? parsedIncome.value : null;
   const amounts = parsed.map((p) =>
@@ -254,134 +271,138 @@ export function CategoryEditor({
     >
       <ReferenceIncomeCard value={income} onChange={setIncome} />
 
-      <div className="divide-y divide-border rounded-2xl border border-border bg-card px-4 shadow-lg">
-        <div
-          aria-hidden
-          className="hidden items-center gap-x-3 py-2 text-xs font-medium tracking-wide text-muted-foreground sm:flex"
-        >
-          <span className="w-9 shrink-0" />
-          <span className="min-w-40 flex-1">CATEGORIA</span>
-          <span className={COL_PERCENT}>ALOCAÇÃO (%)</span>
-          <span className={COL_AMOUNT}>VALOR PREVISTO (R$)</span>
-          <span className={COL_INVESTMENT}>INVESTIMENTO</span>
-          <span className={COL_COUNT}>SUBCATEGORIAS</span>
-          <span className={`${COL_ACTION} shrink-0 whitespace-nowrap text-center text-[10px] tracking-normal`}>AÇÕES</span>
-        </div>
-        {rows.map((row, i) => {
-          const nameError = fieldErrors[`${i}.name`];
-          const colorError = fieldErrors[`${i}.color`];
-          const live = parsed[i];
-          const typed = row.amountText !== undefined && incomeCents !== null ? parseBRL(row.amountText) : null;
-          const typedMicro = typed?.ok && incomeCents !== null ? microFromCents(typed.value, incomeCents) : typed;
-          const amountError = typedMicro && !typedMicro.ok ? typedMicro.error : undefined;
-          const percentError = fieldErrors[`${i}.percent`] ?? (live && !live.ok ? live.error : undefined);
-          return (
-            <div key={row.key} className="group/row py-2">
-              <SubcategoryEditor
-                index={i}
-                name={row.name}
-                color={row.color}
-                items={row.subcategories}
-                errors={fieldErrors}
-                onChange={(subcategories) => update(i, { subcategories })}
-                controls={
-                  <>
-                    <div>
-                      <ColorPicker
-                        label={`Cor da categoria ${i + 1}`}
-                        name={row.name}
-                        groupName={`color-${row.key}`}
-                        value={row.color}
-                        errorId={colorError ? `color-error-${row.key}` : undefined}
-                        onChange={(color) => update(i, { color })}
-                      />
-                      {colorError && (
-                        <p id={`color-error-${row.key}`} className="mt-1 text-sm text-destructive">
-                          {colorError}
-                        </p>
-                      )}
-                    </div>
-                    <div className="min-w-40 flex-1">
-                      <Input
-                        aria-label={`Nome da categoria ${i + 1}`}
-                        value={row.name}
-                        maxLength={60}
-                        aria-invalid={!!nameError}
-                        onChange={(e) => update(i, { name: e.target.value })}
-                      />
-                      {nameError && <p className="mt-1 text-sm text-destructive">{nameError}</p>}
-                    </div>
-                    <div className={COL_PERCENT}>
-                      <InputAffix suffix="%">
-                        <Input
-                          aria-label={`Percentual da categoria ${i + 1}`}
-                          inputMode="decimal"
-                          value={percentFieldText(row.percent, focusedRow === i)}
-                          aria-invalid={!!percentError}
-                          onFocus={() => setFocusedRow(i)}
-                          onBlur={() => setFocusedRow((current) => (current === i ? null : current))}
-                          onChange={(e) => update(i, { percent: e.target.value, amountText: undefined })}
+      {view.empty ? (
+        <EmptyAllocation onAdd={add} />
+      ) : (
+        <div className="divide-y divide-border rounded-2xl border border-border bg-card px-4 shadow-lg">
+          <div
+            aria-hidden
+            className="hidden items-center gap-x-3 py-2 text-xs font-medium tracking-wide text-muted-foreground sm:flex"
+          >
+            <span className="w-9 shrink-0" />
+            <span className="min-w-40 flex-1">CATEGORIA</span>
+            <span className={COL_PERCENT}>ALOCAÇÃO (%)</span>
+            <span className={COL_AMOUNT}>VALOR PREVISTO (R$)</span>
+            <span className={COL_INVESTMENT}>INVESTIMENTO</span>
+            <span className={COL_COUNT}>SUBCATEGORIAS</span>
+            <span className={`${COL_ACTION} shrink-0 whitespace-nowrap text-center text-[10px] tracking-normal`}>AÇÕES</span>
+          </div>
+          {rows.map((row, i) => {
+            const nameError = fieldErrors[`${i}.name`];
+            const colorError = fieldErrors[`${i}.color`];
+            const live = parsed[i];
+            const typed = row.amountText !== undefined && incomeCents !== null ? parseBRL(row.amountText) : null;
+            const typedMicro = typed?.ok && incomeCents !== null ? microFromCents(typed.value, incomeCents) : typed;
+            const amountError = typedMicro && !typedMicro.ok ? typedMicro.error : undefined;
+            const percentError = fieldErrors[`${i}.percent`] ?? (live && !live.ok ? live.error : undefined);
+            return (
+              <div key={row.key} className="group/row py-2">
+                <SubcategoryEditor
+                  index={i}
+                  name={row.name}
+                  color={row.color}
+                  items={row.subcategories}
+                  errors={fieldErrors}
+                  onChange={(subcategories) => update(i, { subcategories })}
+                  controls={
+                    <>
+                      <div>
+                        <ColorPicker
+                          label={`Cor da categoria ${i + 1}`}
+                          name={row.name}
+                          groupName={`color-${row.key}`}
+                          value={row.color}
+                          errorId={colorError ? `color-error-${row.key}` : undefined}
+                          onChange={(color) => update(i, { color })}
                         />
-                      </InputAffix>
-                      {percentError && <p className="mt-1 text-sm text-destructive">{percentError}</p>}
-                    </div>
-                    <div className={COL_AMOUNT}>
-                      <InputAffix prefix="R$">
+                        {colorError && (
+                          <p id={`color-error-${row.key}`} className="mt-1 text-sm text-destructive">
+                            {colorError}
+                          </p>
+                        )}
+                      </div>
+                      <div className="min-w-40 flex-1">
                         <Input
-                          aria-label={`Valor da categoria ${i + 1}`}
-                          data-testid={`category-amount-${i + 1}`}
-                          inputMode="decimal"
-                          disabled={incomeCents === null}
-                          title={incomeCents === null ? "Informe a receita de referência" : undefined}
-                          value={row.amountText ?? (amounts[i] === null ? "" : amountField(amounts[i]))}
-                          aria-invalid={!!amountError}
-                          onChange={(e) => changeAmount(i, e.target.value)}
-                          onBlur={() => update(i, { amountText: undefined })}
+                          aria-label={`Nome da categoria ${i + 1}`}
+                          value={row.name}
+                          maxLength={60}
+                          aria-invalid={!!nameError}
+                          onChange={(e) => update(i, { name: e.target.value })}
                         />
-                      </InputAffix>
-                      {amountError && <p className="mt-1 text-sm text-destructive">{amountError}</p>}
-                    </div>
-                    <label
-                      className={`${COL_INVESTMENT} flex items-center gap-2 text-sm`}
-                      title="Passar da meta de um investimento não é estouro"
-                    >
-                      <Checkbox
-                        aria-label={`Investimento / aporte da categoria ${i + 1}`}
-                        checked={row.isInvestment}
-                        onCheckedChange={(checked) => update(i, { isInvestment: checked === true })}
-                      />
-                      <span className="sm:hidden">Investimento</span>
-                    </label>
-                  </>
-                }
-                trailing={
-                  <>
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="icon-sm"
-                      aria-label={`Remover categoria ${i + 1}`}
-                      onClick={() => (row.subcategories.length > 0 ? setRemoving(i) : remove(i))}
-                      className={`size-8 opacity-40 hover:text-destructive group-hover/row:text-destructive group-hover/row:opacity-100 group-focus-within/row:text-destructive group-focus-within/row:opacity-100`}
-                    >
-                      <Trash2Icon aria-hidden className="size-4" />
-                    </Button>
-                  </>
-                }
-              />
-            </div>
-          );
-        })}
-        <div className="flex flex-wrap items-center justify-end gap-x-6 py-2 text-sm font-medium">
-          <span>Soma</span>
-          <span data-testid="category-sum">{sumLabel(sumMicro)}</span>
-          <span data-testid="category-amount-sum">
-            {incomeCents === null ? "—" : formatBRL(amountSum)}
-          </span>
+                        {nameError && <p className="mt-1 text-sm text-destructive">{nameError}</p>}
+                      </div>
+                      <div className={COL_PERCENT}>
+                        <InputAffix suffix="%">
+                          <Input
+                            aria-label={`Percentual da categoria ${i + 1}`}
+                            inputMode="decimal"
+                            value={percentFieldText(row.percent, focusedRow === i)}
+                            aria-invalid={!!percentError}
+                            onFocus={() => setFocusedRow(i)}
+                            onBlur={() => setFocusedRow((current) => (current === i ? null : current))}
+                            onChange={(e) => update(i, { percent: e.target.value, amountText: undefined })}
+                          />
+                        </InputAffix>
+                        {percentError && <p className="mt-1 text-sm text-destructive">{percentError}</p>}
+                      </div>
+                      <div className={COL_AMOUNT}>
+                        <InputAffix prefix="R$">
+                          <Input
+                            aria-label={`Valor da categoria ${i + 1}`}
+                            data-testid={`category-amount-${i + 1}`}
+                            inputMode="decimal"
+                            disabled={incomeCents === null}
+                            title={incomeCents === null ? "Informe a receita de referência" : undefined}
+                            value={row.amountText ?? (amounts[i] === null ? "" : amountField(amounts[i]))}
+                            aria-invalid={!!amountError}
+                            onChange={(e) => changeAmount(i, e.target.value)}
+                            onBlur={() => update(i, { amountText: undefined })}
+                          />
+                        </InputAffix>
+                        {amountError && <p className="mt-1 text-sm text-destructive">{amountError}</p>}
+                      </div>
+                      <label
+                        className={`${COL_INVESTMENT} flex items-center gap-2 text-sm`}
+                        title="Passar da meta de um investimento não é estouro"
+                      >
+                        <Checkbox
+                          aria-label={`Investimento / aporte da categoria ${i + 1}`}
+                          checked={row.isInvestment}
+                          onCheckedChange={(checked) => update(i, { isInvestment: checked === true })}
+                        />
+                        <span className="sm:hidden">Investimento</span>
+                      </label>
+                    </>
+                  }
+                  trailing={
+                    <>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon-sm"
+                        aria-label={`Remover categoria ${i + 1}`}
+                        onClick={() => (row.subcategories.length > 0 ? setRemoving(i) : remove(i))}
+                        className={`size-8 opacity-40 hover:text-destructive group-hover/row:text-destructive group-hover/row:opacity-100 group-focus-within/row:text-destructive group-focus-within/row:opacity-100`}
+                      >
+                        <Trash2Icon aria-hidden className="size-4" />
+                      </Button>
+                    </>
+                  }
+                />
+              </div>
+            );
+          })}
+          <div className="flex flex-wrap items-center justify-end gap-x-6 py-2 text-sm font-medium">
+            <span>Soma</span>
+            <span data-testid="category-sum">{sumLabel(sumMicro)}</span>
+            <span data-testid="category-amount-sum">
+              {incomeCents === null ? "—" : formatBRL(amountSum)}
+            </span>
+          </div>
         </div>
-      </div>
+      )}
 
-      {!sumOk && (
+      {view.showSumWarning && (
         <AdjustSumBar
           sumMicro={sumMicro}
           incomeCents={incomeCents}
@@ -405,18 +426,27 @@ export function CategoryEditor({
         </p>
       )}
 
-      <div className="flex gap-2">
-        <Button type="button" variant="outline" onClick={add}>
-          Adicionar categoria
-        </Button>
-        <Button
-          type="submit"
-          disabled={!sumOk || pending}
-          className="disabled:pointer-events-auto disabled:cursor-not-allowed disabled:opacity-50"
-        >
-          Salvar
-        </Button>
-      </div>
+      {view.showSave && (
+        <div className="flex gap-2">
+          <Button type="button" variant="outline" onClick={add}>
+            Adicionar categoria
+          </Button>
+          <Button
+            type="submit"
+            disabled={!sumOk || pending}
+            title={view.saveHint ?? undefined}
+            aria-describedby={view.saveHint ? saveHintId : undefined}
+            className="disabled:pointer-events-auto disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            Salvar
+          </Button>
+          {view.saveHint && (
+            <span id={saveHintId} className="sr-only">
+              {view.saveHint}
+            </span>
+          )}
+        </div>
+      )}
       <Dialog open={removing !== null} onOpenChange={(open) => !open && setRemoving(null)}>
         <DialogContent className="sm:max-w-sm">
           <DialogHeader>
