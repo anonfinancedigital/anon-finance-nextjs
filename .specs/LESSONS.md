@@ -180,7 +180,7 @@ Seen once or not yet corroborated. Tracked, not trusted.
 - evidence: M4 src/components/password-input.tsx:18; e2e/login.spec.ts:26 (ui)
 - last seen: 2026-10-07T09:23:55Z
 
-### L-029 - When a UI criterion lists exact attributes or icons, assert each one in the e2e test instead of relying on flows that only exercise them indirectly
+### L-029 - When a UI criterion lists exact attributes or icons, verify each one explicitly (code inspection with file:line while e2e is suspended, AD-005) instead of relying on flows that only exercise them indirectly
 - signal: `ac_gap` · recurrence: 1 feature(s) · scope: `ui` · harmful: 0
 - features: senha-visivel-confirmacao
 - evidence: PWD-01 AC3/AC6, PWD-02 AC1; M8 M9 M10 (ui)

@@ -35,7 +35,7 @@
 - **Status**: active
 
 ### AD-005
-- **Decision**: Testes e2e (Playwright, `npm run e2e`) estão suspensos como requisito: tasks de UI não exigem teste e2e novo e o gate build não roda `npm run e2e`. Unit e integration continuam obrigatórios.
+- **Decision**: Testes e2e (Playwright, `npm run e2e`) estão suspensos como requisito. Regras: (1) não escrever e2e novo; (2) não rodar `npm run e2e`/`playwright test`, nem no gate nem no Verifier; (3) o Verifier não pode exigir e2e nem criar fix tasks de e2e, e a evidência de UI vem de inspeção de código (`file:line`); (4) specs existentes em `e2e/` só são editados se o typecheck quebrar, com ajuste mínimo e sem rodar; (5) lições que sugiram e2e não se aplicam enquanto esta decisão estiver ativa. Unit e integration continuam obrigatórios.
 - **Reason**: Pedido do usuário, por enquanto, para acelerar a execução das tasks.
 - **Trade-off**: Fluxos de UI ficam sem cobertura automatizada; regressões visuais ou de navegação só aparecem em verificação manual.
 - **Scope**: Test Coverage Matrix e gates de todas as features novas (tasks.md); specs e2e existentes em `e2e/` permanecem no repositório
