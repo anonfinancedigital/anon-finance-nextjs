@@ -79,7 +79,7 @@ export function GoalChart({ summary }: { summary: GoalSummary }) {
   const first = timeline[0];
   const last = timeline[timeline.length - 1];
   const badge = interestBadge(summary);
-  const yAxis = chartYAxis(summary.targetCents, last.totalCents);
+  const yAxis = chartYAxis(summary.targetCents, last.totalCents, summary.monthlyCents ?? 0);
 
   return (
     <figure

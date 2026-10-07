@@ -51,7 +51,7 @@ Decisões ativas respeitadas: AD-003 (centavos e pontos-base; só a apresentaç�
 | `summarize`, `PRESET_RATES`, `presetFor`, `ageOn` | `src/lib/domain/freedom.ts` | Cálculo, cenário a partir do par e idade atual |
 | `formatCompactBRL`, `formatBRL`, `maskBRLInput` | `src/lib/domain/money.ts` | Valores compactos e máscaras (aporte inteiro via novo `formatWholeBRL`) |
 | `formatTerm`, `formatRate`, `planLines`, `interestBadge` | `src/lib/domain/freedom-copy.ts` | Prazo, taxa e insight |
-| `ageTicks` | `src/lib/domain/age-ticks.ts` | Ticks do eixo X (inalterado) |
+| `ageTicks` | `src/lib/domain/age-ticks.ts` | Ticks do eixo X: inteiros de `summary.currentAge` até a idade final, no máximo 9 rótulos |
 | `ChartTooltip`, `Area`, `ReferenceLine` | `src/components/goal-chart.tsx` | Tooltip por idade já existe; ganha guia que acompanha o cursor e toque |
 | `Dialog`, `Tooltip`, `Popover`, `Slider`, `Sheet` | `src/components/ui/` | Descarte, tooltips, slider, gaveta |
 | `saveGoal` | `src/actions/goals.ts` | Salvar pela gaveta ("Aplicar") e pelo estado vazio ("Salvar objetivo") |
@@ -91,7 +91,7 @@ Decisões ativas respeitadas: AD-003 (centavos e pontos-base; só a apresentaç�
 
 ### freedom.ts
 
-- **Interfaces**: `GoalSummary.currentAge: number` (de `ageOn(goal.birthDate, today)`; só exibição); `chartYAxis(targetCents, finalCents): { max: number; ticks: number[] }` substitui `chartYMax` (APICE-08). Algoritmo: `raw = max(target, final)`; passo candidato de `[1, 2, 5] × 10ⁿ` (em centavos) em ordem crescente; escolhe o menor passo com `ceil(raw/step) ≤ 5`; `max = ceil(raw/step) × step`; ticks `0, step, …, max`. Fórmulas financeiras não mudam.
+- **Interfaces**: `GoalSummary.currentAge: number` (de `ageOn(goal.birthDate, today)`; só exibição); `chartYAxis(targetCents, finalCents, monthlyCents): { max: number; ticks: number[] }` substitui `chartYMax` (APICE-08). Algoritmo: `raw = target` quando `monthlyCents > 0` (o excesso do final é só arredondamento do aporte) e `raw = max(target, final)` com aporte 0 (patrimônio final real); passo candidato de `[1, 2, 5] × 10ⁿ` (em centavos) em ordem crescente; escolhe o menor passo com `ceil(raw/step) ≤ 5`; `max = ceil(raw/step) × step`; ticks `0, step, …, max`. Fórmulas financeiras não mudam.
 
 ### useGoalDraft
 
@@ -148,7 +148,7 @@ Decisões ativas respeitadas: AD-003 (centavos e pontos-base; só a apresentaç�
 
 - **Purpose**: Eixo Y regular, rótulo da meta, título "Idade", guia no cursor e insight sem pílula (APICE-08 a 13).
 - **Location**: `src/components/goal-chart.tsx`
-- **Interfaces**: `YAxis` usa `chartYAxis` (`ticks`, `domain`); `ReferenceLine` com `label` à esquerda (`position: "insideTopLeft"`, fundo `var(--card)` por `content` customizado); `XAxis` com `label={{ value: "Idade", position: "insideBottom" }}` e primeiro tick = idade atual (`ageTicks` passa a incluir `first` inteiro); `Tooltip` com `cursor` vertical e `trigger` por toque (recharts já trata `touchmove`); insight em `<p>` com ícone `Sparkles`/`TrendingUp` sem fundo; cores por `--color-invested` e `--color-returns`.
+- **Interfaces**: `YAxis` usa `chartYAxis` (`ticks`, `domain`); `ReferenceLine` com `label` à esquerda (`position: "insideTopLeft"`, fundo `var(--card)` por `content` customizado); `XAxis` com `label={{ value: "Idade", position: "insideBottom" }}` e primeiro tick = idade atual (`ageTicks(summary.currentAge, last.age)`; domínio a partir de `min(currentAge, first.age)`); `Tooltip` com `cursor` vertical e `trigger` por toque (recharts já trata `touchmove`); insight em `<p>` com ícone `Sparkles`/`TrendingUp` sem fundo; cores por `--color-invested` e `--color-returns`.
 
 ### GoalExperience (orquestração)
 

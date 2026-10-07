@@ -1143,17 +1143,17 @@ Gaps do `validation.md` (Verifier reprovou): APICE-14.1 (Major), APICE-19.4 (Maj
 
 **Done when**:
 
-- [ ] `chartYAxis(targetCents, finalCents, monthlyCents)` usa `raw = target` com aporte > 0 e `raw = max(target, final)` com aporte 0; a tolerância fixa sai
-- [ ] Com `summarize`, o cenário agressivo de 20 a 90 anos com meta de R$ 500 mil dá ticks 0 a 500 mil; com aporte 0 e patrimônio acima da meta, o final define o máximo
-- [ ] `design.md` descreve a regra e o eixo X a partir da idade atual
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
-- [ ] Test count: os testes anteriores mais os novos passam
+- [x] `chartYAxis(targetCents, finalCents, monthlyCents)` usa `raw = target` com aporte > 0 e `raw = max(target, final)` com aporte 0; a tolerância fixa sai
+- [x] Com `summarize`, o cenário agressivo de 20 a 90 anos com meta de R$ 500 mil dá ticks 0 a 500 mil; com aporte 0 e patrimônio acima da meta, o final define o máximo
+- [x] `design.md` descreve a regra e o eixo X a partir da idade atual
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] Test count: os testes anteriores mais os novos passam
 
 **Tests**: unit
 **Gate**: build
 
 **Commit**: `fix(apice): follow the target on the Y axis when a deposit is due`
-**Status**: ⬜ Pending
+**Status**: ✅ Done
 
 ---
 
