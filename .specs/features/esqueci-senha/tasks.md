@@ -560,6 +560,8 @@ T6 → T17
 
 ### T17: Criar a página de redefinição
 
+**Status**: ✅ Complete
+
 **What**: Página `/redefinir-senha` que lê o token de `searchParams`, mostra o formulário se `isValid` ou "Link inválido ou expirado" com link para pedir outro.
 **Where**: `src/app/redefinir-senha/page.tsx`
 **Depends on**: T16, T10, T6
@@ -573,10 +575,10 @@ T6 → T17
 
 **Done when**:
 
-- [ ] Token válido mostra o formulário; token ausente, inválido, expirado ou de conta não aprovada mostra "Link inválido ou expirado" com link para `/esqueci-senha`
-- [ ] Ambas as variações têm o link "Voltar ao login" para `/login`
-- [ ] Usuário aprovado logado é redirecionado a `/`
-- [ ] Build gate passa: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
+- [x] Token válido mostra o formulário; token ausente, inválido, expirado ou de conta não aprovada mostra "Link inválido ou expirado" com link para `/esqueci-senha`
+- [x] Ambas as variações têm o link "Voltar ao login" para `/login`
+- [x] Usuário aprovado logado é redirecionado a `/`
+- [x] Build gate passa: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
 
 **Tests**: none
 **Gate**: build

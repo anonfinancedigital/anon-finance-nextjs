@@ -128,16 +128,16 @@ Quem esquece a senha não consegue entrar, e hoje só o administrador, mexendo n
 
 | Requirement ID | Story | Phase | Status |
 | -------------- | ----- | ----- | ------ |
-| SENHA-01 | P1: Pedir o link pelo login (AC 1) | Design | Pending |
+| SENHA-01 | P1: Pedir o link pelo login (AC 1) | Execute | Implemented |
 | SENHA-02 | P1: Pedir o link pelo login (AC 2, 3, 10) | Execute | Implemented |
-| SENHA-03 | P1: Pedir o link pelo login (AC 4, 5, 7) | Design | Pending |
-| SENHA-04 | P1: Pedir o link pelo login (AC 6) | Design | Pending |
+| SENHA-03 | P1: Pedir o link pelo login (AC 4, 5, 7) | Execute | Implemented |
+| SENHA-04 | P1: Pedir o link pelo login (AC 6) | Execute | Implemented |
 | SENHA-05 | P1: Pedir o link pelo login (AC 8, 9) | Execute | Implemented |
-| SENHA-06 | P1: Definir a nova senha (AC 1, 2, 5) | Design | Pending |
+| SENHA-06 | P1: Definir a nova senha (AC 1, 2, 5) | Execute | Implemented |
 | SENHA-07 | P1: Definir a nova senha (AC 3, 4) | Execute | Implemented |
-| SENHA-08 | P1: Definir a nova senha (AC 6, 7) | Design | Pending |
-| SENHA-09 | P1: Definir a nova senha (AC 8, 9, 10) | Design | Pending |
-| SENHA-10 | P2: Entrada de e-mail simples e retorno ao login | - | Pending |
+| SENHA-08 | P1: Definir a nova senha (AC 6, 7) | Execute | Implemented |
+| SENHA-09 | P1: Definir a nova senha (AC 8, 9, 10) | Execute | Implemented |
+| SENHA-10 | P2: Entrada de e-mail simples e retorno ao login | Execute | Implemented |
 
 **Coverage:** 10 total, 0 mapped to tasks, 10 unmapped ⚠️
 
