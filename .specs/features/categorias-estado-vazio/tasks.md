@@ -239,11 +239,13 @@ T10 → T11
 
 **Done when**:
 
-- [ ] A página mostra só `Defina quanto da receita do mês vai para cada categoria. A soma deve ser 100%.` como instrução
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
+- [x] A página mostra só `Defina quanto da receita do mês vai para cada categoria. A soma deve ser 100%.` como instrução
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
 
 **Tests**: none
 **Gate**: build
+
+**Status**: ✅ Complete
 
 **Commit**: `fix(categorias): keep a single instruction line on the allocation page`
 
