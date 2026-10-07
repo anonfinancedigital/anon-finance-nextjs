@@ -139,7 +139,7 @@ function ColorPicker({
 /** Shown instead of the table when there are no category rows. */
 function EmptyAllocation({ onAdd }: { onAdd: () => void }) {
   return (
-    <div className="space-y-4 rounded-2xl border border-border bg-card px-4 py-6 shadow-lg">
+    <div className="w-full space-y-4 rounded-2xl border border-border bg-card px-4 py-6 shadow-lg">
       <p className="text-sm text-muted-foreground">
         Você ainda não tem categorias. Crie a primeira para começar a distribuir sua receita.
       </p>
@@ -271,13 +271,13 @@ export function CategoryEditor({
         save();
       }}
     >
-      <ReferenceIncomeCard value={income} onChange={setIncome} />
+      <ReferenceIncomeCard value={income} initialValue={initialIncome} onChange={setIncome} />
       <AllocationProgress value={view.progressValue} text={view.progressText} />
 
       {view.empty ? (
         <EmptyAllocation onAdd={add} />
       ) : (
-        <div className="divide-y divide-border rounded-2xl border border-border bg-card px-4 shadow-lg">
+        <div className="w-full divide-y divide-border rounded-2xl border border-border bg-card px-4 shadow-lg">
           <div
             aria-hidden
             className="hidden items-center gap-x-3 py-2 text-xs font-medium tracking-wide text-muted-foreground sm:flex"

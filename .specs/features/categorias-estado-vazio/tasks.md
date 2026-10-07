@@ -353,13 +353,15 @@ T10 → T11
 
 **Done when**:
 
-- [ ] `ReferenceIncomeCard` recebe `initialValue={initialIncome}`
-- [ ] Card da receita, indicador, card da tabela (ou do estado vazio) e barra de ajuste têm a mesma borda esquerda e direita (verificado por `getBoundingClientRect` na verificação manual)
-- [ ] Ordem na tela: receita, indicador, tabela ou vazio, aviso, ajuste, status/erro, Salvar
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
+- [x] `ReferenceIncomeCard` recebe `initialValue={initialIncome}`
+- [x] Card da receita, indicador, card da tabela (ou do estado vazio) e barra de ajuste têm a mesma borda esquerda e direita (verificado por `getBoundingClientRect` na verificação manual)
+- [x] Ordem na tela: receita, indicador, tabela ou vazio, aviso, ajuste, status/erro, Salvar
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
 
 **Tests**: none
 **Gate**: build
+
+**Status**: ✅ Complete
 
 **Commit**: `feat(categorias): align allocation blocks and wire the initial income`
 
