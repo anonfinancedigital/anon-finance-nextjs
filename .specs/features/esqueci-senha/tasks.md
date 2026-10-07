@@ -178,6 +178,8 @@ T6 → T17
 
 ### T4: Criar os esquemas de validação
 
+**Status**: ✅ Complete
+
 **What**: `requestResetSchema` e `resetPasswordSchema` com as mensagens exatas da spec, mais `REQUEST_SENT_MESSAGE` e `INVALID_LINK_MESSAGE`.
 **Where**: `src/lib/validation/password-reset.ts`
 **Depends on**: None
@@ -191,13 +193,13 @@ T6 → T17
 
 **Done when**:
 
-- [ ] E-mail com espaços e maiúsculas é normalizado (trim + minúsculas); vazio ou sem formato válido falha com "Informe um e-mail válido"
-- [ ] Senha de 7 e de 129 caracteres falha com "A senha deve ter entre 8 e 128 caracteres"; de 8 e de 128 passa
-- [ ] Confirmação diferente falha em `confirmPassword` com "As senhas não coincidem"
-- [ ] Token vazio falha
-- [ ] `REQUEST_SENT_MESSAGE` é "Se este e-mail estiver cadastrado, você receberá um link para redefinir a senha em instantes" e `INVALID_LINK_MESSAGE` é "Link inválido ou expirado"
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
-- [ ] Test count: ≥8 tests pass (no silent deletions)
+- [x] E-mail com espaços e maiúsculas é normalizado (trim + minúsculas); vazio ou sem formato válido falha com "Informe um e-mail válido"
+- [x] Senha de 7 e de 129 caracteres falha com "A senha deve ter entre 8 e 128 caracteres"; de 8 e de 128 passa
+- [x] Confirmação diferente falha em `confirmPassword` com "As senhas não coincidem"
+- [x] Token vazio falha
+- [x] `REQUEST_SENT_MESSAGE` é "Se este e-mail estiver cadastrado, você receberá um link para redefinir a senha em instantes" e `INVALID_LINK_MESSAGE` é "Link inválido ou expirado"
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Test count: ≥8 tests pass (no silent deletions)
 
 **Tests**: unit
 **Gate**: quick
