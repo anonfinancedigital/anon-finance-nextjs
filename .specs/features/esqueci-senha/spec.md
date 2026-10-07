@@ -110,6 +110,8 @@ Quem esquece a senha não consegue entrar, e hoje só o administrador, mexendo n
 1. The `/esqueci-senha` and `/redefinir-senha` pages SHALL each show a link "Voltar ao login" that leads to `/login`.
 2. WHEN the person submits the request THEN the system SHALL disable the submit button until the response arrives.
 3. WHERE the person is already logged in, WHEN they open `/esqueci-senha` or `/redefinir-senha` THEN the system SHALL redirect them to `/`.
+4. WHEN the person follows "Esqueci minha senha" from the login form with an e-mail typed in the field THEN the system SHALL open `/esqueci-senha` with that e-mail already filled in the "E-mail" field.
+5. WHEN the person follows "Esqueci minha senha" from the login form with the e-mail field empty THEN the system SHALL open `/esqueci-senha` with the "E-mail" field empty.
 
 **Independent Test**: Abrir `/esqueci-senha` logado e ver o redirecionamento; deslogado, ver o link de volta ao login.
 

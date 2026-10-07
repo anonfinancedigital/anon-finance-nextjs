@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import { signInAction } from "@/actions/auth";
 import { Button } from "@/components/ui/button";
 import { PasswordInput } from "@/components/password-input";
@@ -10,12 +10,22 @@ import { Label } from "@/components/ui/label";
 
 export function LoginForm() {
   const [state, formAction, pending] = useActionState(signInAction, undefined);
+  const [email, setEmail] = useState("");
+  const forgotHref = email.trim() ? `/esqueci-senha?email=${encodeURIComponent(email.trim())}` : "/esqueci-senha";
 
   return (
     <form action={formAction} className="space-y-4">
       <div className="space-y-2">
         <Label htmlFor="email">E-mail</Label>
-        <Input id="email" name="email" type="email" autoComplete="username" required />
+        <Input
+          id="email"
+          name="email"
+          type="email"
+          autoComplete="username"
+          required
+          value={email}
+          onChange={(event) => setEmail(event.target.value)}
+        />
       </div>
       <div className="space-y-2">
         <Label htmlFor="password">Senha</Label>
@@ -30,7 +40,7 @@ export function LoginForm() {
         Entrar
       </Button>
       <p className="flex justify-between text-sm">
-        <Link href="/esqueci-senha" className="text-link hover:underline">
+        <Link href={forgotHref} className="text-link hover:underline">
           Esqueci minha senha
         </Link>
         <Link href="/cadastro" className="text-link hover:underline">

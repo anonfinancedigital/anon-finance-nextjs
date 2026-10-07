@@ -94,6 +94,7 @@ T6 → T17
 ```
 T16 → T18
 T5 → T19
+T14 → T20
 ```
 
 ---
@@ -639,6 +640,31 @@ T5 → T19
 **Tests**: unit
 **Gate**: quick
 **Commit**: `fix(senha): use implicit TLS on SMTP port 465`
+
+---
+
+### T20: Levar o e-mail do login para o pedido de redefinição
+
+**What**: O link "Esqueci minha senha" leva o e-mail digitado como `?email=` e `/esqueci-senha` o preenche no campo (P2 AC 4 e 5). Pedido do usuário após a entrega. Toca `login-form.tsx`, `esqueci-senha/page.tsx` e `request-form.tsx`, juntos por serem um só comportamento.
+**Where**: `src/app/login/login-form.tsx`
+**Depends on**: T14
+**Reuses**: `searchParams` como Promise (Next 16)
+**Requirement**: SENHA-10
+
+**Tools**:
+
+- MCP: NONE
+- Skill: NONE
+
+**Done when**:
+
+- [x] Com e-mail digitado, o link aponta para `/esqueci-senha?email=<codificado>` e o campo da página vem preenchido (conferido em `next dev`)
+- [x] Sem e-mail, o link é `/esqueci-senha` e o campo vem vazio; valor com HTML não é injetado
+- [x] Build gate passa: typecheck, lint, build e unitários
+
+**Tests**: none
+**Gate**: build
+**Commit**: `feat(senha): carry the login e-mail to the reset request`
 
 ---
 

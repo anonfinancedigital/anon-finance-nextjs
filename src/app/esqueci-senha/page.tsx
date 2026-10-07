@@ -6,8 +6,16 @@ import { RequestForm } from "./request-form";
 
 export const metadata: Metadata = { title: "Esqueci minha senha" };
 
-export default async function ForgotPasswordPage() {
+const MAX_EMAIL_LENGTH = 254;
+
+export default async function ForgotPasswordPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}) {
   await redirectIfSignedIn();
+  const { email } = await searchParams;
+  const defaultEmail = typeof email === "string" ? email.slice(0, MAX_EMAIL_LENGTH) : "";
 
   return (
     <main className="flex flex-1 items-center justify-center p-6">
@@ -18,7 +26,7 @@ export default async function ForgotPasswordPage() {
           </h1>
           <p className="text-sm text-muted-foreground">Gestão Patrimonial Familiar</p>
         </div>
-        <RequestForm />
+        <RequestForm defaultEmail={defaultEmail} />
         <p className="text-center text-sm">
           <Link href="/login" className="text-link hover:underline">
             Voltar ao login
