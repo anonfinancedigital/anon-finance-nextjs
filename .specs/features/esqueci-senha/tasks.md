@@ -121,6 +121,8 @@ T6 → T17
 
 ### T2: Documentar variáveis SMTP
 
+**Status**: ✅ Complete
+
 **What**: Acrescentar `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS` e `SMTP_FROM` ao exemplo de ambiente, com um comentário por grupo.
 **Where**: `.env.example`
 **Depends on**: None
@@ -134,8 +136,8 @@ T6 → T17
 
 **Done when**:
 
-- [ ] As cinco variáveis aparecem vazias, com comentário
-- [ ] Build gate passa: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
+- [x] As cinco variáveis aparecem vazias, com comentário
+- [x] Build gate passa: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
 
 **Tests**: none
 **Gate**: build
