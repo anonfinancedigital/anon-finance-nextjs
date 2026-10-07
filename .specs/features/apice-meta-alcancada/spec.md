@@ -88,10 +88,10 @@ Em `/liberdade` (Ápice) o indicador "Aporte mensal necessário" mostra "Meta al
 | APM-03 | P1: Meta alcançada só quando alcançada (AC 3) | - | Implementing |
 | APM-04 | P1: Meta alcançada só quando alcançada (AC 4, 5) | - | Implementing |
 | APM-05 | P1: Meta alcançada só quando alcançada (AC 6) | - | Implementing |
-| APM-06 | P1: Check nos marcos atingidos (AC 1, 2) | - | Pending |
-| APM-07 | P1: Check nos marcos atingidos (AC 3) | - | Pending |
+| APM-06 | P1: Check nos marcos atingidos (AC 1, 2) | - | Implementing |
+| APM-07 | P1: Check nos marcos atingidos (AC 3) | - | Implementing |
 
-**Coverage:** 7 total, 5 implemented, 2 pending
+**Coverage:** 7 total, 7 implemented
 
 ---
 

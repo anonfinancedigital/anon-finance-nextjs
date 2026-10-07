@@ -1,3 +1,4 @@
+import { Check } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import type { GoalSummary } from "@/lib/domain/freedom";
 import { checkpointLabel, todayLabel } from "@/lib/domain/freedom-copy";
@@ -6,7 +7,7 @@ import { cn } from "cn";
 
 /**
  * Progress bar (progress-colored fill) with the 25/50/75/100% checkpoints of the target as markers
- * on the rail (filled circle when reached, smaller hollow circle otherwise) and a "Hoje" dot with
+ * on the rail (filled circle with a check when reached, smaller hollow circle otherwise) and a "Hoje" dot with
  * its label, the only place that shows the progress percentage. Nothing here is interactive: no
  * pointer cursor, hover or focus state. From the `@xl` container width the labels sit centered under
  * their markers; below it they form a 2×2 grid.
@@ -39,11 +40,13 @@ export function GoalCheckpoints({ summary }: { summary: GoalSummary }) {
               aria-hidden
               data-reached={c.reached}
               className={cn(
-                "absolute top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border-2",
-                c.reached ? "size-4 border-progress bg-progress" : "size-3 border-muted-foreground bg-card",
+                "absolute top-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-2",
+                c.reached ? "size-4 border-progress bg-progress text-background" : "size-3 border-muted-foreground bg-card",
               )}
               style={{ left: `${c.positionBp / 100}%` }}
-            />
+            >
+              {c.reached && <Check className="size-3" strokeWidth={3} />}
+            </span>
           ))}
           <span
             aria-hidden
