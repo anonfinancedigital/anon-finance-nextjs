@@ -843,7 +843,7 @@ T21 → T22 → T23 → T24 → T25 → T26
 
 ## Phase 5: Correções da verificação
 
-Gaps do `validation.md` (Verifier reprovou): APICE-14.1 (Major), APICE-19.4 (Major), APICE-19.3 e APICE-04.4 (Minor) e limpezas sem risco. Execução sequencial T27 → T28 → T29 → T30.
+Gaps do `validation.md` (Verifier reprovou): APICE-14.1 (Major), APICE-19.4 (Major), APICE-19.3 e APICE-04.4 (Minor) e limpezas sem risco. Execução sequencial T27 → T28 → T29 → T30 → T31 → T32.
 
 ### T27: Resumo da gaveta fixo ao rolar
 
@@ -960,6 +960,62 @@ Gaps do `validation.md` (Verifier reprovou): APICE-14.1 (Major), APICE-19.4 (Maj
 
 ---
 
+### T31: `dirty` trata guardado vazio como R$ 0
+
+**What**: Comparar `withZeroSaved(values)` com `withZeroSaved(baseline)` em `evaluateDraft`, para guardado vazio e "0,00" não contarem como alteração (a T28 deixou `dirty` comparando o texto cru; após salvar, a página recebe "0,00" e mostrava "Prévia" e o diálogo de descarte indevidos).
+**Where**: `src/lib/validation/goal-draft.ts`, `src/lib/validation/goal-draft.test.ts`
+**Depends on**: T30
+**Reuses**: `withZeroSaved`
+**Requirement**: APICE-14, APICE-18
+
+**Tools**:
+
+- MCP: NONE
+- Skill: NONE
+
+**Done when**:
+
+- [x] `dirty` é `false` com guardado "" contra baseline "0,00" (e o inverso) e `true` quando o valor realmente difere
+- [x] O teste da T28 que fixava `dirty` no texto cru é corrigido (contrariava APICE-14.7)
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Test count: os testes anteriores mais os novos passam
+
+**Tests**: unit
+**Gate**: quick
+
+**Commit**: `fix(apice): ignore empty-versus-zero saved amount when checking dirty`
+**Status**: ✅ Done
+
+---
+
+### T32: Ajustes cosméticos de gráfico e gaveta
+
+**What**: Conter a tabela `sr-only` do gráfico para a página não rolar na horizontal a 320 px e dar `z-index` ao rodapé sticky da gaveta, acima dos cartões e abaixo de popovers e tooltips (`z-50`).
+**Where**: `src/components/goal-chart.tsx`, `src/components/goal-form.tsx`
+**Depends on**: T31
+**Reuses**: n/a
+**Requirement**: APICE-17, APICE-18
+
+**Tools**:
+
+- MCP: NONE
+- Skill: NONE
+
+**Done when**:
+
+- [x] A `figure` do gráfico é `relative overflow-hidden`, com a tabela `sr-only` mantida para leitores de tela
+- [x] O rodapé da gaveta tem `z-20`
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] Test count: todos os testes existentes passam
+
+**Tests**: none (UI, AD-005/AD-008)
+**Gate**: build
+
+**Commit**: `fix(apice): contain the chart table and lift the drawer footer`
+**Status**: ✅ Done
+
+---
+
 ## Phase Execution Map
 
 ```
@@ -969,7 +1025,7 @@ Phase 1:  T1 → T2 → T3 → T4 → T5 → T6 → T7
 Phase 2:  T8 → T9 → T10 → T11 → T12 → T13 → T14
 Phase 3:  T15 → T16 → T17 → T18 → T19 → T20
 Phase 4:  T21 → T22 → T23 → T24 → T25 → T26
-Phase 5:  T27 → T28 → T29 → T30
+Phase 5:  T27 → T28 → T29 → T30 → T31 → T32
 ```
 
 Execução estritamente sequencial. Com 26 tasks, o empacotamento dá 4 lotes (~7 tasks, fases inteiras); a oferta de sub-agentes é feita no Execute.
@@ -993,11 +1049,11 @@ Execução estritamente sequencial. Com 26 tasks, o empacotamento dá 4 lotes (~
 | APICE-11 | T20 |
 | APICE-12 | T20 |
 | APICE-13 | T8, T17, T20 |
-| APICE-14 | T5, T7, T8, T10, T14, T18, T21, T24, T27, T30 |
+| APICE-14 | T5, T7, T8, T10, T14, T18, T21, T24, T27, T30, T31 |
 | APICE-15 | T1, T13 |
 | APICE-16 | T11, T13 |
-| APICE-17 | T12 |
-| APICE-18 | T14, T22, T24 |
+| APICE-17 | T12, T32 |
+| APICE-18 | T14, T22, T24, T31, T32 |
 | APICE-19 | T7, T10, T13, T23, T24, T28, T29 |
 
 Cobertura: 19 de 19 requisitos mapeados.

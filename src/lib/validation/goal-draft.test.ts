@@ -123,10 +123,18 @@ describe("guardado vazio vale R$ 0 (APICE-19.4)", () => {
     expect(evaluateDraft({ ...savedValues, saved: "  " }, null, now, null).summary).toEqual(zeroSaved);
   });
 
-  it("o texto digitado continua valendo para dirty: vazio é igual ao baseline vazio", () => {
+  it("guardado vazio e \"0,00\" valem o mesmo: dirty false (APICE-14.7)", () => {
     const blankSaved = { ...savedValues, saved: "" };
+    const zeroSavedValues = { ...savedValues, saved: "0,00" };
+    expect(evaluateDraft(blankSaved, zeroSavedValues, now, null).dirty).toBe(false);
+    expect(evaluateDraft(zeroSavedValues, blankSaved, now, null).dirty).toBe(false);
     expect(evaluateDraft(blankSaved, blankSaved, now, null).dirty).toBe(false);
-    expect(evaluateDraft(blankSaved, savedValues, now, null).dirty).toBe(true);
+  });
+
+  it("dirty true quando o guardado realmente difere (APICE-14.6)", () => {
+    const zeroSavedValues = { ...savedValues, saved: "0,00" };
+    expect(evaluateDraft({ ...savedValues, saved: "" }, savedValues, now, null).dirty).toBe(true);
+    expect(evaluateDraft({ ...savedValues, saved: "1,00" }, zeroSavedValues, now, null).dirty).toBe(true);
   });
 
   it("um guardado inválido continua com erro", () => {

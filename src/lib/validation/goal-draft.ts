@@ -53,9 +53,11 @@ export function evaluateDraft(
   previous: GoalSummary | null,
 ): GoalDraft {
   const baseline = saved ?? BLANK_GOAL_VALUES;
-  const dirty = FIELDS.some((field) => values[field] !== baseline[field]);
+  const current = withZeroSaved(values);
+  const reference = withZeroSaved(baseline);
+  const dirty = FIELDS.some((field) => current[field] !== reference[field]);
 
-  const parsed = goalSchema(now).safeParse(withZeroSaved(values));
+  const parsed = goalSchema(now).safeParse(current);
   if (parsed.success) return { summary: summarize(parsed.data, now), errors: {}, dirty };
 
   const errors: GoalDraft["errors"] = {};
