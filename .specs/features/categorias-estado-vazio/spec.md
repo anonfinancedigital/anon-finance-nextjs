@@ -130,7 +130,7 @@ Na primeira visita à tela Alocação (sem categorias), o usuário vê uma tabel
 **Acceptance Criteria**:
 
 1. WHILE o campo da receita base está em edição, the system SHALL mostrar o prefixo `R$` junto ao campo.  <!-- state-driven -->
-2. WHERE a receita base vem preenchida do mês, the system SHALL mostrar abaixo do campo o texto `Preenchido com a receita do mês; edite para simular.`  <!-- optional-feature -->
+2. WHERE a receita base vem preenchida do mês e o campo está em edição com o valor inicial, the system SHALL mostrar abaixo do campo o texto `Preenchido com a receita do mês; edite para simular.`  <!-- optional-feature -->
 3. WHILE o campo da receita base está vazio, the system SHALL mostrar abaixo do campo o texto `Informe para ver os valores em R$.`  <!-- state-driven -->
 4. The system SHALL mostrar na tela Alocação uma única frase de instrução sobre a regra dos 100%: `Defina quanto da receita do mês vai para cada categoria. A soma deve ser 100%.`, sem o subtítulo `Alocação total obrigatória: 100% da receita`.  <!-- ubiquitous -->
 5. The system SHALL usar para `text-muted-foreground` uma razão de contraste de pelo menos 4,5:1 sobre o fundo da página no tema escuro.  <!-- ubiquitous -->

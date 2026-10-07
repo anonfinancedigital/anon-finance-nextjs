@@ -44,6 +44,16 @@ describe("allocationView", () => {
     expect(view.progressText).toBe("105,00% de 100% alocado");
   });
 
+  it("keeps the warning, the adjust controls and the save hint above 100% with 2+ rows", () => {
+    expect(allocationView(2, 105_000_000)).toMatchObject({
+      showSumWarning: true,
+      showAdjust: true,
+      saveHint: "Some 100% para salvar",
+      progressValue: 100,
+      progressText: "105,00% de 100% alocado",
+    });
+  });
+
   it("treats a cleared percentage on a single row as 0% with the warning", () => {
     const view = allocationView(1, 0);
     expect(view.showSumWarning).toBe(true);

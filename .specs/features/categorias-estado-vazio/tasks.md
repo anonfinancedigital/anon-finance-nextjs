@@ -448,3 +448,8 @@ Execução estritamente sequencial; 11 tasks ficam num lote inline só se o usu�
 | T11: seletores e2e | e2e | none | none | ✅ OK |
 
 **Cobertura de requisitos:** ESV-01 (T1, T2, T7, T8), ESV-02 (T7, T11), ESV-03 (T1, T3, T4, T8), ESV-04 (T1, T2, T8), ESV-05 (T1, T7, T9), ESV-06 (T9), ESV-07 (T5, T10), ESV-08 (T5, T6, T10). Todos os 8 mapeados. O AC de contraste (ESV-08/5) não gera task: o token já mede ≥ 6,7:1 e o Verifier registra a medição.
+
+## Fix Tasks (Verifier iteração 1)
+
+- [x] F1 (Minor, ESV-03/04/05): mutante `sumMicro >= TOTAL_MICRO` sobrevivia; teste novo `allocationView(2, 105_000_000)` em `allocation-view.test.ts` mata o mutante (verificado: 1 falha com o mutante, 8 passam sem ele).
+- [x] F2 (spec-precision, ESV-07/2): AC reescrita para "campo em edição com o valor inicial", como no design (o card abre em modo resumo quando a receita é válida).
