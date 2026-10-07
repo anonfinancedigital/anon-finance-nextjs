@@ -87,8 +87,10 @@ export function SummaryTable({ rows, hideCta = false }: { rows: CategorySummary[
                 )}
               </span>
             </TableCell>
-            <TableCell className="text-right text-muted-foreground tabular-nums">{formatPercentCompact(row.percentMicro)}</TableCell>
-            <TableCell className="text-right tabular-nums">{formatBRL(row.targetCents)}</TableCell>
+            <TableCell className="text-right text-muted-foreground tabular-nums">{row.hasPercent === false ? "—" : formatPercentCompact(row.percentMicro)}</TableCell>
+            <TableCell className={`text-right tabular-nums ${row.hasPercent === false ? "text-muted-foreground" : ""}`}>
+              {row.hasPercent === false ? "Sem meta" : formatBRL(row.targetCents)}
+            </TableCell>
             <TableCell className="text-right font-semibold tabular-nums">{formatBRL(row.spentCents)}</TableCell>
             <TableCell
               className={`text-right tabular-nums ${row.overspent ? "text-destructive" : "text-income"}`}

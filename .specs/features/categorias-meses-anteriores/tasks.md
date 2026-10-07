@@ -89,6 +89,7 @@ T1 → T2 → T3
 **Depends on**: T1
 **Reuses**: células e classes existentes (`text-muted-foreground`)
 **Requirement**: CATMES-02, CATMES-04
+**Status**: Done
 
 **Tools**:
 
@@ -97,10 +98,10 @@ T1 → T2 → T3
 
 **Done when**:
 
-- [ ] Com `hasPercent === false`, a coluna de percentual exibe "—" e a de meta exibe "Sem meta" (AC 2); com `hasPercent` true ou omitido, o conteúdo é o atual
-- [ ] Sem gasto, a linha não exibe "Estourou" nem "Excedeu" (AC 3); com gasto, exibe "Estourou" com o valor gasto (AC 4), por inspeção `file:line`
-- [ ] `SpendingShare` (`src/components/budget-charts.tsx:103-105`) já filtra gasto 0 (AC 7), confirmado por inspeção, sem alteração de código
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Com `hasPercent === false`, a coluna de percentual exibe "—" e a de meta exibe "Sem meta" (AC 2); com `hasPercent` true ou omitido, o conteúdo é o atual
+- [x] Sem gasto, a linha não exibe "Estourou" nem "Excedeu" (AC 3); com gasto, exibe "Estourou" com o valor gasto (AC 4), por inspeção `file:line`
+- [x] `SpendingShare` (`src/components/budget-charts.tsx:103-105`) já filtra gasto 0 (AC 7), confirmado por inspeção, sem alteração de código
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
 
 **Tests**: none
 **Gate**: build
