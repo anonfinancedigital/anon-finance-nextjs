@@ -1,15 +1,19 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import { signUpAction } from "@/actions/auth";
+import { PasswordInput } from "@/components/password-input";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { PASSWORD_MISMATCH_MESSAGE } from "@/lib/validation/signup";
 
 const SENT_MESSAGE = "Cadastro enviado. Você poderá entrar quando o administrador aprová-lo";
 
 export function SignupForm() {
   const [state, formAction, pending] = useActionState(signUpAction, undefined);
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
   if (state?.ok) {
     return (
@@ -20,6 +24,8 @@ export function SignupForm() {
   }
 
   const fieldErrors = state && !state.ok ? (state.fieldErrors ?? {}) : {};
+  const mismatch = confirmPassword !== "" && confirmPassword !== password;
+  const confirmError = mismatch ? PASSWORD_MISMATCH_MESSAGE : fieldErrors.confirmPassword;
   const generalError = state && !state.ok && !state.fieldErrors ? state.error : undefined;
 
   return (
@@ -49,22 +55,41 @@ export function SignupForm() {
       </div>
       <div className="space-y-2">
         <Label htmlFor="password">Senha</Label>
-        <Input
+        <PasswordInput
           id="password"
           name="password"
-          type="password"
           autoComplete="new-password"
           required
+          value={password}
+          onChange={(event) => setPassword(event.target.value)}
           aria-invalid={!!fieldErrors.password}
         />
         {fieldErrors.password && <p className="text-sm text-destructive">{fieldErrors.password}</p>}
+      </div>
+      <div className="space-y-2">
+        <Label htmlFor="confirmPassword">Confirmar senha</Label>
+        <PasswordInput
+          id="confirmPassword"
+          name="confirmPassword"
+          autoComplete="new-password"
+          required
+          value={confirmPassword}
+          onChange={(event) => setConfirmPassword(event.target.value)}
+          aria-invalid={!!confirmError}
+          aria-describedby={confirmError ? "confirmPassword-error" : undefined}
+        />
+        {confirmError && (
+          <p id="confirmPassword-error" className="text-sm text-destructive">
+            {confirmError}
+          </p>
+        )}
       </div>
       {generalError && (
         <p role="alert" className="text-sm text-destructive">
           {generalError}
         </p>
       )}
-      <Button type="submit" className="w-full" disabled={pending}>
+      <Button type="submit" className="w-full" disabled={pending || mismatch}>
         Cadastrar
       </Button>
     </form>

@@ -252,6 +252,7 @@ describe("deleteUser", () => {
       signup.set("name", "De novo");
       signup.set("email", email);
       signup.set("password", "12345678");
+      signup.set("confirmPassword", "12345678");
       expect(await signUpAction(undefined, signup)).toEqual({ ok: true });
     },
   );
