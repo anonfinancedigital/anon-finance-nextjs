@@ -9,7 +9,7 @@ Implement these tasks with the `tlc-spec-driven` skill: **activate it by name an
 ---
 
 **Design**: `.specs/features/esqueci-senha/design.md`
-**Status**: Draft
+**Status**: In Progress
 
 ---
 
@@ -95,6 +95,8 @@ T6 → T17
 
 ### T1: Adicionar nodemailer
 
+**Status**: ✅ Complete
+
 **What**: Instalar `nodemailer` e `@types/nodemailer` como dependências do projeto.
 **Where**: `package.json`
 **Depends on**: None
@@ -108,8 +110,8 @@ T6 → T17
 
 **Done when**:
 
-- [ ] `nodemailer` em `dependencies` e `@types/nodemailer` em `devDependencies`; `package-lock.json` atualizado no mesmo commit
-- [ ] Build gate passa: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
+- [x] `nodemailer` em `dependencies` e `@types/nodemailer` em `devDependencies`; `package-lock.json` atualizado no mesmo commit
+- [x] Build gate passa: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
 
 **Tests**: none
 **Gate**: build
