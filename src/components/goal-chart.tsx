@@ -1,5 +1,6 @@
 "use client";
 
+import { TrendingUp } from "lucide-react";
 import { Area, AreaChart, CartesianGrid, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { ageTicks } from "@/lib/domain/age-ticks";
 import { chartYAxis, compositionShares, type GoalSummary } from "@/lib/domain/freedom";
@@ -16,8 +17,8 @@ const tooltipStyle = {
   padding: "8px 12px",
 };
 
-const INVESTED = "var(--viz-target)";
-const INTEREST = "var(--viz-spent)";
+const INVESTED = "var(--color-invested)";
+const INTEREST = "var(--color-returns)";
 
 /** "Meta: X" above the left end of the target line, on a card-colored plate so the line does not cross the text. */
 function TargetLabel({ viewBox, value }: { viewBox?: { x?: number; y?: number }; value: string }) {
@@ -47,15 +48,15 @@ function ChartTooltip({ active, payload }: { active?: boolean; payload?: { paylo
   return (
     <div style={tooltipStyle} className="space-y-1">
       <p className="font-medium">Aos {row.ageYears} anos</p>
+      <p className="font-medium">Patrimônio total: {formatBRL(row.total)}</p>
       <p className="flex items-center gap-1.5">
         <Swatch color={INVESTED} /> Total investido: {formatBRL(row.invested)}
         {shares && ` (${shares.investedPct}%)`}
       </p>
       <p className="flex items-center gap-1.5">
-        <Swatch color={INTEREST} /> Rendimentos gerados: {formatBRL(row.interest)}
+        <Swatch color={INTEREST} /> Rendimentos: {formatBRL(row.interest)}
         {shares && ` (${shares.interestPct}%)`}
       </p>
-      <p className="font-medium">Patrimônio total: {formatBRL(row.total)}</p>
     </div>
   );
 }
@@ -90,7 +91,10 @@ export function GoalChart({ summary }: { summary: GoalSummary }) {
         <span className="text-sm font-medium">Trajetória dos Juros Compostos</span>
         <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
           {badge && (
-            <span className="rounded-full bg-income/15 px-3 py-1 text-xs font-medium text-income">{badge}</span>
+            <p className="flex items-center gap-1.5 text-xs font-medium text-returns">
+              <TrendingUp aria-hidden className="size-4 shrink-0" />
+              {badge}
+            </p>
           )}
           <ul className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
             <li className="flex items-center gap-1.5">

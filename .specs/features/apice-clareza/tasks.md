@@ -649,16 +649,17 @@ T21 → T22 → T23 → T24 → T25 → T26
 
 **Done when**:
 
-- [ ] Passar o mouse ou tocar mostra o tooltip da idade (patrimônio total, total investido, rendimentos) e a linha vertical acompanha o cursor
-- [ ] O insight "{rendimentos} vêm dos rendimentos · {percentual}% do patrimônio final" aparece com ícone e sem fundo preenchido
-- [ ] Investido usa `--color-invested`, rendimentos `--color-returns`; nenhum uso de `income` no arquivo
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
-- [ ] Test count: a suíte unit existente passa sem alteração
+- [x] Passar o mouse ou tocar mostra o tooltip da idade (patrimônio total, total investido, rendimentos) e a linha vertical acompanha o cursor
+- [x] O insight "{rendimentos} vêm dos rendimentos · {percentual}% do patrimônio final" aparece com ícone e sem fundo preenchido
+- [x] Investido usa `--color-invested`, rendimentos `--color-returns`; nenhum uso de `income` no arquivo
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] Test count: a suíte unit existente passa sem alteração
 
 **Tests**: none
 **Gate**: build
 
 **Commit**: `feat(apice): age tooltip with a guide line and a plain earnings insight`
+**Status**: ✅ Done
 
 ---
 
