@@ -166,11 +166,6 @@ export function compositionShares(
   return { investedPct, interestPct: 100 - investedPct };
 }
 
-/** Teto do eixo Y do gráfico: 107% do maior valor entre o alvo e o patrimônio final, em centavos inteiros. */
-export function chartYMax(targetCents: number, finalCents: number): number {
-  return Math.round((Math.max(targetCents, finalCents) * 107) / 100);
-}
-
 const AXIS_MAX_INTERVALS = 5;
 
 /**

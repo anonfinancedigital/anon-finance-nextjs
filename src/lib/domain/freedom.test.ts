@@ -3,7 +3,6 @@ import {
   ageOn,
   annualIncomeCents,
   chartYAxis,
-  chartYMax,
   compositionShares,
   DEFAULT_ANNUAL_RATE_BP,
   DEFAULT_WITHDRAWAL_RATE_BP,
@@ -429,9 +428,9 @@ describe("summarize com a meta pela taxa de retirada", () => {
     withdrawalRateBp: 600,
   };
   const scenarios = [
-    { annualRateBp: 600, withdrawalRateBp: 400, target: 600_000_000, perMonth: 0.004867551, yMax: 642_000_458 },
-    { annualRateBp: 800, withdrawalRateBp: 600, target: 400_000_000, perMonth: 0.00643403, yMax: 428_000_093 },
-    { annualRateBp: 1000, withdrawalRateBp: 700, target: 342_857_143, perMonth: 0.00797414, yMax: 366_857_473 },
+    { annualRateBp: 600, withdrawalRateBp: 400, target: 600_000_000, perMonth: 0.004867551 },
+    { annualRateBp: 800, withdrawalRateBp: 600, target: 400_000_000, perMonth: 0.00643403 },
+    { annualRateBp: 1000, withdrawalRateBp: 700, target: 342_857_143, perMonth: 0.00797414 },
   ] as const;
 
   it.each(scenarios)(
@@ -476,14 +475,13 @@ describe("summarize com a meta pela taxa de retirada", () => {
 
   it.each(scenarios)(
     "$annualRateBp pb: linha do tempo, teto do gráfico e marco de 100% usam a mesma meta",
-    ({ annualRateBp, withdrawalRateBp, target, yMax }) => {
+    ({ annualRateBp, withdrawalRateBp, target }) => {
       const summary = summarize({ ...goal, annualRateBp, withdrawalRateBp }, now);
       const last = summary.timeline.at(-1)!.totalCents;
       expect(last).toBe(projectedCents({ savedCents: 0, monthlyCents: summary.monthlyCents!, annualRateBp }, 240));
       expect(last).toBeGreaterThanOrEqual(target);
       expect(last - target).toBeLessThanOrEqual(projectedCents({ savedCents: 0, monthlyCents: 1, annualRateBp }, 240));
-      expect(chartYMax(summary.targetCents, last)).toBe(yMax);
-      expect(chartYMax(summary.targetCents, last)).toBeGreaterThanOrEqual(Math.round((target * 107) / 100));
+      expect(chartYAxis(summary.targetCents, last).max).toBeGreaterThanOrEqual(Math.max(target, last));
       expect(summary.checkpoints.at(-1)?.valueCents).toBe(summary.targetCents);
     },
   );
@@ -739,24 +737,5 @@ describe("compositionShares", () => {
 
   it("patrimônio zerado não tem percentuais", () => {
     expect(compositionShares(0, 0)).toBeNull();
-  });
-});
-
-describe("chartYMax", () => {
-  it("alvo e final de R$ 3.000.000,00 dão teto de R$ 3.210.000,00", () => {
-    expect(chartYMax(300_000_000, 300_000_000)).toBe(321_000_000);
-  });
-
-  it("patrimônio final acima do alvo define o teto", () => {
-    expect(chartYMax(300_000_000, 400_000_000)).toBe(428_000_000);
-  });
-
-  it("alvo acima do patrimônio final define o teto", () => {
-    expect(chartYMax(300_000_000, 100_000_000)).toBe(321_000_000);
-  });
-
-  it("devolve centavos inteiros, arredondando (R$ 3.012.345,67 × 107% = R$ 3.223.209,87)", () => {
-    expect(chartYMax(5, 0)).toBe(5);
-    expect(chartYMax(301_234_567, 0)).toBe(322_320_987);
   });
 });

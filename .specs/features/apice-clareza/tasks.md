@@ -800,15 +800,16 @@ T21 → T22 → T23 → T24 → T25 → T26
 
 **Done when**:
 
-- [ ] `grep` não encontra `chartYMax` em `src/`
-- [ ] Os testes antigos de `chartYMax` são removidos porque a função some, e `chartYAxis` já os cobre (T2)
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
-- [ ] Test count: os testes de `chartYMax` removidos e todos os demais passam
+- [x] `grep` não encontra `chartYMax` em `src/`
+- [x] Os testes antigos de `chartYMax` são removidos porque a função some, e `chartYAxis` já os cobre (T2)
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] Test count: os testes de `chartYMax` removidos e todos os demais passam
 
 **Tests**: unit
 **Gate**: build
 
 **Commit**: `refactor(apice): remove the superseded chart ceiling helper`
+**Status**: ✅ Done
 
 ---
 
