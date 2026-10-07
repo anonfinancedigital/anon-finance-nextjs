@@ -1,10 +1,15 @@
+import { APIError } from "better-auth/api";
+import { hashPassword } from "better-auth/crypto";
+import { and, eq } from "drizzle-orm";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { verification } from "@/lib/db/auth-schema";
+import { SAVE_FAILED } from "@/lib/action-result";
+import { auth } from "@/lib/auth";
+import { account, session, user, verification } from "@/lib/db/auth-schema";
 import { db } from "@/lib/db/client";
 import { passwordResetsRepo } from "@/lib/db/repos/password-resets";
-import { insertCredentialUser } from "@/test/auth";
+import { insertCredentialUser, signInCookie, TEST_PASSWORD } from "@/test/auth";
 import { setupTestDb } from "@/test/db";
-import { requestPasswordResetAction } from "./password-reset";
+import { requestPasswordResetAction, resetPasswordAction } from "./password-reset";
 
 // Tasks scheduled with `after` are kept so the test can wait for them, as the response would.
 const scheduled = vi.hoisted(() => ({ tasks: [] as Promise<unknown>[] }));
@@ -21,8 +26,14 @@ vi.mock("next/navigation", () => ({
   }),
 }));
 vi.mock("@/lib/mailer", () => ({ sendMail: vi.fn(async () => {}) }));
+// Real hashing, wrapped so a test can force one call to fail.
+vi.mock("better-auth/crypto", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("better-auth/crypto")>();
+  return { ...actual, hashPassword: vi.fn(actual.hashPassword) };
+});
 
 const { sendMail } = await import("@/lib/mailer");
+const { redirect } = await import("next/navigation");
 
 setupTestDb();
 
@@ -62,6 +73,7 @@ beforeEach(() => {
 
 afterEach(() => {
   vi.restoreAllMocks();
+  vi.useRealTimers();
 });
 
 describe("requestPasswordResetAction", () => {
@@ -138,5 +150,159 @@ describe("requestPasswordResetAction", () => {
     expect(sendMail).toHaveBeenCalledTimes(2);
     expect(await passwordResetsRepo.isValid(tokenOfMail(0))).toBe(false);
     expect(await passwordResetsRepo.isValid(tokenOfMail(1))).toBe(true);
+  });
+});
+
+describe("resetPasswordAction", () => {
+  const NEW_PASSWORD = "nova-senha-456";
+  const LENGTH = "A senha deve ter entre 8 e 128 caracteres";
+  const MISMATCH = "As senhas não coincidem";
+  const INVALID_LINK = { ok: false, error: "Link inválido ou expirado" };
+
+  let userId: string;
+
+  beforeEach(async () => {
+    vi.mocked(redirect).mockClear();
+    userId = await insertCredentialUser(EMAIL);
+  });
+
+  function reset(token: string, password: string, confirmPassword = password) {
+    const data = new FormData();
+    data.set("token", token);
+    data.set("password", password);
+    data.set("confirmPassword", confirmPassword);
+    return resetPasswordAction(undefined, data);
+  }
+
+  async function issueToken() {
+    const issued = await passwordResetsRepo.issue(EMAIL);
+    if (!issued) throw new Error("no token issued");
+    return issued.token;
+  }
+
+  const passwordHashOf = async (id: string) => {
+    const [row] = await db
+      .select({ password: account.password })
+      .from(account)
+      .where(and(eq(account.userId, id), eq(account.providerId, "credential")));
+    return row.password;
+  };
+
+  const sessionsOf = (id: string) => db.$count(session, eq(session.userId, id));
+
+  const signIn = (password: string) => auth.api.signInEmail({ body: { email: EMAIL, password } });
+
+  it("replaces the password, ends every session, opens none and redirects to /login", async () => {
+    await signInCookie(EMAIL);
+    await signInCookie(EMAIL);
+    const token = await issueToken();
+
+    await expect(reset(token, NEW_PASSWORD)).rejects.toThrow("NEXT_REDIRECT /login");
+
+    expect(redirect).toHaveBeenCalledWith("/login");
+    // No session row left or created: no session cookie can be valid after the reset.
+    expect(await sessionsOf(userId)).toBe(0);
+    await expect(signIn(TEST_PASSWORD)).rejects.toBeInstanceOf(APIError);
+    expect((await signIn(NEW_PASSWORD)).user.id).toBe(userId);
+  });
+
+  it.each([[7], [129]])(
+    "refuses a password of %i characters and keeps the token usable",
+    async (size) => {
+      const token = await issueToken();
+      const before = await passwordHashOf(userId);
+
+      expect(await reset(token, "a".repeat(size))).toEqual({
+        ok: false,
+        error: LENGTH,
+        fieldErrors: { password: LENGTH },
+      });
+      expect(await passwordHashOf(userId)).toBe(before);
+
+      await expect(reset(token, NEW_PASSWORD)).rejects.toThrow("NEXT_REDIRECT /login");
+      expect((await signIn(NEW_PASSWORD)).user.id).toBe(userId);
+    },
+  );
+
+  it("refuses a different confirmation and keeps the token valid", async () => {
+    const token = await issueToken();
+    const before = await passwordHashOf(userId);
+
+    expect(await reset(token, NEW_PASSWORD, "outra-senha-789")).toEqual({
+      ok: false,
+      error: MISMATCH,
+      fieldErrors: { confirmPassword: MISMATCH },
+    });
+    expect(await passwordHashOf(userId)).toBe(before);
+    expect(await passwordResetsRepo.isValid(token)).toBe(true);
+  });
+
+  it("refuses an unknown token without changing the password", async () => {
+    const before = await passwordHashOf(userId);
+
+    expect(await reset("token-desconhecido", NEW_PASSWORD)).toEqual(INVALID_LINK);
+    expect(await passwordHashOf(userId)).toBe(before);
+    expect(redirect).not.toHaveBeenCalled();
+  });
+
+  it("refuses an empty token without changing the password", async () => {
+    const before = await passwordHashOf(userId);
+
+    expect(await reset("", NEW_PASSWORD)).toMatchObject(INVALID_LINK);
+    expect(await passwordHashOf(userId)).toBe(before);
+    expect(redirect).not.toHaveBeenCalled();
+  });
+
+  it("refuses an expired token without changing the password", async () => {
+    vi.useFakeTimers({ toFake: ["Date"] });
+    vi.setSystemTime(new Date("2026-10-07T12:00:00.000Z"));
+    const token = await issueToken();
+    const before = await passwordHashOf(userId);
+    vi.setSystemTime(Date.now() + 30 * 60_000 + 1000);
+
+    expect(await reset(token, NEW_PASSWORD)).toEqual(INVALID_LINK);
+    expect(await passwordHashOf(userId)).toBe(before);
+  });
+
+  it("refuses a token already used and keeps the password set with it", async () => {
+    const token = await issueToken();
+    await expect(reset(token, NEW_PASSWORD)).rejects.toThrow("NEXT_REDIRECT /login");
+    const afterFirstUse = await passwordHashOf(userId);
+
+    expect(await reset(token, "terceira-senha-000")).toEqual(INVALID_LINK);
+    expect(await passwordHashOf(userId)).toBe(afterFirstUse);
+    expect((await signIn(NEW_PASSWORD)).user.id).toBe(userId);
+  });
+
+  it("refuses a token replaced by a newer request without changing the password", async () => {
+    const older = await issueToken();
+    await issueToken();
+    const before = await passwordHashOf(userId);
+
+    expect(await reset(older, NEW_PASSWORD)).toEqual(INVALID_LINK);
+    expect(await passwordHashOf(userId)).toBe(before);
+  });
+
+  it.each(NOT_APPROVED)(
+    "refuses the token of an account that became %s after the request",
+    async (status) => {
+      const token = await issueToken();
+      const before = await passwordHashOf(userId);
+      await db.update(user).set({ status }).where(eq(user.id, userId));
+
+      expect(await reset(token, NEW_PASSWORD)).toEqual(INVALID_LINK);
+      expect(await passwordHashOf(userId)).toBe(before);
+    },
+  );
+
+  it("answers SAVE_FAILED on an unexpected failure and keeps the token valid", async () => {
+    const token = await issueToken();
+    const before = await passwordHashOf(userId);
+    vi.mocked(hashPassword).mockRejectedValueOnce(new Error("hash falhou"));
+
+    expect(await reset(token, NEW_PASSWORD)).toEqual({ ok: false, error: SAVE_FAILED });
+    expect(await passwordHashOf(userId)).toBe(before);
+    expect(await passwordResetsRepo.isValid(token)).toBe(true);
+    expect(consoleError).toHaveBeenCalled();
   });
 });

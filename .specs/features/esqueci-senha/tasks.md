@@ -337,6 +337,8 @@ T6 → T17
 
 ### T9: Criar a ação de troca de senha
 
+**Status**: ✅ Complete
+
 **What**: `resetPasswordAction` que valida token, senha e confirmação, chama `consume` e redireciona ao login.
 **Where**: `src/actions/password-reset.ts` (modify)
 **Depends on**: T4, T7
@@ -350,14 +352,14 @@ T6 → T17
 
 **Done when**:
 
-- [ ] Dados válidos: redireciona a `/login`, a senha nova entra, as sessões somem e nenhum cookie de sessão é emitido
-- [ ] Senha de 7 e de 129 caracteres: `{ ok: false }` com "A senha deve ter entre 8 e 128 caracteres"; o mesmo token ainda troca a senha depois
-- [ ] Confirmação diferente: "As senhas não coincidem" em `confirmPassword`; o mesmo token ainda vale
-- [ ] Token inexistente, expirado, usado, substituído, vazio: `{ ok: false, error: "Link inválido ou expirado" }` e senha intacta
-- [ ] Conta que deixou de ser `approved` depois do pedido: "Link inválido ou expirado" e senha intacta
-- [ ] Falha inesperada do repo (forçada): `SAVE_FAILED` e token ainda válido
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
-- [ ] Test count: ≥8 tests pass in total in this file (no silent deletions)
+- [x] Dados válidos: redireciona a `/login`, a senha nova entra, as sessões somem e nenhum cookie de sessão é emitido
+- [x] Senha de 7 e de 129 caracteres: `{ ok: false }` com "A senha deve ter entre 8 e 128 caracteres"; o mesmo token ainda troca a senha depois
+- [x] Confirmação diferente: "As senhas não coincidem" em `confirmPassword`; o mesmo token ainda vale
+- [x] Token inexistente, expirado, usado, substituído, vazio: `{ ok: false, error: "Link inválido ou expirado" }` e senha intacta
+- [x] Conta que deixou de ser `approved` depois do pedido: "Link inválido ou expirado" e senha intacta
+- [x] Falha inesperada do repo (forçada): `SAVE_FAILED` e token ainda válido
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
+- [x] Test count: ≥8 tests pass in total in this file (no silent deletions)
 
 **Tests**: integration
 **Gate**: full
