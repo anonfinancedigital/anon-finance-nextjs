@@ -9,7 +9,7 @@ Implement these tasks with the `tlc-spec-driven` skill: **activate it by name an
 ---
 
 **Design**: `.specs/features/categorias-meses-anteriores/design.md`
-**Status**: In progress (T4-T6 adicionadas após revisão da spec)
+**Status**: Done (T4-T6 adicionadas após revisão da spec)
 
 Antes de qualquer comando: `export PATH=$HOME/.nvm/versions/node/v20.20.2/bin:$PATH`. A árvore tem alterações não commitadas de outras features (`.specs/LESSONS.md`, `e2e/transaction-form.spec.ts`, `src/components/transaction-form.tsx`, `data-nascimento`, `apice-clareza`): cada commit adiciona só os arquivos da própria task (`git add <arquivos>`, nunca `-A`).
 
@@ -206,6 +206,7 @@ T1 → T2 → T3 → T4 → T5 → T6
 **Depends on**: T5
 **Reuses**: células existentes
 **Requirement**: CATMES-02, CATMES-04
+**Status**: Done
 
 **Tools**:
 
@@ -214,8 +215,8 @@ T1 → T2 → T3 → T4 → T5 → T6
 
 **Done when**:
 
-- [ ] Com `hasPercent === false`, restante e consumo exibem "—" e não há barra nem "Estourou" (AC 3), por inspeção `file:line`
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Com `hasPercent === false`, restante e consumo exibem "—" e não há barra nem "Estourou" (AC 3), por inspeção `file:line`
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
 
 **Tests**: none
 **Gate**: build

@@ -93,11 +93,16 @@ export function SummaryTable({ rows, hideCta = false }: { rows: CategorySummary[
             </TableCell>
             <TableCell className="text-right font-semibold tabular-nums">{formatBRL(row.spentCents)}</TableCell>
             <TableCell
-              className={`text-right tabular-nums ${row.overspent ? "text-destructive" : "text-income"}`}
+              className={`text-right tabular-nums ${
+                row.hasPercent === false ? "text-muted-foreground" : row.overspent ? "text-destructive" : "text-income"
+              }`}
             >
-              {formatRemaining(row)}
+              {row.hasPercent === false ? "—" : formatRemaining(row)}
             </TableCell>
             <TableCell className="pr-6">
+              {row.hasPercent === false ? (
+                <p className="text-right text-muted-foreground">—</p>
+              ) : (
               <div className="flex items-center justify-end gap-2">
                 <Progress
                   value={Math.min(row.consumedPct, 100)}
@@ -107,6 +112,7 @@ export function SummaryTable({ rows, hideCta = false }: { rows: CategorySummary[
                 />
                 <span className="w-10 text-right text-xs font-semibold tabular-nums">{row.consumedPct}%</span>
               </div>
+              )}
               {row.overspent && (
                 <p className="mt-1 text-right text-[11px] font-semibold text-destructive">
                   Estourou {formatBRL(row.overspentCents)}
