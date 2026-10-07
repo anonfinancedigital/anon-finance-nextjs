@@ -324,13 +324,15 @@ T10 → T11
 
 **Done when**:
 
-- [ ] Primeira coluna do cabeçalho com `COR`; `AÇÕES` sem `text-[10px]` nem `tracking-normal`; coluna do marcador com `É INVESTIMENTO?`
-- [ ] Com 1+ linhas, `Adicionar categoria` (outline) fica dentro do card, abaixo da última linha e acima da Soma; o rodapé fora do card mantém só o Salvar
-- [ ] Linha Soma: espaçador `w-9`, `Soma` em `min-w-40 flex-1`, `sumLabel` em `COL_PERCENT`, total R$ (ou `—` sem receita válida) em `COL_AMOUNT`; `data-testid` `category-sum` e `category-amount-sum` mantidos
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
+- [x] Primeira coluna do cabeçalho com `COR`; `AÇÕES` sem `text-[10px]` nem `tracking-normal`; coluna do marcador com `É INVESTIMENTO?`
+- [x] Com 1+ linhas, `Adicionar categoria` (outline) fica dentro do card, abaixo da última linha e acima da Soma; o rodapé fora do card mantém só o Salvar
+- [x] Linha Soma: espaçador `w-9`, `Soma` em `min-w-40 flex-1`, `sumLabel` em `COL_PERCENT`, total R$ (ou `—` sem receita válida) em `COL_AMOUNT`; `data-testid` `category-sum` e `category-amount-sum` mantidos
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
 
 **Tests**: none
 **Gate**: build
+
+**Status**: ✅ Complete
 
 **Commit**: `feat(categorias): align the sum row and move add button into the table`
 

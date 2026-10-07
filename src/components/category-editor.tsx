@@ -282,13 +282,13 @@ export function CategoryEditor({
             aria-hidden
             className="hidden items-center gap-x-3 py-2 text-xs font-medium tracking-wide text-muted-foreground sm:flex"
           >
-            <span className="w-9 shrink-0" />
+            <span className="w-9 shrink-0">COR</span>
             <span className="min-w-40 flex-1">CATEGORIA</span>
             <span className={COL_PERCENT}>ALOCAÇÃO (%)</span>
             <span className={COL_AMOUNT}>VALOR PREVISTO (R$)</span>
-            <span className={COL_INVESTMENT}>INVESTIMENTO</span>
+            <span className={COL_INVESTMENT}>É INVESTIMENTO?</span>
             <span className={COL_COUNT}>SUBCATEGORIAS</span>
-            <span className={`${COL_ACTION} shrink-0 whitespace-nowrap text-center text-[10px] tracking-normal`}>AÇÕES</span>
+            <span className={`${COL_ACTION} shrink-0 whitespace-nowrap text-center`}>AÇÕES</span>
           </div>
           {rows.map((row, i) => {
             const nameError = fieldErrors[`${i}.name`];
@@ -395,12 +395,24 @@ export function CategoryEditor({
               </div>
             );
           })}
-          <div className="flex flex-wrap items-center justify-end gap-x-6 py-2 text-sm font-medium">
-            <span>Soma</span>
-            <span data-testid="category-sum">{sumLabel(sumMicro)}</span>
-            <span data-testid="category-amount-sum">
+          <div className="py-2">
+            <Button type="button" variant="outline" onClick={add}>
+              Adicionar categoria
+            </Button>
+          </div>
+          <div className="flex flex-wrap items-center gap-x-3 py-2 text-sm font-medium">
+            <span className="w-9 shrink-0" />
+            <span className="min-w-40 flex-1">Soma</span>
+            <span className={COL_PERCENT} data-testid="category-sum">
+              {sumLabel(sumMicro)}
+            </span>
+            <span className={COL_AMOUNT} data-testid="category-amount-sum">
               {incomeCents === null ? "—" : formatBRL(amountSum)}
             </span>
+            {/* Empty cells for the remaining columns, so the sums sit under their own columns. */}
+            <span className={COL_INVESTMENT} />
+            <span className={COL_COUNT} />
+            <span className={`${COL_ACTION} shrink-0`} />
           </div>
         </div>
       )}
@@ -434,9 +446,6 @@ export function CategoryEditor({
 
       {view.showSave && (
         <div className="flex gap-2">
-          <Button type="button" variant="outline" onClick={add}>
-            Adicionar categoria
-          </Button>
           <Button
             type="submit"
             disabled={!sumOk || pending}
