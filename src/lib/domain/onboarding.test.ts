@@ -12,6 +12,7 @@ describe("deriveSetup", () => {
   it("with only categories: 1 done, current is transaction", () => {
     const s = deriveSetup({ categories: 2, transactions: 0, hasGoal: false });
     expect(s.doneCount).toBe(1);
+    expect(s.complete).toBe(false);
     expect(s.currentId).toBe("transaction");
     expect(s.steps.map((x) => x.done)).toEqual([true, false, false]);
   });
@@ -19,6 +20,7 @@ describe("deriveSetup", () => {
   it("marks steps done in any order; current is the first pending", () => {
     const s = deriveSetup({ categories: 0, transactions: 3, hasGoal: true });
     expect(s.doneCount).toBe(2);
+    expect(s.complete).toBe(false);
     expect(s.currentId).toBe("categories");
     expect(s.steps.map((x) => x.done)).toEqual([false, true, true]);
   });
@@ -34,6 +36,7 @@ describe("deriveSetup", () => {
     const s = deriveSetup({ categories: 1, transactions: 1, hasGoal: false });
     expect(s.currentId).toBe("goal");
     expect(s.doneCount).toBe(2);
+    expect(s.complete).toBe(false);
   });
 
   it("uses the exact step ids and labels in order", () => {
@@ -50,6 +53,7 @@ describe("deriveMonthState", () => {
   it.each([
     [{ monthTransactions: 0, totalTransactions: 0 }, "first-access"],
     [{ monthTransactions: 0, totalTransactions: 5 }, "empty-month"],
+    [{ monthTransactions: 1, totalTransactions: 1 }, "has-data"],
     [{ monthTransactions: 3, totalTransactions: 5 }, "has-data"],
   ] as const)("%j -> %s", (input, expected) => {
     expect(deriveMonthState(input)).toBe(expected);
