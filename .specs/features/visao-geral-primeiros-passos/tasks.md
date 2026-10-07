@@ -93,6 +93,8 @@ T8 → T9 → T10 → T11 → T12
 
 ### T2: Criar as regras de onboarding e de estado do mês
 
+**Status**: ✅ Done
+
 **What**: `deriveSetup`, `deriveMonthState`, `previousMonth` e `monthLongName` conforme as interfaces do design.
 **Where**: `src/lib/domain/onboarding.ts`
 **Depends on**: T1
@@ -106,14 +108,14 @@ T8 → T9 → T10 → T11 → T12
 
 **Done when**:
 
-- [ ] `deriveSetup({categories:0, transactions:0, hasGoal:false})` → 0 concluídos, `currentId: "categories"`, `complete: false`
-- [ ] Com `categories:2, transactions:0, hasGoal:false` → 1 concluído, `currentId: "transaction"`; com `categories:0, transactions:3, hasGoal:true` → 2 concluídos, `currentId: "categories"` (primeiro pendente)
-- [ ] Com `categories:1, transactions:1, hasGoal:true` → `complete: true`, `currentId: null`, `doneCount: 3`
-- [ ] Rótulos dos passos exatos: `Definir sua receita e categorias`, `Registrar sua primeira transação`, `Definir seu Ápice`
-- [ ] `deriveMonthState`: `{0,0}` → `first-access`; `{0,5}` → `empty-month`; `{3,5}` → `has-data`
-- [ ] `previousMonth({2026,1})` → `{2025,12}`; `monthLongName({2026,9})` → `setembro`
-- [ ] Gate quick passa: `npm run typecheck && npm run lint && npm run test:unit`
-- [ ] Testes em `onboarding.test.ts` cobrem todos os ramos
+- [x] `deriveSetup({categories:0, transactions:0, hasGoal:false})` → 0 concluídos, `currentId: "categories"`, `complete: false`
+- [x] Com `categories:2, transactions:0, hasGoal:false` → 1 concluído, `currentId: "transaction"`; com `categories:0, transactions:3, hasGoal:true` → 2 concluídos, `currentId: "categories"` (primeiro pendente)
+- [x] Com `categories:1, transactions:1, hasGoal:true` → `complete: true`, `currentId: null`, `doneCount: 3`
+- [x] Rótulos dos passos exatos: `Definir sua receita e categorias`, `Registrar sua primeira transação`, `Definir seu Ápice`
+- [x] `deriveMonthState`: `{0,0}` → `first-access`; `{0,5}` → `empty-month`; `{3,5}` → `has-data`
+- [x] `previousMonth({2026,1})` → `{2025,12}`; `monthLongName({2026,9})` → `setembro`
+- [x] Gate quick passa: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Testes em `onboarding.test.ts` cobrem todos os ramos
 
 **Tests**: unit
 **Gate**: quick

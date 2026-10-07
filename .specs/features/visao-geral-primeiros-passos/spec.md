@@ -140,15 +140,15 @@ Um usuário novo cai na Visão Geral (`/`) com três cards "R$ 0,00" em cores fo
 
 | Requirement ID | Story | Phase | Status |
 | -------------- | ----- | ----- | ------ |
-| VG-01 | P1: Checklist | Specify | Pending |
-| VG-02 | P1: Checklist | Specify | Pending |
-| VG-03 | P1: Checklist | Specify | Pending |
-| VG-04 | P1: Checklist | Specify | Pending |
-| VG-05 | P1: Checklist | Specify | Pending |
-| VG-06 | P1: Checklist | Specify | Pending |
-| VG-07 | P1: Estados vazios e hierarquia | Specify | Pending |
-| VG-08 | P1: Estados vazios e hierarquia | Specify | Pending |
-| VG-09 | P1: Estados vazios e hierarquia | Specify | Pending |
+| VG-01 | P1: Checklist | Specify | Implementing |
+| VG-02 | P1: Checklist | Specify | Implementing |
+| VG-03 | P1: Checklist | Specify | Implementing |
+| VG-04 | P1: Checklist | Specify | Implementing |
+| VG-05 | P1: Checklist | Specify | Implementing |
+| VG-06 | P1: Checklist | Specify | Implementing |
+| VG-07 | P1: Estados vazios e hierarquia | Specify | Implementing |
+| VG-08 | P1: Estados vazios e hierarquia | Specify | Implementing |
+| VG-09 | P1: Estados vazios e hierarquia | Specify | Implementing |
 | VG-10 | P1: Estados vazios e hierarquia | Specify | Pending |
 | VG-11 | P1: Estados vazios e hierarquia | Specify | Pending |
 | VG-12 | P1: Estados vazios e hierarquia | Specify | Pending |
