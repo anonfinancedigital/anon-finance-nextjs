@@ -358,6 +358,8 @@ T8 → T9 → T10 → T11 → T12
 
 ### T11: Estados vazios de "Transações do mês"
 
+**Status**: ✅ Done
+
 **What**: `TransactionList` recebe `emptyState`, `monthName` e `previousHref`; com 0 transações e sem filtro/busca renderiza o texto de primeiro acesso ou `Nenhuma transação em {mês}` com botões `Nova transação` e `Ver {mês anterior}`; ramo filtrado/busca continua prioritário.
 **Where**: `src/components/transaction-list.tsx`
 **Depends on**: T10
@@ -371,13 +373,15 @@ T8 → T9 → T10 → T11 → T12
 
 **Done when**:
 
-- [ ] `first-access`: `Todas as receitas e gastos do mês aparecem aqui.` e nenhum `Nenhuma transação neste mês`
-- [ ] `empty-month`: título `Nenhuma transação em {mês}`, botão `Nova transação` e link `Ver {mês anterior}` apontando ao `previousHref`
-- [ ] `filtered` ou `searching` mantêm as mensagens atuais
-- [ ] Gate build passa: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
+- [x] `first-access`: `Todas as receitas e gastos do mês aparecem aqui.` e nenhum `Nenhuma transação neste mês`
+- [x] `empty-month`: título `Nenhuma transação em {mês}`, botão `Nova transação` e link `Ver {mês anterior}` apontando ao `previousHref`
+- [x] `filtered` ou `searching` mantêm as mensagens atuais
+- [x] Gate build passa: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
 
 **Tests**: none
 **Gate**: build
+
+**Desvio**: `new-transaction-button.tsx` ganhou a prop `label` (variant `inline`), porque o botão do estado vazio precisa do rótulo `Nova transação` visível em qualquer largura. `TransactionList` também recebe `previousMonthName`, `defaultDate` e `emphasis`.
 
 **Commit**: `feat(transacoes): distinguish first access from empty month`
 

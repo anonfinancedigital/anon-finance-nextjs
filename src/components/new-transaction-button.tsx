@@ -25,6 +25,8 @@ type Props = {
   variant?: "floating" | "header" | "inline";
   /** "secondary" renders the button as `outline`, so another action can be the single filled one. */
   emphasis?: "primary" | "secondary";
+  /** Text of the "inline" variant (default "Registrar transação"). */
+  label?: string;
 };
 
 /** Button that opens the new-transaction form in a dialog and closes it on save. */
@@ -33,6 +35,7 @@ export function NewTransactionButton({
   defaultDate,
   variant = "floating",
   emphasis = "primary",
+  label = "Registrar transação",
 }: Props) {
   const [open, setOpen] = useState(false);
   const buttonVariant = emphasis === "secondary" ? "outline" : "default";
@@ -48,7 +51,7 @@ export function NewTransactionButton({
         ) : variant === "inline" ? (
           <Button variant={buttonVariant}>
             <PlusIcon />
-            Registrar transação
+            {label}
           </Button>
         ) : (
           <Button

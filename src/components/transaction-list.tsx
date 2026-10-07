@@ -1,8 +1,10 @@
 "use client";
 
 import { ArrowDownLeftIcon, ArrowUpRightIcon } from "lucide-react";
+import Link from "next/link";
 import { useState, useTransition } from "react";
 import { deleteTransaction } from "@/actions/transactions";
+import { NewTransactionButton } from "@/components/new-transaction-button";
 import { TransactionForm } from "@/components/transaction-form";
 import { TransactionRowMenu } from "@/components/transaction-row-menu";
 import { Button } from "@/components/ui/button";
@@ -17,6 +19,7 @@ import {
 } from "@/components/ui/dialog";
 import type { Occurrence } from "@/lib/db/repos/transactions";
 import { colorVar } from "@/lib/domain/color";
+import type { MonthState } from "@/lib/domain/onboarding";
 import { formatBRL } from "@/lib/domain/money";
 import { monthKey } from "@/lib/domain/recurrence";
 
@@ -32,6 +35,18 @@ type Props = {
   filtered?: boolean;
   /** A description search is active. */
   searching?: boolean;
+  /** Distinguishes first access from an empty month when there is no filter or search. */
+  emptyState?: MonthState;
+  /** Lowercase month name for the empty-month title, e.g. `outubro`. */
+  monthName?: string;
+  /** Link to the month before the displayed one. */
+  previousHref?: string;
+  /** Name of the month before the displayed one, for the `Ver {mês}` link. */
+  previousMonthName?: string;
+  /** Date preselected in the new-transaction dialog. */
+  defaultDate?: string;
+  /** Emphasis of the empty-month "Nova transação" button. */
+  emphasis?: "primary" | "secondary";
 };
 
 const formatDate = (iso: string) => iso.split("-").reverse().join("/");
@@ -40,12 +55,53 @@ const formatDate = (iso: string) => iso.split("-").reverse().join("/");
 const amountText = (cents: number) => formatBRL(cents).replace(/^R\$\s*/, "");
 
 /** The selected month's transactions, in the order received (latest date first). */
-export function TransactionList({ transactions, categories, filtered = false, searching = false }: Props) {
+export function TransactionList({
+  transactions,
+  categories,
+  filtered = false,
+  searching = false,
+  emptyState = "has-data",
+  monthName,
+  previousHref,
+  previousMonthName,
+  defaultDate,
+  emphasis = "primary",
+}: Props) {
   const categoryById = new Map(categories.map((c) => [c.id, c]));
   const [editing, setEditing] = useState<Occurrence | null>(null);
   const [deleting, setDeleting] = useState<Occurrence | null>(null);
   const [deleteError, setDeleteError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
+
+  if (transactions.length === 0 && !filtered && !searching && emptyState === "first-access") {
+    return (
+      <p className="px-6 pb-6 text-sm text-muted-foreground">Todas as receitas e gastos do mês aparecem aqui.</p>
+    );
+  }
+
+  if (transactions.length === 0 && !filtered && !searching && emptyState === "empty-month") {
+    return (
+      <div className="space-y-4 px-6 pb-6">
+        <p className="text-sm text-muted-foreground">Nenhuma transação em {monthName}</p>
+        <div className="flex flex-wrap gap-2">
+          {defaultDate && (
+            <NewTransactionButton
+              variant="inline"
+              emphasis={emphasis}
+              categories={categories}
+              defaultDate={defaultDate}
+              label="Nova transação"
+            />
+          )}
+          {previousHref && (
+            <Button asChild variant="outline">
+              <Link href={previousHref}>Ver {previousMonthName}</Link>
+            </Button>
+          )}
+        </div>
+      </div>
+    );
+  }
 
   if (transactions.length === 0) {
     return (
