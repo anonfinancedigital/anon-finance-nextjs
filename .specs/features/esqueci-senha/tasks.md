@@ -479,6 +479,8 @@ T6 → T17
 
 ### T14: Criar o formulário de pedido
 
+**Status**: ✅ Complete
+
 **What**: Formulário com o campo e-mail, botão desabilitado durante o envio e a mensagem de sucesso em `role="status"`.
 **Where**: `src/app/esqueci-senha/request-form.tsx`
 **Depends on**: T8
@@ -492,9 +494,9 @@ T6 → T17
 
 **Done when**:
 
-- [ ] Envio com sucesso troca o formulário por `REQUEST_SENT_MESSAGE`; erro mostra a mensagem em `role="alert"`
-- [ ] O botão fica desabilitado enquanto `pending`
-- [ ] Build gate passa: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
+- [x] Envio com sucesso troca o formulário por `REQUEST_SENT_MESSAGE`; erro mostra a mensagem em `role="alert"`
+- [x] O botão fica desabilitado enquanto `pending`
+- [x] Build gate passa: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
 
 **Tests**: none
 **Gate**: build
