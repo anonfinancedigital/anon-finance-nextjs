@@ -201,18 +201,24 @@ describe("signInAction for a user who is not approved", () => {
 
 describe("signUpAction", () => {
   const DUPLICATE = "Este e-mail já está cadastrado";
-  const VALID = { name: "  Ana  ", email: " Ana@X.com ", password: "12345678" };
+  const VALID = { name: "  Ana  ", email: " Ana@X.com ", password: "12345678", confirmPassword: "12345678" };
+  const MISMATCH = "As senhas não coincidem";
 
-  function signupForm(input: { name: string; email: string; password: string }) {
+  function signupForm(input: { name: string; email: string; password: string; confirmPassword?: string }) {
     const data = new FormData();
     data.set("name", input.name);
     data.set("email", input.email);
     data.set("password", input.password);
+    if (input.confirmPassword !== undefined) data.set("confirmPassword", input.confirmPassword);
     return data;
   }
 
+  /** Confirms the same password unless the case overrides `confirmPassword`. */
   const signUp = (input: Partial<typeof VALID> = {}) =>
-    signUpAction(undefined, signupForm({ ...VALID, ...input }));
+    signUpAction(
+      undefined,
+      signupForm({ ...VALID, confirmPassword: input.password ?? VALID.confirmPassword, ...input }),
+    );
 
   const usersWith = (email: string) => db.select().from(user).where(eq(user.email, email));
 
@@ -239,6 +245,28 @@ describe("signUpAction", () => {
     expect(await signUp(input)).toEqual({ ok: false, error: message, fieldErrors: { [field]: message } });
 
     expect(await db.$count(user)).toBe(1); // only the user created in beforeEach
+  });
+
+  it.each([["12345679"], [""]])("rejects confirmPassword %j with 'As senhas não coincidem' and creates no user", async (confirmPassword) => {
+    expect(await signUp({ confirmPassword })).toEqual({
+      ok: false,
+      error: MISMATCH,
+      fieldErrors: { confirmPassword: MISMATCH },
+    });
+
+    expect(await db.$count(user)).toBe(1);
+  });
+
+  it("rejects a form without confirmPassword and creates no user", async () => {
+    const { confirmPassword: _omitted, ...withoutConfirm } = VALID;
+
+    expect(await signUpAction(undefined, signupForm(withoutConfirm))).toEqual({
+      ok: false,
+      error: MISMATCH,
+      fieldErrors: { confirmPassword: MISMATCH },
+    });
+
+    expect(await db.$count(user)).toBe(1);
   });
 
   it.each([["pending"], ["approved"], ["rejected"], ["revoked"]] as const)(

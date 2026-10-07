@@ -1,7 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { signupSchema } from "./signup";
 
-const valid = { name: "Ana", email: "ana@x.com", password: "12345678" };
+const valid = { name: "Ana", email: "ana@x.com", password: "12345678", confirmPassword: "12345678" };
+const MISMATCH = "As senhas não coincidem";
 
 /** Issues as "path → message" pairs. */
 function issues(input: unknown) {
@@ -51,19 +52,41 @@ describe("signupSchema", () => {
 
   describe("password", () => {
     it("rejects 7 characters", () => {
-      expect(issues({ ...valid, password: "a".repeat(7) })).toEqual([
+      expect(issues({ ...valid, password: "a".repeat(7), confirmPassword: "a".repeat(7) })).toEqual([
         { path: "password", message: "A senha deve ter pelo menos 8 caracteres" },
       ]);
     });
 
     it.each([[8], [128]])("accepts %i characters", (length) => {
       const password = "a".repeat(length);
-      expect(signupSchema.parse({ ...valid, password }).password).toBe(password);
+      expect(signupSchema.parse({ ...valid, password, confirmPassword: password }).password).toBe(password);
     });
 
     it("rejects 129 characters", () => {
-      expect(issues({ ...valid, password: "a".repeat(129) })).toEqual([
+      expect(issues({ ...valid, password: "a".repeat(129), confirmPassword: "a".repeat(129) })).toEqual([
         { path: "password", message: "A senha deve ter no máximo 128 caracteres" },
+      ]);
+    });
+  });
+
+  describe("confirmPassword", () => {
+    it.each([["12345679"], [""], ["12345678 "]])("rejects %j with 'As senhas não coincidem'", (confirmPassword) => {
+      expect(issues({ ...valid, confirmPassword })).toEqual([{ path: "confirmPassword", message: MISMATCH }]);
+    });
+
+    it("rejects a missing confirmPassword", () => {
+      const { confirmPassword: _omitted, ...withoutConfirm } = valid;
+      expect(issues(withoutConfirm)).toEqual([{ path: "confirmPassword", message: MISMATCH }]);
+    });
+
+    it("accepts 128 identical characters", () => {
+      const password = "a".repeat(128);
+      expect(signupSchema.parse({ ...valid, password, confirmPassword: password }).password).toBe(password);
+    });
+
+    it("keeps only the length error when a short password is confirmed identically", () => {
+      expect(issues({ ...valid, password: "1234567", confirmPassword: "1234567" })).toEqual([
+        { path: "password", message: "A senha deve ter pelo menos 8 caracteres" },
       ]);
     });
   });

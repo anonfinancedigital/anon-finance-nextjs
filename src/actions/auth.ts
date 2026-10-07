@@ -85,11 +85,13 @@ export async function signUpAction(
     name: formData.get("name") ?? "",
     email: formData.get("email") ?? "",
     password: formData.get("password") ?? "",
+    confirmPassword: formData.get("confirmPassword") ?? undefined,
   });
   if (!parsed.success) return invalidInput(parsed.error);
 
   try {
-    const result = await usersRepo.createPending(parsed.data);
+    const { name, email, password } = parsed.data;
+    const result = await usersRepo.createPending({ name, email, password });
     if (!result.ok) return { ok: false, error: DUPLICATE_EMAIL, fieldErrors: { email: DUPLICATE_EMAIL } };
   } catch (error) {
     console.error("signUpAction", error);
