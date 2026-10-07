@@ -36,4 +36,29 @@ describe("ageTicks", () => {
       expect(ticks, `span ${span}`).toEqual([...new Set(ticks)].sort((a, b) => a - b));
     }
   });
+
+  it("de 33 a 48 anos o primeiro rótulo é 33 e o último é 48, com no máximo 9 rótulos", () => {
+    const ticks = ageTicks(33, 48);
+    expect(ticks[0]).toBe(33);
+    expect(ticks[ticks.length - 1]).toBe(48);
+    expect(ticks.length).toBeLessThanOrEqual(9);
+  });
+
+  it("intervalo curto de 33 a 35 devolve 33, 34, 35", () => {
+    expect(ageTicks(33, 35)).toEqual([33, 34, 35]);
+  });
+
+  it("em toda distância de 1 a 60 anos o primeiro rótulo é a idade atual, o último é a final e a ordem é crescente sem repetição", () => {
+    for (let span = 1; span <= 60; span++) {
+      const ticks = ageTicks(33, 33 + span);
+      expect(ticks[0], `span ${span}`).toBe(33);
+      expect(ticks[ticks.length - 1], `span ${span}`).toBe(33 + span);
+      expect(ticks.length, `span ${span}`).toBeLessThanOrEqual(9);
+      expect(ticks, `span ${span}`).toEqual([...new Set(ticks)].sort((a, b) => a - b));
+    }
+  });
+
+  it("idade atual fracionária começa no primeiro ano inteiro", () => {
+    expect(ageTicks(33.4, 36.8)).toEqual([34, 35, 36]);
+  });
 });

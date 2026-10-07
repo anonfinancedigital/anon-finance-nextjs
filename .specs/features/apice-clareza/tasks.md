@@ -238,16 +238,17 @@ T21 → T22 → T23 → T24 → T25 → T26
 
 **Done when**:
 
-- [ ] Para `first = 33` e `last = 48` o primeiro tick é 33 e o último é 48, com no máximo 9 ticks
-- [ ] Para um intervalo curto (ex.: 33 a 35) devolve 33, 34, 35
-- [ ] Os ticks ficam em ordem crescente, sem repetição, para intervalos de 1 a 60 anos
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
-- [ ] Test count: os testes anteriores (ajustados só onde a spec mudou o primeiro tick) mais os novos passam
+- [x] Para `first = 33` e `last = 48` o primeiro tick é 33 e o último é 48, com no máximo 9 ticks
+- [x] Para um intervalo curto (ex.: 33 a 35) devolve 33, 34, 35
+- [x] Os ticks ficam em ordem crescente, sem repetição, para intervalos de 1 a 60 anos
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Test count: os testes anteriores (ajustados só onde a spec mudou o primeiro tick) mais os novos passam
 
 **Tests**: unit
 **Gate**: quick
 
 **Commit**: `feat(apice): always label the current age on the x axis`
+**Status**: ✅ Done
 
 ---
 
