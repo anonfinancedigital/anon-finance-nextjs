@@ -450,16 +450,16 @@ T16 → T17
 
 **Done when**:
 
-- [ ] Props repassadas sem mudar o layout
-- [ ] Typecheck e build passam
-- [ ] Evidência por inspeção de código (`file:line`)
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] Props repassadas sem mudar o layout
+- [x] Typecheck e build passam
+- [x] Evidência por inspeção de código (`file:line`)
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
 
 **Tests**: none
 **Gate**: build
 
 **Commit**: `feat(apice): pass the slack actions through the summary`
-**Status**: Pending
+**Status**: ✅ Done
 
 ---
 
