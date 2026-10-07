@@ -397,6 +397,8 @@ T6 → T17
 
 ### T11: Provar que o endpoint nativo não consome nossos tokens
 
+**Status**: ✅ Complete
+
 **What**: Teste de integração que usa o `/reset-password` nativo do Better Auth com um token emitido por `passwordResetsRepo.issue` e mostra que nada muda.
 **Where**: `src/lib/auth.int.test.ts` (modify)
 **Depends on**: T7
@@ -410,11 +412,11 @@ T6 → T17
 
 **Done when**:
 
-- [ ] `auth.api.resetPassword` com o token puro de `issue` rejeita com erro de token inválido
-- [ ] A senha da conta continua a antiga e o token do nosso repo continua `isValid`
-- [ ] `auth.api.requestPasswordReset` rejeita com `RESET_PASSWORD_DISABLED` (fluxo nativo desligado)
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
-- [ ] Test count: ≥3 new tests pass (no silent deletions)
+- [x] `auth.api.resetPassword` com o token puro de `issue` rejeita com erro de token inválido
+- [x] A senha da conta continua a antiga e o token do nosso repo continua `isValid`
+- [x] `auth.api.requestPasswordReset` rejeita com `RESET_PASSWORD_DISABLED` (fluxo nativo desligado)
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
+- [x] Test count: ≥3 new tests pass (no silent deletions)
 
 **Tests**: integration
 **Gate**: full
