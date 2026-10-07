@@ -3,7 +3,7 @@
   "promote_threshold": 2,
   "window_days": 45,
   "quarantine_threshold": 2,
-  "next_id": 28,
+  "next_id": 30,
   "lessons": [
     {
       "id": "L-001",
@@ -492,6 +492,42 @@
       ],
       "created": "2026-10-06T23:48:10Z",
       "last_seen": "2026-10-06T23:48:10Z"
+    },
+    {
+      "id": "L-028",
+      "key": "surviving_mutant::to prove a button does not submit a form fill the form so a submission would visibly change state or assert type button directly a blocked or failing submit looks the same as none",
+      "text": "To prove a button does not submit a form, fill the form so a submission would visibly change state, or assert type=button directly; a blocked or failing submit looks the same as none",
+      "signal": "surviving_mutant",
+      "scope": "ui",
+      "status": "candidate",
+      "features": [
+        "senha-visivel-confirmacao"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "M4 src/components/password-input.tsx:18; e2e/login.spec.ts:26 (ui)"
+      ],
+      "created": "2026-10-07T09:23:55Z",
+      "last_seen": "2026-10-07T09:23:55Z"
+    },
+    {
+      "id": "L-029",
+      "key": "ac_gap::when a ui criterion lists exact attributes or icons assert each one in the e2e test instead of relying on flows that only exercise them indirectly",
+      "text": "When a UI criterion lists exact attributes or icons, assert each one in the e2e test instead of relying on flows that only exercise them indirectly",
+      "signal": "ac_gap",
+      "scope": "ui",
+      "status": "candidate",
+      "features": [
+        "senha-visivel-confirmacao"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "PWD-01 AC3/AC6, PWD-02 AC1; M8 M9 M10 (ui)"
+      ],
+      "created": "2026-10-07T09:23:55Z",
+      "last_seen": "2026-10-07T09:23:55Z"
     }
   ]
 }

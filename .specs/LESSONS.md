@@ -174,6 +174,18 @@ Seen once or not yet corroborated. Tracked, not trusted.
 - evidence: spec.md decisão AC 11 (spec)
 - last seen: 2026-10-06T23:48:10Z
 
+### L-028 - To prove a button does not submit a form, fill the form so a submission would visibly change state, or assert type=button directly; a blocked or failing submit looks the same as none
+- signal: `surviving_mutant` · recurrence: 1 feature(s) · scope: `ui` · harmful: 0
+- features: senha-visivel-confirmacao
+- evidence: M4 src/components/password-input.tsx:18; e2e/login.spec.ts:26 (ui)
+- last seen: 2026-10-07T09:23:55Z
+
+### L-029 - When a UI criterion lists exact attributes or icons, assert each one in the e2e test instead of relying on flows that only exercise them indirectly
+- signal: `ac_gap` · recurrence: 1 feature(s) · scope: `ui` · harmful: 0
+- features: senha-visivel-confirmacao
+- evidence: PWD-01 AC3/AC6, PWD-02 AC1; M8 M9 M10 (ui)
+- last seen: 2026-10-07T09:23:55Z
+
 ## Quarantined (failed when applied - ignore)
 
 A confirmed lesson that recurred alongside failure. Kept for the maintainer to review.
