@@ -678,17 +678,18 @@ T21 → T22 → T23 → T24 → T25 → T26
 
 **Done when**:
 
-- [ ] O aporte usa o maior tamanho e o patrimônio fica menor ao lado
-- [ ] O número do aporte recebe `animate-flash` quando muda (re-disparado por `key`), sem animação com `prefers-reduced-motion`
-- [ ] A variação aparece só quando há objetivo salvo e a diferença não é zero, com ↑ ou ↓
-- [ ] "Prévia" aparece só quando `dirty` é verdadeiro
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
-- [ ] Test count: a suíte unit existente passa sem alteração
+- [x] O aporte usa o maior tamanho e o patrimônio fica menor ao lado
+- [x] O número do aporte recebe `animate-flash` quando muda (re-disparado por `key`), sem animação com `prefers-reduced-motion`
+- [x] A variação aparece só quando há objetivo salvo e a diferença não é zero, com ↑ ou ↓
+- [x] "Prévia" aparece só quando `dirty` é verdadeiro
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] Test count: a suíte unit existente passa sem alteração
 
 **Tests**: none
 **Gate**: build
 
 **Commit**: `feat(apice): show a live deposit summary with delta in the drawer`
+**Status**: ✅ Done
 
 ---
 
