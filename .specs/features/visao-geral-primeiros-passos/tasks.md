@@ -300,6 +300,8 @@ T8 → T9 → T10 → T11 → T12
 
 ### T9: Estado vazio de "Gastos por categoria" sem botão preenchido
 
+**Status**: ✅ Done
+
 **What**: Com 0 categorias, o CTA vira `outline` e some quando `hideCta` for verdadeiro.
 **Where**: `src/components/summary-table.tsx` (modify)
 **Depends on**: T8
@@ -313,18 +315,22 @@ T8 → T9 → T10 → T11 → T12
 
 **Done when**:
 
-- [ ] Prop `hideCta?: boolean`; com 0 linhas e `hideCta` falso, botão `Crie sua primeira categoria` em `outline`; com `hideCta`, nada é renderizado
-- [ ] `git diff` mostra só as hunks desta task commitadas (alterações pendentes de outra feature ficam fora)
-- [ ] Gate build passa: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
+- [x] Prop `hideCta?: boolean`; com 0 linhas e `hideCta` falso, botão `Crie sua primeira categoria` em `outline`; com `hideCta`, nada é renderizado
+- [x] `git diff` mostra só as hunks desta task commitadas (alterações pendentes de outra feature ficam fora)
+- [x] Gate build passa: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
 
 **Tests**: none
 **Gate**: build
+
+**Desvio**: commit `2b4e122` feito pelo usuário com `summary-table.tsx` inteiro, incluindo a hunk de outra feature (botão `Crie sua primeira categoria`), que ocupa as mesmas linhas do bloco vazio.
 
 **Commit**: `feat(resumo): make empty category CTA secondary and hideable`
 
 ---
 
 ### T10: Linha explicativa e contador condicional em `CategoryOverview`
+
+**Status**: ✅ Done
 
 **What**: Com 0 categorias, `ContentCard` sem `note` e com `description` `Veja para onde vai seu dinheiro, comparado com o que você planejou.`; repassa `hideCta` ao `SummaryTable`.
 **Where**: `src/components/category-overview.tsx`
@@ -339,9 +345,9 @@ T8 → T9 → T10 → T11 → T12
 
 **Done when**:
 
-- [ ] 0 categorias: sem texto `0 categorias`, com a linha explicativa exata
-- [ ] 1+ categorias: nota `{n} categorias` como hoje
-- [ ] Gate build passa: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
+- [x] 0 categorias: sem texto `0 categorias`, com a linha explicativa exata
+- [x] 1+ categorias: nota `{n} categorias` como hoje
+- [x] Gate build passa: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
 
 **Tests**: none
 **Gate**: build

@@ -15,13 +15,16 @@ const views: { value: View; label: string }[] = [
 ];
 
 /** "Gastos por categoria": the same data as a table or as spent × target bars, one at a time. */
-export function CategoryOverview({ rows }: { rows: CategorySummary[] }) {
+export function CategoryOverview({ rows, hideCta = false }: { rows: CategorySummary[]; hideCta?: boolean }) {
   const [view, setView] = useState<View>("tabela");
 
   if (rows.length === 0) {
     return (
-      <ContentCard title="Gastos por categoria" note="0 categorias">
-        <SummaryTable rows={rows} />
+      <ContentCard
+        title="Gastos por categoria"
+        description="Veja para onde vai seu dinheiro, comparado com o que você planejou."
+      >
+        <SummaryTable rows={rows} hideCta={hideCta} />
       </ContentCard>
     );
   }
