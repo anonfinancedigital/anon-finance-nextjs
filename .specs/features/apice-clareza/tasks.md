@@ -353,16 +353,17 @@ T21 → T22 → T23 → T24 → T25 → T26
 
 **Done when**:
 
-- [ ] O hook devolve `values`, `set`, `summary`, `savedSummary`, `dirty`, `errors` (só de campos tocados), `touched` e `reset`
-- [ ] O resumo é recalculado a cada alteração, sem blur (derivado no render)
-- [ ] `reset` volta aos valores salvos e limpa `touched`
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
-- [ ] Test count: a suíte unit existente mais os testes da T7 passam
+- [x] O hook devolve `values`, `set`, `summary`, `savedSummary`, `dirty`, `errors` (só de campos tocados), `touched` e `reset`
+- [x] O resumo é recalculado a cada alteração, sem blur (derivado no render)
+- [x] `reset` volta aos valores salvos e limpa `touched`
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] Test count: a suíte unit existente mais os testes da T7 passam
 
 **Tests**: none
 **Gate**: build
 
 **Commit**: `feat(apice): add the goal draft hook`
+**Status**: ✅ Done
 
 ---
 
