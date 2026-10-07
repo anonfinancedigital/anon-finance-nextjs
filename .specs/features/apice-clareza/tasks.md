@@ -592,14 +592,15 @@ T21 → T22 → T23 → T24 → T25 → T26
 
 **Done when**:
 
-- [ ] `GoalSummary({ summary, onAdjust, preview })` repassa os dois ao `GoalHero`
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
-- [ ] Test count: a suíte unit existente passa sem alteração
+- [x] `GoalSummary({ summary, onAdjust, preview })` repassa os dois ao `GoalHero`
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] Test count: a suíte unit existente passa sem alteração
 
 **Tests**: none
 **Gate**: build
 
 **Commit**: `feat(apice): pass adjust and preview through the summary`
+**Status**: ✅ Done
 
 ---
 
