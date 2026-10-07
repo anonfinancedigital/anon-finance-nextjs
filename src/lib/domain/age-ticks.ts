@@ -1,7 +1,7 @@
 const MAX_INTERVALS = 8;
 
 /**
- * Whole ages from the whole current age (the floor of the first point's fractional age) to the last point, at most `MAX_INTERVALS + 1` labels. The first whole
+ * Whole ages from `first` (the current whole age, `summary.currentAge`) to the last point, at most `MAX_INTERVALS + 1` labels. The first whole
  * age (the current age) and the last age are always ticks; the step runs forward from the first.
  */
 export function ageTicks(first: number, last: number): number[] {

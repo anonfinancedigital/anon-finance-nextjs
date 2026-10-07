@@ -74,4 +74,22 @@ describe("ageTicks", () => {
     }
     expect(Number.isInteger(summarize({ ...goal, birthDate: "1993-05-10" }, now).timeline[0].age)).toBe(false);
   });
+
+  describe("com o aniversário no mês corrente (APICE-10.6)", () => {
+    const now = new Date("2026-10-07T15:00:00Z");
+    const goal = { monthlyIncomeCents: 2_000_000, savedCents: 56_500_000, retirementAge: 48, annualRateBp: 800, withdrawalRateBp: 500 };
+    it.each([
+      ["1993-10-20", 32, "aniversário ainda não chegou"],
+      ["1993-10-07", 33, "aniversário é hoje"],
+      ["1993-10-01", 33, "aniversário já passou no mês"],
+      ["1993-10-31", 32, "aniversário no fim do mês"],
+    ])("nascimento %s: idade atual %i (%s) é o primeiro rótulo, com rótulos crescentes e distintos", (birthDate, age) => {
+      const summary = summarize({ ...goal, birthDate }, now);
+      expect(summary.currentAge).toBe(age);
+      const ticks = ageTicks(summary.currentAge, summary.timeline[summary.timeline.length - 1].age);
+      expect(ticks[0]).toBe(age);
+      expect(ticks.at(-1)).toBe(48);
+      expect(ticks).toEqual([...new Set(ticks)].sort((a, b) => a - b));
+    });
+  });
 });

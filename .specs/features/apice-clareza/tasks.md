@@ -843,7 +843,7 @@ T21 → T22 → T23 → T24 → T25 → T26
 
 ## Phase 5: Correções da verificação
 
-Gaps do `validation.md` (Verifier reprovou): APICE-14.1 (Major), APICE-19.4 (Major), APICE-19.3 e APICE-04.4 (Minor) e limpezas sem risco; T33 a T35 vêm da iteração 3 (Gaps A e B e spec). Execução sequencial T27 → T28 → T29 → T30 → T31 → T32 → T33 → T34 → T35.
+Gaps do `validation.md` (Verifier reprovou): APICE-14.1 (Major), APICE-19.4 (Major), APICE-19.3 e APICE-04.4 (Minor) e limpezas sem risco; T33 a T35 vêm da iteração 3 (Gaps A e B e spec); T36 e T37 vêm da iteração 4 (Gaps B' e A'). Execução sequencial T27 → T28 → T29 → T30 → T31 → T32 → T33 → T34 → T35 → T36 → T37.
 
 ### T27: Resumo da gaveta fixo ao rolar
 
@@ -1100,6 +1100,63 @@ Gaps do `validation.md` (Verifier reprovou): APICE-14.1 (Major), APICE-19.4 (Maj
 
 ---
 
+### T36: Eixo X começa na idade atual do resumo
+
+**What**: O eixo X passa a começar em `summary.currentAge` (anos completos de `ageOn`), não no `floor` da idade fracionária do primeiro ponto, que no mês do aniversário, antes do dia, dava a idade atual + 1 (Gap B' do `validation.md`).
+**Where**: `src/lib/domain/age-ticks.ts`, `src/lib/domain/age-ticks.test.ts`, `src/components/goal-chart.tsx`
+**Depends on**: T35
+**Reuses**: `summarize`, `ageTicks`
+**Requirement**: APICE-10
+
+**Tools**:
+
+- MCP: NONE
+- Skill: NONE
+
+**Done when**:
+
+- [x] `goal-chart.tsx` chama `ageTicks(summary.currentAge, last.age)` e usa `Math.min(summary.currentAge, first.age)` como início do domínio
+- [x] Com `now` fixo e aniversário no mês corrente (antes, no dia e depois do dia de hoje), o primeiro rótulo é `summary.currentAge` (ex.: nascimento 20/10/1993 com hoje 07/10/2026 dá 32), crescente e sem repetição
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] Test count: os testes anteriores mais os novos passam
+
+**Tests**: unit
+**Gate**: build
+
+**Commit**: `fix(apice): start the X axis at the summary current age`
+**Status**: ✅ Done
+
+---
+
+### T37: Eixo Y segue a meta quando há aporte
+
+**What**: `chartYAxis` recebe o aporte: com aporte maior que 0 o excesso do patrimônio final é só arredondamento (chega a R$ 500,29 em 20 a 90 anos, acima da tolerância de 0,1%), então o máximo segue a meta; com aporte 0 o patrimônio final real também define o máximo (Gap A' do `validation.md`).
+**Where**: `src/lib/domain/freedom.ts`, `src/lib/domain/freedom.test.ts`, `src/components/goal-chart.tsx`, `.specs/features/apice-clareza/design.md`
+**Depends on**: T36
+**Reuses**: `summarize`, `chartYAxis`
+**Requirement**: APICE-08
+
+**Tools**:
+
+- MCP: NONE
+- Skill: NONE
+
+**Done when**:
+
+- [ ] `chartYAxis(targetCents, finalCents, monthlyCents)` usa `raw = target` com aporte > 0 e `raw = max(target, final)` com aporte 0; a tolerância fixa sai
+- [ ] Com `summarize`, o cenário agressivo de 20 a 90 anos com meta de R$ 500 mil dá ticks 0 a 500 mil; com aporte 0 e patrimônio acima da meta, o final define o máximo
+- [ ] `design.md` descreve a regra e o eixo X a partir da idade atual
+- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [ ] Test count: os testes anteriores mais os novos passam
+
+**Tests**: unit
+**Gate**: build
+
+**Commit**: `fix(apice): follow the target on the Y axis when a deposit is due`
+**Status**: ⬜ Pending
+
+---
+
 ## Phase Execution Map
 
 ```
@@ -1109,7 +1166,7 @@ Phase 1:  T1 → T2 → T3 → T4 → T5 → T6 → T7
 Phase 2:  T8 → T9 → T10 → T11 → T12 → T13 → T14
 Phase 3:  T15 → T16 → T17 → T18 → T19 → T20
 Phase 4:  T21 → T22 → T23 → T24 → T25 → T26
-Phase 5:  T27 → T28 → T29 → T30 → T31 → T32 → T33 → T34 → T35
+Phase 5:  T27 → T28 → T29 → T30 → T31 → T32 → T33 → T34 → T35 → T36 → T37
 ```
 
 Execução estritamente sequencial. Com 26 tasks, o empacotamento dá 4 lotes (~7 tasks, fases inteiras); a oferta de sub-agentes é feita no Execute.
@@ -1127,9 +1184,9 @@ Execução estritamente sequencial. Com 26 tasks, o empacotamento dá 4 lotes (~
 | APICE-05 | T5, T12, T15 |
 | APICE-06 | T1, T5, T16 |
 | APICE-07 | T16, T17 |
-| APICE-08 | T2, T19, T25, T33, T35 |
+| APICE-08 | T2, T19, T25, T33, T35, T37 |
 | APICE-09 | T19 |
-| APICE-10 | T6, T19, T34 |
+| APICE-10 | T6, T19, T34, T36 |
 | APICE-11 | T20 |
 | APICE-12 | T20 |
 | APICE-13 | T8, T17, T20 |

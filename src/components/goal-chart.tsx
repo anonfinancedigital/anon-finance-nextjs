@@ -114,8 +114,8 @@ export function GoalChart({ summary }: { summary: GoalSummary }) {
             <XAxis
               type="number"
               dataKey="age"
-              domain={[Math.floor(first.age), last.age]}
-              ticks={ageTicks(first.age, last.age)}
+              domain={[Math.min(summary.currentAge, first.age), last.age]}
+              ticks={ageTicks(summary.currentAge, last.age)}
               tick={tick}
               tickFormatter={(v: number) => `${v}`}
               axisLine={false}
