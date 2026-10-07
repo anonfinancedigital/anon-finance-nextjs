@@ -208,17 +208,18 @@ T21 → T22 → T23 → T24 → T25 → T26
 
 **Done when**:
 
-- [ ] `assumptionChips` devolve "Cenário moderado", "8% real a.a.", "Retirada de 5% a.a.", "Valores em R$ de hoje" para 8%/5%; "Cenário conservador" e "Cenário agressivo" para 6%/4% e 10%/6%; "Cenário personalizado" com as taxas digitadas (ex.: "6,5% real a.a.") fora dos presets
-- [ ] `withdrawalTooltip` devolve "Percentual do patrimônio que você saca por ano para gerar sua renda. Com 5%, R$ 4,8 mi geram R$ 240 mil/ano (R$ 20 mil/mês)." para o cenário de aceite e usa os valores dados (renda e retirada diferentes mudam o texto)
-- [ ] `todayLabel` devolve "Hoje · R$ 565 mil (11,8%) · 33 anos" para o cenário de aceite; com progresso acima de 100% mostra o percentual real
-- [ ] `depositDelta(10267, 9027)` (em reais, valores em centavos nos testes) devolve `{ direction: "up", text: "R$ 1.240 vs. atual" }`; redução devolve `"down"`; iguais devolve `null`; qualquer lado null devolve `null`
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
-- [ ] Test count: os testes anteriores mais os novos passam
+- [x] `assumptionChips` devolve "Cenário moderado", "8% real a.a.", "Retirada de 5% a.a.", "Valores em R$ de hoje" para 8%/5%; "Cenário conservador" e "Cenário agressivo" para 6%/4% e 10%/6%; "Cenário personalizado" com as taxas digitadas (ex.: "6,5% real a.a.") fora dos presets
+- [x] `withdrawalTooltip` devolve "Percentual do patrimônio que você saca por ano para gerar sua renda. Com 5%, R$ 4,8 mi geram R$ 240 mil/ano (R$ 20 mil/mês)." para o cenário de aceite e usa os valores dados (renda e retirada diferentes mudam o texto)
+- [x] `todayLabel` devolve "Hoje · R$ 565 mil (11,8%) · 33 anos" para o cenário de aceite; com progresso acima de 100% mostra o percentual real
+- [x] `depositDelta(10267, 9027)` (em reais, valores em centavos nos testes) devolve `{ direction: "up", text: "R$ 1.240 vs. atual" }`; redução devolve `"down"`; iguais devolve `null`; qualquer lado null devolve `null`
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Test count: os testes anteriores mais os novos passam
 
 **Tests**: unit
 **Gate**: quick
 
 **Commit**: `feat(apice): add assumption, today and delta copy`
+**Status**: ✅ Done
 
 ---
 

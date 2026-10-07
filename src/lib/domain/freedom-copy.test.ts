@@ -3,8 +3,10 @@ import { summarize, type Checkpoint } from "./freedom";
 import { formatCompactBRL } from "./money";
 import {
   ADJUST_LABEL,
+  assumptionChips,
   checkpointLabel,
   DEPOSIT_LABEL,
+  depositDelta,
   depositText,
   DRAWER_INTRO,
   formatRate,
@@ -19,9 +21,12 @@ import {
   planLines,
   RATE_HINT,
   RATE_TITLE,
+  scenarioName,
   SUBTITLE,
   summarySentence,
   TARGET_LABEL,
+  todayLabel,
+  withdrawalTooltip,
 } from "./freedom-copy";
 
 const normalize = (s: string) => s.replace(/\s/g, " ");
@@ -179,6 +184,120 @@ describe("depositText", () => {
       now,
     );
     expect(depositText(reached)).toBe("Meta alcançada");
+  });
+});
+
+describe("assumptionChips e scenarioName", () => {
+  const withRates = (annualRateBp: number, withdrawalRateBp: number) =>
+    summarize(
+      { monthlyIncomeCents: 2_000_000, savedCents: 56_500_000, birthDate: "1993-05-10", retirementAge: 48, annualRateBp, withdrawalRateBp },
+      now,
+    );
+
+  it("8% e 5%: cenário moderado e as premissas ativas", () => {
+    expect(scenarioName(acceptance)).toBe("moderado");
+    expect(assumptionChips(acceptance)).toEqual({
+      scenario: "Cenário moderado",
+      rate: "8% real a.a.",
+      withdrawal: "Retirada de 5% a.a.",
+      today: "Valores em R$ de hoje",
+    });
+  });
+
+  it("6% e 4%: Cenário conservador", () => {
+    const summary = withRates(600, 400);
+    expect(assumptionChips(summary)).toMatchObject({
+      scenario: "Cenário conservador",
+      rate: "6% real a.a.",
+      withdrawal: "Retirada de 4% a.a.",
+    });
+  });
+
+  it("10% e 6%: Cenário agressivo", () => {
+    const summary = withRates(1000, 600);
+    expect(assumptionChips(summary)).toMatchObject({
+      scenario: "Cenário agressivo",
+      rate: "10% real a.a.",
+      withdrawal: "Retirada de 6% a.a.",
+    });
+  });
+
+  it("par fora dos presets: Cenário personalizado com as taxas digitadas", () => {
+    const summary = withRates(650, 450);
+    expect(scenarioName(summary)).toBe("personalizado");
+    expect(assumptionChips(summary)).toEqual({
+      scenario: "Cenário personalizado",
+      rate: "6,5% real a.a.",
+      withdrawal: "Retirada de 4,5% a.a.",
+      today: "Valores em R$ de hoje",
+    });
+  });
+
+  it("rentabilidade de um preset com retirada diferente também é personalizado", () => {
+    const summary = withRates(800, 600);
+    expect(assumptionChips(summary).scenario).toBe("Cenário personalizado");
+  });
+});
+
+describe("withdrawalTooltip", () => {
+  it("cenário de aceite: 5% sobre R$ 4,8 mi geram R$ 240 mil/ano (R$ 20 mil/mês)", () => {
+    const text = withdrawalTooltip({
+      withdrawalBp: acceptance.withdrawalRateBp,
+      targetCents: acceptance.targetCents,
+      monthlyIncomeCents: acceptance.monthlyIncomeCents,
+    });
+    expect(normalize(text)).toBe(
+      "Percentual do patrimônio que você saca por ano para gerar sua renda. Com 5%, R$ 4,8 mi geram R$ 240 mil/ano (R$ 20 mil/mês).",
+    );
+  });
+
+  it("usa os valores dados: retirada, patrimônio e renda diferentes mudam o texto", () => {
+    const text = withdrawalTooltip({ withdrawalBp: 650, targetCents: 200_000_000, monthlyIncomeCents: 1_000_000 });
+    expect(normalize(text)).toBe(
+      "Percentual do patrimônio que você saca por ano para gerar sua renda. Com 6,5%, R$ 2 mi geram R$ 120 mil/ano (R$ 10 mil/mês).",
+    );
+  });
+});
+
+describe("todayLabel", () => {
+  it("cenário de aceite: Hoje · R$ 565 mil (11,8%) · 33 anos", () => {
+    expect(normalize(todayLabel(acceptance))).toBe("Hoje · R$ 565 mil (11,8%) · 33 anos");
+  });
+
+  it("progresso acima de 100% mostra o percentual real", () => {
+    const above = summarize(
+      { monthlyIncomeCents: 2_000_000, savedCents: 600_000_000, birthDate: "1993-05-10", retirementAge: 48, annualRateBp: 800, withdrawalRateBp: 500 },
+      now,
+    );
+    expect(normalize(todayLabel(above))).toBe("Hoje · R$ 6 mi (125,0%) · 33 anos");
+  });
+});
+
+describe("depositDelta", () => {
+  it("aumento: seta para cima e a diferença em reais inteiros", () => {
+    expect(depositDelta(1_026_700, 902_700)).toEqual({ direction: "up", text: expect.any(String) });
+    expect(normalize(depositDelta(1_026_700, 902_700)!.text)).toBe("R$ 1.240 vs. atual");
+  });
+
+  it("redução: seta para baixo e a diferença sem sinal", () => {
+    const delta = depositDelta(902_700, 1_026_700);
+    expect(delta?.direction).toBe("down");
+    expect(normalize(delta!.text)).toBe("R$ 1.240 vs. atual");
+  });
+
+  it("aportes iguais não têm variação", () => {
+    expect(depositDelta(902_719, 902_719)).toBeNull();
+    expect(depositDelta(0, 0)).toBeNull();
+  });
+
+  it("lado nulo não tem variação", () => {
+    expect(depositDelta(null, 902_719)).toBeNull();
+    expect(depositDelta(902_719, null)).toBeNull();
+    expect(depositDelta(null, null)).toBeNull();
+  });
+
+  it("diferença menor que R$ 1 não mostra variação em reais inteiros", () => {
+    expect(depositDelta(902_719, 902_700)).toBeNull();
   });
 });
 

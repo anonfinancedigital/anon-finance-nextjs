@@ -1,5 +1,6 @@
-import type { Checkpoint, GoalSummary } from "./freedom";
+import { presetFor, type Checkpoint, type GoalSummary } from "./freedom";
 import { formatBRL, formatCompactBRL, formatWholeBRL } from "./money";
+import { formatShare } from "./percent";
 
 /** Subtítulo da página, sob o título "Ápice". */
 export const SUBTITLE = "Quanto você precisa juntar para viver de renda — e quanto guardar por mês para chegar lá.";
@@ -63,6 +64,59 @@ export function depositText(summary: GoalSummary): string {
   if (summary.monthlyCents === null) return "Prazo encerrado";
   if (summary.monthlyCents === 0) return PLAN_REACHED;
   return `${formatWholeBRL(summary.monthlyCents)}/mês`;
+}
+
+export type ScenarioName = "conservador" | "moderado" | "agressivo" | "personalizado";
+
+const SCENARIO_BY_PRESET: Record<number, ScenarioName> = { 600: "conservador", 800: "moderado", 1000: "agressivo" };
+
+/** Nome do cenário pelo par (rentabilidade, retirada) do resumo; "personalizado" fora dos presets. */
+export function scenarioName(summary: GoalSummary): ScenarioName {
+  const preset = presetFor(summary.annualRateBp, summary.withdrawalRateBp);
+  return preset === null ? "personalizado" : SCENARIO_BY_PRESET[preset];
+}
+
+/** Os quatro chips de premissas da página. */
+export function assumptionChips(summary: GoalSummary): {
+  scenario: string;
+  rate: string;
+  withdrawal: string;
+  today: string;
+} {
+  return {
+    scenario: `Cenário ${scenarioName(summary)}`,
+    rate: `${formatRate(summary.annualRateBp)} real a.a.`,
+    withdrawal: `Retirada de ${perYear(summary.withdrawalRateBp)}`,
+    today: "Valores em R$ de hoje",
+  };
+}
+
+/** Tooltip da retirada: o que a taxa significa, com um exemplo calculado dos valores dados. */
+export function withdrawalTooltip(input: {
+  withdrawalBp: number;
+  targetCents: number;
+  monthlyIncomeCents: number;
+}): string {
+  return `Percentual do patrimônio que você saca por ano para gerar sua renda. Com ${formatRate(input.withdrawalBp)}, ${formatCompactBRL(input.targetCents)} geram ${formatCompactBRL(input.monthlyIncomeCents * 12)}/ano (${formatCompactBRL(input.monthlyIncomeCents)}/mês).`;
+}
+
+/** Rótulo do ponto "Hoje" na barra de marcos, com o percentual real do progresso (sem teto). */
+export function todayLabel(summary: GoalSummary): string {
+  return `Hoje · ${formatCompactBRL(summary.savedCents)} (${formatShare(summary.progressBp)}) · ${summary.currentAge} anos`;
+}
+
+/**
+ * Variação do aporte da prévia sobre o salvo, em reais inteiros: "R$ 1.240 vs. atual" com a direção.
+ * `null` sem um dos lados ou quando a diferença não chega a R$ 1.
+ */
+export function depositDelta(
+  previewCents: number | null,
+  savedCents: number | null,
+): { direction: "up" | "down"; text: string } | null {
+  if (previewCents === null || savedCents === null) return null;
+  const diff = previewCents - savedCents;
+  if (Math.round(Math.abs(diff) / 100) === 0) return null;
+  return { direction: diff > 0 ? "up" : "down", text: `${formatWholeBRL(Math.abs(diff))} vs. atual` };
 }
 
 /** Rótulo curto do marco: "Atingido", "Sem previsão", "Aos N anos" e, no último, "Aos N anos (Meta)". */
