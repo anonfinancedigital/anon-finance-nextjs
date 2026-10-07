@@ -29,7 +29,10 @@ export function LoginForm() {
       <Button type="submit" className="w-full" disabled={pending}>
         Entrar
       </Button>
-      <p className="text-center text-sm">
+      <p className="flex justify-between text-sm">
+        <Link href="/esqueci-senha" className="text-link hover:underline">
+          Esqueci minha senha
+        </Link>
         <Link href="/cadastro" className="text-link hover:underline">
           Criar conta
         </Link>

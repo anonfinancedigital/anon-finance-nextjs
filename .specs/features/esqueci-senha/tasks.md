@@ -453,6 +453,8 @@ T6 → T17
 
 ### T13: Adicionar o link no formulário de login
 
+**Status**: ✅ Complete
+
 **What**: Link "Esqueci minha senha" para `/esqueci-senha`, junto de "Criar conta".
 **Where**: `src/app/login/login-form.tsx`
 **Depends on**: None
@@ -466,8 +468,8 @@ T6 → T17
 
 **Done when**:
 
-- [ ] O formulário mostra o link com o texto "Esqueci minha senha" apontando para `/esqueci-senha`
-- [ ] Build gate passa: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
+- [x] O formulário mostra o link com o texto "Esqueci minha senha" apontando para `/esqueci-senha`
+- [x] Build gate passa: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
 
 **Tests**: none
 **Gate**: build
