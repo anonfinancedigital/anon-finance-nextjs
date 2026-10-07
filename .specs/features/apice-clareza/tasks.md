@@ -325,15 +325,16 @@ T21 → T22 → T23 → T24 → T25 → T26
 
 **Done when**:
 
-- [ ] Sem `subtitle`, o cabeçalho das demais telas fica idêntico ao atual
-- [ ] Com `subtitle`, o texto aparece em `text-sm text-muted-foreground` abaixo do título e cabe em uma linha a 1280 px
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
-- [ ] Test count: a suíte unit existente passa sem alteração
+- [x] Sem `subtitle`, o cabeçalho das demais telas fica idêntico ao atual
+- [x] Com `subtitle`, o texto aparece em `text-sm text-muted-foreground` abaixo do título e cabe em uma linha a 1280 px
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] Test count: a suíte unit existente passa sem alteração
 
 **Tests**: none
 **Gate**: build
 
 **Commit**: `feat(apice): support a subtitle in the page header`
+**Status**: ✅ Done
 
 ---
 
