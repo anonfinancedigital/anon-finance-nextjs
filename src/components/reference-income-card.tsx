@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { InputAffix } from "@/components/input-affix";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { formatBRL, parseBRL } from "@/lib/domain/money";
@@ -13,9 +14,12 @@ import { formatBRL, parseBRL } from "@/lib/domain/money";
 export function ReferenceIncomeCard({
   value,
   onChange,
+  initialValue = "",
 }: {
   value: string;
   onChange: (text: string) => void;
+  /** Text the field started with (the month's income); while `value` still equals it, the help text says so. */
+  initialValue?: string;
 }) {
   const [editing, setEditing] = useState(false);
   // Focus the field only when the user opened it with "Editar base", not on first render.
@@ -26,7 +30,7 @@ export function ReferenceIncomeCard({
 
   if (parsed?.ok && !editing) {
     return (
-      <div className="flex max-w-md flex-wrap items-center justify-between gap-2 rounded-2xl border border-border bg-card px-4 py-2 shadow-lg">
+      <div className="flex flex-wrap items-center justify-between gap-2 rounded-2xl border border-border bg-card px-4 py-2 shadow-lg">
         <p className="text-sm">
           Base de cálculo mensal: <span className="font-medium">{formatBRL(parsed.value)}</span>
         </p>
@@ -45,6 +49,13 @@ export function ReferenceIncomeCard({
     );
   }
 
+  const help =
+    value.trim() === ""
+      ? "Informe para ver os valores em R$."
+      : value === initialValue && initialValue !== ""
+        ? "Preenchido com a receita do mês; edite para simular."
+        : null;
+
   function finish() {
     if (!invalid) {
       setEditing(false);
@@ -53,29 +64,34 @@ export function ReferenceIncomeCard({
   }
 
   return (
-    <div className="max-w-xs space-y-1">
+    <div className="space-y-1 rounded-2xl border border-border bg-card px-4 py-2 shadow-lg">
       <Label htmlFor="reference-income">Receita Base Mensal</Label>
-      <Input
-        id="reference-income"
-        inputMode="decimal"
-        placeholder="5.000,00"
-        value={value}
-        autoFocus={focusOnOpen}
-        aria-invalid={invalid}
-        onChange={(e) => {
-          // Typing keeps the field open even when the text becomes valid mid-way.
-          setEditing(true);
-          onChange(e.target.value);
-        }}
-        onBlur={finish}
-        onKeyDown={(e) => {
-          if (e.key !== "Enter") return;
-          // Inside the editor form, Enter would submit it.
-          e.preventDefault();
-          finish();
-        }}
-      />
+      <div className="max-w-xs">
+        <InputAffix prefix="R$">
+          <Input
+            id="reference-income"
+            inputMode="decimal"
+            placeholder="5.000,00"
+            value={value}
+            autoFocus={focusOnOpen}
+            aria-invalid={invalid}
+            onChange={(e) => {
+              // Typing keeps the field open even when the text becomes valid mid-way.
+              setEditing(true);
+              onChange(e.target.value);
+            }}
+            onBlur={finish}
+            onKeyDown={(e) => {
+              if (e.key !== "Enter") return;
+              // Inside the editor form, Enter would submit it.
+              e.preventDefault();
+              finish();
+            }}
+          />
+        </InputAffix>
+      </div>
       {parsed && !parsed.ok && <p className="text-sm text-destructive">{parsed.error}</p>}
+      {help && <p className="text-sm text-muted-foreground">{help}</p>}
     </div>
   );
 }

@@ -209,14 +209,16 @@ T10 → T11
 
 **Done when**:
 
-- [ ] Modo campo: card `rounded-2xl border bg-card px-4 py-2 shadow-lg` sem `max-w-md`, `Input` em `max-w-xs` com prefixo `R$`; modo resumo sem `max-w-md`
-- [ ] Texto `Informe para ver os valores em R$.` quando o valor está vazio
-- [ ] Texto `Preenchido com a receita do mês; edite para simular.` quando `value === initialValue` e `initialValue !== ""`; nenhum texto quando o valor foi trocado
-- [ ] `initialValue` é opcional (padrão `""`); label "Receita Base Mensal" e `id="reference-income"` intactos
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
+- [x] Modo campo: card `rounded-2xl border bg-card px-4 py-2 shadow-lg` sem `max-w-md`, `Input` em `max-w-xs` com prefixo `R$`; modo resumo sem `max-w-md`
+- [x] Texto `Informe para ver os valores em R$.` quando o valor está vazio
+- [x] Texto `Preenchido com a receita do mês; edite para simular.` quando `value === initialValue` e `initialValue !== ""`; nenhum texto quando o valor foi trocado
+- [x] `initialValue` é opcional (padrão `""`); label "Receita Base Mensal" e `id="reference-income"` intactos
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
 
 **Tests**: none
 **Gate**: build
+
+**Status**: ✅ Complete
 
 **Commit**: `feat(categorias): format the reference income field as money`
 
