@@ -156,9 +156,9 @@ Um usuário novo cai na Visão Geral (`/`) com três cards "R$ 0,00" em cores fo
 | VG-14 | P2: Cards neutros e sem ruído | Specify | Implementing |
 | VG-15 | P2: Cards neutros e sem ruído | Specify | Pending |
 | VG-16 | P2: Cards neutros e sem ruído | Specify | Pending |
-| VG-17 | P2: Seletor de mês | Specify | Pending |
+| VG-17 | P2: Seletor de mês | Specify | Implementing |
 | VG-18 | P2: Seletor de mês | Specify | Implementing |
-| VG-19 | P2: Seletor de mês | Specify | Pending |
+| VG-19 | P2: Seletor de mês | Specify | Implementing |
 
 **Coverage:** 19 total, 0 mapped to tasks, 19 unmapped ⚠️
 

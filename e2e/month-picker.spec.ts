@@ -11,7 +11,10 @@ test("without ?mes the current month (America/Sao_Paulo) is shown", async ({ pag
 
   await login(page);
   await expect(page).toHaveURL("/");
-  await expect(page.getByLabel("Mês", { exact: true })).toHaveValue(today);
+  const label = new Intl.DateTimeFormat("pt-BR", { month: "long", year: "numeric", timeZone: "UTC" }).format(
+    new Date(Date.UTC(year, month - 1, 1)),
+  );
+  await expect(page.getByTestId("month-label")).toHaveText(label);
   await expect(page.getByTestId("total-income")).toHaveText("R$ 1.234,00");
 });
 
@@ -35,7 +38,8 @@ test("switching between September and October shows each month's own totals", as
   await expect(page).toHaveURL("/?mes=2026-09");
   await expect(page.getByTestId("total-spent")).toHaveText("R$ 100,00");
 
-  await page.getByLabel("Mês", { exact: true }).fill("2026-10");
+  await page.getByTestId("month-label").click();
+  await page.getByRole("button", { name: "Outubro", exact: true }).click();
   await expect(page).toHaveURL("/?mes=2026-10");
   await expect(page.getByTestId("total-spent")).toHaveText("R$ 250,00");
 });
@@ -50,7 +54,7 @@ test("reloading keeps the month selected in the URL", async ({ page }) => {
 
   await page.reload();
   await expect(page).toHaveURL("/?mes=2026-09");
-  await expect(page.getByLabel("Mês", { exact: true })).toHaveValue("2026-09");
+  await expect(page.getByTestId("month-label")).toHaveText("setembro de 2026");
   await expect(page.getByTestId("total-income")).toHaveText("R$ 700,00");
 });
 

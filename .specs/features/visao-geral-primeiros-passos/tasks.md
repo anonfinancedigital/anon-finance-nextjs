@@ -242,6 +242,8 @@ T8 → T9 → T10 → T11 → T12
 
 ### T7: Trocar o seletor de mês por um único controle pt-BR
 
+**Status**: ✅ Done
+
 **What**: Remover o `Input type="month"`; o nome do mês vira `PopoverTrigger` que abre grade de 12 meses com setas de ano; escolher navega e fecha; escolher o mês exibido só fecha; atualizar as 3 asserções de `e2e/month-picker.spec.ts`.
 **Where**: `src/components/month-picker.tsx`
 **Depends on**: T6
@@ -255,11 +257,11 @@ T8 → T9 → T10 → T11 → T12
 
 **Done when**:
 
-- [ ] Nenhum `input[type=month]` no componente; `data-testid="month-label"` mantido no gatilho
-- [ ] Grade mostra `Janeiro`..`Dezembro` e setas `Ano anterior` / `Próximo ano`
-- [ ] Escolha navega para `?mes=AAAA-MM` preservando os demais parâmetros e fecha; escolha igual ao exibido não navega
-- [ ] `e2e/month-picker.spec.ts` (linhas 14, 38, 53) reescrito para o novo seletor (o spec não é executado, AD-005)
-- [ ] Gate build passa: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
+- [x] Nenhum `input[type=month]` no componente; `data-testid="month-label"` mantido no gatilho
+- [x] Grade mostra `Janeiro`..`Dezembro` e setas `Ano anterior` / `Próximo ano`
+- [x] Escolha navega para `?mes=AAAA-MM` preservando os demais parâmetros e fecha; escolha igual ao exibido não navega
+- [x] `e2e/month-picker.spec.ts` (linhas 14, 38, 53) reescrito para o novo seletor (o spec não é executado, AD-005)
+- [x] Gate build passa: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
 
 **Tests**: none
 **Gate**: build
