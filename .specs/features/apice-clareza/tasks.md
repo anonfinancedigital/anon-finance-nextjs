@@ -175,20 +175,21 @@ T21 → T22 → T23 → T24 → T25 → T26
 
 **Done when**:
 
-- [ ] `SUBTITLE` é exatamente "Quanto você precisa juntar para viver de renda — e quanto guardar por mês para chegar lá."; `DRAWER_INTRO` é "Altere os valores e veja o aporte mensal mudar na hora."; `ADJUST_LABEL` "Ajustar objetivo"; `DEPOSIT_LABEL` "Aporte mensal necessário"; `TARGET_LABEL` "Patrimônio necessário"
-- [ ] `incomeHeadline` devolve "R$ 20 mil/mês aos 48 anos" no cenário de aceite
-- [ ] `summarySentence` devolve "Para ter R$ 20 mil/mês aos 48 anos, você precisa de R$ 4,8 mi. Isso exige guardar R$ 9.027/mês por 14 anos e 11 meses." no cenário de aceite e muda com a renda e a idade (prova que nada é fixo)
-- [ ] `monthlyCents` null: a frase termina em "…você precisa de R$ 4,8 mi." sem "Isso exige guardar"; `monthlyCents` 0: usa "Você já tem o necessário." no lugar da cláusula
-- [ ] `depositText` devolve "R$ 9.027/mês", "Prazo encerrado" (null) e "Meta alcançada" (0)
-- [ ] Nenhum texto do módulo contém "Aporte Estratégico", "Meta Patrimonial", "Calibrar Parâmetros" nem "Simule o ápice"; `heroPill` permanece até a T26 (o Hero ainda a usa até a T17)
-- [ ] A lista de termos proibidos da feature `liberdade-copy-hierarquia` segue passando para os textos novos
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
-- [ ] Test count: os casos antigos de `freedom-copy.test.ts` mantidos ou reescritos para os textos novos, mais os novos (nenhum removido sem substituto)
+- [x] `SUBTITLE` é exatamente "Quanto você precisa juntar para viver de renda — e quanto guardar por mês para chegar lá."; `DRAWER_INTRO` é "Altere os valores e veja o aporte mensal mudar na hora."; `ADJUST_LABEL` "Ajustar objetivo"; `DEPOSIT_LABEL` "Aporte mensal necessário"; `TARGET_LABEL` "Patrimônio necessário"
+- [x] `incomeHeadline` devolve "R$ 20 mil/mês aos 48 anos" no cenário de aceite
+- [x] `summarySentence` devolve "Para ter R$ 20 mil/mês aos 48 anos, você precisa de R$ 4,8 mi. Isso exige guardar R$ 9.027/mês por 14 anos e 11 meses." no cenário de aceite e muda com a renda e a idade (prova que nada é fixo)
+- [x] `monthlyCents` null: a frase termina em "…você precisa de R$ 4,8 mi." sem "Isso exige guardar"; `monthlyCents` 0: usa "Você já tem o necessário." no lugar da cláusula
+- [x] `depositText` devolve "R$ 9.027/mês", "Prazo encerrado" (null) e "Meta alcançada" (0)
+- [x] Nenhum texto do módulo contém "Aporte Estratégico", "Meta Patrimonial", "Calibrar Parâmetros" nem "Simule o ápice"; `heroPill` permanece até a T26 (o Hero ainda a usa até a T17)
+- [x] A lista de termos proibidos da feature `liberdade-copy-hierarquia` segue passando para os textos novos
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Test count: os casos antigos de `freedom-copy.test.ts` mantidos ou reescritos para os textos novos, mais os novos (nenhum removido sem substituto)
 
 **Tests**: unit
 **Gate**: quick
 
 **Commit**: `feat(apice): add income-first copy and rename jargon terms`
+**Status**: ✅ Done
 
 ---
 

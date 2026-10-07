@@ -2,18 +2,26 @@ import { describe, expect, it } from "vitest";
 import { summarize, type Checkpoint } from "./freedom";
 import { formatCompactBRL } from "./money";
 import {
+  ADJUST_LABEL,
   checkpointLabel,
+  DEPOSIT_LABEL,
+  depositText,
+  DRAWER_INTRO,
   formatRate,
   formatTerm,
   heroPill,
   HOW_DISCLAIMER,
   HOW_TITLE,
   howWeCalculate,
+  incomeHeadline,
   interestBadge,
   PLAN_REACHED,
   planLines,
   RATE_HINT,
   RATE_TITLE,
+  SUBTITLE,
+  summarySentence,
+  TARGET_LABEL,
 } from "./freedom-copy";
 
 const normalize = (s: string) => s.replace(/\s/g, " ");
@@ -38,7 +46,20 @@ describe("rótulos do seletor", () => {
 
 describe("sem promessa de renda ou retorno", () => {
   const FORBIDDEN = ["segur", "perpétu", "garantid", "vitalíc", "consumir", "principal", "vai gerar"];
-  const texts = [RATE_TITLE, RATE_HINT, heroPill(acceptance), howWeCalculate(acceptance)];
+  const texts = [
+    RATE_TITLE,
+    RATE_HINT,
+    heroPill(acceptance),
+    howWeCalculate(acceptance),
+    SUBTITLE,
+    DRAWER_INTRO,
+    ADJUST_LABEL,
+    DEPOSIT_LABEL,
+    TARGET_LABEL,
+    incomeHeadline(acceptance),
+    summarySentence(acceptance),
+    depositText(acceptance),
+  ];
 
   it.each(FORBIDDEN)("nenhum texto contém \"%s\"", (root) => {
     for (const t of texts) expect(normalize(t).toLowerCase()).not.toContain(root);
@@ -47,6 +68,117 @@ describe("sem promessa de renda ou retorno", () => {
   // O aviso nega a garantia ("não representam garantia"); só "garantid" fica de fora.
   it.each(FORBIDDEN.filter((root) => root !== "garantid"))("o aviso do popover não contém \"%s\"", (root) => {
     expect(HOW_DISCLAIMER.toLowerCase()).not.toContain(root);
+  });
+});
+
+describe("nomenclatura sem os termos antigos", () => {
+  const OLD_TERMS = ["Aporte Estratégico", "Meta Patrimonial", "Calibrar Parâmetros", "Simule o ápice"];
+  const texts = [
+    RATE_TITLE,
+    RATE_HINT,
+    HOW_TITLE,
+    HOW_DISCLAIMER,
+    howWeCalculate(acceptance),
+    SUBTITLE,
+    DRAWER_INTRO,
+    ADJUST_LABEL,
+    DEPOSIT_LABEL,
+    TARGET_LABEL,
+    incomeHeadline(acceptance),
+    summarySentence(acceptance),
+    depositText(acceptance),
+  ];
+
+  it.each(OLD_TERMS)("nenhum texto contém \"%s\"", (term) => {
+    for (const t of texts) expect(normalize(t)).not.toContain(term);
+  });
+});
+
+describe("hierarquia e nomenclatura", () => {
+  it("subtítulo, descrição da gaveta e rótulos exatos", () => {
+    expect(SUBTITLE).toBe("Quanto você precisa juntar para viver de renda — e quanto guardar por mês para chegar lá.");
+    expect(DRAWER_INTRO).toBe("Altere os valores e veja o aporte mensal mudar na hora.");
+    expect(ADJUST_LABEL).toBe("Ajustar objetivo");
+    expect(DEPOSIT_LABEL).toBe("Aporte mensal necessário");
+    expect(TARGET_LABEL).toBe("Patrimônio necessário");
+  });
+});
+
+describe("incomeHeadline", () => {
+  it("cenário de aceite: R$ 20 mil/mês aos 48 anos", () => {
+    expect(normalize(incomeHeadline(acceptance))).toBe("R$ 20 mil/mês aos 48 anos");
+  });
+
+  it("outra renda e outra idade mudam o texto", () => {
+    const other = summarize(
+      { monthlyIncomeCents: 1_500_000, savedCents: 0, birthDate: "1993-05-10", retirementAge: 55, annualRateBp: 800, withdrawalRateBp: 500 },
+      now,
+    );
+    expect(normalize(incomeHeadline(other))).toBe("R$ 15 mil/mês aos 55 anos");
+  });
+});
+
+describe("summarySentence", () => {
+  it("cenário de aceite: renda, patrimônio, aporte e prazo", () => {
+    expect(acceptance.monthlyCents).toBe(902_719);
+    expect(normalize(summarySentence(acceptance))).toBe(
+      "Para ter R$ 20 mil/mês aos 48 anos, você precisa de R$ 4,8 mi. Isso exige guardar R$ 9.027/mês por 14 anos e 11 meses.",
+    );
+  });
+
+  it("muda com a renda e com a idade", () => {
+    const other = summarize(
+      { monthlyIncomeCents: 1_500_000, savedCents: 56_500_000, birthDate: "1993-05-10", retirementAge: 55, annualRateBp: 800, withdrawalRateBp: 500 },
+      now,
+    );
+    const sentence = normalize(summarySentence(other));
+    expect(sentence).toContain("Para ter R$ 15 mil/mês aos 55 anos, você precisa de R$ 3,6 mi.");
+    expect(sentence).toContain(`Isso exige guardar ${normalize(depositText(other))} por 21 anos e 11 meses.`);
+    expect(sentence).not.toBe(normalize(summarySentence(acceptance)));
+  });
+
+  it("prazo encerrado: termina em \"você precisa de R$ 4,8 mi.\" sem a cláusula", () => {
+    const ended = summarize(
+      { monthlyIncomeCents: 2_000_000, savedCents: 56_500_000, birthDate: "1978-06-20", retirementAge: 48, annualRateBp: 800, withdrawalRateBp: 500 },
+      now,
+    );
+    expect(ended.monthlyCents).toBeNull();
+    const sentence = normalize(summarySentence(ended));
+    expect(sentence).toBe("Para ter R$ 20 mil/mês aos 48 anos, você precisa de R$ 4,8 mi.");
+    expect(sentence).not.toContain("Isso exige guardar");
+  });
+
+  it("meta já alcançada: usa \"Você já tem o necessário.\" no lugar da cláusula", () => {
+    const reached = summarize(
+      { monthlyIncomeCents: 2_000_000, savedCents: 500_000_000, birthDate: "1993-05-10", retirementAge: 48, annualRateBp: 800, withdrawalRateBp: 500 },
+      now,
+    );
+    expect(reached.monthlyCents).toBe(0);
+    const sentence = normalize(summarySentence(reached));
+    expect(sentence).toBe("Para ter R$ 20 mil/mês aos 48 anos, você precisa de R$ 4,8 mi. Você já tem o necessário.");
+    expect(sentence).not.toContain("Isso exige guardar");
+  });
+});
+
+describe("depositText", () => {
+  it("aporte vira reais inteiros por mês", () => {
+    expect(normalize(depositText(acceptance))).toBe("R$ 9.027/mês");
+  });
+
+  it("prazo encerrado (aporte nulo) vira Prazo encerrado", () => {
+    const ended = summarize(
+      { monthlyIncomeCents: 2_000_000, savedCents: 56_500_000, birthDate: "1978-06-20", retirementAge: 48, annualRateBp: 800, withdrawalRateBp: 500 },
+      now,
+    );
+    expect(depositText(ended)).toBe("Prazo encerrado");
+  });
+
+  it("meta alcançada (aporte 0) vira Meta alcançada", () => {
+    const reached = summarize(
+      { monthlyIncomeCents: 2_000_000, savedCents: 500_000_000, birthDate: "1993-05-10", retirementAge: 48, annualRateBp: 800, withdrawalRateBp: 500 },
+      now,
+    );
+    expect(depositText(reached)).toBe("Meta alcançada");
   });
 });
 
