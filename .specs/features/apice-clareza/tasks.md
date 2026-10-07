@@ -708,15 +708,16 @@ T21 → T22 → T23 → T24 → T25 → T26
 
 **Done when**:
 
-- [ ] Mostra o título "Descartar alterações?" e os botões "Descartar" e "Continuar editando"
-- [ ] "Descartar" chama `onDiscard`; "Continuar editando" e Escape chamam `onKeepEditing`
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
-- [ ] Test count: a suíte unit existente passa sem alteração
+- [x] Mostra o título "Descartar alterações?" e os botões "Descartar" e "Continuar editando"
+- [x] "Descartar" chama `onDiscard`; "Continuar editando" e Escape chamam `onKeepEditing`
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] Test count: a suíte unit existente passa sem alteração
 
 **Tests**: none
 **Gate**: build
 
 **Commit**: `feat(apice): add a light confirmation before discarding changes`
+**Status**: ✅ Done
 
 ---
 
