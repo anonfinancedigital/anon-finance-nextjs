@@ -282,6 +282,18 @@ export function buildCheckpoints(input: {
   });
 }
 
+/** Chegada à meta só com o guardado rendendo (aporte 0, guardado abaixo do alvo, prazo maior que 0). */
+export type Reach = {
+  /** Primeiro mês em que o guardado alcança o alvo. */
+  months: number;
+  /** Idade da meta N, em anos completos. */
+  ageYears: number;
+  /** Idade fracionária do alcance (eixo do gráfico). */
+  age: number;
+  /** Patrimônio no prazo sem aportes. */
+  finalCents: number;
+};
+
 export type GoalSummary = {
   monthlyIncomeCents: number;
   annualIncomeCents: number;
@@ -302,6 +314,10 @@ export type GoalSummary = {
   retirementAge: number;
   /** Idade atual em anos completos, só para exibição. */
   currentAge: number;
+  /** Plano de chegada sem aportes; `null` fora do caso aporte 0 com guardado abaixo do alvo e prazo. */
+  reach: Reach | null;
+  /** Renda mensal que o guardado gera hoje: guardado × retirada ÷ 12, ao centavo. */
+  incomeNowCents: number;
 };
 
 /** Resumo calculado na leitura a partir do objetivo salvo e de `now`. */
@@ -319,6 +335,27 @@ export function summarize(goal: Goal, now: Date): GoalSummary {
       months,
       annualRateBp: goal.annualRateBp,
     });
+  }
+
+  const currentAge = ageOn(goal.birthDate, today(now));
+  let reach: Reach | null = null;
+  if (monthlyCents === 0 && !reached && months > 0) {
+    const rates = { savedCents: goal.savedCents, annualRateBp: goal.annualRateBp };
+    const reachMonths = monthsToTarget({ ...rates, targetCents: target, months });
+    if (reachMonths !== null) {
+      reach = {
+        months: reachMonths,
+        ageYears: retirementAgeReaching({
+          birthDate: goal.birthDate,
+          retirementAge: goal.retirementAge,
+          currentAge,
+          reachMonths,
+          now,
+        }),
+        age: goal.retirementAge - (months - reachMonths) / 12,
+        finalCents: projectedCents({ ...rates, monthlyCents: 0 }, months),
+      };
+    }
   }
 
   const timeline = projectTimeline({
@@ -351,6 +388,8 @@ export function summarize(goal: Goal, now: Date): GoalSummary {
       annualRateBp: goal.annualRateBp,
     }),
     retirementAge: goal.retirementAge,
-    currentAge: ageOn(goal.birthDate, today(now)),
+    currentAge,
+    reach,
+    incomeNowCents: Math.round((goal.savedCents * goal.withdrawalRateBp) / 10_000 / 12),
   };
 }

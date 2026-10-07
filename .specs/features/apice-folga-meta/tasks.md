@@ -152,18 +152,18 @@ T16 → T17
 
 **Done when**:
 
-- [ ] Referência: `reach.ageYears` 43, `reach.months` 118, `reach.finalCents` entre R$ 1,78 mi e R$ 1,79 mi e `age` fracionária entre 42,9 e 43
-- [ ] `reach` é `null` com aporte maior que 0, com guardado igual ou maior que o alvo e com prazo encerrado
-- [ ] `incomeNowCents` com R$ 1,3 mi e retirada de 5% é 541.667 (R$ 5.416,67)
-- [ ] Todas as expectativas numéricas existentes de `freedom.test.ts` seguem passando sem edição
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
-- [ ] Test count: os testes anteriores mais os novos passam (nenhum removido)
+- [x] Referência: `reach.ageYears` 43, `reach.months` 118, `reach.finalCents` entre R$ 1,78 mi e R$ 1,79 mi e `age` fracionária entre 42,9 e 43
+- [x] `reach` é `null` com aporte maior que 0, com guardado igual ou maior que o alvo e com prazo encerrado
+- [x] `incomeNowCents` com R$ 1,3 mi e retirada de 5% é 541.667 (R$ 5.416,67)
+- [x] Todas as expectativas numéricas existentes de `freedom.test.ts` seguem passando sem edição
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Test count: os testes anteriores mais os novos passam (nenhum removido)
 
 **Tests**: unit
 **Gate**: quick
 
 **Commit**: `feat(apice): expose the reach plan and the current income in the summary`
-**Status**: Pending
+**Status**: ✅ Done
 
 ---
 

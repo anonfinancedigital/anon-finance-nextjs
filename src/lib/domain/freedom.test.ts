@@ -459,6 +459,57 @@ describe("summarize", () => {
   });
 });
 
+describe("summarize: plano de chegada e renda atual", () => {
+  // Cenário de referência: renda R$ 5.000,00, 8% real, retirada 5% (alvo R$ 1.200.000,00), R$ 565.000,00
+  // guardados, nascido em 1993-05-10, ápice aos 48; 2026-06 dá 179 meses.
+  const now = new Date("2026-06-15T15:00:00Z");
+  const reference: Goal = {
+    monthlyIncomeCents: 500_000,
+    savedCents: 56_500_000,
+    birthDate: "1993-05-10",
+    retirementAge: 48,
+    annualRateBp: 800,
+    withdrawalRateBp: 500,
+  };
+
+  it("referência: alcança a meta no mês 118, aos 43 anos, e chega a R$ 1,78 mi no prazo", () => {
+    const { reach } = summarize(reference, now);
+    expect(reach).not.toBeNull();
+    expect(reach!.months).toBe(118);
+    expect(reach!.ageYears).toBe(43);
+    expect(reach!.finalCents).toBeGreaterThanOrEqual(178_000_000);
+    expect(reach!.finalCents).toBeLessThan(179_000_000);
+    expect(reach!.age).toBeGreaterThan(42.9);
+    expect(reach!.age).toBeLessThan(43);
+  });
+
+  it("guardado 1 centavo abaixo do alvo: alcança no mês 1, aos 34 (idade atual + 1)", () => {
+    const { reach } = summarize({ ...reference, savedCents: 119_999_999 }, now);
+    expect(reach).toMatchObject({ months: 1, ageYears: 34 });
+  });
+
+  it("sem plano de chegada com aporte maior que 0", () => {
+    const summary = summarize({ ...reference, savedCents: 0 }, now);
+    expect(summary.monthlyCents).toBeGreaterThan(0);
+    expect(summary.reach).toBeNull();
+  });
+
+  it("sem plano de chegada com guardado igual ou maior que o alvo", () => {
+    expect(summarize({ ...reference, savedCents: 120_000_000 }, now).reach).toBeNull();
+    expect(summarize({ ...reference, savedCents: 130_000_000 }, now).reach).toBeNull();
+  });
+
+  it("sem plano de chegada com prazo encerrado", () => {
+    const summary = summarize({ ...reference, birthDate: "1978-06-20" }, now);
+    expect(summary.months).toBe(0);
+    expect(summary.reach).toBeNull();
+  });
+
+  it("renda atual: R$ 1.300.000,00 com retirada de 5% geram 541.667 centavos por mês", () => {
+    expect(summarize({ ...reference, savedCents: 130_000_000 }, now).incomeNowCents).toBe(541_667);
+  });
+});
+
 describe("taxa anual como parâmetro", () => {
   it("oferece as taxas 6%, 8% e 10%, com 8% como padrão", () => {
     expect(PRESET_RATES.map((p) => p.annualBp)).toEqual([600, 800, 1000]);
