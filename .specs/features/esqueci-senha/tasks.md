@@ -369,6 +369,8 @@ T6 → T17
 
 ### T10: Criar o guard de visitante
 
+**Status**: ✅ Complete
+
 **What**: `redirectIfSignedIn` em `auth-guard.ts`, que manda quem tem sessão aprovada para `/`.
 **Where**: `src/lib/auth-guard.ts`
 **Depends on**: None
@@ -382,10 +384,10 @@ T6 → T17
 
 **Done when**:
 
-- [ ] Sessão de conta `approved`: redireciona a `/`
-- [ ] Sem sessão, e com sessão de conta `pending`, `rejected` ou `revoked`: não redireciona e retorna normalmente
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
-- [ ] Test count: ≥4 new tests pass (no silent deletions)
+- [x] Sessão de conta `approved`: redireciona a `/`
+- [x] Sem sessão, e com sessão de conta `pending`, `rejected` ou `revoked`: não redireciona e retorna normalmente
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
+- [x] Test count: ≥4 new tests pass (no silent deletions)
 
 **Tests**: integration
 **Gate**: full

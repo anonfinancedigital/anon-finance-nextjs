@@ -18,6 +18,11 @@ export async function requireSessionForPage(): Promise<{ userId: string; isAdmin
   return { userId: user.id, isAdmin: user.isAdmin };
 }
 
+/** For visitor-only pages (password reset): an approved signed-in user goes to /. */
+export async function redirectIfSignedIn(): Promise<void> {
+  if (await currentUser()) redirect("/");
+}
+
 /** For Server Actions: the signed-in approved user, or UNAUTHORIZED without touching any data. */
 export async function requireSessionForAction(): Promise<
   { ok: true; userId: string } | { ok: false; error: typeof UNAUTHORIZED }

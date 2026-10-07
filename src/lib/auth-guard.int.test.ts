@@ -5,6 +5,7 @@ import { db } from "@/lib/db/client";
 import { createSignedInUser } from "@/test/auth";
 import { setupTestDb } from "@/test/db";
 import {
+  redirectIfSignedIn,
   requireAdminForAction,
   requireAdminForPage,
   requireSessionForAction,
@@ -154,4 +155,30 @@ describe("without ADMIN_EMAIL", () => {
     expect(redirect).toHaveBeenCalledWith("/");
     expect(await requireSessionForPage()).toMatchObject({ isAdmin: false });
   });
+});
+
+describe("redirectIfSignedIn", () => {
+  it("redirects an approved signed-in user to /", async () => {
+    const { cookie } = await createSignedInUser();
+    request.headers = new Headers({ cookie });
+
+    await expect(redirectIfSignedIn()).rejects.toThrow("NEXT_REDIRECT /");
+    expect(redirect).toHaveBeenCalledWith("/");
+  });
+
+  it("returns normally without a session", async () => {
+    await expect(redirectIfSignedIn()).resolves.toBeUndefined();
+    expect(redirect).not.toHaveBeenCalled();
+  });
+
+  it.each([["pending"], ["rejected"], ["revoked"]] as const)(
+    "returns normally with the session of a %s user",
+    async (status) => {
+      const { cookie } = await createSignedInUser(undefined, status);
+      request.headers = new Headers({ cookie });
+
+      await expect(redirectIfSignedIn()).resolves.toBeUndefined();
+      expect(redirect).not.toHaveBeenCalled();
+    },
+  );
 });
