@@ -85,7 +85,7 @@ export function GoalChart({ summary }: { summary: GoalSummary }) {
     <figure
       data-testid="goal-chart"
       aria-label={`Trajetória dos Juros Compostos: alvo ${formatBRL(summary.targetCents)} aos ${last.ageYears} anos.${badge ? ` ${badge}` : ""}`}
-      className="space-y-3 rounded-2xl border border-border bg-card p-6 shadow-lg"
+      className="relative space-y-3 overflow-hidden rounded-2xl border border-border bg-card p-6 shadow-lg"
     >
       <figcaption className="flex flex-wrap items-center justify-between gap-2">
         <span className="text-sm font-medium">Trajetória dos Juros Compostos</span>
