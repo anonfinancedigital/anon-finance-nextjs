@@ -8,6 +8,7 @@ import {
   DEFAULT_WITHDRAWAL_RATE_BP,
   interestSharePct,
   monthlyRate,
+  monthsToTarget,
   presetFor,
   PRESET_RATES,
   projectTimeline,
@@ -302,6 +303,36 @@ describe("chartYAxis", () => {
       expect(ticks.every((t, i) => t === i * step), `raw ${raw}`).toBe(true);
       expect(max - step, `raw ${raw}`).toBeLessThan(raw);
     }
+  });
+});
+
+describe("monthsToTarget", () => {
+  // Cenário de referência: R$ 565.000,00 guardados, alvo R$ 1.200.000,00, 8% real a.a., 179 meses.
+  const reference = { savedCents: 56_500_000, targetCents: 120_000_000, annualRateBp: 800, months: 179 };
+
+  it("cenário de referência: o guardado alcança o alvo no mês 118", () => {
+    expect(monthsToTarget(reference)).toBe(118);
+  });
+
+  it("o mês do alcance conta quando é o último do prazo; um mês a menos de prazo dá null", () => {
+    expect(monthsToTarget({ ...reference, months: 118 })).toBe(118);
+    expect(monthsToTarget({ ...reference, months: 117 })).toBeNull();
+  });
+
+  it("guardado R$ 0 dá null", () => {
+    expect(monthsToTarget({ ...reference, savedCents: 0 })).toBeNull();
+  });
+
+  it("guardado que não alcança o alvo no prazo (R$ 400.000,00 em 60 meses) dá null", () => {
+    expect(monthsToTarget({ ...reference, savedCents: 40_000_000, months: 60 })).toBeNull();
+  });
+
+  it("guardado igual ao alvo dá o primeiro mês (1), nunca 0", () => {
+    expect(monthsToTarget({ ...reference, savedCents: 120_000_000 })).toBe(1);
+  });
+
+  it("guardado 1 centavo abaixo do alvo dá 1: o rendimento do primeiro mês cobre o centavo", () => {
+    expect(monthsToTarget({ ...reference, savedCents: 119_999_999 })).toBe(1);
   });
 });
 

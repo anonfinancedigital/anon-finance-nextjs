@@ -119,6 +119,23 @@ export function projectedCents(
 }
 
 /**
+ * Primeiro mês, entre 1 e `months`, em que o guardado rendendo sem aportes alcança o alvo; `null` se
+ * não alcança no prazo.
+ */
+export function monthsToTarget(input: {
+  savedCents: number;
+  targetCents: number;
+  annualRateBp: number;
+  months: number;
+}): number | null {
+  const { savedCents, targetCents, annualRateBp, months } = input;
+  for (let m = 1; m <= months; m++) {
+    if (projectedCents({ savedCents, monthlyCents: 0, annualRateBp }, m) >= targetCents) return m;
+  }
+  return null;
+}
+
+/**
  * Evolução do patrimônio pagando o aporte necessário: um ponto por ano completo a partir de hoje
  * (meses 0, 12, 24 …) e um ponto final no prazo. Vazia sem prazo ou sem aporte definido.
  */
