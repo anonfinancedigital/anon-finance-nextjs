@@ -261,6 +261,20 @@ describe("summarize", () => {
     );
     expect(summary.retirementAge).toBe(48);
   });
+
+  it("expõe a idade atual: 33 anos no cenário de aceite", () => {
+    const summary = summarize(
+      { monthlyIncomeCents: 2_000_000, savedCents: 56_500_000, birthDate: "1993-05-10", retirementAge: 48, annualRateBp: 800, withdrawalRateBp: 500 },
+      now,
+    );
+    expect(summary.currentAge).toBe(33);
+  });
+
+  it("na véspera do aniversário a idade atual ainda é a anterior", () => {
+    const goal = { monthlyIncomeCents: 2_000_000, savedCents: 56_500_000, birthDate: "1993-06-16", retirementAge: 48, annualRateBp: 800, withdrawalRateBp: 500 };
+    expect(summarize(goal, now).currentAge).toBe(32);
+    expect(summarize(goal, new Date("2026-06-16T15:00:00Z")).currentAge).toBe(33);
+  });
 });
 
 describe("taxa anual como parâmetro", () => {

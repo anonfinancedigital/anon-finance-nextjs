@@ -1,3 +1,4 @@
+import { today } from "@/lib/validation/goal";
 import { currentMonth, type YearMonth } from "./month";
 
 export type YearMonthDay = { year: number; month: number; day: number };
@@ -244,6 +245,8 @@ export type GoalSummary = {
   checkpoints: Checkpoint[];
   /** Idade do ápice, copiada do objetivo só para exibição. */
   retirementAge: number;
+  /** Idade atual em anos completos, só para exibição. */
+  currentAge: number;
 };
 
 /** Resumo calculado na leitura a partir do objetivo salvo e de `now`. */
@@ -293,5 +296,6 @@ export function summarize(goal: Goal, now: Date): GoalSummary {
       annualRateBp: goal.annualRateBp,
     }),
     retirementAge: goal.retirementAge,
+    currentAge: ageOn(goal.birthDate, today(now)),
   };
 }
