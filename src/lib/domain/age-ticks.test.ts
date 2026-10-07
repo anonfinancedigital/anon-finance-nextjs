@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { ageTicks } from "./age-ticks";
+import { summarize } from "./freedom";
 
 describe("ageTicks", () => {
   it("objetivo de 34 a 45 anos termina em 45 com no máximo 9 rótulos", () => {
@@ -58,7 +59,19 @@ describe("ageTicks", () => {
     }
   });
 
-  it("idade atual fracionária começa no primeiro ano inteiro", () => {
-    expect(ageTicks(33.4, 36.8)).toEqual([34, 35, 36]);
+  it("idade atual fracionária começa na idade inteira atual (APICE-10.6)", () => {
+    expect(ageTicks(33.4, 36.8)).toEqual([33, 34, 35, 36]);
+  });
+
+  it("com a idade fracionária real do pipeline o primeiro rótulo é a idade atual do resumo", () => {
+    const now = new Date("2026-07-15T15:00:00Z");
+    const goal = { monthlyIncomeCents: 2_000_000, savedCents: 56_500_000, retirementAge: 48, annualRateBp: 800, withdrawalRateBp: 500 };
+    for (const birthDate of ["1993-05-10", "1993-06-16", "1993-07-15", "1993-08-20", "1993-12-31"]) {
+      const summary = summarize({ ...goal, birthDate }, now);
+      const first = summary.timeline[0].age;
+      const last = summary.timeline[summary.timeline.length - 1].age;
+      expect(ageTicks(first, last)[0], birthDate).toBe(summary.currentAge);
+    }
+    expect(Number.isInteger(summarize({ ...goal, birthDate: "1993-05-10" }, now).timeline[0].age)).toBe(false);
   });
 });

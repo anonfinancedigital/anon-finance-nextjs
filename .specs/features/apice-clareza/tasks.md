@@ -1059,16 +1059,16 @@ Gaps do `validation.md` (Verifier reprovou): APICE-14.1 (Major), APICE-19.4 (Maj
 
 **Done when**:
 
-- [ ] Com a idade fracionária real do pipeline (`summarize`), o primeiro tick é `summary.currentAge`
-- [ ] O domínio do eixo X inclui o primeiro tick
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
-- [ ] Test count: os testes anteriores mais os novos passam
+- [x] Com a idade fracionária real do pipeline (`summarize`), o primeiro tick é `summary.currentAge`
+- [x] O domínio do eixo X inclui o primeiro tick
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] Test count: os testes anteriores mais os novos passam
 
 **Tests**: unit
 **Gate**: build
 
 **Commit**: `fix(apice): start the X axis at the current whole age`
-**Status**: ⏳ Pending
+**Status**: ✅ Done
 
 ---
 
