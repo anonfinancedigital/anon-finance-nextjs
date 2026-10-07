@@ -533,6 +533,8 @@ T6 → T17
 
 ### T16: Criar o formulário de nova senha
 
+**Status**: ✅ Complete
+
 **What**: Formulário com token oculto, "Nova senha" e "Confirmar senha" em `PasswordInput`, com aviso local de diferença e erro do servidor.
 **Where**: `src/app/redefinir-senha/reset-form.tsx`
 **Depends on**: T9
@@ -546,9 +548,9 @@ T6 → T17
 
 **Done when**:
 
-- [ ] Mostra os campos "Nova senha" e "Confirmar senha" com `autoComplete="new-password"` e envia o token em campo oculto
-- [ ] Confirmação diferente mostra "As senhas não coincidem" e desabilita o envio; erros de campo e `INVALID_LINK_MESSAGE` do servidor aparecem
-- [ ] Build gate passa: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
+- [x] Mostra os campos "Nova senha" e "Confirmar senha" com `autoComplete="new-password"` e envia o token em campo oculto
+- [x] Confirmação diferente mostra "As senhas não coincidem" e desabilita o envio; erros de campo e `INVALID_LINK_MESSAGE` do servidor aparecem
+- [x] Build gate passa: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
 
 **Tests**: none
 **Gate**: build
