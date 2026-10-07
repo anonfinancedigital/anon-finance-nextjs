@@ -182,18 +182,18 @@ T16 → T17
 
 **Done when**:
 
-- [ ] Referência: `barEndCents` igual a `reach.finalCents`, marco de R$ 1,2 mi com `positionBp` entre 6600 e 6800 e `ageYears` 43; marcos de 25/50/75% mantêm `ageYears` da regra atual (33 e 39 nos de 600 e 900 mil)
-- [ ] Com aporte maior que 0: `barEndCents` igual ao alvo e `positionBp` igual à fração (2500, 5000, 7500, 10000), como hoje
-- [ ] `todayPositionBp` é o guardado ÷ `barEndCents` com teto 10000
-- [ ] Guardado igual ou maior que o alvo: os 4 marcos com `reached` verdadeiro e `todayPositionBp` 10000
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
-- [ ] Test count: os testes anteriores mais os novos passam (nenhum removido)
+- [x] Referência: `barEndCents` igual a `reach.finalCents`, marco de R$ 1,2 mi com `positionBp` entre 6600 e 6800 e `ageYears` 43; marcos de 25/50/75% mantêm `ageYears` da regra atual (33 e 39 nos de 600 e 900 mil)
+- [x] Com aporte maior que 0: `barEndCents` igual ao alvo e `positionBp` igual à fração (2500, 5000, 7500, 10000), como hoje
+- [x] `todayPositionBp` é o guardado ÷ `barEndCents` com teto 10000
+- [x] Guardado igual ou maior que o alvo: os 4 marcos com `reached` verdadeiro e `todayPositionBp` 10000
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Test count: os testes anteriores mais os novos passam (nenhum removido)
 
 **Tests**: unit
 **Gate**: quick
 
 **Commit**: `feat(apice): scale the checkpoints to the projected patrimony`
-**Status**: Pending
+**Status**: ✅ Done
 
 ---
 

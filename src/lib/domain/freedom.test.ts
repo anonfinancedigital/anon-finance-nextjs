@@ -873,7 +873,8 @@ describe("buildCheckpoints", () => {
     expect(half.reached).toBe(false);
     expect(half.months).toEqual(expect.any(Number));
     expect(three.ageYears).toEqual(expect.any(Number));
-    expect(full).toMatchObject({ reached: false, months: 240, ageYears: 60 });
+    // Aporte 0: o guardado alcança o alvo sem aportes no mês 217, aos 59 (APF-04, apice-folga-meta).
+    expect(full).toMatchObject({ reached: false, months: 217, ageYears: 59 });
   });
 
   it("guardado igual ao alvo: os 4 atingidos", () => {
@@ -901,6 +902,74 @@ describe("buildCheckpoints", () => {
     const values = checkpointsOf({ annualRateBp: 600, withdrawalRateBp: 400 }).map((c) => c.valueCents);
     expect(values[0]).toBe(75_000_000);
     expect(values[3]).toBe(300_000_000);
+  });
+});
+
+describe("escala da barra de marcos (apice-folga-meta)", () => {
+  const now = new Date("2026-06-15T15:00:00Z");
+  // Cenário de referência: renda R$ 5.000,00, 8% real, retirada 5% (alvo R$ 1.200.000,00), R$ 565.000,00
+  // guardados, nascido em 1993-05-10, ápice aos 48 (179 meses); a meta chega aos 43 sem aportes.
+  const reference: Goal = {
+    monthlyIncomeCents: 500_000,
+    savedCents: 56_500_000,
+    birthDate: "1993-05-10",
+    retirementAge: 48,
+    annualRateBp: 800,
+    withdrawalRateBp: 500,
+  };
+  // Aporte maior que 0: renda R$ 10.000,00, 8%, retirada 6% (alvo R$ 2.000.000,00), 240 meses.
+  const withDeposit: Goal = {
+    monthlyIncomeCents: 1_000_000,
+    savedCents: 15_000_000,
+    birthDate: "1986-06-15",
+    retirementAge: 60,
+    annualRateBp: 800,
+    withdrawalRateBp: 600,
+  };
+
+  it("referência: o fim da barra é o patrimônio no prazo sem aportes", () => {
+    const summary = summarize(reference, now);
+    expect(summary.barEndCents).toBe(summary.reach!.finalCents);
+  });
+
+  it("referência: o marco de R$ 1,2 mi fica entre 6600 e 6800 pb, aos 43 anos, no mês 118", () => {
+    const full = summarize(reference, now).checkpoints[3];
+    expect(full.valueCents).toBe(120_000_000);
+    expect(full.positionBp).toBeGreaterThanOrEqual(6600);
+    expect(full.positionBp).toBeLessThanOrEqual(6800);
+    expect(full).toMatchObject({ reached: false, months: 118, ageYears: 43 });
+  });
+
+  it("referência: os marcos de R$ 600 mil e R$ 900 mil mantêm a regra de anos completos (33 e 39)", () => {
+    const [, half, three] = summarize(reference, now).checkpoints;
+    expect(half).toMatchObject({ valueCents: 60_000_000, ageYears: 33 });
+    expect(three).toMatchObject({ valueCents: 90_000_000, ageYears: 39 });
+  });
+
+  it("referência: cada marco fica em valor ÷ fim da barra", () => {
+    const summary = summarize(reference, now);
+    expect(summary.checkpoints.map((c) => c.positionBp)).toEqual(
+      [30_000_000, 60_000_000, 90_000_000, 120_000_000].map((v) => Math.round((v * 10_000) / summary.barEndCents)),
+    );
+  });
+
+  it("referência: \"Hoje\" fica em guardado ÷ fim da barra (3173 pb)", () => {
+    expect(summarize(reference, now).todayPositionBp).toBe(3173);
+  });
+
+  it("aporte maior que 0: fim da barra no alvo e marcos em 2500, 5000, 7500 e 10000", () => {
+    const summary = summarize(withDeposit, now);
+    expect(summary.monthlyCents).toBeGreaterThan(0);
+    expect(summary.barEndCents).toBe(summary.targetCents);
+    expect(summary.checkpoints.map((c) => c.positionBp)).toEqual([2500, 5000, 7500, 10_000]);
+    expect(summary.checkpoints[3]).toMatchObject({ months: 240, ageYears: 60 });
+    expect(summary.todayPositionBp).toBe(750);
+  });
+
+  it.each([120_000_000, 130_000_000])("guardado de %d centavos (alvo R$ 1,2 mi): 4 marcos atingidos e Hoje em 10000", (savedCents) => {
+    const summary = summarize({ ...reference, savedCents }, now);
+    expect(summary.checkpoints.map((c) => c.reached)).toEqual([true, true, true, true]);
+    expect(summary.todayPositionBp).toBe(10_000);
   });
 });
 

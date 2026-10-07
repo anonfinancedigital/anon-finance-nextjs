@@ -236,7 +236,7 @@ export type Checkpoint = {
   months: number | null;
   /** Idade em anos completos nessa data; nulo quando `months` é nulo. */
   ageYears: number | null;
-  /** Posição na barra em pontos-base (a própria fração). */
+  /** Posição na barra em pontos-base: valor ÷ fim da barra (`barEndCents`). */
   positionBp: number;
 };
 
@@ -244,7 +244,8 @@ const CHECKPOINT_FRACTIONS_BP = [2500, 5000, 7500, 10_000];
 
 /**
  * Checkpoints em 25%, 50%, 75% e 100% do alvo. Os não atingidos ganham a previsão: o menor mês em
- * que o valor projetado (pagando o aporte necessário) alcança o checkpoint; o de 100% cai no prazo.
+ * que o valor projetado (pagando o aporte necessário) alcança o checkpoint; o de 100% cai no prazo ou,
+ * com plano de chegada, no mês e na idade da meta. A posição na barra é valor ÷ `barEndCents`.
  */
 export function buildCheckpoints(input: {
   targetCents: number;
@@ -253,8 +254,11 @@ export function buildCheckpoints(input: {
   monthlyCents: number | null;
   retirementAge: number;
   annualRateBp: number;
+  barEndCents: number;
+  reach: Reach | null;
 }): Checkpoint[] {
-  const { targetCents: target, savedCents, months, monthlyCents, retirementAge, annualRateBp } = input;
+  const { targetCents: target, savedCents, months, monthlyCents, retirementAge, annualRateBp, barEndCents, reach } =
+    input;
 
   return CHECKPOINT_FRACTIONS_BP.map((fractionBp) => {
     const valueCents = Math.round((target * fractionBp) / 10_000);
@@ -271,13 +275,17 @@ export function buildCheckpoints(input: {
         }
       }
     }
+    const positionBp = Math.round((valueCents * 10_000) / barEndCents);
+    if (!reached && reach && fractionBp === 10_000) {
+      return { fractionBp, valueCents, reached, months: reach.months, ageYears: reach.ageYears, positionBp };
+    }
     return {
       fractionBp,
       valueCents,
       reached,
       months: forecast,
       ageYears: forecast === null ? null : retirementAge - Math.ceil((months - forecast) / 12),
-      positionBp: fractionBp,
+      positionBp,
     };
   });
 }
@@ -318,6 +326,10 @@ export type GoalSummary = {
   reach: Reach | null;
   /** Renda mensal que o guardado gera hoje: guardado × retirada ÷ 12, ao centavo. */
   incomeNowCents: number;
+  /** Fim da barra de marcos: patrimônio no prazo sem aportes com plano de chegada; senão, o alvo. */
+  barEndCents: number;
+  /** Posição do "Hoje" na barra: guardado ÷ `barEndCents`, em pontos-base, com teto 10000. */
+  todayPositionBp: number;
 };
 
 /** Resumo calculado na leitura a partir do objetivo salvo e de `now`. */
@@ -358,6 +370,8 @@ export function summarize(goal: Goal, now: Date): GoalSummary {
     }
   }
 
+  const barEndCents = reach?.finalCents ?? target;
+
   const timeline = projectTimeline({
     savedCents: goal.savedCents,
     months,
@@ -386,10 +400,14 @@ export function summarize(goal: Goal, now: Date): GoalSummary {
       monthlyCents,
       retirementAge: goal.retirementAge,
       annualRateBp: goal.annualRateBp,
+      barEndCents,
+      reach,
     }),
     retirementAge: goal.retirementAge,
     currentAge,
     reach,
     incomeNowCents: Math.round((goal.savedCents * goal.withdrawalRateBp) / 10_000 / 12),
+    barEndCents,
+    todayPositionBp: Math.min(10_000, Math.round((goal.savedCents * 10_000) / barEndCents)),
   };
 }
