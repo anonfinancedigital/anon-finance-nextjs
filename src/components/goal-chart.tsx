@@ -1,7 +1,7 @@
 "use client";
 
 import { TrendingUp } from "lucide-react";
-import { Area, AreaChart, CartesianGrid, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { Area, AreaChart, CartesianGrid, ReferenceDot, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { ageTicks } from "@/lib/domain/age-ticks";
 import { targetLabelPlacement } from "@/lib/domain/chart-label";
 import { chartYAxis, compositionShares, type GoalSummary } from "@/lib/domain/freedom";
@@ -45,6 +45,23 @@ function TargetLabel({
   );
 }
 
+/** "Meta aos N" above and to the left of the crossing dot (the empty side of the curve), on a card-colored plate. */
+function CrossingLabel({ viewBox, value }: { viewBox?: { x?: number; y?: number; width?: number; height?: number }; value: string }) {
+  const cx = (viewBox?.x ?? 0) + (viewBox?.width ?? 0) / 2;
+  const cy = (viewBox?.y ?? 0) + (viewBox?.height ?? 0) / 2;
+  const width = value.length * 7 + 12;
+  const left = cx - width - 4;
+  const top = cy - 28;
+  return (
+    <g>
+      <rect x={left} y={top} width={width} height={20} rx={4} fill="var(--card)" />
+      <text x={left + 6} y={top + 14} fill="var(--foreground)" fontSize={12} fontWeight={500}>
+        {value}
+      </text>
+    </g>
+  );
+}
+
 function Swatch({ color }: { color: string }) {
   return <span aria-hidden className="inline-block size-2 shrink-0 rounded-full" style={{ background: color }} />;
 }
@@ -73,7 +90,9 @@ function ChartTooltip({ active, payload }: { active?: boolean; payload?: { paylo
 
 /**
  * Stacked area of the patrimony up to retirement: what came out of the pocket versus compound
- * interest; the tooltip reads the patrimony year by year. Renders nothing when the term is over.
+ * interest; the tooltip reads the patrimony year by year. When the savings alone reach the target
+ * before the chosen age, a dot on the target line marks where the curve crosses it. Renders nothing
+ * when the term is over.
  */
 export function GoalChart({ summary }: { summary: GoalSummary }) {
   const { timeline } = summary;
@@ -89,6 +108,8 @@ export function GoalChart({ summary }: { summary: GoalSummary }) {
   const first = timeline[0];
   const last = timeline[timeline.length - 1];
   const badge = interestBadge(summary);
+  const { reach } = summary;
+  const crossing = reach && reach.ageYears < summary.retirementAge ? reach : null;
   const yAxis = chartYAxis(summary.targetCents, last.totalCents, summary.monthlyCents ?? 0);
 
   return (
@@ -155,6 +176,18 @@ export function GoalChart({ summary }: { summary: GoalSummary }) {
                 />
               }
             />
+            {crossing && (
+              <ReferenceDot
+                x={crossing.age}
+                y={summary.targetCents}
+                r={5}
+                fill="var(--color-returns)"
+                stroke="var(--card)"
+                strokeWidth={2}
+                ifOverflow="extendDomain"
+                label={<CrossingLabel value={`Meta aos ${crossing.ageYears}`} />}
+              />
+            )}
             <Tooltip content={<ChartTooltip />} cursor={{ stroke: "var(--muted-foreground)", strokeWidth: 1 }} />
             <Area
               type="monotone"

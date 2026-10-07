@@ -564,17 +564,17 @@ T16 → T17
 
 **Done when**:
 
-- [ ] Referência: ponto sobre a linha da meta em torno dos 43 anos com "Meta aos 43"
-- [ ] Sem `reach` ou com N igual à idade-alvo não há ponto
-- [ ] Com aporte 0 a série "Total investido" é a linha plana do valor guardado
-- [ ] Evidência por inspeção de código (`file:line`)
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] Referência: ponto sobre a linha da meta em torno dos 43 anos com "Meta aos 43"
+- [x] Sem `reach` ou com N igual à idade-alvo não há ponto
+- [x] Com aporte 0 a série "Total investido" é a linha plana do valor guardado
+- [x] Evidência por inspeção de código (`file:line`)
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
 
 **Tests**: none
 **Gate**: build
 
 **Commit**: `feat(apice): mark where the curve crosses the target on the chart`
-**Status**: Pending
+**Status**: ✅ Done
 
 ---
 
