@@ -382,16 +382,17 @@ T21 → T22 → T23 → T24 → T25 → T26
 
 **Done when**:
 
-- [ ] Mostra "{valor} anos" acima do handle e "{mínimo} anos" e "90 anos" nas pontas
-- [ ] Setas do teclado mudam a idade em 1 ano; `disabled` desativa o controle
-- [ ] Sem data de nascimento, mostra "Informe a data de nascimento para usar o controle"
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
-- [ ] Test count: a suíte unit existente passa sem alteração
+- [x] Mostra "{valor} anos" acima do handle e "{mínimo} anos" e "90 anos" nas pontas
+- [x] Setas do teclado mudam a idade em 1 ano; `disabled` desativa o controle
+- [x] Sem data de nascimento, mostra "Informe a data de nascimento para usar o controle"
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] Test count: a suíte unit existente passa sem alteração
 
 **Tests**: none
 **Gate**: build
 
 **Commit**: `feat(apice): add the independence age slider`
+**Status**: ✅ Done
 
 ---
 
