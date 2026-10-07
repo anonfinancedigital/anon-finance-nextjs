@@ -502,16 +502,17 @@ T21 → T22 → T23 → T24 → T25 → T26
 
 **Done when**:
 
-- [ ] Renderiza "Cenário moderado", "8% real a.a.", "Retirada de 5% a.a.", "Valores em R$ de hoje" e "Ajustar" conforme as premissas do resumo
-- [ ] "Ajustar" chama `onAdjust`
-- [ ] Tooltip "Todos os valores já descontam a inflação." no chip de R$ de hoje e tooltip de retirada no ⓘ, ambos por hover e foco
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
-- [ ] Test count: a suíte unit existente passa sem alteração
+- [x] Renderiza "Cenário moderado", "8% real a.a.", "Retirada de 5% a.a.", "Valores em R$ de hoje" e "Ajustar" conforme as premissas do resumo
+- [x] "Ajustar" chama `onAdjust`
+- [x] Tooltip "Todos os valores já descontam a inflação." no chip de R$ de hoje e tooltip de retirada no ⓘ, ambos por hover e foco
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] Test count: a suíte unit existente passa sem alteração
 
 **Tests**: none
 **Gate**: build
 
 **Commit**: `feat(apice): show scenario assumptions as chips`
+**Status**: ✅ Done
 
 ---
 
