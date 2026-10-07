@@ -422,16 +422,16 @@ T16 → T17
 
 **Done when**:
 
-- [ ] Com `reach` o Hero mostra o bloco abaixo dos indicadores e a robustez depois dele; sem `reach` não mostra nenhum
-- [ ] No estado atingido não há bloco nem robustez
-- [ ] Evidência por inspeção de código (`file:line`)
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] Com `reach` o Hero mostra o bloco abaixo dos indicadores e a robustez depois dele; sem `reach` não mostra nenhum
+- [x] No estado atingido não há bloco nem robustez
+- [x] Evidência por inspeção de código (`file:line`)
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
 
 **Tests**: none
 **Gate**: build
 
 **Commit**: `feat(apice): place the slack block and robustness in the hero`
-**Status**: Pending
+**Status**: ✅ Done
 
 ---
 

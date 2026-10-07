@@ -166,7 +166,7 @@ Substitui as regras de aporte 0 com guardado abaixo do alvo de `apice-meta-alcan
 | APF-05 | P1: Aporte 0 como conquista (AC 7) | Phase 1 | Implementing |
 | APF-06 | P1: Ápice já atingido (AC 1, 2) | Phase 1 | Implementing |
 | APF-07 | P1: Ápice já atingido (AC 3) | Phase 1 | Implementing |
-| APF-08 | P1: Ápice já atingido (AC 4, 5) | - | Pending |
+| APF-08 | P1: Ápice já atingido (AC 4, 5) | Phase 2 | Implementing |
 | APF-09 | P2: Bloco "Você tem folga" (AC 1, 7) | Phase 1 | Implementing |
 | APF-10 | P2: Bloco "Você tem folga" (AC 2, 3) | Phase 1 | Implementing |
 | APF-11 | P2: Bloco "Você tem folga" (AC 4, 5, 6) | Phase 1 | Implementing |
@@ -176,7 +176,7 @@ Substitui as regras de aporte 0 com guardado abaixo do alvo de `apice-meta-alcan
 | APF-15 | P3: Barra e gráfico contam a folga (AC 1, 2, 5) | Phase 1 | Implementing |
 | APF-16 | P3: Barra e gráfico contam a folga (AC 3, 4) | Phase 1 | Implementing |
 
-**Coverage:** 16 total, 16 mapped to tasks, 0 unmapped; 15 Implementing, 1 Pending
+**Coverage:** 16 total, 16 mapped to tasks, 0 unmapped; 16 Implementing, 0 Pending
 
 ---
 

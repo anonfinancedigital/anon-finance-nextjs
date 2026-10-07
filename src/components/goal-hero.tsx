@@ -1,6 +1,8 @@
 import { Check, Info } from "lucide-react";
 import { AssumptionChips } from "@/components/assumption-chips";
 import { GoalCheckpoints } from "@/components/goal-checkpoints";
+import { GoalRobustness } from "@/components/goal-robustness";
+import { GoalSlack } from "@/components/goal-slack";
 import {
   Popover,
   PopoverContent,
@@ -32,16 +34,21 @@ const glow = {
 /**
  * Top card of the goal: the desired income is the hero (largest number), followed by the summary
  * sentence, the two indicators side by side (needed patrimony and monthly deposit with its term),
- * the assumption chips, the progress bar and the "Como calculamos?" popover. `preview` marks values
- * that come from an unapplied draft.
+ * the slack block and the robustness line (only when the savings alone reach the target), the
+ * assumption chips, the progress bar and the "Como calculamos?" popover. `preview` marks values
+ * that come from an unapplied draft; `onApplyIncome` and `onApplyAge` hand the slack options to the page.
  */
 export function GoalHero({
   summary,
   onAdjust,
+  onApplyIncome,
+  onApplyAge,
   preview = false,
 }: {
   summary: GoalSummary;
   onAdjust: () => void;
+  onApplyIncome?: (cents: number) => void;
+  onApplyAge?: (age: number) => void;
   preview?: boolean;
 }) {
   return (
@@ -95,6 +102,15 @@ export function GoalHero({
             )}
           </div>
         </div>
+
+        {summary.reach && (
+          <div className="space-y-3">
+            {onApplyIncome && onApplyAge && (
+              <GoalSlack summary={summary} onApplyIncome={onApplyIncome} onApplyAge={onApplyAge} />
+            )}
+            <GoalRobustness summary={summary} />
+          </div>
+        )}
 
         <AssumptionChips premises={summary} summary={summary} onAdjust={onAdjust} />
 
