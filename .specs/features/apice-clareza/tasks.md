@@ -1200,17 +1200,17 @@ Gaps do `validation.md` (Verifier reprovou): APICE-14.1 (Major), APICE-19.4 (Maj
 
 **Done when**:
 
-- [ ] `targetLabelPlacement(firstTotalCents, targetCents)` devolve "below" quando `firstTotalCents >= targetCents` e "above" nos demais casos
-- [ ] Com `summarize`, renda 2.500, Agressivo, guardado R$ 650 mil, 33 a 48 anos devolve "below"; guardado R$ 0 e R$ 500 mil de meta com aporte devolve "above"
-- [ ] `TargetLabel` desenha a placa abaixo da linha em "below" e mantém o desenho atual em "above"
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
-- [ ] Test count: os testes anteriores mais os novos passam
+- [x] `targetLabelPlacement(firstTotalCents, targetCents)` devolve "below" quando `firstTotalCents >= targetCents` e "above" nos demais casos
+- [x] Com `summarize`, renda 2.500, Agressivo, guardado R$ 650 mil, 33 a 48 anos devolve "below"; guardado R$ 0 e R$ 500 mil de meta com aporte devolve "above"
+- [x] `TargetLabel` desenha a placa abaixo da linha em "below" e mantém o desenho atual em "above"
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] Test count: os testes anteriores mais os novos passam
 
 **Tests**: unit
 **Gate**: build
 
-**Commit**: `fix(apice): keep the target label off the curves when the goal is reached`
-**Status**: ⏳ Pending
+**Commit**: `fix(apice): keep the target label off the curves once the goal is met`
+**Status**: ✅ Done
 
 ---
 

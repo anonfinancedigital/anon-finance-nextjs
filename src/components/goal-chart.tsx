@@ -3,6 +3,7 @@
 import { TrendingUp } from "lucide-react";
 import { Area, AreaChart, CartesianGrid, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { ageTicks } from "@/lib/domain/age-ticks";
+import { targetLabelPlacement } from "@/lib/domain/chart-label";
 import { chartYAxis, compositionShares, type GoalSummary } from "@/lib/domain/freedom";
 import { interestBadge } from "@/lib/domain/freedom-copy";
 import { formatBRL, formatCompactBRL } from "@/lib/domain/money";
@@ -20,15 +21,24 @@ const tooltipStyle = {
 const INVESTED = "var(--color-invested)";
 const INTEREST = "var(--color-returns)";
 
-/** "Meta: X" above the left end of the target line, on a card-colored plate so the line does not cross the text. */
-function TargetLabel({ viewBox, value }: { viewBox?: { x?: number; y?: number }; value: string }) {
+/** "Meta: X" next to the left end of the target line, on a card-colored plate so the line does not cross the text. */
+function TargetLabel({
+  viewBox,
+  value,
+  placement,
+}: {
+  viewBox?: { x?: number; y?: number };
+  value: string;
+  placement: "above" | "below";
+}) {
   const x = (viewBox?.x ?? 0) + 8;
   const y = viewBox?.y ?? 0;
   const width = value.length * 7 + 12;
+  const top = placement === "above" ? y - 24 : y + 4;
   return (
     <g>
-      <rect x={x} y={y - 24} width={width} height={20} rx={4} fill="var(--card)" />
-      <text x={x + 6} y={y - 10} fill="var(--muted-foreground)" fontSize={12}>
+      <rect x={x} y={top} width={width} height={20} rx={4} fill="var(--card)" />
+      <text x={x + 6} y={top + 14} fill="var(--muted-foreground)" fontSize={12}>
         {value}
       </text>
     </g>
@@ -138,7 +148,12 @@ export function GoalChart({ summary }: { summary: GoalSummary }) {
               strokeDasharray="4 4"
               strokeOpacity={0.7}
               ifOverflow="extendDomain"
-              label={<TargetLabel value={`Meta: ${formatCompactBRL(summary.targetCents)}`} />}
+              label={
+                <TargetLabel
+                  value={`Meta: ${formatCompactBRL(summary.targetCents)}`}
+                  placement={targetLabelPlacement(first.totalCents, summary.targetCents)}
+                />
+              }
             />
             <Tooltip content={<ChartTooltip />} cursor={{ stroke: "var(--muted-foreground)", strokeWidth: 1 }} />
             <Area
