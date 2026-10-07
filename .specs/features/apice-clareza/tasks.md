@@ -736,19 +736,20 @@ T21 → T22 → T23 → T24 → T25 → T26
 
 **Done when**:
 
-- [ ] Mostra "Quanto você precisa para viver de renda?" e "Diga a renda que quer ter e veja quanto guardar por mês para chegar lá."
-- [ ] Sem interação não há mensagem de erro; com renda ou idade faltando mostra "Preencha a renda e a idade para ver o aporte"
-- [ ] Com renda e idade válidas mostra a frase-resumo e o aporte, calculados por `useGoalDraft` (mesma lógica da gaveta)
-- [ ] O cenário Moderado vem por padrão, mostrado como chip com "Ajustar" que chama `onAdjust`
-- [ ] Enquanto renda ou idade estão vazias, mostra um gráfico de exemplo esmaecido e `aria-hidden`
-- [ ] "Salvar objetivo" salva via `saveGoal`; em erro mostra a mensagem retornada e mantém os valores
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
-- [ ] Test count: a suíte unit existente passa sem alteração
+- [x] Mostra "Quanto você precisa para viver de renda?" e "Diga a renda que quer ter e veja quanto guardar por mês para chegar lá."
+- [x] Sem interação não há mensagem de erro; com renda ou idade faltando mostra "Preencha a renda e a idade para ver o aporte"
+- [x] Com renda e idade válidas mostra a frase-resumo e o aporte, calculados por `useGoalDraft` (mesma lógica da gaveta)
+- [x] O cenário Moderado vem por padrão, mostrado como chip com "Ajustar" que chama `onAdjust`
+- [x] Enquanto renda ou idade estão vazias, mostra um gráfico de exemplo esmaecido e `aria-hidden`
+- [x] "Salvar objetivo" salva via `saveGoal`; em erro mostra a mensagem retornada e mantém os valores
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] Test count: a suíte unit existente passa sem alteração
 
 **Tests**: none
 **Gate**: build
 
 **Commit**: `feat(apice): simulate the goal inline in the empty state`
+**Status**: ✅ Done
 
 ---
 
