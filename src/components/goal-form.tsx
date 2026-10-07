@@ -7,7 +7,7 @@ import { GoalFields } from "@/components/goal-fields";
 import type { useGoalDraft } from "@/components/use-goal-draft";
 import { Button } from "@/components/ui/button";
 import type { ActionResult } from "@/lib/action-result";
-import { BLANK_GOAL_VALUES } from "@/lib/validation/goal-draft";
+import { BLANK_GOAL_VALUES, withZeroSaved } from "@/lib/validation/goal-draft";
 
 export type GoalFormValues = {
   /** pt-BR text, e.g. "10.000,00". */
@@ -59,7 +59,7 @@ export function GoalForm({
     event.preventDefault();
     if (pending) return;
     startTransition(async () => {
-      const res = await saveGoal(draft.values);
+      const res = await saveGoal(withZeroSaved(draft.values));
       setResult(res);
       if (res.ok) {
         onSaved?.();

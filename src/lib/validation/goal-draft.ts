@@ -21,6 +21,11 @@ export type GoalDraft = {
   dirty: boolean;
 };
 
+/** "Guardado" vazio vale R$ 0 (quem não tem nada guardado não digita 0: a máscara apaga zeros). */
+export function withZeroSaved(values: GoalFormValues): GoalFormValues {
+  return values.saved.trim() === "" ? { ...values, saved: "0,00" } : values;
+}
+
 const FIELDS = Object.keys(BLANK_GOAL_VALUES) as (keyof GoalFormValues)[];
 
 /**
@@ -37,7 +42,7 @@ export function evaluateDraft(
   const baseline = saved ?? BLANK_GOAL_VALUES;
   const dirty = FIELDS.some((field) => values[field] !== baseline[field]);
 
-  const parsed = goalSchema(now).safeParse(values);
+  const parsed = goalSchema(now).safeParse(withZeroSaved(values));
   if (parsed.success) return { summary: summarize(parsed.data, now), errors: {}, dirty };
 
   const errors: GoalDraft["errors"] = {};

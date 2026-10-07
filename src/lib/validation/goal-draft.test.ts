@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import type { GoalFormValues } from "@/components/goal-form";
 import { summarize } from "@/lib/domain/freedom";
-import { BLANK_GOAL_VALUES, evaluateDraft } from "./goal-draft";
+import { BLANK_GOAL_VALUES, evaluateDraft, withZeroSaved } from "./goal-draft";
 
 // 2026-06-15 12:00 em São Paulo; cenário de aceite: nascido em 10/05/1993 (33 anos), ápice aos 48.
 const now = new Date("2026-06-15T15:00:00Z");
@@ -107,5 +107,38 @@ describe("evaluateDraft sem objetivo salvo", () => {
     const draft = evaluateDraft({ ...savedValues, monthlyIncome: "" }, null, now, savedSummary);
     expect(draft.summary).toBeNull();
     expect(draft.errors.monthlyIncome).toBe("Informe o valor");
+  });
+});
+
+describe("guardado vazio vale R$ 0 (APICE-19.4)", () => {
+  const zeroSaved = summarize({ ...savedGoal, savedCents: 0 }, now);
+
+  it("sem nada guardado, renda e idade válidas dão o resumo de R$ 0 e nenhum erro em saved", () => {
+    const draft = evaluateDraft({ ...savedValues, saved: "" }, null, now, null);
+    expect(draft.summary).toEqual(zeroSaved);
+    expect(draft.errors.saved).toBeUndefined();
+    expect(draft.errors).toEqual({});
+  });
+
+  it("guardado só com espaços também vale R$ 0", () => {
+    expect(evaluateDraft({ ...savedValues, saved: "  " }, null, now, null).summary).toEqual(zeroSaved);
+  });
+
+  it("o texto digitado continua valendo para dirty: vazio é igual ao baseline vazio", () => {
+    const blankSaved = { ...savedValues, saved: "" };
+    expect(evaluateDraft(blankSaved, blankSaved, now, null).dirty).toBe(false);
+    expect(evaluateDraft(blankSaved, savedValues, now, null).dirty).toBe(true);
+  });
+
+  it("um guardado inválido continua com erro", () => {
+    expect(evaluateDraft({ ...savedValues, saved: "abc" }, null, now, null).errors.saved).toBe(
+      "Valor inválido. Use o formato 1.234,56",
+    );
+  });
+
+  it("withZeroSaved troca guardado vazio ou em branco por 0,00 e preserva o resto", () => {
+    expect(withZeroSaved({ ...savedValues, saved: "" })).toEqual({ ...savedValues, saved: "0,00" });
+    expect(withZeroSaved({ ...savedValues, saved: "  " })).toEqual({ ...savedValues, saved: "0,00" });
+    expect(withZeroSaved(savedValues)).toEqual(savedValues);
   });
 });

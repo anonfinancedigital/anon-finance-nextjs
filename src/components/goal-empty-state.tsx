@@ -16,6 +16,7 @@ import {
   summarySentence,
 } from "@/lib/domain/freedom-copy";
 import { parseRate } from "@/lib/validation/goal";
+import { withZeroSaved } from "@/lib/validation/goal-draft";
 
 const HEADLINE = "Quanto você precisa para viver de renda?";
 const SUPPORT =
@@ -87,7 +88,7 @@ export function GoalEmptyState({
     event.preventDefault();
     if (pending) return;
     startTransition(async () => {
-      const res = await saveGoal(draft.values);
+      const res = await saveGoal(withZeroSaved(draft.values));
       setResult(res);
       if (res.ok) router.refresh();
     });

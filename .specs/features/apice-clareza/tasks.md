@@ -888,18 +888,18 @@ Gaps do `validation.md` (Verifier reprovou): APICE-14.1 (Major), APICE-19.4 (Maj
 
 **Done when**:
 
-- [ ] Renda e idade válidas com "guardado" vazio: `evaluateDraft` devolve o mesmo `summary` de "guardado" "0,00" e `errors.saved` indefinido
-- [ ] "Guardado" só com espaços também vale R$ 0; `dirty` continua comparando o texto digitado
-- [ ] Os valores enviados a `saveGoal` no estado vazio e na gaveta trazem "0,00" no lugar de vazio
-- [ ] Os testes de `goalSchema` (vazio rejeitado em `saved`) e de `maskBRLInput` seguem iguais
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
-- [ ] Test count: os testes anteriores mais os novos passam
+- [x] Renda e idade válidas com "guardado" vazio: `evaluateDraft` devolve o mesmo `summary` de "guardado" "0,00" e `errors.saved` indefinido
+- [x] "Guardado" só com espaços também vale R$ 0; `dirty` continua comparando o texto digitado
+- [x] Os valores enviados a `saveGoal` no estado vazio e na gaveta trazem "0,00" no lugar de vazio
+- [x] Os testes de `goalSchema` (vazio rejeitado em `saved`) e de `maskBRLInput` seguem iguais
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] Test count: os testes anteriores mais os novos passam
 
 **Tests**: unit
 **Gate**: build
 
 **Commit**: `fix(apice): treat an empty saved amount as zero in the goal draft`
-**Status**: ⏳ Pending
+**Status**: ✅ Done
 
 ---
 
