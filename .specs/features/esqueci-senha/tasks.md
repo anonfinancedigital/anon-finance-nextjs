@@ -426,6 +426,8 @@ T6 → T17
 
 ### T12: Liberar as rotas no proxy
 
+**Status**: ✅ Complete
+
 **What**: O matcher do `proxy` passa a excluir `esqueci-senha` e `redefinir-senha`.
 **Where**: `src/proxy.ts`
 **Depends on**: None
@@ -439,9 +441,9 @@ T6 → T17
 
 **Done when**:
 
-- [ ] `/esqueci-senha` e `/redefinir-senha?token=x` abrem sem cookie de sessão (sem redirecionar a `/login`)
-- [ ] Demais rotas continuam protegidas
-- [ ] Build gate passa: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
+- [x] `/esqueci-senha` e `/redefinir-senha?token=x` abrem sem cookie de sessão (sem redirecionar a `/login`)
+- [x] Demais rotas continuam protegidas
+- [x] Build gate passa: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
 
 **Tests**: none
 **Gate**: build

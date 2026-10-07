@@ -14,7 +14,7 @@ export function proxy(request: NextRequest) {
 
 export const config = {
   matcher: [
-    // Everything except the login and signup pages, Better Auth routes, Next assets and public images.
-    "/((?!login|cadastro|api/auth|_next/static|_next/image|favicon\\.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)",
+    // Everything except the login, signup and password reset pages, Better Auth routes, Next assets and public images.
+    "/((?!login|cadastro|esqueci-senha|redefinir-senha|api/auth|_next/static|_next/image|favicon\\.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)",
   ],
 };
