@@ -1,19 +1,21 @@
-import { ArrowDownLeftIcon, ArrowUpRightIcon, WalletIcon } from "lucide-react";
 import type { Metadata } from "next";
 import { BudgetCharts } from "@/components/budget-charts";
 import { CategoryOverview } from "@/components/category-overview";
+import { GettingStartedCard } from "@/components/getting-started-card";
 import { ContentCard } from "@/components/content-card";
 import { MonthPicker } from "@/components/month-picker";
 import { NewTransactionButton } from "@/components/new-transaction-button";
 import { PageHeader } from "@/components/page-header";
+import { SummaryCards } from "@/components/summary-cards";
 import { TransactionFilter } from "@/components/transaction-filter";
 import { TransactionList } from "@/components/transaction-list";
 import { requireSessionForPage } from "@/lib/auth-guard";
 import { categoriesRepo } from "@/lib/db/repos/categories";
+import { goalsRepo } from "@/lib/db/repos/goals";
 import { transactionsRepo } from "@/lib/db/repos/transactions";
 import { buildMonthlySummary } from "@/lib/domain/budget";
-import { formatBRL } from "@/lib/domain/money";
-import { monthRange, parseMonth } from "@/lib/domain/month";
+import { monthHref, monthRange, parseMonth } from "@/lib/domain/month";
+import { deriveMonthState, deriveSetup, monthLongName, previousMonth } from "@/lib/domain/onboarding";
 import { buildSpendingPaceViews } from "@/lib/domain/spending-pace";
 import {
   filterTransactions,
@@ -30,16 +32,19 @@ export const metadata: Metadata = { title: "Visão Geral" };
 
 export default async function SummaryPage({ searchParams }: PageProps<"/">) {
   const { userId } = await requireSessionForPage();
-  const { mes, categoria, subcategoria, busca } = await searchParams;
+  const params = await searchParams;
+  const { mes, categoria, subcategoria, busca } = params;
   const month = parseMonth(typeof mes === "string" ? mes : undefined, new Date());
   const range = monthRange(month);
 
-  const [categories, activeCategories, transactions, totals] = await Promise.all([
+  const [categories, activeCategories, transactions, totals, totalTransactions, goal] = await Promise.all([
     categoriesRepo.listForMonth(userId, month),
     // Forms only accept active categories: one deleted after `month` still shows in the summary.
     categoriesRepo.list(userId),
     transactionsRepo.listByMonth(userId, range),
     transactionsRepo.monthTotals(userId, range),
+    transactionsRepo.countAll(userId),
+    goalsRepo.get(userId),
   ]);
   const summary = buildMonthlySummary({ categories, ...totals });
   const paces = buildSpendingPaceViews({
@@ -60,32 +65,20 @@ export default async function SummaryPage({ searchParams }: PageProps<"/">) {
   const search = parseSearch(typeof busca === "string" ? busca : undefined);
   const shown = searchTransactions(filterTransactions(transactions, filter), search);
 
-  const cards = [
-    {
-      label: "Receita",
-      testId: "total-income",
-      cents: summary.incomeCents,
-      icon: ArrowDownLeftIcon,
-      tone: "text-income",
-      iconTone: "bg-income/15 text-income",
-    },
-    {
-      label: "Gasto",
-      testId: "total-spent",
-      cents: summary.spentCents,
-      icon: ArrowUpRightIcon,
-      tone: "text-destructive",
-      iconTone: "bg-destructive/15 text-destructive",
-    },
-    {
-      label: "Saldo",
-      testId: "total-balance",
-      cents: summary.balanceCents,
-      icon: WalletIcon,
-      tone: summary.balanceCents < 0 ? "text-destructive" : "text-link",
-      iconTone: "bg-primary/15 text-link",
-    },
-  ];
+  const monthIsEmpty = transactions.length === 0;
+  const setup = deriveSetup({
+    categories: activeCategories.length,
+    transactions: totalTransactions,
+    hasGoal: goal !== null,
+  });
+  const monthState = deriveMonthState({ monthTransactions: transactions.length, totalTransactions });
+  const previous = previousMonth(month);
+  const emphasis = setup.complete ? "primary" : "secondary";
+  const showFilters = !monthIsEmpty || filter.categoryId !== null || search !== "";
+  const today = todayInSaoPaulo();
+  const currentParams = new URLSearchParams(
+    Object.entries(params).flatMap(([key, value]) => (typeof value === "string" ? [[key, value]] : [])),
+  );
 
   return (
     <div className="space-y-6 pb-32">
@@ -93,29 +86,16 @@ export default async function SummaryPage({ searchParams }: PageProps<"/">) {
         <MonthPicker month={month} />
       </PageHeader>
 
-      <dl className="grid gap-4 sm:grid-cols-3">
-        {cards.map(({ label, testId, cents, icon: Icon, tone, iconTone }) => (
-          <div
-            key={testId}
-            className="relative overflow-hidden rounded-2xl border border-border bg-card p-6 shadow-lg"
-          >
-            <div className="flex items-center justify-between pb-4">
-              <dt className="text-sm text-muted-foreground">{label}</dt>
-              <span className={`flex size-9 items-center justify-center rounded-xl ${iconTone}`}>
-                <Icon aria-hidden className="size-4" />
-              </span>
-            </div>
-            <dd
-              data-testid={testId}
-              className={`font-display text-3xl font-bold tracking-tight tabular-nums ${tone}`}
-            >
-              {formatBRL(cents)}
-            </dd>
-          </div>
-        ))}
-      </dl>
+      <GettingStartedCard setup={setup} categories={activeCategories} defaultDate={today} />
 
-      <CategoryOverview rows={summary.rows} />
+      <SummaryCards
+        incomeCents={summary.incomeCents}
+        spentCents={summary.spentCents}
+        balanceCents={summary.balanceCents}
+        empty={monthIsEmpty}
+      />
+
+      <CategoryOverview rows={summary.rows} hideCta={!setup.complete} />
 
       {/* Keyed by month so the "Incluir investimentos" choice resets when the month changes. */}
       <BudgetCharts
@@ -127,22 +107,37 @@ export default async function SummaryPage({ searchParams }: PageProps<"/">) {
 
       <ContentCard
         title="Transações do mês"
-        note={`${shown.length} lançamentos`}
-        action={<NewTransactionButton variant="header" categories={activeCategories} defaultDate={todayInSaoPaulo()} />}
+        note={shown.length > 0 ? `${shown.length} lançamentos` : undefined}
+        action={
+          <NewTransactionButton
+            variant="header"
+            emphasis={emphasis}
+            categories={activeCategories}
+            defaultDate={today}
+          />
+        }
         bodyClassName="space-y-4"
       >
-        <div className="px-6">
-          <TransactionFilter categories={categories} filter={filter} search={search} />
-        </div>
+        {showFilters && (
+          <div className="px-6">
+            <TransactionFilter categories={categories} filter={filter} search={search} />
+          </div>
+        )}
         <TransactionList
           transactions={shown}
           categories={activeCategories}
           filtered={filter.categoryId !== null}
           searching={search !== ""}
+          emptyState={monthState}
+          monthName={monthLongName(month)}
+          previousHref={monthHref(currentParams, `${previous.year}-${String(previous.month).padStart(2, "0")}`)}
+          previousMonthName={monthLongName(previous)}
+          defaultDate={today}
+          emphasis="secondary"
         />
       </ContentCard>
 
-      <NewTransactionButton categories={activeCategories} defaultDate={todayInSaoPaulo()} />
+      <NewTransactionButton emphasis={emphasis} categories={activeCategories} defaultDate={today} />
     </div>
   );
 }

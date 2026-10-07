@@ -389,6 +389,8 @@ T8 → T9 → T10 → T11 → T12
 
 ### T12: Compor a Visão Geral
 
+**Status**: ✅ Done
+
 **What**: `page.tsx` lê `countAll` e objetivo, deriva `setup` e `monthState`, renderiza `GettingStartedCard`, `SummaryCards`, filtros só com dados ou filtro/busca ativos, nota `{n} lançamentos` só com n > 0, `emphasis` secundária enquanto houver passo pendente e `hideCta` quando o card estiver visível.
 **Where**: `src/app/(app)/page.tsx`
 **Depends on**: T11
@@ -402,11 +404,11 @@ T8 → T9 → T10 → T11 → T12
 
 **Done when**:
 
-- [ ] Conta sem dados: card `0 de 3 passos`, um único botão preenchido, cards neutros, sem busca/filtros, sem `0 lançamentos`
-- [ ] Conta com histórico vendo mês vazio: `Nenhuma transação em {mês}`, filtros ocultos
-- [ ] Mês com transações: filtros visíveis, cards coloridos
-- [ ] Filtro/busca ativos com 0 resultados: controles visíveis
-- [ ] Gate build passa: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
+- [x] Conta sem dados: card `0 de 3 passos`, um único botão preenchido, cards neutros, sem busca/filtros, sem `0 lançamentos`
+- [x] Conta com histórico vendo mês vazio: `Nenhuma transação em {mês}`, filtros ocultos
+- [x] Mês com transações: filtros visíveis, cards coloridos
+- [x] Filtro/busca ativos com 0 resultados: controles visíveis
+- [x] Gate build passa: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
 
 **Tests**: none
 **Gate**: build

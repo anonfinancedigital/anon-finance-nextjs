@@ -154,7 +154,7 @@ Um usuário novo cai na Visão Geral (`/`) com três cards "R$ 0,00" em cores fo
 | VG-12 | P1: Estados vazios e hierarquia | Specify | Implementing |
 | VG-13 | P2: Cards neutros e sem ruído | Specify | Implementing |
 | VG-14 | P2: Cards neutros e sem ruído | Specify | Implementing |
-| VG-15 | P2: Cards neutros e sem ruído | Specify | Pending |
+| VG-15 | P2: Cards neutros e sem ruído | Specify | Implementing |
 | VG-16 | P2: Cards neutros e sem ruído | Specify | Implementing |
 | VG-17 | P2: Seletor de mês | Specify | Implementing |
 | VG-18 | P2: Seletor de mês | Specify | Implementing |
