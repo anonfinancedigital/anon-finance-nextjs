@@ -3,7 +3,7 @@
   "promote_threshold": 2,
   "window_days": 45,
   "quarantine_threshold": 2,
-  "next_id": 33,
+  "next_id": 49,
   "lessons": [
     {
       "id": "L-001",
@@ -582,6 +582,295 @@
       ],
       "created": "2026-10-07T13:00:44Z",
       "last_seen": "2026-10-07T13:00:44Z"
+    },
+    {
+      "id": "L-033",
+      "key": "ac_gap::when a spec requires an element to stay fixed in a scrolling panel make it sticky inside the scroll container and check it at a short viewport",
+      "text": "When a spec requires an element to stay fixed in a scrolling panel, make it sticky inside the scroll container and check it at a short viewport",
+      "signal": "ac_gap",
+      "scope": "ui",
+      "status": "candidate",
+      "features": [
+        "apice-clareza"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "APICE-14.1 src/components/drawer-summary.tsx:34 (ui)"
+      ],
+      "created": "2026-10-07T13:22:47Z",
+      "last_seen": "2026-10-07T13:22:47Z"
+    },
+    {
+      "id": "L-034",
+      "key": "ac_gap::when a live preview depends on a form make sure every required field can hold its zero value so the preview can appear",
+      "text": "When a live preview depends on a form, make sure every required field can hold its zero value so the preview can appear",
+      "signal": "ac_gap",
+      "scope": "forms",
+      "status": "candidate",
+      "features": [
+        "apice-clareza"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "APICE-19.4 src/lib/validation/goal-draft.ts:48 (forms)"
+      ],
+      "created": "2026-10-07T13:22:47Z",
+      "last_seen": "2026-10-07T13:22:47Z"
+    },
+    {
+      "id": "L-035",
+      "key": "ac_gap::keep acceptance criteria copy in the copy module with an exact text unit test instead of literals inside components",
+      "text": "Keep acceptance-criteria copy in the copy module with an exact-text unit test instead of literals inside components",
+      "signal": "ac_gap",
+      "scope": "copy",
+      "status": "candidate",
+      "features": [
+        "apice-clareza"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "APICE-04.4 src/components/assumption-chips.tsx:11 (copy)"
+      ],
+      "created": "2026-10-07T13:22:47Z",
+      "last_seen": "2026-10-07T13:22:47Z"
+    },
+    {
+      "id": "L-036",
+      "key": "spec_precision_gap::pair each visual acceptance criterion with the viewport and the observable check that proves it",
+      "text": "Pair each visual acceptance criterion with the viewport and the observable check that proves it",
+      "signal": "spec_precision_gap",
+      "scope": "ui",
+      "status": "candidate",
+      "features": [
+        "apice-clareza"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "APICE-01.2, APICE-09.5, APICE-17.12 (ui)"
+      ],
+      "created": "2026-10-07T13:22:47Z",
+      "last_seen": "2026-10-07T13:22:47Z"
+    },
+    {
+      "id": "L-037",
+      "key": "ac_gap::compute the dirty flag on the same normalized values that are validated and saved or an equivalent saved state keeps showing as changed",
+      "text": "Compute the dirty flag on the same normalized values that are validated and saved, or an equivalent saved state keeps showing as changed.",
+      "signal": "ac_gap",
+      "scope": "validation",
+      "status": "candidate",
+      "features": [
+        "apice-clareza"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "APICE-14.7 / goal-draft.ts:56 (validation)"
+      ],
+      "created": "2026-10-07T13:46:48Z",
+      "last_seen": "2026-10-07T13:46:48Z"
+    },
+    {
+      "id": "L-038",
+      "key": "spec_precision_gap::state in the spec when an empty field is treated as a default value so the acceptance wording matches the schema",
+      "text": "State in the spec when an empty field is treated as a default value, so the acceptance wording matches the schema.",
+      "signal": "spec_precision_gap",
+      "scope": "specs",
+      "status": "candidate",
+      "features": [
+        "apice-clareza"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "APICE-19.4 / T28 withZeroSaved (specs)"
+      ],
+      "created": "2026-10-07T13:46:48Z",
+      "last_seen": "2026-10-07T13:46:48Z"
+    },
+    {
+      "id": "L-039",
+      "key": "ac_gap::test display helpers with the values the real pipeline feeds them such as fractional ages or totals rounded past the target not only idealized round inputs",
+      "text": "Test display helpers with the values the real pipeline feeds them, such as fractional ages or totals rounded past the target, not only idealized round inputs",
+      "signal": "ac_gap",
+      "scope": "domain",
+      "status": "candidate",
+      "features": [
+        "apice-clareza"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "APICE-10.6 src/components/goal-chart.tsx:118 + src/lib/domain/age-ticks.ts:8 (domain)",
+        "APICE-08.2/08.4 src/components/goal-chart.tsx:82 + src/lib/domain/freedom.test.ts:189,204 (domain)"
+      ],
+      "created": "2026-10-07T13:58:55Z",
+      "last_seen": "2026-10-07T13:58:56Z"
+    },
+    {
+      "id": "L-040",
+      "key": "spec_precision_gap::when an acceptance example depends on a computed value that rounding can push past a boundary state in the spec how that overshoot is treated",
+      "text": "When an acceptance example depends on a computed value that rounding can push past a boundary, state in the spec how that overshoot is treated",
+      "signal": "spec_precision_gap",
+      "scope": "specs",
+      "status": "candidate",
+      "features": [
+        "apice-clareza"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "APICE-08.1 vs 08.2/08.4 (final patrimony exceeds target by cents) (specs)"
+      ],
+      "created": "2026-10-07T13:58:56Z",
+      "last_seen": "2026-10-07T13:58:56Z"
+    },
+    {
+      "id": "L-041",
+      "key": "ac_gap::when an age or date value mixes calendar month counts with day based birthdays test a birthday later in the current month as well as earlier and later months",
+      "text": "When an age or date value mixes calendar-month counts with day-based birthdays, test a birthday later in the current month as well as earlier and later months",
+      "signal": "ac_gap",
+      "scope": "domain",
+      "status": "candidate",
+      "features": [
+        "apice-clareza"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "APICE-10.6 Gap B' src/lib/domain/age-ticks.test.ts:66 (domain)"
+      ],
+      "created": "2026-10-07T14:13:26Z",
+      "last_seen": "2026-10-07T14:13:26Z"
+    },
+    {
+      "id": "L-042",
+      "key": "ac_gap::derive a rounding tolerance from the computation s actual rounding error bound not from a fixed percentage of the result",
+      "text": "Derive a rounding tolerance from the computation's actual rounding error bound, not from a fixed percentage of the result",
+      "signal": "ac_gap",
+      "scope": "domain",
+      "status": "candidate",
+      "features": [
+        "apice-clareza"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "APICE-08.2 Gap A' src/lib/domain/freedom.ts:180 (domain)"
+      ],
+      "created": "2026-10-07T14:13:26Z",
+      "last_seen": "2026-10-07T14:13:26Z"
+    },
+    {
+      "id": "L-043",
+      "key": "spec_precision_gap::when sibling acceptance examples share a precondition state it in every example not only in one of them",
+      "text": "When sibling acceptance examples share a precondition, state it in every example, not only in one of them",
+      "signal": "spec_precision_gap",
+      "scope": "specs",
+      "status": "candidate",
+      "features": [
+        "apice-clareza"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "APICE-08.2/08.4 spec.md:209-211 (specs)"
+      ],
+      "created": "2026-10-07T14:13:26Z",
+      "last_seen": "2026-10-07T14:13:26Z"
+    },
+    {
+      "id": "L-044",
+      "key": "spec_precision_gap::when a fix task replaces a rule that an acceptance criterion states list spec md in the task s where and update that criterion in the same commit",
+      "text": "When a fix task replaces a rule that an acceptance criterion states, list spec.md in the task's Where and update that criterion in the same commit",
+      "signal": "spec_precision_gap",
+      "scope": "specs",
+      "status": "candidate",
+      "features": [
+        "apice-clareza"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "spec.md:208 (APICE-08.1) vs src/lib/domain/freedom.ts:183 (specs)"
+      ],
+      "created": "2026-10-07T14:32:04Z",
+      "last_seen": "2026-10-07T14:32:04Z"
+    },
+    {
+      "id": "L-045",
+      "key": "ac_gap::check chart annotations in the state where the series starts above or below the reference line not only where the series ends at it",
+      "text": "Check chart annotations in the state where the series starts above or below the reference line, not only where the series ends at it",
+      "signal": "ac_gap",
+      "scope": "ui",
+      "status": "candidate",
+      "features": [
+        "apice-clareza"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "APICE-09.5, src/components/goal-chart.tsx:24-36 (v5-chart-aporte0.png) (ui)"
+      ],
+      "created": "2026-10-07T14:32:04Z",
+      "last_seen": "2026-10-07T14:32:04Z"
+    },
+    {
+      "id": "L-046",
+      "key": "surviving_mutant::assert boolean completion flags are false at partial progress not only at zero and at full",
+      "text": "Assert boolean completion flags are false at partial progress, not only at zero and at full",
+      "signal": "surviving_mutant",
+      "scope": "domain",
+      "status": "candidate",
+      "features": [
+        "visao-geral-primeiros-passos"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "validation.md M4 src/lib/domain/onboarding.ts:30 (domain)"
+      ],
+      "created": "2026-10-07T14:34:48Z",
+      "last_seen": "2026-10-07T14:34:48Z"
+    },
+    {
+      "id": "L-047",
+      "key": "surviving_mutant::test the one item boundary of count based state branches not only zero and many",
+      "text": "Test the one-item boundary of count-based state branches, not only zero and many",
+      "signal": "surviving_mutant",
+      "scope": "domain",
+      "status": "candidate",
+      "features": [
+        "visao-geral-primeiros-passos"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "validation.md M6 src/lib/domain/onboarding.ts:40 (domain)"
+      ],
+      "created": "2026-10-07T14:34:48Z",
+      "last_seen": "2026-10-07T14:34:48Z"
+    },
+    {
+      "id": "L-048",
+      "key": "spec_precision_gap::when a chart label must not overlap the data state in the spec whether area fills count or only the plotted lines",
+      "text": "When a chart label must not overlap the data, state in the spec whether area fills count or only the plotted lines",
+      "signal": "spec_precision_gap",
+      "scope": "charts",
+      "status": "candidate",
+      "features": [
+        "apice-clareza"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "validation.md APICE-09.5 (placa below sobre o preenchimento de Total investido) (charts)"
+      ],
+      "created": "2026-10-07T14:48:57Z",
+      "last_seen": "2026-10-07T14:48:57Z"
     }
   ]
 }

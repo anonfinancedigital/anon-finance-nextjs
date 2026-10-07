@@ -204,6 +204,102 @@ Seen once or not yet corroborated. Tracked, not trusted.
 - evidence: ESV-07 AC2 (ui)
 - last seen: 2026-10-07T13:00:44Z
 
+### L-033 - When a spec requires an element to stay fixed in a scrolling panel, make it sticky inside the scroll container and check it at a short viewport
+- signal: `ac_gap` · recurrence: 1 feature(s) · scope: `ui` · harmful: 0
+- features: apice-clareza
+- evidence: APICE-14.1 src/components/drawer-summary.tsx:34 (ui)
+- last seen: 2026-10-07T13:22:47Z
+
+### L-034 - When a live preview depends on a form, make sure every required field can hold its zero value so the preview can appear
+- signal: `ac_gap` · recurrence: 1 feature(s) · scope: `forms` · harmful: 0
+- features: apice-clareza
+- evidence: APICE-19.4 src/lib/validation/goal-draft.ts:48 (forms)
+- last seen: 2026-10-07T13:22:47Z
+
+### L-035 - Keep acceptance-criteria copy in the copy module with an exact-text unit test instead of literals inside components
+- signal: `ac_gap` · recurrence: 1 feature(s) · scope: `copy` · harmful: 0
+- features: apice-clareza
+- evidence: APICE-04.4 src/components/assumption-chips.tsx:11 (copy)
+- last seen: 2026-10-07T13:22:47Z
+
+### L-036 - Pair each visual acceptance criterion with the viewport and the observable check that proves it
+- signal: `spec_precision_gap` · recurrence: 1 feature(s) · scope: `ui` · harmful: 0
+- features: apice-clareza
+- evidence: APICE-01.2, APICE-09.5, APICE-17.12 (ui)
+- last seen: 2026-10-07T13:22:47Z
+
+### L-037 - Compute the dirty flag on the same normalized values that are validated and saved, or an equivalent saved state keeps showing as changed.
+- signal: `ac_gap` · recurrence: 1 feature(s) · scope: `validation` · harmful: 0
+- features: apice-clareza
+- evidence: APICE-14.7 / goal-draft.ts:56 (validation)
+- last seen: 2026-10-07T13:46:48Z
+
+### L-038 - State in the spec when an empty field is treated as a default value, so the acceptance wording matches the schema.
+- signal: `spec_precision_gap` · recurrence: 1 feature(s) · scope: `specs` · harmful: 0
+- features: apice-clareza
+- evidence: APICE-19.4 / T28 withZeroSaved (specs)
+- last seen: 2026-10-07T13:46:48Z
+
+### L-039 - Test display helpers with the values the real pipeline feeds them, such as fractional ages or totals rounded past the target, not only idealized round inputs
+- signal: `ac_gap` · recurrence: 1 feature(s) · scope: `domain` · harmful: 0
+- features: apice-clareza
+- evidence: APICE-10.6 src/components/goal-chart.tsx:118 + src/lib/domain/age-ticks.ts:8 (domain) (+1 more)
+- last seen: 2026-10-07T13:58:56Z
+
+### L-040 - When an acceptance example depends on a computed value that rounding can push past a boundary, state in the spec how that overshoot is treated
+- signal: `spec_precision_gap` · recurrence: 1 feature(s) · scope: `specs` · harmful: 0
+- features: apice-clareza
+- evidence: APICE-08.1 vs 08.2/08.4 (final patrimony exceeds target by cents) (specs)
+- last seen: 2026-10-07T13:58:56Z
+
+### L-041 - When an age or date value mixes calendar-month counts with day-based birthdays, test a birthday later in the current month as well as earlier and later months
+- signal: `ac_gap` · recurrence: 1 feature(s) · scope: `domain` · harmful: 0
+- features: apice-clareza
+- evidence: APICE-10.6 Gap B' src/lib/domain/age-ticks.test.ts:66 (domain)
+- last seen: 2026-10-07T14:13:26Z
+
+### L-042 - Derive a rounding tolerance from the computation's actual rounding error bound, not from a fixed percentage of the result
+- signal: `ac_gap` · recurrence: 1 feature(s) · scope: `domain` · harmful: 0
+- features: apice-clareza
+- evidence: APICE-08.2 Gap A' src/lib/domain/freedom.ts:180 (domain)
+- last seen: 2026-10-07T14:13:26Z
+
+### L-043 - When sibling acceptance examples share a precondition, state it in every example, not only in one of them
+- signal: `spec_precision_gap` · recurrence: 1 feature(s) · scope: `specs` · harmful: 0
+- features: apice-clareza
+- evidence: APICE-08.2/08.4 spec.md:209-211 (specs)
+- last seen: 2026-10-07T14:13:26Z
+
+### L-044 - When a fix task replaces a rule that an acceptance criterion states, list spec.md in the task's Where and update that criterion in the same commit
+- signal: `spec_precision_gap` · recurrence: 1 feature(s) · scope: `specs` · harmful: 0
+- features: apice-clareza
+- evidence: spec.md:208 (APICE-08.1) vs src/lib/domain/freedom.ts:183 (specs)
+- last seen: 2026-10-07T14:32:04Z
+
+### L-045 - Check chart annotations in the state where the series starts above or below the reference line, not only where the series ends at it
+- signal: `ac_gap` · recurrence: 1 feature(s) · scope: `ui` · harmful: 0
+- features: apice-clareza
+- evidence: APICE-09.5, src/components/goal-chart.tsx:24-36 (v5-chart-aporte0.png) (ui)
+- last seen: 2026-10-07T14:32:04Z
+
+### L-046 - Assert boolean completion flags are false at partial progress, not only at zero and at full
+- signal: `surviving_mutant` · recurrence: 1 feature(s) · scope: `domain` · harmful: 0
+- features: visao-geral-primeiros-passos
+- evidence: validation.md M4 src/lib/domain/onboarding.ts:30 (domain)
+- last seen: 2026-10-07T14:34:48Z
+
+### L-047 - Test the one-item boundary of count-based state branches, not only zero and many
+- signal: `surviving_mutant` · recurrence: 1 feature(s) · scope: `domain` · harmful: 0
+- features: visao-geral-primeiros-passos
+- evidence: validation.md M6 src/lib/domain/onboarding.ts:40 (domain)
+- last seen: 2026-10-07T14:34:48Z
+
+### L-048 - When a chart label must not overlap the data, state in the spec whether area fills count or only the plotted lines
+- signal: `spec_precision_gap` · recurrence: 1 feature(s) · scope: `charts` · harmful: 0
+- features: apice-clareza
+- evidence: validation.md APICE-09.5 (placa below sobre o preenchimento de Total investido) (charts)
+- last seen: 2026-10-07T14:48:57Z
+
 ## Quarantined (failed when applied - ignore)
 
 A confirmed lesson that recurred alongside failure. Kept for the maintainer to review.
