@@ -380,13 +380,31 @@ describe("buildMonthlySummary without percent in force", () => {
   const conforto = { ...base, id: "c1", name: "Conforto", percentMicro: 100000000, color: 1 };
   const nova = { ...base, id: "c2", name: "Nova", percentMicro: 0, color: 2, hasPercent: false };
 
-  it("omits a category with hasPercent false and no spending", () => {
+  it("keeps a category with hasPercent false and no spending at target 0, not overspent", () => {
     const { rows } = buildMonthlySummary({
       categories: [conforto, nova],
       incomeCents: 500000,
       spentByCategory: new Map([["c1", 1000]]),
     });
-    expect(rows.map((r) => r.id)).toEqual(["c1"]);
+    expect(rows.map((r) => r.id)).toEqual(["c1", "c2"]);
+    expect(rows[1]).toMatchObject({
+      hasPercent: false,
+      targetCents: 0,
+      spentCents: 0,
+      overspent: false,
+      overspentCents: 0,
+      exceeded: false,
+      consumedPct: 0,
+    });
+  });
+
+  it("leaves the target and spending of a category with a percent unchanged", () => {
+    const { rows } = buildMonthlySummary({
+      categories: [conforto, nova],
+      incomeCents: 500000,
+      spentByCategory: new Map([["c1", 1000]]),
+    });
+    expect(rows[0]).toMatchObject({ targetCents: 500000, spentCents: 1000, overspent: false });
   });
 
   it("keeps a category with hasPercent false and spending at target 0, overspent", () => {
@@ -414,7 +432,7 @@ describe("buildMonthlySummary without percent in force", () => {
     expect(rows[0].targetCents).toBe(500000);
   });
 
-  it("does not change the total spent when omitting categories without spending", () => {
+  it("does not change the total spent when a category has no percent and no spending", () => {
     const summary = buildMonthlySummary({
       categories: [conforto, nova],
       incomeCents: 500000,
