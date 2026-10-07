@@ -81,7 +81,7 @@ export function GoalHero({
           </div>
         </div>
 
-        <AssumptionChips summary={summary} onAdjust={onAdjust} />
+        <AssumptionChips premises={summary} summary={summary} onAdjust={onAdjust} />
 
         <Popover>
           <PopoverTrigger className="inline-flex w-fit cursor-pointer items-center gap-1.5 rounded-sm text-sm text-muted-foreground outline-none hover:text-foreground focus-visible:ring-2 focus-visible:ring-primary/30">

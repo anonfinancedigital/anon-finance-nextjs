@@ -63,28 +63,37 @@ export function depositText(summary: GoalSummary): string {
 
 export type ScenarioName = "conservador" | "moderado" | "agressivo" | "personalizado";
 
+/** Par de taxas que define as premissas; o resumo e o rascunho sem resumo têm os dois. */
+export type Premises = Pick<GoalSummary, "annualRateBp" | "withdrawalRateBp">;
+
 const SCENARIO_BY_PRESET: Record<number, ScenarioName> = { 600: "conservador", 800: "moderado", 1000: "agressivo" };
 
 /** Nome do cenário pelo par (rentabilidade, retirada) do resumo; "personalizado" fora dos presets. */
-export function scenarioName(summary: GoalSummary): ScenarioName {
-  const preset = presetFor(summary.annualRateBp, summary.withdrawalRateBp);
+export function scenarioName(rates: Premises): ScenarioName {
+  const preset = presetFor(rates.annualRateBp, rates.withdrawalRateBp);
   return preset === null ? "personalizado" : SCENARIO_BY_PRESET[preset];
 }
 
 /** Os quatro chips de premissas da página. */
-export function assumptionChips(summary: GoalSummary): {
+export function assumptionChips(premises: Premises): {
   scenario: string;
   rate: string;
   withdrawal: string;
   today: string;
 } {
   return {
-    scenario: `Cenário ${scenarioName(summary)}`,
-    rate: `${formatRate(summary.annualRateBp)} real a.a.`,
-    withdrawal: `Retirada de ${perYear(summary.withdrawalRateBp)}`,
+    scenario: `Cenário ${scenarioName(premises)}`,
+    rate: `${formatRate(premises.annualRateBp)} real a.a.`,
+    withdrawal: `Retirada de ${perYear(premises.withdrawalRateBp)}`,
     today: "Valores em R$ de hoje",
   };
 }
+
+/** Tooltip do chip "Valores em R$ de hoje". */
+export const TODAY_TOOLTIP = "Todos os valores já descontam a inflação.";
+
+/** O que a taxa de retirada significa; abre o tooltip da retirada e o substitui sem resumo. */
+export const WITHDRAWAL_EXPLANATION = "Percentual do patrimônio que você saca por ano para gerar sua renda.";
 
 /** Tooltip da retirada: o que a taxa significa, com um exemplo calculado dos valores dados. */
 export function withdrawalTooltip(input: {
@@ -92,7 +101,7 @@ export function withdrawalTooltip(input: {
   targetCents: number;
   monthlyIncomeCents: number;
 }): string {
-  return `Percentual do patrimônio que você saca por ano para gerar sua renda. Com ${formatRate(input.withdrawalBp)}, ${formatCompactBRL(input.targetCents)} geram ${formatCompactBRL(input.monthlyIncomeCents * 12)}/ano (${formatCompactBRL(input.monthlyIncomeCents)}/mês).`;
+  return `${WITHDRAWAL_EXPLANATION} Com ${formatRate(input.withdrawalBp)}, ${formatCompactBRL(input.targetCents)} geram ${formatCompactBRL(input.monthlyIncomeCents * 12)}/ano (${formatCompactBRL(input.monthlyIncomeCents)}/mês).`;
 }
 
 /** Rótulo do ponto "Hoje" na barra de marcos, com o percentual real do progresso (sem teto). */

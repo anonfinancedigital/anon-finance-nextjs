@@ -3,25 +3,40 @@
 import { Info } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import type { GoalSummary } from "@/lib/domain/freedom";
-import { assumptionChips, withdrawalTooltip } from "@/lib/domain/freedom-copy";
+import {
+  assumptionChips,
+  type Premises,
+  TODAY_TOOLTIP,
+  WITHDRAWAL_EXPLANATION,
+  withdrawalTooltip,
+} from "@/lib/domain/freedom-copy";
 
 const CHIP_CLASS = "inline-flex items-center gap-1.5 rounded-full border border-border bg-subtle px-3 py-1 text-xs";
 const FOCUS_CLASS = "outline-none focus-visible:ring-2 focus-visible:ring-primary/40";
-
-const TODAY_TOOLTIP = "Todos os valores já descontam a inflação.";
 
 /**
  * Premises behind the result as chips: scenario, real rate, withdrawal rate (with an info tooltip)
  * and "values in today's R$" (with a tooltip), plus the "Ajustar" link. Tooltips open on hover and
  * focus; Escape closes them.
  */
-export function AssumptionChips({ summary, onAdjust }: { summary: GoalSummary; onAdjust: () => void }) {
-  const chips = assumptionChips(summary);
-  const withdrawal = withdrawalTooltip({
-    withdrawalBp: summary.withdrawalRateBp,
-    targetCents: summary.targetCents,
-    monthlyIncomeCents: summary.monthlyIncomeCents,
-  });
+export function AssumptionChips({
+  premises,
+  summary = null,
+  onAdjust,
+}: {
+  premises: Premises;
+  /** Com resumo, o tooltip da retirada traz o exemplo calculado; sem, só a explicação. */
+  summary?: GoalSummary | null;
+  onAdjust: () => void;
+}) {
+  const chips = assumptionChips(premises);
+  const withdrawal = summary
+    ? withdrawalTooltip({
+        withdrawalBp: summary.withdrawalRateBp,
+        targetCents: summary.targetCents,
+        monthlyIncomeCents: summary.monthlyIncomeCents,
+      })
+    : WITHDRAWAL_EXPLANATION;
 
   return (
     <ul aria-label="Premissas do cálculo" className="flex flex-wrap items-center gap-2">

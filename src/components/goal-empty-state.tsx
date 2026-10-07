@@ -9,10 +9,16 @@ import { GoalFields } from "@/components/goal-fields";
 import { Button } from "@/components/ui/button";
 import { useGoalDraft } from "@/components/use-goal-draft";
 import type { ActionResult } from "@/lib/action-result";
-import { type Goal, presetFor, summarize } from "@/lib/domain/freedom";
+import {
+  DEFAULT_ANNUAL_RATE_BP,
+  DEFAULT_WITHDRAWAL_RATE_BP,
+  type Goal,
+  summarize,
+} from "@/lib/domain/freedom";
 import {
   DEPOSIT_LABEL,
   depositText,
+  type Premises,
   summarySentence,
 } from "@/lib/domain/freedom-copy";
 import { parseRate } from "@/lib/validation/goal";
@@ -37,24 +43,21 @@ const EXAMPLE_SUMMARY = summarize(
   new Date("2026-01-01T12:00:00Z"),
 );
 
-const SCENARIO_NAMES: Record<number, string> = {
-  600: "conservador",
-  800: "moderado",
-  1000: "agressivo",
+const DEFAULT_PREMISES = {
+  annualRateBp: DEFAULT_ANNUAL_RATE_BP,
+  withdrawalRateBp: DEFAULT_WITHDRAWAL_RATE_BP,
 };
 
-/** Scenario chip for the empty state while there is no valid summary: the name comes from the typed rates. */
-function scenarioChip(values: {
+/** Premises typed so far; Moderado when a rate is not valid yet (the drawer edits them). */
+function typedPremises(values: {
   annualRate: string;
   withdrawalRate: string;
-}): string {
+}): Premises {
   const annual = parseRate(values.annualRate);
   const withdrawal = parseRate(values.withdrawalRate);
-  const preset =
-    annual.ok && withdrawal.ok
-      ? presetFor(annual.value, withdrawal.value)
-      : null;
-  return `Cenário ${preset === null ? "personalizado" : SCENARIO_NAMES[preset]}`;
+  return annual.ok && withdrawal.ok
+    ? { annualRateBp: annual.value, withdrawalRateBp: withdrawal.value }
+    : DEFAULT_PREMISES;
 }
 
 /**
@@ -116,22 +119,11 @@ export function GoalEmptyState({
           variant="inline"
         />
 
-        {summary ? (
-          <AssumptionChips summary={summary} onAdjust={onAdjust} />
-        ) : (
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="inline-flex rounded-full border border-border bg-subtle px-3 py-1 text-xs">
-              {scenarioChip(draft.values)}
-            </span>
-            <button
-              type="button"
-              onClick={onAdjust}
-              className="cursor-pointer rounded-md text-sm text-link underline-offset-4 outline-none hover:underline focus-visible:ring-2 focus-visible:ring-primary/40"
-            >
-              Ajustar
-            </button>
-          </div>
-        )}
+        <AssumptionChips
+          premises={summary ?? typedPremises(draft.values)}
+          summary={summary}
+          onAdjust={onAdjust}
+        />
 
         <div
           aria-live="polite"

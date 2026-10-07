@@ -24,7 +24,9 @@ import {
   SUBTITLE,
   summarySentence,
   TARGET_LABEL,
+  TODAY_TOOLTIP,
   todayLabel,
+  WITHDRAWAL_EXPLANATION,
   withdrawalTooltip,
 } from "./freedom-copy";
 
@@ -234,6 +236,28 @@ describe("assumptionChips e scenarioName", () => {
   it("rentabilidade de um preset com retirada diferente também é personalizado", () => {
     const summary = withRates(800, 600);
     expect(assumptionChips(summary).scenario).toBe("Cenário personalizado");
+  });
+});
+
+describe("textos dos tooltips das premissas", () => {
+  it("tooltip do chip R$ de hoje (APICE-04.4)", () => {
+    expect(TODAY_TOOLTIP).toBe("Todos os valores já descontam a inflação.");
+  });
+
+  it("explicação da retirada, usada sozinha quando ainda não há resumo", () => {
+    expect(WITHDRAWAL_EXPLANATION).toBe("Percentual do patrimônio que você saca por ano para gerar sua renda.");
+  });
+});
+
+describe("premissas sem resumo (APICE-19.3)", () => {
+  it("assumptionChips e scenarioName aceitam só o par de taxas", () => {
+    expect(scenarioName({ annualRateBp: 600, withdrawalRateBp: 400 })).toBe("conservador");
+    expect(assumptionChips({ annualRateBp: 1000, withdrawalRateBp: 600 })).toEqual({
+      scenario: "Cenário agressivo",
+      rate: "10% real a.a.",
+      withdrawal: "Retirada de 6% a.a.",
+      today: "Valores em R$ de hoje",
+    });
   });
 });
 

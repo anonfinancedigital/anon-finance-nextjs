@@ -918,17 +918,17 @@ Gaps do `validation.md` (Verifier reprovou): APICE-14.1 (Major), APICE-19.4 (Maj
 
 **Done when**:
 
-- [ ] `TODAY_TOOLTIP` em `freedom-copy.ts` vale exatamente "Todos os valores já descontam a inflação." e o teste faz `toBe` desse texto
-- [ ] Sem resumo válido, o estado vazio mostra os chips de cenário, taxa real, retirada e "Valores em R$ de hoje" mais "Ajustar", com as taxas digitadas
-- [ ] `scenarioChip` e `SCENARIO_NAMES` saem de `goal-empty-state.tsx`
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
-- [ ] Test count: os testes anteriores mais os novos passam
+- [x] `TODAY_TOOLTIP` em `freedom-copy.ts` vale exatamente "Todos os valores já descontam a inflação." e o teste faz `toBe` desse texto
+- [x] Sem resumo válido, o estado vazio mostra os chips de cenário, taxa real, retirada e "Valores em R$ de hoje" mais "Ajustar", com as taxas digitadas
+- [x] `scenarioChip` e `SCENARIO_NAMES` saem de `goal-empty-state.tsx`
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] Test count: os testes anteriores mais os novos passam
 
 **Tests**: unit
 **Gate**: build
 
 **Commit**: `fix(apice): show all assumption chips in the empty state`
-**Status**: ⏳ Pending
+**Status**: ✅ Done
 
 ---
 
