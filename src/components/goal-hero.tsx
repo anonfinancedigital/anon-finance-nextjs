@@ -73,7 +73,7 @@ export function GoalHero({
             <p className="font-display text-2xl font-bold tracking-tight">
               {depositText(summary)}
             </p>
-            {summary.months > 0 && (
+            {summary.months > 0 && summary.remainingCents > 0 && (
               <p className="text-sm text-muted-foreground">
                 em {formatTerm(summary.months)}
               </p>

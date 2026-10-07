@@ -161,6 +161,31 @@ describe("summarySentence", () => {
     expect(sentence).toBe("Para ter R$ 20 mil/mês aos 48 anos, você precisa de R$ 4,8 mi. Você já tem o necessário.");
     expect(sentence).not.toContain("Isso exige guardar");
   });
+
+  it("aporte 0 com guardado abaixo do alvo: explica que o patrimônio atual chega lá", () => {
+    const compounding = summarize(
+      { monthlyIncomeCents: 500_000, savedCents: 56_500_000, birthDate: "1993-05-10", retirementAge: 48, annualRateBp: 800, withdrawalRateBp: 500 },
+      now,
+    );
+    expect(compounding.monthlyCents).toBe(0);
+    expect(compounding.savedCents).toBeLessThan(compounding.targetCents);
+    const sentence = normalize(summarySentence(compounding));
+    expect(sentence).toBe(
+      "Para ter R$ 5 mil/mês aos 48 anos, você precisa de R$ 1,2 mi. Seu patrimônio atual, rendendo, chega lá sem novos aportes.",
+    );
+    expect(sentence).not.toContain("Você já tem o necessário");
+  });
+
+  it("guardado exatamente igual ao alvo: Você já tem o necessário", () => {
+    const exact = summarize(
+      { monthlyIncomeCents: 500_000, savedCents: 120_000_000, birthDate: "1993-05-10", retirementAge: 48, annualRateBp: 800, withdrawalRateBp: 500 },
+      now,
+    );
+    expect(exact.savedCents).toBe(exact.targetCents);
+    expect(normalize(summarySentence(exact))).toBe(
+      "Para ter R$ 5 mil/mês aos 48 anos, você precisa de R$ 1,2 mi. Você já tem o necessário.",
+    );
+  });
 });
 
 describe("depositText", () => {
@@ -182,6 +207,31 @@ describe("depositText", () => {
       now,
     );
     expect(depositText(reached)).toBe("Meta alcançada");
+  });
+
+  it("aporte 0 com guardado abaixo do alvo vira Sem aporte necessário", () => {
+    const compounding = summarize(
+      { monthlyIncomeCents: 500_000, savedCents: 56_500_000, birthDate: "1993-05-10", retirementAge: 48, annualRateBp: 800, withdrawalRateBp: 500 },
+      now,
+    );
+    expect(compounding.monthlyCents).toBe(0);
+    expect(depositText(compounding)).toBe("Sem aporte necessário");
+  });
+
+  it("guardado 1 centavo abaixo do alvo com aporte 0 vira Sem aporte necessário", () => {
+    const almost = summarize(
+      { monthlyIncomeCents: 500_000, savedCents: 119_999_999, birthDate: "1993-05-10", retirementAge: 48, annualRateBp: 800, withdrawalRateBp: 500 },
+      now,
+    );
+    expect(depositText(almost)).toBe("Sem aporte necessário");
+  });
+
+  it("guardado exatamente igual ao alvo vira Meta alcançada", () => {
+    const exact = summarize(
+      { monthlyIncomeCents: 500_000, savedCents: 120_000_000, birthDate: "1993-05-10", retirementAge: 48, annualRateBp: 800, withdrawalRateBp: 500 },
+      now,
+    );
+    expect(depositText(exact)).toBe("Meta alcançada");
   });
 });
 
