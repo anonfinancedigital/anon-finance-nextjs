@@ -125,12 +125,14 @@ T10 → T11
 
 **Done when**:
 
-- [ ] Props `{ value: number; text: string }`; mostra `text` e uma barra com `role="progressbar"`, `aria-valuenow={value}` e `aria-label={text}`
-- [ ] Indicador usa `bg-muted-foreground` (sem cor de erro nem de ação)
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
+- [x] Props `{ value: number; text: string }`; mostra `text` e uma barra com `role="progressbar"`, `aria-valuenow={value}` e `aria-label={text}`
+- [x] Indicador usa `bg-muted-foreground` (sem cor de erro nem de ação)
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
 
 **Tests**: none
 **Gate**: build
+
+**Status**: ✅ Complete
 
 **Commit**: `feat(categorias): add allocation progress indicator`
 
