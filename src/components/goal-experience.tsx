@@ -22,6 +22,7 @@ import {
   DRAWER_INTRO,
   SUBTITLE,
 } from "@/lib/domain/freedom-copy";
+import { referenceIncomeText } from "@/lib/domain/money";
 import { cn } from "@/lib/utils";
 import type { GoalFormValues } from "@/lib/validation/goal-draft";
 
@@ -50,6 +51,17 @@ export function GoalExperience({
   function requestClose() {
     if (draft.dirty) setConfirmingDiscard(true);
     else setOpen(false);
+  }
+
+  /** Slack buttons only fill the draft and open the drawer to preview it; saving stays in the form. */
+  function applyIncome(cents: number) {
+    draft.set({ monthlyIncome: referenceIncomeText(cents) });
+    setOpen(true);
+  }
+
+  function applyAge(age: number) {
+    draft.set({ retirementAge: String(age) });
+    setOpen(true);
   }
 
   function discard() {
@@ -85,6 +97,8 @@ export function GoalExperience({
             <GoalSummary
               summary={summary}
               onAdjust={() => setOpen(true)}
+              onApplyIncome={applyIncome}
+              onApplyAge={applyAge}
               preview={draft.dirty}
             />
           )

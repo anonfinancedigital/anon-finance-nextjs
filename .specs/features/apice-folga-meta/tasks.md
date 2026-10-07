@@ -478,17 +478,17 @@ T16 → T17
 
 **Done when**:
 
-- [ ] Acionar "Usar R$ 7,4 mil" deixa o campo de renda com "7.420,00" e abre a gaveta em prévia
-- [ ] Acionar "Antecipar para 43" deixa a idade com "43" e abre a gaveta em prévia
-- [ ] Nenhum caminho chama `saveGoal`; o salvar continua só em `GoalForm`
-- [ ] Evidência por inspeção de código (`file:line`)
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] Acionar "Usar R$ 7,4 mil" deixa o campo de renda com "7.420,00" e abre a gaveta em prévia
+- [x] Acionar "Antecipar para 43" deixa a idade com "43" e abre a gaveta em prévia
+- [x] Nenhum caminho chama `saveGoal`; o salvar continua só em `GoalForm`
+- [x] Evidência por inspeção de código (`file:line`)
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
 
 **Tests**: none
 **Gate**: build
 
 **Commit**: `feat(apice): apply the slack options to the draft and open the drawer`
-**Status**: Pending
+**Status**: ✅ Done
 
 ---
 
