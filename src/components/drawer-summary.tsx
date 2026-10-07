@@ -33,7 +33,7 @@ export function DrawerSummary({
   return (
     <section
       aria-label="Resumo da prévia"
-      className="space-y-2 rounded-xl border border-border bg-card p-3"
+      className="sticky top-0 z-10 space-y-2 rounded-xl border border-border bg-card p-3"
     >
       <div className="flex items-center gap-2">
         <p className="text-sm text-muted-foreground">{DEPOSIT_LABEL}</p>

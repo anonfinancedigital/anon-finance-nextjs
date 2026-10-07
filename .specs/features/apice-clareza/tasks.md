@@ -841,15 +841,135 @@ T21 → T22 → T23 → T24 → T25 → T26
 
 ---
 
+## Phase 5: Correções da verificação
+
+Gaps do `validation.md` (Verifier reprovou): APICE-14.1 (Major), APICE-19.4 (Major), APICE-19.3 e APICE-04.4 (Minor) e limpezas sem risco. Execução sequencial T27 → T28 → T29 → T30.
+
+### T27: Resumo da gaveta fixo ao rolar
+
+**What**: Tornar o resumo da gaveta `sticky` no topo da área rolável, com fundo opaco do tema e acima do conteúdo que rola.
+**Where**: `src/components/drawer-summary.tsx`
+**Depends on**: T26
+**Reuses**: `SheetContent` (`overflow-y-auto`, largura 320 px a 384 px)
+**Requirement**: APICE-14
+
+**Tools**:
+
+- MCP: NONE
+- Skill: NONE
+
+**Done when**:
+
+- [x] A `section` do resumo é `sticky top-0` com `z-index` acima dos campos e fundo opaco (`bg-card`), sem vazar conteúdo por baixo
+- [x] O resumo continua visível ao rolar a gaveta, sem estourar a largura de 320 px
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] Test count: todos os testes existentes passam
+
+**Tests**: none (UI, AD-005/AD-008)
+**Gate**: build
+
+**Commit**: `fix(apice): keep the drawer summary fixed while the drawer scrolls`
+**Status**: ✅ Done
+
+---
+
+### T28: Guardado vazio vale R$ 0 no rascunho
+
+**What**: Tratar "guardado" vazio como "0,00" ao avaliar e ao salvar o rascunho, para quem não tem nada guardado ver o aporte e salvar. `goalSchema` e `parseBRL` ficam intactos.
+**Where**: `src/lib/validation/goal-draft.ts`, `src/lib/validation/goal-draft.test.ts`, `src/components/goal-empty-state.tsx`, `src/components/goal-form.tsx`
+**Depends on**: T27
+**Reuses**: `goalSchema`, `evaluateDraft`
+**Requirement**: APICE-19
+
+**Tools**:
+
+- MCP: NONE
+- Skill: NONE
+
+**Done when**:
+
+- [ ] Renda e idade válidas com "guardado" vazio: `evaluateDraft` devolve o mesmo `summary` de "guardado" "0,00" e `errors.saved` indefinido
+- [ ] "Guardado" só com espaços também vale R$ 0; `dirty` continua comparando o texto digitado
+- [ ] Os valores enviados a `saveGoal` no estado vazio e na gaveta trazem "0,00" no lugar de vazio
+- [ ] Os testes de `goalSchema` (vazio rejeitado em `saved`) e de `maskBRLInput` seguem iguais
+- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [ ] Test count: os testes anteriores mais os novos passam
+
+**Tests**: unit
+**Gate**: build
+
+**Commit**: `fix(apice): treat an empty saved amount as zero in the goal draft`
+**Status**: ⏳ Pending
+
+---
+
+### T29: Chips de premissas e tooltip no estado vazio
+
+**What**: Mostrar os quatro chips de premissas no estado vazio sem resumo válido, reusando `scenarioName`, e mover o texto do tooltip "R$ de hoje" para `freedom-copy.ts` com assertão exata.
+**Where**: `src/lib/domain/freedom-copy.ts`, `src/lib/domain/freedom-copy.test.ts`, `src/components/assumption-chips.tsx`, `src/components/goal-empty-state.tsx`
+**Depends on**: T28
+**Reuses**: `scenarioName`, `assumptionChips`, `AssumptionChips`
+**Requirement**: APICE-19, APICE-04
+
+**Tools**:
+
+- MCP: NONE
+- Skill: NONE
+
+**Done when**:
+
+- [ ] `TODAY_TOOLTIP` em `freedom-copy.ts` vale exatamente "Todos os valores já descontam a inflação." e o teste faz `toBe` desse texto
+- [ ] Sem resumo válido, o estado vazio mostra os chips de cenário, taxa real, retirada e "Valores em R$ de hoje" mais "Ajustar", com as taxas digitadas
+- [ ] `scenarioChip` e `SCENARIO_NAMES` saem de `goal-empty-state.tsx`
+- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [ ] Test count: os testes anteriores mais os novos passam
+
+**Tests**: unit
+**Gate**: build
+
+**Commit**: `fix(apice): show all assumption chips in the empty state`
+**Status**: ⏳ Pending
+
+---
+
+### T30: Limpezas seguras
+
+**What**: Mover `GoalFormValues` para a camada de validação sem React, remover o export `blank` sem consumidor e `planLines` (se a spec não o exigir).
+**Where**: `src/lib/validation/goal-draft.ts`, `src/components/goal-form.tsx`, `src/components/use-goal-draft.ts`, `src/lib/domain/freedom-copy.ts`, `src/lib/domain/freedom-copy.test.ts`
+**Depends on**: T29
+**Reuses**: n/a
+**Requirement**: APICE-02, APICE-14
+
+**Tools**:
+
+- MCP: NONE
+- Skill: NONE
+
+**Done when**:
+
+- [ ] `goal-draft.ts` não importa de `@/components/*`; o tipo `GoalFormValues` é definido em `src/lib/validation/goal-draft.ts` e os consumidores importam dele
+- [ ] `grep` não encontra o export `blank` nem `planLines` sem consumidor em `src/`
+- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [ ] Test count: só saem os testes de `planLines`, se removido; os demais passam
+
+**Tests**: unit
+**Gate**: build
+
+**Commit**: `refactor(apice): move the goal form values type out of the component layer`
+**Status**: ⏳ Pending
+
+---
+
 ## Phase Execution Map
 
 ```
-Phase 1 → Phase 2 → Phase 3 → Phase 4
+Phase 1 → Phase 2 → Phase 3 → Phase 4 → Phase 5
 
 Phase 1:  T1 → T2 → T3 → T4 → T5 → T6 → T7
 Phase 2:  T8 → T9 → T10 → T11 → T12 → T13 → T14
 Phase 3:  T15 → T16 → T17 → T18 → T19 → T20
 Phase 4:  T21 → T22 → T23 → T24 → T25 → T26
+Phase 5:  T27 → T28 → T29 → T30
 ```
 
 Execução estritamente sequencial. Com 26 tasks, o empacotamento dá 4 lotes (~7 tasks, fases inteiras); a oferta de sub-agentes é feita no Execute.
@@ -861,9 +981,9 @@ Execução estritamente sequencial. Com 26 tasks, o empacotamento dá 4 lotes (~
 | Requirement | Tasks |
 | ----------- | ----- |
 | APICE-01 | T4, T9, T24 |
-| APICE-02 | T3, T4, T17, T26 |
+| APICE-02 | T3, T4, T17, T26, T30 |
 | APICE-03 | T4, T17, T24 |
-| APICE-04 | T5, T15, T18, T23 |
+| APICE-04 | T5, T15, T18, T23, T29 |
 | APICE-05 | T5, T12, T15 |
 | APICE-06 | T1, T5, T16 |
 | APICE-07 | T16, T17 |
@@ -873,11 +993,11 @@ Execução estritamente sequencial. Com 26 tasks, o empacotamento dá 4 lotes (~
 | APICE-11 | T20 |
 | APICE-12 | T20 |
 | APICE-13 | T8, T17, T20 |
-| APICE-14 | T5, T7, T8, T10, T14, T18, T21, T24 |
+| APICE-14 | T5, T7, T8, T10, T14, T18, T21, T24, T27, T30 |
 | APICE-15 | T1, T13 |
 | APICE-16 | T11, T13 |
 | APICE-17 | T12 |
 | APICE-18 | T14, T22, T24 |
-| APICE-19 | T7, T10, T13, T23, T24 |
+| APICE-19 | T7, T10, T13, T23, T24, T28, T29 |
 
 Cobertura: 19 de 19 requisitos mapeados.
