@@ -10,6 +10,18 @@ test.describe("password confirmation", () => {
     await page.goto("/cadastro");
   });
 
+  test("Confirmar senha comes right after Senha, is required and uses new-password", async ({ page }) => {
+    const passwordFields = page.locator('input[name="password"], input[name="confirmPassword"]');
+    await expect(passwordFields).toHaveCount(2);
+    await expect(passwordFields.nth(0)).toHaveAttribute("name", "password");
+    await expect(passwordFields.nth(1)).toHaveAttribute("name", "confirmPassword");
+
+    const confirm = page.getByLabel("Confirmar senha", { exact: true });
+    await expect(confirm).toBeVisible();
+    await expect(confirm).toHaveAttribute("autocomplete", "new-password");
+    await expect(confirm).toHaveJSProperty("required", true);
+  });
+
   test("each password field has its own eye button", async ({ page }) => {
     const password = page.getByLabel("Senha", { exact: true });
     const confirm = page.getByLabel("Confirmar senha", { exact: true });
