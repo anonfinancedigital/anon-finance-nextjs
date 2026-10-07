@@ -631,16 +631,16 @@ T18 → T19 → T20
 
 **Done when**:
 
-- [ ] As duas props são obrigatórias nos dois componentes e todos os consumidores já as passam
-- [ ] O bloco de folga não depende mais de checagem das props
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
-- [ ] Evidência por inspeção de código (`file:line`)
+- [x] As duas props são obrigatórias nos dois componentes e todos os consumidores já as passam
+- [x] O bloco de folga não depende mais de checagem das props
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] Evidência por inspeção de código (`file:line`)
 
 **Tests**: none
 **Gate**: build
 
 **Commit**: `refactor(apice): require the slack actions on the hero and summary`
-**Status**: ⏳ Pending
+**Status**: ✅ Done
 
 ---
 

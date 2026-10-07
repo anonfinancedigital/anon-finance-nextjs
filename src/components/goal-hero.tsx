@@ -47,8 +47,8 @@ export function GoalHero({
 }: {
   summary: GoalSummary;
   onAdjust: () => void;
-  onApplyIncome?: (cents: number) => void;
-  onApplyAge?: (age: number) => void;
+  onApplyIncome: (cents: number) => void;
+  onApplyAge: (age: number) => void;
   preview?: boolean;
 }) {
   return (
@@ -105,9 +105,7 @@ export function GoalHero({
 
         {summary.reach && (
           <div className="space-y-3">
-            {onApplyIncome && onApplyAge && (
-              <GoalSlack summary={summary} onApplyIncome={onApplyIncome} onApplyAge={onApplyAge} />
-            )}
+            <GoalSlack summary={summary} onApplyIncome={onApplyIncome} onApplyAge={onApplyAge} />
             <GoalRobustness summary={summary} />
           </div>
         )}

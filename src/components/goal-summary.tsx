@@ -16,8 +16,8 @@ export function GoalSummary({
 }: {
   summary: Summary;
   onAdjust: () => void;
-  onApplyIncome?: (cents: number) => void;
-  onApplyAge?: (age: number) => void;
+  onApplyIncome: (cents: number) => void;
+  onApplyAge: (age: number) => void;
   preview?: boolean;
 }) {
   return (
