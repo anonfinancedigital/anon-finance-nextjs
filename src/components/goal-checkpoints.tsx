@@ -1,9 +1,9 @@
+import { cn } from "cn";
 import { Check } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import type { GoalSummary } from "@/lib/domain/freedom";
 import { checkpointLabel, todayLabel } from "@/lib/domain/freedom-copy";
 import { formatCompactBRL } from "@/lib/domain/money";
-import { cn } from "@/lib/utils";
 
 /**
  * Progress bar (progress-colored fill) with the 25/50/75/100% checkpoints of the target as markers
@@ -11,8 +11,9 @@ import { cn } from "@/lib/utils";
  * its label, the only place that shows the progress percentage. When the savings alone reach the
  * target (`reach`) the bar is scaled to the patrimony at the end of the term: the stretch after the
  * 100% marker is drawn in the returns color and gets a closing "Folga" label. Nothing here is interactive: no
- * pointer cursor, hover or focus state. From the `@xl` container width the labels sit centered under
- * their markers; below it they form a 2×2 grid (`@3xl` instead of `@xl` with the slack stretch).
+ * pointer cursor, hover or focus state. Without the slack stretch, from the `@xl` container width the
+ * labels sit centered under their markers; below it they form a 2×2 grid. With the stretch the markers
+ * can sit at 5/10/15/20% of the bar and centered labels would overlap or clip, so the grid is always used.
  */
 export function GoalCheckpoints({ summary }: { summary: GoalSummary }) {
   const label = todayLabel(summary);
@@ -69,25 +70,20 @@ export function GoalCheckpoints({ summary }: { summary: GoalSummary }) {
       </div>
 
       <ol
-        className={cn(
-          "grid grid-cols-2 gap-3",
-          // The scaled bar packs the labels closer, so the absolute layout waits for a wider container.
-          reach ? "@3xl:relative @3xl:block @3xl:h-10" : "@xl:relative @xl:block @xl:h-10",
-        )}
+        className={cn("grid grid-cols-2 gap-3", !reach && "@xl:relative @xl:block @xl:h-10")}
       >
         {summary.checkpoints.map((c, index) => (
           <li
             key={c.fractionBp}
             className={cn(
               "min-w-0 space-y-0.5 text-sm",
-              reach
-                ? "@3xl:absolute @3xl:top-0 @3xl:-translate-x-1/2 @3xl:text-center"
-                : cn(
-                    "@xl:absolute @xl:top-0 @xl:text-center",
-                    index === lastIndex ? "@xl:right-0 @xl:text-right" : "@xl:-translate-x-1/2",
-                  ),
+              !reach &&
+                cn(
+                  "@xl:absolute @xl:top-0 @xl:text-center",
+                  index === lastIndex ? "@xl:right-0 @xl:text-right" : "@xl:-translate-x-1/2",
+                ),
             )}
-            style={index === lastIndex && !reach ? undefined : { left: `${c.positionBp / 100}%` }}
+            style={index === lastIndex || reach ? undefined : { left: `${c.positionBp / 100}%` }}
           >
             <span className="block font-medium">{formatCompactBRL(c.valueCents)}</span>
             <span
@@ -98,7 +94,7 @@ export function GoalCheckpoints({ summary }: { summary: GoalSummary }) {
           </li>
         ))}
         {reach && (
-          <li className="min-w-0 space-y-0.5 text-sm @3xl:absolute @3xl:top-0 @3xl:right-0 @3xl:text-right">
+          <li className="min-w-0 space-y-0.5 text-sm">
             <span className="block font-medium">{formatCompactBRL(reach.finalCents)}</span>
             <span className="block truncate text-xs whitespace-nowrap text-returns">
               Aos {summary.retirementAge} anos (Folga)

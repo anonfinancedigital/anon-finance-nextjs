@@ -543,7 +543,7 @@ T18 → T19 → T20
 
 - [x] Referência: marco de R$ 1,2 mi a cerca de 67% da barra, trecho final em cor de rendimentos e rótulo final com o patrimônio e a idade-alvo
 - [x] Sem `reach` o componente fica como hoje (marcos em 25/50/75/100%)
-- [x] Os rótulos continuam sem sobreposição (grade 2×2 abaixo de `@xl`, posições absolutas acima; com folga, sempre a grade 2×2, ver T20)
+- [x] Os rótulos continuam sem sobreposição (grade 2×2 abaixo de `@xl`, posições absolutas acima; com `reach`, sempre a grade 2×2, ver T20)
 - [x] Evidência por inspeção de código (`file:line`)
 - [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
 
@@ -659,16 +659,16 @@ T18 → T19 → T20
 
 **Done when**:
 
-- [ ] Com `reach` os rótulos usam sempre a grade 2×2; sem `reach` o layout é o de antes (`@xl`)
-- [ ] `import { cn } from "cn"`
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
-- [ ] Evidência por inspeção de código (`file:line`)
+- [x] Com `reach` os rótulos usam sempre a grade 2×2; sem `reach` o layout é o de antes (`@xl`)
+- [x] `import { cn } from "cn"`
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] Evidência por inspeção de código (`file:line`)
 
 **Tests**: none
 **Gate**: build
 
 **Commit**: `fix(apice): keep the checkpoint labels in a grid when there is slack`
-**Status**: ⏳ Pending
+**Status**: ✅ Done
 
 ---
 
