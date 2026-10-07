@@ -205,7 +205,7 @@ export function TransactionForm({
                   href="/categorias"
                   className="font-medium underline underline-offset-4"
                 >
-                  Crie suas categorias primeiro
+                  Crie sua primeira categoria
                 </Link>
               </p>
             ) : (

@@ -91,7 +91,7 @@ test("without categories an expense points to creating categories first", async 
   await login(page);
   await page.goto("/?mes=2026-09");
 
-  const link = form(page).getByRole("link", { name: "Crie suas categorias primeiro" });
+  const link = form(page).getByRole("link", { name: "Crie sua primeira categoria" });
   await expect(link).toBeVisible();
   await link.click();
   await expect(page).toHaveURL("/categorias");
