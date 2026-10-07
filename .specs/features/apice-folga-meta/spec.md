@@ -159,12 +159,12 @@ Substitui as regras de aporte 0 com guardado abaixo do alvo de `apice-meta-alcan
 
 | Requirement ID | Story | Phase | Status |
 | -------------- | ----- | ----- | ------ |
-| APF-01 | P1: Aporte 0 como conquista (AC 1, 4) | - | Pending |
+| APF-01 | P1: Aporte 0 como conquista (AC 1, 4) | Phase 1 | Implementing |
 | APF-02 | P1: Aporte 0 como conquista (AC 2, 3) | Phase 1 | Implementing |
-| APF-03 | P1: Aporte 0 como conquista (AC 5) | - | Pending |
+| APF-03 | P1: Aporte 0 como conquista (AC 5) | Phase 1 | Implementing |
 | APF-04 | P1: Aporte 0 como conquista (AC 6) | - | Pending |
-| APF-05 | P1: Aporte 0 como conquista (AC 7) | - | Pending |
-| APF-06 | P1: Ápice já atingido (AC 1, 2) | - | Pending |
+| APF-05 | P1: Aporte 0 como conquista (AC 7) | Phase 1 | Implementing |
+| APF-06 | P1: Ápice já atingido (AC 1, 2) | Phase 1 | Implementing |
 | APF-07 | P1: Ápice já atingido (AC 3) | Phase 1 | Implementing |
 | APF-08 | P1: Ápice já atingido (AC 4, 5) | - | Pending |
 | APF-09 | P2: Bloco "Você tem folga" (AC 1, 7) | Phase 1 | Implementing |
@@ -176,7 +176,7 @@ Substitui as regras de aporte 0 com guardado abaixo do alvo de `apice-meta-alcan
 | APF-15 | P3: Barra e gráfico contam a folga (AC 1, 2, 5) | - | Pending |
 | APF-16 | P3: Barra e gráfico contam a folga (AC 3, 4) | Phase 1 | Implementing |
 
-**Coverage:** 16 total, 16 mapped to tasks, 0 unmapped; 8 Implementing, 8 Pending
+**Coverage:** 16 total, 16 mapped to tasks, 0 unmapped; 12 Implementing, 4 Pending
 
 ---
 

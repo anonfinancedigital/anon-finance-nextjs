@@ -273,18 +273,18 @@ T16 → T17
 
 **Done when**:
 
-- [ ] Referência: indicador "R$ 0" e frase "Para ter R$ 5 mil/mês aos 48 anos, você precisa de R$ 1,2 mi. Seu patrimônio atual, rendendo, chega lá aos 43, sem novos aportes."
-- [ ] Guardado igual ao alvo: indicador "Meta alcançada" e frase terminando em "Você já atingiu seu Ápice."; 1 centavo abaixo: "R$ 0"
-- [ ] Aporte maior que 0 e prazo encerrado: textos inalterados
-- [ ] Os testes de `freedom-copy.test.ts` sobre "Sem aporte necessário" e "Você já tem o necessário." são substituídos pelas expectativas desta spec; nenhum outro teste é alterado, removido ou pulado
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
-- [ ] Test count: os testes anteriores mais os novos passam (nenhum removido)
+- [x] Referência: indicador "R$ 0" e frase "Para ter R$ 5 mil/mês aos 48 anos, você precisa de R$ 1,2 mi. Seu patrimônio atual, rendendo, chega lá aos 43, sem novos aportes."
+- [x] Guardado igual ao alvo: indicador "Meta alcançada" e frase terminando em "Você já atingiu seu Ápice."; 1 centavo abaixo: "R$ 0"
+- [x] Aporte maior que 0 e prazo encerrado: textos inalterados
+- [x] Os testes de `freedom-copy.test.ts` sobre "Sem aporte necessário" e "Você já tem o necessário." são substituídos pelas expectativas desta spec; nenhum outro teste é alterado, removido ou pulado
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Test count: os testes anteriores mais os novos passam (nenhum removido)
 
 **Tests**: unit
 **Gate**: quick
 
 **Commit**: `feat(apice): celebrate a zero deposit and the reached Ápice in the copy`
-**Status**: Pending
+**Status**: ✅ Done
 
 ---
 

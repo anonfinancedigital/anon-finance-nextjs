@@ -44,25 +44,27 @@ export function incomeHeadline(summary: GoalSummary): string {
 
 /**
  * Frase-resumo: renda, idade e patrimônio necessário e, quando há aporte, quanto guardar e por quanto
- * tempo. Prazo encerrado (aporte nulo) omite a cláusula; guardado já no alvo a troca por "Você já tem
- * o necessário."; aporte 0 com guardado abaixo do alvo explica que o patrimônio atual chega lá rendendo.
+ * tempo. Prazo encerrado (aporte nulo) omite a cláusula; guardado já no alvo a troca por "Você já atingiu
+ * seu Ápice."; aporte 0 com guardado abaixo do alvo diz a idade em que o patrimônio atual chega lá.
  */
 export function summarySentence(summary: GoalSummary): string {
   const base = `Para ter ${incomeHeadline(summary)}, você precisa de ${formatCompactBRL(summary.targetCents)}.`;
+  if (summary.remainingCents === 0) return `${base} Você já atingiu seu Ápice.`;
   if (summary.monthlyCents === null) return base;
-  if (summary.monthlyCents === 0) {
-    return `${base} ${summary.remainingCents === 0 ? "Você já tem o necessário." : "Seu patrimônio atual, rendendo, chega lá sem novos aportes."}`;
+  if (summary.reach) {
+    return `${base} Seu patrimônio atual, rendendo, chega lá aos ${summary.reach.ageYears}, sem novos aportes.`;
   }
   return `${base} Isso exige guardar ${formatWholeBRL(summary.monthlyCents)}/mês por ${formatTerm(summary.months)}.`;
 }
 
 /**
- * Valor do indicador de aporte: "R$ 9.027/mês", "Prazo encerrado", "Sem aporte necessário" (o guardado
- * rendendo já alcança o alvo) ou "Meta alcançada" (o guardado já está no alvo).
+ * Valor do indicador de aporte: "R$ 9.027/mês", "Prazo encerrado", "R$ 0" (o guardado rendendo já
+ * alcança o alvo) ou "Meta alcançada" (o guardado já está no alvo).
  */
 export function depositText(summary: GoalSummary): string {
   if (summary.monthlyCents === null) return "Prazo encerrado";
-  if (summary.monthlyCents === 0) return summary.remainingCents === 0 ? PLAN_REACHED : NO_DEPOSIT_NEEDED;
+  if (summary.remainingCents === 0) return PLAN_REACHED;
+  if (summary.monthlyCents === 0) return formatWholeBRL(0);
   return `${formatWholeBRL(summary.monthlyCents)}/mês`;
 }
 
@@ -153,9 +155,6 @@ export function formatTerm(months: number): string {
 
 /** Linha do card de aporte quando o guardado já está na meta. */
 export const PLAN_REACHED = "Meta alcançada";
-
-/** Linha do card de aporte quando o guardado, rendendo, alcança o alvo no prazo sem novos aportes. */
-export const NO_DEPOSIT_NEEDED = "Sem aporte necessário";
 
 /**
  * Pílula do gráfico: rendimentos do último ponto (compacto) e a participação deles no patrimônio
