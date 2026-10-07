@@ -212,19 +212,19 @@ T16 → T17
 
 **Done when**:
 
-- [ ] Referência: `extraIncomeCents` 742.000 (R$ 7.420) e `earlierAge` 43
-- [ ] Renda extra de 4,9% sobre a desejada dá `extraIncomeCents` nulo; de 5% dá o valor
-- [ ] `earlierAge` nulo quando N é igual à idade-alvo
-- [ ] Sem `reach` (aporte maior que 0, já atingiu, prazo encerrado, guardado 0) as duas opções são nulas
-- [ ] Aplicar `extraIncomeCents` ao objetivo de referência dá `monthlyCents` 0 em `summarize`
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
-- [ ] Test count: os testes anteriores mais os novos passam (nenhum removido)
+- [x] Referência: `extraIncomeCents` 742.000 (R$ 7.420) e `earlierAge` 43
+- [x] Renda extra de 4,9% sobre a desejada dá `extraIncomeCents` nulo; de 5% dá o valor
+- [x] `earlierAge` nulo quando N é igual à idade-alvo
+- [x] Sem `reach` (aporte maior que 0, já atingiu, prazo encerrado, guardado 0) as duas opções são nulas
+- [x] Aplicar `extraIncomeCents` ao objetivo de referência dá `monthlyCents` 0 em `summarize`
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Test count: os testes anteriores mais os novos passam (nenhum removido)
 
 **Tests**: unit
 **Gate**: quick
 
 **Commit**: `feat(apice): derive the slack options from the summary`
-**Status**: Pending
+**Status**: ✅ Done
 
 ---
 
