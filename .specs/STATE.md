@@ -74,4 +74,12 @@
 - **Date**: 2026-10-06
 - **Status**: active
 
+### AD-010
+- **Decision**: A redefinição de senha não usa o fluxo nativo do Better Auth (`sendResetPassword`, `/reset-password`); fica em `password-resets` (repo) com token aleatório guardado só como hash SHA-256 na tabela `verification` (identificador `password-reset:<hash>`), e a troca de senha, o consumo do token e o fim das sessões acontecem em uma transação. Sem `sendResetPassword` configurado, o endpoint nativo de pedido fica desligado.
+- **Reason**: O fluxo nativo não confere `status`, não invalida links anteriores e consome o token, troca a senha e apaga sessões em passos separados; a regra do AD-009 e o "tudo ou nada" do projeto exigem controle desses passos.
+- **Trade-off**: Reimplementa um fluxo que a biblioteca já oferece; futuras mudanças do Better Auth nesse fluxo não chegam sozinhas.
+- **Scope**: `password-resets` (repo), ações de redefinição, `auth.ts` (não configurar `sendResetPassword`)
+- **Date**: 2026-10-07
+- **Status**: active
+
 ## Handoff
