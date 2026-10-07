@@ -303,20 +303,20 @@ T16 → T17
 
 **Done when**:
 
-- [ ] `reachLine` na referência: "…aos 43 anos, 5 anos antes do previsto."; com D igual a 1: "1 ano antes do previsto"; com N igual à idade-alvo: "no prazo previsto"
-- [ ] `incomeNowLine` com R$ 1,3 mi e 5%: "Seu patrimônio já gera R$ 5,4 mil/mês"
-- [ ] `slackIntro`: "Sem novos aportes, aos 48 anos seu patrimônio chega a R$ 1,8 mi."
-- [ ] Opções: "R$ 7,4 mil/mês aos 48 anos" com botão "Usar R$ 7,4 mil" e "R$ 5 mil/mês aos 43 anos" com botão "Antecipar para 43"
-- [ ] `robustnessText`: "Mesmo com 6% real a.a., você chega à meta. Isso considera que você não retira nada do patrimônio até lá." e "Com 6% real a.a., seria preciso aportar R$ {A}/mês." com A em reais inteiros
-- [ ] Os textos novos passam no teste de linguagem proibida existente (`FORBIDDEN` em `freedom-copy.test.ts`)
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
-- [ ] Test count: os testes anteriores mais os novos passam (nenhum removido)
+- [x] `reachLine` na referência: "…aos 43 anos, 5 anos antes do previsto."; com D igual a 1: "1 ano antes do previsto"; com N igual à idade-alvo: "no prazo previsto"
+- [x] `incomeNowLine` com R$ 1,3 mi e 5%: "Seu patrimônio já gera R$ 5,4 mil/mês"
+- [x] `slackIntro`: "Sem novos aportes, aos 48 anos seu patrimônio chega a R$ 1,8 mi."
+- [x] Opções: "R$ 7,4 mil/mês aos 48 anos" com botão "Usar R$ 7,4 mil" e "R$ 5 mil/mês aos 43 anos" com botão "Antecipar para 43"
+- [x] `robustnessText`: "Mesmo com 6% real a.a., você chega à meta. Isso considera que você não retira nada do patrimônio até lá." e "Com 6% real a.a., seria preciso aportar R$ {A}/mês." com A em reais inteiros
+- [x] Os textos novos passam no teste de linguagem proibida existente (`FORBIDDEN` em `freedom-copy.test.ts`)
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Test count: os testes anteriores mais os novos passam (nenhum removido)
 
 **Tests**: unit
 **Gate**: quick
 
 **Commit**: `feat(apice): add the reach, slack and robustness copy`
-**Status**: Pending
+**Status**: ✅ Done
 
 ---
 

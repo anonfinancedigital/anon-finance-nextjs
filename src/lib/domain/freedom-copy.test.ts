@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { summarize, type Checkpoint } from "./freedom";
 import { formatCompactBRL } from "./money";
+import { robustnessCheck, slackOptions } from "./slack";
 import {
   ADJUST_LABEL,
   assumptionChips,
@@ -9,16 +10,25 @@ import {
   depositDelta,
   depositText,
   DRAWER_INTRO,
+  EARLIER_TITLE,
+  earlierOption,
+  EXTRA_INCOME_TITLE,
+  extraIncomeOption,
   formatRate,
   formatTerm,
   HOW_DISCLAIMER,
   HOW_TITLE,
   howWeCalculate,
   incomeHeadline,
+  incomeNowLine,
   interestBadge,
   RATE_HINT,
   RATE_TITLE,
+  reachLine,
+  robustnessText,
   scenarioName,
+  SLACK_TITLE,
+  slackIntro,
   SUBTITLE,
   summarySentence,
   TARGET_LABEL,
@@ -41,6 +51,13 @@ const acceptance = summarize(
   now,
 );
 
+// Cenário de referência da folga: renda R$ 5.000,00, guardado R$ 565.000,00, 8% real, retirada 5%,
+// ápice aos 48 (alvo R$ 1,2 mi, alcançado aos 43 sem aportes).
+const slackGoal = { monthlyIncomeCents: 500_000, savedCents: 56_500_000, birthDate: "1993-05-10", retirementAge: 48, annualRateBp: 800, withdrawalRateBp: 500 };
+const slackReference = summarize(slackGoal, now);
+const apexReached = summarize({ ...slackGoal, savedCents: 130_000_000 }, now);
+const robustnessShort = robustnessCheck(summarize({ ...slackGoal, savedCents: 40_000_000 }, now));
+
 describe("rótulos do seletor", () => {
   it("título e legenda da rentabilidade real", () => {
     expect(RATE_TITLE).toBe("Rentabilidade real esperada");
@@ -62,6 +79,16 @@ describe("sem promessa de renda ou retorno", () => {
     incomeHeadline(acceptance),
     summarySentence(acceptance),
     depositText(acceptance),
+    reachLine(slackReference)!,
+    incomeNowLine(apexReached),
+    slackIntro(slackReference)!,
+    SLACK_TITLE,
+    EXTRA_INCOME_TITLE,
+    EARLIER_TITLE,
+    ...Object.values(extraIncomeOption(slackReference, 742_000)),
+    ...Object.values(earlierOption(slackReference, 43)),
+    robustnessText({ reaches: true }),
+    robustnessText(robustnessShort!),
   ];
 
   it.each(FORBIDDEN)("nenhum texto contém \"%s\"", (root) => {
@@ -232,6 +259,82 @@ describe("depositText", () => {
       now,
     );
     expect(depositText(exact)).toBe("Meta alcançada");
+  });
+});
+
+describe("reachLine", () => {
+  it("referência: atinge a meta aos 43 anos, 5 anos antes do previsto", () => {
+    expect(normalize(reachLine(slackReference)!)).toBe(
+      "Seu patrimônio atual já te leva lá: você atinge a meta aos 43 anos, 5 anos antes do previsto.",
+    );
+  });
+
+  it("um ano antes (R$ 430.000,00 guardados, meta aos 47): \"1 ano antes do previsto\"", () => {
+    const oneYear = summarize({ ...slackGoal, savedCents: 43_000_000 }, now);
+    expect(normalize(reachLine(oneYear)!)).toBe(
+      "Seu patrimônio atual já te leva lá: você atinge a meta aos 47 anos, 1 ano antes do previsto.",
+    );
+  });
+
+  it("meta na idade-alvo (R$ 400.000,00 guardados): \"no prazo previsto\"", () => {
+    const onTime = summarize({ ...slackGoal, savedCents: 40_000_000 }, now);
+    expect(normalize(reachLine(onTime)!)).toBe(
+      "Seu patrimônio atual já te leva lá: você atinge a meta aos 48 anos, no prazo previsto.",
+    );
+  });
+
+  it("sem plano de chegada não há linha", () => {
+    expect(reachLine(apexReached)).toBeNull();
+    expect(reachLine(acceptance)).toBeNull();
+  });
+});
+
+describe("incomeNowLine", () => {
+  it("R$ 1,3 mi guardados com retirada de 5%: \"Seu patrimônio já gera R$ 5,4 mil/mês\"", () => {
+    expect(normalize(incomeNowLine(apexReached))).toBe("Seu patrimônio já gera R$ 5,4 mil/mês");
+  });
+});
+
+describe("bloco de folga", () => {
+  it("título e nomes das opções", () => {
+    expect(SLACK_TITLE).toBe("Você tem folga");
+    expect(EXTRA_INCOME_TITLE).toBe("Ter mais renda");
+    expect(EARLIER_TITLE).toBe("Parar antes");
+  });
+
+  it("referência: \"Sem novos aportes, aos 48 anos seu patrimônio chega a R$ 1,8 mi.\"", () => {
+    expect(normalize(slackIntro(slackReference)!)).toBe("Sem novos aportes, aos 48 anos seu patrimônio chega a R$ 1,8 mi.");
+  });
+
+  it("sem plano de chegada não há introdução", () => {
+    expect(slackIntro(apexReached)).toBeNull();
+  });
+
+  it("referência: \"R$ 7,4 mil/mês aos 48 anos\" com o botão \"Usar R$ 7,4 mil\"", () => {
+    const { extraIncomeCents } = slackOptions(slackReference);
+    const option = extraIncomeOption(slackReference, extraIncomeCents!);
+    expect(normalize(option.result)).toBe("R$ 7,4 mil/mês aos 48 anos");
+    expect(normalize(option.button)).toBe("Usar R$ 7,4 mil");
+  });
+
+  it("referência: \"R$ 5 mil/mês aos 43 anos\" com o botão \"Antecipar para 43\"", () => {
+    const { earlierAge } = slackOptions(slackReference);
+    const option = earlierOption(slackReference, earlierAge!);
+    expect(normalize(option.result)).toBe("R$ 5 mil/mês aos 43 anos");
+    expect(option.button).toBe("Antecipar para 43");
+  });
+});
+
+describe("robustnessText", () => {
+  it("alcança a meta a 6%: frase da spec", () => {
+    expect(robustnessText({ reaches: true })).toBe(
+      "Mesmo com 6% real a.a., você chega à meta. Isso considera que você não retira nada do patrimônio até lá.",
+    );
+  });
+
+  it("não alcança a 6% (R$ 400.000,00 guardados): aporte em reais inteiros (86.467 centavos → R$ 865)", () => {
+    expect(robustnessShort).toEqual({ reaches: false, monthlyCents: 86_467 });
+    expect(normalize(robustnessText(robustnessShort!))).toBe("Com 6% real a.a., seria preciso aportar R$ 865/mês.");
   });
 });
 

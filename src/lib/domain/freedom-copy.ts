@@ -1,6 +1,7 @@
 import { presetFor, type Checkpoint, type GoalSummary } from "./freedom";
 import { formatBRL, formatCompactBRL, formatWholeBRL } from "./money";
 import { formatShare } from "./percent";
+import type { RobustnessCheck } from "./slack";
 
 /** Subtítulo da página, sob o título "Ápice". */
 export const SUBTITLE = "Quanto você precisa juntar para viver de renda — e quanto guardar por mês para chegar lá.";
@@ -155,6 +156,57 @@ export function formatTerm(months: number): string {
 
 /** Linha do card de aporte quando o guardado já está na meta. */
 export const PLAN_REACHED = "Meta alcançada";
+
+/** Linha do card de aporte com plano de chegada: idade da meta e quanto antes do previsto; `null` sem plano. */
+export function reachLine(summary: GoalSummary): string | null {
+  if (!summary.reach) return null;
+  const { ageYears } = summary.reach;
+  const early = summary.retirementAge - ageYears;
+  const when = early === 0 ? "no prazo previsto" : `${plural(early, "ano", "anos")} antes do previsto`;
+  return `Seu patrimônio atual já te leva lá: você atinge a meta aos ${ageYears} anos, ${when}.`;
+}
+
+/** Linha do card de aporte quando o guardado já está no alvo: a renda que ele gera hoje. */
+export function incomeNowLine(summary: GoalSummary): string {
+  return `Seu patrimônio já gera ${formatCompactBRL(summary.incomeNowCents)}/mês`;
+}
+
+/** Título do bloco de folga. */
+export const SLACK_TITLE = "Você tem folga";
+
+/** Nome da opção de renda extra. */
+export const EXTRA_INCOME_TITLE = "Ter mais renda";
+
+/** Nome da opção de antecipar a idade. */
+export const EARLIER_TITLE = "Parar antes";
+
+/** Primeira linha do bloco de folga: o patrimônio no prazo sem aportes; `null` sem plano de chegada. */
+export function slackIntro(summary: GoalSummary): string | null {
+  if (!summary.reach) return null;
+  return `Sem novos aportes, aos ${summary.retirementAge} anos seu patrimônio chega a ${formatCompactBRL(summary.reach.finalCents)}.`;
+}
+
+/** Opção "Ter mais renda": resultado e rótulo do botão. */
+export function extraIncomeOption(summary: GoalSummary, extraIncomeCents: number): { result: string; button: string } {
+  const income = formatCompactBRL(extraIncomeCents);
+  return { result: `${income}/mês aos ${summary.retirementAge} anos`, button: `Usar ${income}` };
+}
+
+/** Opção "Parar antes": resultado e rótulo do botão. */
+export function earlierOption(summary: GoalSummary, earlierAge: number): { result: string; button: string } {
+  return {
+    result: `${formatCompactBRL(summary.monthlyIncomeCents)}/mês aos ${earlierAge} anos`,
+    button: `Antecipar para ${earlierAge}`,
+  };
+}
+
+/** Linha do teste de robustez a 6% real a.a. */
+export function robustnessText(check: RobustnessCheck): string {
+  if (check.reaches) {
+    return "Mesmo com 6% real a.a., você chega à meta. Isso considera que você não retira nada do patrimônio até lá.";
+  }
+  return `Com 6% real a.a., seria preciso aportar ${formatWholeBRL(check.monthlyCents)}/mês.`;
+}
 
 /**
  * Pílula do gráfico: rendimentos do último ponto (compacto) e a participação deles no patrimônio
