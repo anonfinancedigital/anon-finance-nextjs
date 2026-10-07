@@ -396,6 +396,15 @@ async function monthTotals(userId: string, range: MonthRange): Promise<MonthTota
   return totals;
 }
 
+/** Stored transactions of the user in any month (not occurrences), to tell first access from an empty month. */
+async function countAll(userId: string): Promise<number> {
+  const [row] = await db
+    .select({ total: sql<number>`count(*)::int` })
+    .from(transaction)
+    .where(eq(transaction.userId, userId));
+  return row.total;
+}
+
 export const transactionsRepo = {
   create,
   update,
@@ -405,4 +414,5 @@ export const transactionsRepo = {
   deleteFrom,
   listByMonth,
   monthTotals,
+  countAll,
 };

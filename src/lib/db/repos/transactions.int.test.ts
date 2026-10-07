@@ -1116,3 +1116,31 @@ describe("transactionsRepo.findStored series start", () => {
     });
   });
 });
+
+describe("transactionsRepo.countAll", () => {
+  it("is 0 for a user without transactions", async () => {
+    expect(await transactionsRepo.countAll(userId)).toBe(0);
+  });
+
+  it("counts stored transactions across different months", async () => {
+    for (const date of ["2026-09-10", "2026-10-05", "2026-10-20"]) {
+      await transactionsRepo.create(userId, expense(date));
+    }
+    expect(await transactionsRepo.countAll(userId)).toBe(3);
+  });
+
+  it("ignores other users' transactions", async () => {
+    await transactionsRepo.create(userId, expense("2026-10-05"));
+    const otherId = await insertTestUser();
+    await categoriesRepo.replaceSet(otherId, [{ name: "Outra", percentMicro: 100000000, color: 1 }]);
+    const [otherCategory] = await categoriesRepo.list(otherId);
+    await transactionsRepo.create(otherId, {
+      ...expense("2026-10-06"),
+      categoryId: otherCategory.id,
+    });
+    await transactionsRepo.create(otherId, { ...expense("2026-11-06"), categoryId: otherCategory.id });
+
+    expect(await transactionsRepo.countAll(userId)).toBe(1);
+    expect(await transactionsRepo.countAll(otherId)).toBe(2);
+  });
+});

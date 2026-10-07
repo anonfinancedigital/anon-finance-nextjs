@@ -126,6 +126,8 @@ T8 → T9 → T10 → T11 → T12
 
 ### T3: Adicionar `transactionsRepo.countAll`
 
+**Status**: ✅ Done
+
 **What**: Contagem de transações armazenadas do usuário, em qualquer mês.
 **Where**: `src/lib/db/repos/transactions.ts`
 **Depends on**: T2
@@ -139,10 +141,10 @@ T8 → T9 → T10 → T11 → T12
 
 **Done when**:
 
-- [ ] Usuário sem transações → `0`; com 3 transações em 2 meses diferentes → `3`
-- [ ] Transações de outro usuário não entram na contagem
-- [ ] Teste em `transactions.int.test.ts`; gate full passa (banco `*_test` privado): `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
-- [ ] Contagem de testes não diminui
+- [x] Usuário sem transações → `0`; com 3 transações em 2 meses diferentes → `3`
+- [x] Transações de outro usuário não entram na contagem
+- [x] Teste em `transactions.int.test.ts`; gate full passa (banco `*_test` privado): `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
+- [x] Contagem de testes não diminui
 
 **Tests**: integration
 **Gate**: full
