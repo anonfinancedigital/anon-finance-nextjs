@@ -335,17 +335,17 @@ T16 → T17
 
 **Done when**:
 
-- [ ] Com `reach` o card mostra "R$ 0" com check e `reachLine`, sem `em {prazo}`
-- [ ] Com guardado no alvo mostra "Meta alcançada" e `incomeNowLine`, sem `em {prazo}`
-- [ ] Aporte maior que 0 mantém o valor e o prazo; o ícone é `aria-hidden`
-- [ ] Evidência por inspeção de código (`file:line`)
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] Com `reach` o card mostra "R$ 0" com check e `reachLine`, sem `em {prazo}`
+- [x] Com guardado no alvo mostra "Meta alcançada" e `incomeNowLine`, sem `em {prazo}`
+- [x] Aporte maior que 0 mantém o valor e o prazo; o ícone é `aria-hidden`
+- [x] Evidência por inspeção de código (`file:line`)
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
 
 **Tests**: none
 **Gate**: build
 
 **Commit**: `feat(apice): show the zero deposit as an achievement in the hero`
-**Status**: Pending
+**Status**: ✅ Done
 
 ---
 

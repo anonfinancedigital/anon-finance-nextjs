@@ -1,4 +1,4 @@
-import { Info } from "lucide-react";
+import { Check, Info } from "lucide-react";
 import { AssumptionChips } from "@/components/assumption-chips";
 import { GoalCheckpoints } from "@/components/goal-checkpoints";
 import {
@@ -15,10 +15,13 @@ import {
   HOW_TITLE,
   howWeCalculate,
   incomeHeadline,
+  incomeNowLine,
+  reachLine,
   summarySentence,
   TARGET_LABEL,
 } from "@/lib/domain/freedom-copy";
 import { formatCompactBRL } from "@/lib/domain/money";
+import { cn } from "@/lib/utils";
 
 // Soft violet glow from the top corner and a progress-colored one from the bottom, both from theme tokens.
 const glow = {
@@ -70,13 +73,25 @@ export function GoalHero({
           </div>
           <div className="space-y-1 rounded-xl border border-border bg-subtle p-4">
             <p className="text-sm text-muted-foreground">{DEPOSIT_LABEL}</p>
-            <p className="font-display text-2xl font-bold tracking-tight">
+            <p
+              className={cn(
+                "flex items-center gap-2 font-display text-2xl font-bold tracking-tight",
+                summary.reach && "text-income",
+              )}
+            >
               {depositText(summary)}
+              {summary.reach && <Check aria-hidden className="size-6 shrink-0" strokeWidth={3} />}
             </p>
-            {summary.months > 0 && summary.remainingCents > 0 && (
-              <p className="text-sm text-muted-foreground">
-                em {formatTerm(summary.months)}
-              </p>
+            {summary.reach ? (
+              <p className="text-sm text-muted-foreground">{reachLine(summary)}</p>
+            ) : summary.remainingCents === 0 ? (
+              <p className="text-sm text-muted-foreground">{incomeNowLine(summary)}</p>
+            ) : (
+              summary.months > 0 && (
+                <p className="text-sm text-muted-foreground">
+                  em {formatTerm(summary.months)}
+                </p>
+              )
             )}
           </div>
         </div>
