@@ -153,12 +153,14 @@ T10 → T11
 
 **Done when**:
 
-- [ ] Props `{ sumMicro: number; incomeCents: number | null }`; renderiza ícone `aria-hidden` seguido do texto exato de `sumWarning(sumMicro, incomeCents)`
-- [ ] Texto e ícone em `text-destructive`
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
+- [x] Props `{ sumMicro: number; incomeCents: number | null }`; renderiza ícone `aria-hidden` seguido do texto exato de `sumWarning(sumMicro, incomeCents)`
+- [x] Texto e ícone em `text-destructive`
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
 
 **Tests**: none
 **Gate**: build
+
+**Status**: ✅ Complete
 
 **Commit**: `feat(categorias): add sum warning with icon`
 
