@@ -272,6 +272,8 @@ T8 → T9 → T10 → T11 → T12
 
 ### T8: Aceitar linha explicativa no `ContentCard`
 
+**Status**: ✅ Done
+
 **What**: Prop opcional `description` renderizada sob o título.
 **Where**: `src/components/content-card.tsx`
 **Depends on**: None
@@ -285,9 +287,9 @@ T8 → T9 → T10 → T11 → T12
 
 **Done when**:
 
-- [ ] Sem `description`, a marcação atual não muda
-- [ ] Com `description`, aparece como `<p>` abaixo do `<h2>`
-- [ ] Gate build passa: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
+- [x] Sem `description`, a marcação atual não muda
+- [x] Com `description`, aparece como `<p>` abaixo do `<h2>`
+- [x] Gate build passa: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
 
 **Tests**: none
 **Gate**: build
