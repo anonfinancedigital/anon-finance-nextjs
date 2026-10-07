@@ -1,4 +1,4 @@
-import type { GoalSummary } from "./freedom";
+import { requiredMonthlyCents, type GoalSummary } from "./freedom";
 
 /** Opções da folga; cada uma é `null` quando não se aplica. */
 export type SlackOptions = {
@@ -20,4 +20,24 @@ export function slackOptions(summary: GoalSummary): SlackOptions {
     extraIncomeCents: extraIncomeCents * 100 >= summary.monthlyIncomeCents * 105 ? extraIncomeCents : null,
     earlierAge: reach.ageYears < summary.retirementAge ? reach.ageYears : null,
   };
+}
+
+/** Rentabilidade real do teste de robustez, em pontos-base. */
+export const ROBUSTNESS_RATE_BP = 600;
+
+export type RobustnessCheck = { reaches: true } | { reaches: false; monthlyCents: number };
+
+/**
+ * Refaz a conta a 6% real a.a. mantendo prazo, alvo e retirada do objetivo. `null` sem plano de chegada
+ * ou quando a rentabilidade do objetivo já é 6% ou menos.
+ */
+export function robustnessCheck(summary: GoalSummary): RobustnessCheck | null {
+  if (!summary.reach || summary.annualRateBp <= ROBUSTNESS_RATE_BP) return null;
+  const monthlyCents = requiredMonthlyCents({
+    targetCents: summary.targetCents,
+    savedCents: summary.savedCents,
+    months: summary.months,
+    annualRateBp: ROBUSTNESS_RATE_BP,
+  });
+  return monthlyCents === 0 ? { reaches: true } : { reaches: false, monthlyCents };
 }

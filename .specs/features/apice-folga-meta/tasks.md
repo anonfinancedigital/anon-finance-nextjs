@@ -243,18 +243,18 @@ T16 → T17
 
 **Done when**:
 
-- [ ] Referência (R$ 565 mil, 8%): `{ reaches: true }` (R$ 565 mil a 6% chegam a R$ 1,35 mi)
-- [ ] Guardado R$ 400 mil com aporte 0 a 8% e alvo R$ 1,2 mi: `{ reaches: false, monthlyCents }` igual a `requiredMonthlyCents` a 6%
-- [ ] Rentabilidade do objetivo de 6% (ou 5,5%) dá `null`
-- [ ] Sem `reach` dá `null`
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
-- [ ] Test count: os testes anteriores mais os novos passam (nenhum removido)
+- [x] Referência (R$ 565 mil, 8%): `{ reaches: true }` (R$ 565 mil a 6% chegam a R$ 1,35 mi)
+- [x] Guardado R$ 400 mil com aporte 0 a 8% e alvo R$ 1,2 mi: `{ reaches: false, monthlyCents }` igual a `requiredMonthlyCents` a 6%
+- [x] Rentabilidade do objetivo de 6% (ou 5,5%) dá `null`
+- [x] Sem `reach` dá `null`
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Test count: os testes anteriores mais os novos passam (nenhum removido)
 
 **Tests**: unit
 **Gate**: quick
 
 **Commit**: `feat(apice): check the conclusion against a 6% real return`
-**Status**: Pending
+**Status**: ✅ Done
 
 ---
 

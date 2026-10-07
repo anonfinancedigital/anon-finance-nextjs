@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { summarize, type Goal } from "./freedom";
-import { slackOptions } from "./slack";
+import { requiredMonthlyCents, summarize, type Goal } from "./freedom";
+import { robustnessCheck, slackOptions } from "./slack";
 
 // Cenário de referência: renda R$ 5.000,00, 8% real, retirada 5% (alvo R$ 1.200.000,00), R$ 565.000,00
 // guardados, nascido em 1993-05-10, ápice aos 48; em 2026-06 o prazo é de 179 meses e a meta chega aos 43.
@@ -48,5 +48,34 @@ describe("slackOptions", () => {
   it("aplicar a renda extra ao objetivo de referência mantém o aporte necessário em 0", () => {
     const { extraIncomeCents } = optionsOf();
     expect(summarize({ ...reference, monthlyIncomeCents: extraIncomeCents! }, now).monthlyCents).toBe(0);
+  });
+});
+
+describe("robustnessCheck", () => {
+  it("referência: a 6% real o guardado ainda alcança o alvo sem aportes", () => {
+    expect(robustnessCheck(summarize(reference, now))).toEqual({ reaches: true });
+  });
+
+  it("guardado R$ 400.000,00: a 6% real seria preciso o aporte necessário a 6% (86.467 centavos)", () => {
+    const summary = summarize({ ...reference, savedCents: 40_000_000 }, now);
+    expect(summary.monthlyCents).toBe(0);
+    const expected = requiredMonthlyCents({ targetCents: 120_000_000, savedCents: 40_000_000, months: 179, annualRateBp: 600 });
+    expect(expected).toBe(86_467);
+    expect(robustnessCheck(summary)).toEqual({ reaches: false, monthlyCents: expected });
+  });
+
+  it.each([600, 550])("rentabilidade do objetivo de %d pb não tem teste de robustez", (annualRateBp) => {
+    const summary = summarize({ ...reference, annualRateBp }, now);
+    expect(summary.reach).not.toBeNull();
+    expect(robustnessCheck(summary)).toBeNull();
+  });
+
+  it.each([
+    ["aporte maior que 0", { savedCents: 10_000_000 }],
+    ["guardado no alvo", { savedCents: 120_000_000 }],
+    ["guardado R$ 0", { savedCents: 0 }],
+    ["prazo encerrado", { birthDate: "1978-06-20" }],
+  ] as const)("sem plano de chegada (%s) não há teste de robustez", (_, override) => {
+    expect(robustnessCheck(summarize({ ...reference, ...override }, now))).toBeNull();
   });
 });
