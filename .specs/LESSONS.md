@@ -192,6 +192,18 @@ Seen once or not yet corroborated. Tracked, not trusted.
 - evidence: P1 Definir a nova senha AC 8 / reset-form.tsx (ui/forms)
 - last seen: 2026-10-07T09:52:50Z
 
+### L-031 - Test visibility rules above the threshold with the minimum row count the UI can actually reach, not only a degenerate input
+- signal: `surviving_mutant` · recurrence: 1 feature(s) · scope: `domain` · harmful: 0
+- features: categorias-estado-vazio
+- evidence: M9 allocation-view.ts complete >= TOTAL_MICRO (domain)
+- last seen: 2026-10-07T13:00:43Z
+
+### L-032 - State the UI mode in which a conditional message appears when a component has more than one display mode
+- signal: `spec_precision_gap` · recurrence: 1 feature(s) · scope: `ui` · harmful: 0
+- features: categorias-estado-vazio
+- evidence: ESV-07 AC2 (ui)
+- last seen: 2026-10-07T13:00:44Z
+
 ## Quarantined (failed when applied - ignore)
 
 A confirmed lesson that recurred alongside failure. Kept for the maintainer to review.
