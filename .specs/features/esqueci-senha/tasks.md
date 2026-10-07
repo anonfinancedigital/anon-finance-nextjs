@@ -239,6 +239,8 @@ T6 → T17
 
 ### T6: Emitir e validar tokens no repositório
 
+**Status**: ✅ Complete
+
 **What**: `passwordResetsRepo.issue` (só conta aprovada; apaga anteriores do usuário e expirados; grava hash) e `isValid`.
 **Where**: `src/lib/db/repos/password-resets.ts`
 **Depends on**: T3
@@ -252,15 +254,15 @@ T6 → T17
 
 **Done when**:
 
-- [ ] `issue` de conta `approved` devolve `{ token, email }` e grava uma linha `password-reset:<sha256>` com `value = userId` e `expiresAt` 30 minutos à frente; o token puro não está no banco
-- [ ] `issue` com e-mail em maiúsculas e com espaços acha a conta
-- [ ] `issue` devolve `null` e não grava para e-mail inexistente e para cada status `pending`, `rejected`, `revoked`
-- [ ] Segundo `issue` do mesmo usuário apaga o token anterior (`isValid` do antigo vira `false`); o de outro usuário permanece
-- [ ] `issue` apaga tokens expirados de qualquer usuário
-- [ ] `isValid` é `true` para token vigente de conta aprovada; `false` para desconhecido, expirado (relógio avançado), dono não aprovado, dono excluído e string vazia
-- [ ] `isValid` não consome: chamar duas vezes dá `true` nas duas
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
-- [ ] Test count: ≥12 tests pass (no silent deletions)
+- [x] `issue` de conta `approved` devolve `{ token, email }` e grava uma linha `password-reset:<sha256>` com `value = userId` e `expiresAt` 30 minutos à frente; o token puro não está no banco
+- [x] `issue` com e-mail em maiúsculas e com espaços acha a conta
+- [x] `issue` devolve `null` e não grava para e-mail inexistente e para cada status `pending`, `rejected`, `revoked`
+- [x] Segundo `issue` do mesmo usuário apaga o token anterior (`isValid` do antigo vira `false`); o de outro usuário permanece
+- [x] `issue` apaga tokens expirados de qualquer usuário
+- [x] `isValid` é `true` para token vigente de conta aprovada; `false` para desconhecido, expirado (relógio avançado), dono não aprovado, dono excluído e string vazia
+- [x] `isValid` não consome: chamar duas vezes dá `true` nas duas
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
+- [x] Test count: ≥12 tests pass (no silent deletions)
 
 **Tests**: integration
 **Gate**: full
