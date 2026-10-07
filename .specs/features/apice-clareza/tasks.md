@@ -1087,16 +1087,16 @@ Gaps do `validation.md` (Verifier reprovou): APICE-14.1 (Major), APICE-19.4 (Maj
 
 **Done when**:
 
-- [ ] `npm run lint` sem avisos
-- [ ] `spec.md` descreve as quatro regras
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
-- [ ] Test count: todos os testes existentes passam
+- [x] `npm run lint` sem avisos
+- [x] `spec.md` descreve as quatro regras
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Test count: todos os testes existentes passam
 
 **Tests**: none (limpeza e documentação)
 **Gate**: quick
 
 **Commit**: `docs(apice): record pending spec rules and drop an unused import`
-**Status**: ⏳ Pending
+**Status**: ✅ Done
 
 ---
 

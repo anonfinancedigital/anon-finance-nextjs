@@ -16,7 +16,6 @@ import {
   howWeCalculate,
   incomeHeadline,
   interestBadge,
-  PLAN_REACHED,
   RATE_HINT,
   RATE_TITLE,
   scenarioName,
