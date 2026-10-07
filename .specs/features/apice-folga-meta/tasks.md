@@ -364,17 +364,17 @@ T16 → T17
 
 **Done when**:
 
-- [ ] Com as duas opções renderiza as duas linhas e os botões "Usar R$ 7,4 mil" e "Antecipar para 43"
-- [ ] Com só uma opção renderiza só ela; sem opção devolve `null`
-- [ ] Os botões são `button` nativos, com o texto do rótulo como nome acessível
-- [ ] Evidência por inspeção de código (`file:line`)
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] Com as duas opções renderiza as duas linhas e os botões "Usar R$ 7,4 mil" e "Antecipar para 43"
+- [x] Com só uma opção renderiza só ela; sem opção devolve `null`
+- [x] Os botões são `button` nativos, com o texto do rótulo como nome acessível
+- [x] Evidência por inspeção de código (`file:line`)
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
 
 **Tests**: none
 **Gate**: build
 
 **Commit**: `feat(apice): add the slack block with the two apply options`
-**Status**: Pending
+**Status**: ✅ Done
 
 ---
 
