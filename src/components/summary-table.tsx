@@ -17,8 +17,8 @@ import { colorVar } from "@/lib/domain/color";
 import { formatBRL } from "@/lib/domain/money";
 import { formatPercentCompact, formatShare } from "@/lib/domain/percent";
 
-/** Per category: percentage, target, spent, remaining and how much of the target was used. */
-export function SummaryTable({ rows }: { rows: CategorySummary[] }) {
+/** Per category: percentage, target, spent, remaining and how much of the target was used. `hideCta` drops the empty-state button when another card already points to the same step. */
+export function SummaryTable({ rows, hideCta = false }: { rows: CategorySummary[]; hideCta?: boolean }) {
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
 
   function toggle(id: string) {
@@ -30,12 +30,13 @@ export function SummaryTable({ rows }: { rows: CategorySummary[] }) {
   }
 
   if (rows.length === 0) {
+    if (hideCta) return null;
     return (
-      <p className="text-sm">
-        <Link href="/categorias" className="font-medium underline underline-offset-4">
-          Crie suas categorias primeiro
-        </Link>
-      </p>
+      <div className="px-6 pb-6">
+        <Button asChild variant="outline">
+          <Link href="/categorias">Crie sua primeira categoria</Link>
+        </Button>
+      </div>
     );
   }
 
