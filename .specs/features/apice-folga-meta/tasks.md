@@ -123,17 +123,17 @@ T16 → T17
 
 **Done when**:
 
-- [ ] Cenário de referência (nascido em 1993-05-10, agora 2026-06, ápice 48, `reachMonths` 118) dá 43
-- [ ] `reachMonths` igual ao prazo total dá a idade-alvo
-- [ ] Nunca devolve idade menor que a atual + 1 nem maior que a idade-alvo
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
-- [ ] Test count: os testes anteriores mais os novos passam (nenhum removido)
+- [x] Cenário de referência (nascido em 1993-05-10, agora 2026-06, ápice 48, `reachMonths` 118) dá 43
+- [x] `reachMonths` igual ao prazo total dá a idade-alvo
+- [x] Nunca devolve idade menor que a atual + 1 nem maior que a idade-alvo
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Test count: os testes anteriores mais os novos passam (nenhum removido)
 
 **Tests**: unit
 **Gate**: quick
 
 **Commit**: `feat(apice): compute the age at which the target is reached`
-**Status**: Pending
+**Status**: ✅ Done
 
 ---
 

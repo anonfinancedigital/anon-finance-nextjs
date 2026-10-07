@@ -136,6 +136,25 @@ export function monthsToTarget(input: {
 }
 
 /**
+ * Idade da meta: a menor idade entre `currentAge + 1` e `retirementAge` cujo prazo até o mês do
+ * aniversário cobre `reachMonths`; a idade-alvo quando nenhuma menor cobre.
+ */
+export function retirementAgeReaching(input: {
+  birthDate: string;
+  retirementAge: number;
+  currentAge: number;
+  reachMonths: number;
+  now: Date;
+}): number {
+  const { birthDate, retirementAge, currentAge, reachMonths, now } = input;
+  const month = currentMonth(now);
+  for (let age = currentAge + 1; age < retirementAge; age++) {
+    if (monthsUntilRetirement(birthDate, age, month) >= reachMonths) return age;
+  }
+  return retirementAge;
+}
+
+/**
  * Evolução do patrimônio pagando o aporte necessário: um ponto por ano completo a partir de hoje
  * (meses 0, 12, 24 …) e um ponto final no prazo. Vazia sem prazo ou sem aporte definido.
  */

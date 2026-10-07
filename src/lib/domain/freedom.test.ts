@@ -16,6 +16,7 @@ import {
   progressBp,
   projectedCents,
   requiredMonthlyCents,
+  retirementAgeReaching,
   summarize,
   targetCents,
 } from "./freedom";
@@ -333,6 +334,34 @@ describe("monthsToTarget", () => {
 
   it("guardado 1 centavo abaixo do alvo dá 1: o rendimento do primeiro mês cobre o centavo", () => {
     expect(monthsToTarget({ ...reference, savedCents: 119_999_999 })).toBe(1);
+  });
+});
+
+describe("retirementAgeReaching", () => {
+  // Nascido em 1993-05-10, agora 2026-06 (33 anos), ápice aos 48: prazo de 179 meses.
+  const reference = {
+    birthDate: "1993-05-10",
+    retirementAge: 48,
+    currentAge: 33,
+    reachMonths: 118,
+    now: new Date("2026-06-15T15:00:00Z"),
+  };
+
+  it("cenário de referência (alcance no mês 118) dá 43 anos", () => {
+    expect(retirementAgeReaching(reference)).toBe(43);
+  });
+
+  it("alcance igual ao prazo total (179 meses) dá a idade-alvo", () => {
+    expect(retirementAgeReaching({ ...reference, reachMonths: 179 })).toBe(48);
+  });
+
+  it("nunca devolve idade menor que a atual + 1", () => {
+    expect(retirementAgeReaching({ ...reference, reachMonths: 1 })).toBe(34);
+    expect(retirementAgeReaching({ ...reference, reachMonths: 0 })).toBe(34);
+  });
+
+  it("nunca devolve idade maior que a idade-alvo", () => {
+    expect(retirementAgeReaching({ ...reference, reachMonths: 500 })).toBe(48);
   });
 });
 
