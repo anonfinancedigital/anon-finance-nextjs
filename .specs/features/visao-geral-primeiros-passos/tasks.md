@@ -213,6 +213,8 @@ T8 → T9 → T10 → T11 → T12
 
 ### T6: Criar o card "Comece por aqui"
 
+**Status**: ✅ Done
+
 **What**: Card com os 3 passos, check e texto `concluído` nos feitos, barra `role="progressbar"` (`aria-valuenow`, `aria-valuemax=3`, texto `{n} de 3 passos`) e botão primário só no passo atual (passo 1 → `/categorias`, 2 → `NewTransactionButton` inline, 3 → `/liberdade`).
 **Where**: `src/components/getting-started-card.tsx`
 **Depends on**: T5
@@ -226,10 +228,10 @@ T8 → T9 → T10 → T11 → T12
 
 **Done when**:
 
-- [ ] Renderiza `null` quando `setup.complete`
-- [ ] Exatamente um botão preenchido (o do `currentId`); passos concluídos sem botão e com `concluído` acessível
-- [ ] Barra com `aria-valuenow` igual a `doneCount`
-- [ ] Gate build passa: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
+- [x] Renderiza `null` quando `setup.complete`
+- [x] Exatamente um botão preenchido (o do `currentId`); passos concluídos sem botão e com `concluído` acessível
+- [x] Barra com `aria-valuenow` igual a `doneCount`
+- [x] Gate build passa: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
 
 **Tests**: none
 **Gate**: build
