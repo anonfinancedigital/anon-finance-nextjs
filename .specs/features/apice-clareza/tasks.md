@@ -10,7 +10,7 @@ Implement these tasks with the `tlc-spec-driven` skill: **activate it by name an
 
 **Design**: `.specs/features/apice-clareza/design.md`
 **Spec**: `.specs/features/apice-clareza/spec.md`
-**Status**: Draft
+**Status**: ✅ Done
 
 **Ordem:** o domínio, a copy e a lógica do rascunho vêm primeiro e são testados em unit (fase 1); tokens e blocos de formulário (fase 2); página preenchida (fase 3); gaveta, estado vazio e orquestração (fase 4). Código antigo só sai na task que passa a usar o novo, para cada commit compilar e o build passar (`chartYMax` e os textos antigos saem nas tasks que os substituem).
 
