@@ -81,6 +81,8 @@ export type Category = {
   subcategories: Subcategory[];
   /** False when no percent version covers the month (the category shows with no target); omitted means true. */
   hasPercent?: boolean;
+  /** Soft-deleted category still in force in the month being shown; omitted means false. */
+  deleted?: boolean;
   /** Investment/contribution category: going above the target is good news, not an overspend. Omitted means false. */
   isInvestment?: boolean;
 };
@@ -161,12 +163,23 @@ export function buildMonthlySummary(input: {
 }): MonthlySummary {
   const { categories, incomeCents, spentByCategory, spentBySubcategory } = input;
 
-  const rows = categories.map((cat): CategorySummary => {
+  // A deleted category with no target and no spending in the month has nothing to show.
+  const shown = categories.filter(
+    (cat) => !(cat.deleted && cat.hasPercent === false && (spentByCategory.get(cat.id) ?? 0) === 0),
+  );
+  const rows = shown.map((cat): CategorySummary => {
+    const noTarget = cat.hasPercent === false;
     const targetCents = allocateCents(incomeCents, cat.percentMicro);
     const spentCents = spentByCategory.get(cat.id) ?? 0;
-    const consumedPct =
-      targetCents > 0 ? Math.round((spentCents * 100) / targetCents) : spentCents > 0 ? 100 : 0;
-    const over = spentCents > targetCents;
+    const consumedPct = noTarget
+      ? 0
+      : targetCents > 0
+        ? Math.round((spentCents * 100) / targetCents)
+        : spentCents > 0
+          ? 100
+          : 0;
+    // Without a target there is nothing to overspend.
+    const over = !noTarget && spentCents > targetCents;
     const investment = cat.isInvestment === true;
     return {
       ...cat,

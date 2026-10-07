@@ -1,7 +1,7 @@
 # Categorias Novas Visíveis em Meses Anteriores Design
 
 **Spec**: `.specs/features/categorias-meses-anteriores/spec.md`
-**Status**: Draft
+**Status**: Draft (revisado após uso: sem estouro em categoria sem meta; excluída sem meta e sem gasto some)
 
 ---
 
@@ -42,14 +42,20 @@ graph TD
 
 - **Purpose**: Montar uma linha para toda categoria recebida.
 - **Location**: `src/lib/domain/budget.ts`
-- **Interfaces**: assinatura inalterada. Linha com `hasPercent === false`: `targetCents` 0, `overspent` = `spent > 0`, `consumedPct` 0 sem gasto e 100 com gasto (regra atual).
+- **Interfaces**: assinatura inalterada; `Category` ganha `deleted?: boolean` (omitido = false). Linha com `hasPercent === false`: `targetCents` 0, `overspent` e `exceeded` sempre falsos, `overspentCents` e `exceededCents` 0, `consumedPct` 0. A categoria com `hasPercent === false`, `deleted === true` e gasto 0 é omitida de `rows`.
 - **Reuses**: `allocateCents`, cálculo de linha existente.
+
+### categoriesRepo.listForMonth
+
+- **Purpose**: Marcar `deleted: true` na categoria com `deleted_from` não nulo (vista em mês anterior à exclusão).
+- **Location**: `src/lib/db/repos/categories.ts` (`columns` ganha `deletedFrom`; o campo não vaza para `Category`)
+- **Reuses**: a consulta existente, sem nova query.
 
 ### SummaryTable
 
 - **Purpose**: Exibir "Sem meta" e "—" quando `row.hasPercent === false`.
 - **Location**: `src/components/summary-table.tsx:88-91` (colunas de percentual e meta)
-- **Interfaces**: percentual → `—` (no lugar de `formatPercentCompact`); meta → `Sem meta` em `text-muted-foreground` (no lugar de `formatBRL(targetCents)`). O restante da linha (gasto, restante, barra, "Estourou") segue a regra atual: sem gasto, nada de alerta; com gasto, "Estourou" com o valor gasto.
+- **Interfaces**: restante e consumo → `—` (sem barra) quando `hasPercent === false`; percentual → `—` (no lugar de `formatPercentCompact`); meta → `Sem meta` em `text-muted-foreground` (no lugar de `formatBRL(targetCents)`). O restante da linha (gasto, restante, barra, "Estourou") segue a regra atual: sem gasto, nada de alerta; com gasto, "Estourou" com o valor gasto.
 - **Reuses**: classes existentes da célula.
 
 ---

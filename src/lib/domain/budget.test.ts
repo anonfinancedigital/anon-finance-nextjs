@@ -407,7 +407,7 @@ describe("buildMonthlySummary without percent in force", () => {
     expect(rows[0]).toMatchObject({ targetCents: 500000, spentCents: 1000, overspent: false });
   });
 
-  it("keeps a category with hasPercent false and spending at target 0, overspent", () => {
+  it("never marks a category with hasPercent false as overspent, even with spending", () => {
     const { rows } = buildMonthlySummary({
       categories: [conforto, nova],
       incomeCents: 500000,
@@ -417,9 +417,51 @@ describe("buildMonthlySummary without percent in force", () => {
     expect(rows[1]).toMatchObject({
       targetCents: 0,
       spentCents: 2500,
-      overspent: true,
-      overspentCents: 2500,
+      overspent: false,
+      overspentCents: 0,
+      exceeded: false,
+      exceededCents: 0,
+      consumedPct: 0,
     });
+  });
+
+  it("counts the spending of a category with hasPercent false in the month total", () => {
+    const summary = buildMonthlySummary({
+      categories: [conforto, nova],
+      incomeCents: 500000,
+      spentByCategory: new Map([["c1", 1000], ["c2", 2500]]),
+    });
+    expect(summary.spentCents).toBe(3500);
+    expect(summary.balanceCents).toBe(496500);
+  });
+
+  it("omits a deleted category with hasPercent false and no spending", () => {
+    const { rows } = buildMonthlySummary({
+      categories: [conforto, { ...nova, deleted: true }],
+      incomeCents: 500000,
+      spentByCategory: new Map([["c1", 1000]]),
+    });
+    expect(rows.map((r) => r.id)).toEqual(["c1"]);
+  });
+
+  it("keeps a deleted category with hasPercent false and spending, at target 0", () => {
+    const { rows } = buildMonthlySummary({
+      categories: [conforto, { ...nova, deleted: true }],
+      incomeCents: 500000,
+      spentByCategory: new Map([["c2", 2500]]),
+    });
+    expect(rows.map((r) => r.id)).toEqual(["c1", "c2"]);
+    expect(rows[1]).toMatchObject({ targetCents: 0, spentCents: 2500, overspent: false });
+  });
+
+  it("keeps a deleted category that has a percent in force", () => {
+    const { rows } = buildMonthlySummary({
+      categories: [{ ...conforto, deleted: true }],
+      incomeCents: 500000,
+      spentByCategory: new Map(),
+    });
+    expect(rows).toHaveLength(1);
+    expect(rows[0].targetCents).toBe(500000);
   });
 
   it("treats an omitted hasPercent as true", () => {
