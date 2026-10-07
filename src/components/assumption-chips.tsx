@@ -3,7 +3,7 @@
 import { Info } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import type { GoalSummary } from "@/lib/domain/freedom";
-import { ADJUST_LABEL, assumptionChips, withdrawalTooltip } from "@/lib/domain/freedom-copy";
+import { assumptionChips, withdrawalTooltip } from "@/lib/domain/freedom-copy";
 
 const CHIP_CLASS = "inline-flex items-center gap-1.5 rounded-full border border-border bg-subtle px-3 py-1 text-xs";
 const FOCUS_CLASS = "outline-none focus-visible:ring-2 focus-visible:ring-primary/40";

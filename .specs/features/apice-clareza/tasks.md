@@ -531,17 +531,18 @@ T21 → T22 → T23 → T24 → T25 → T26
 
 **Done when**:
 
-- [ ] O rótulo "Hoje · R$ 565 mil (11,8%) · 33 anos" aparece na barra e é o único lugar com o percentual de progresso
-- [ ] Nenhum elemento da barra tem `cursor-pointer` ou estado de hover/foco
-- [ ] Marcos atingidos são círculos preenchidos; futuros são menores e vazados
-- [ ] A barra usa `bg-progress` e não usa o verde de rendimentos
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
-- [ ] Test count: a suíte unit existente passa sem alteração
+- [x] O rótulo "Hoje · R$ 565 mil (11,8%) · 33 anos" aparece na barra e é o único lugar com o percentual de progresso
+- [x] Nenhum elemento da barra tem `cursor-pointer` ou estado de hover/foco
+- [x] Marcos atingidos são círculos preenchidos; futuros são menores e vazados
+- [x] A barra usa `bg-progress` e não usa o verde de rendimentos
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] Test count: a suíte unit existente passa sem alteração
 
 **Tests**: none
 **Gate**: build
 
 **Commit**: `feat(apice): label today on the progress bar without handle affordance`
+**Status**: ✅ Done
 
 ---
 
