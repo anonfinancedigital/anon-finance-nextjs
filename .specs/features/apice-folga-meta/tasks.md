@@ -393,17 +393,17 @@ T16 → T17
 
 **Done when**:
 
-- [ ] `reaches` verdadeiro: texto secundário com a frase da spec
-- [ ] `reaches` falso: linha em `text-warning` com o aporte a 6%
-- [ ] `null` não renderiza nada
-- [ ] Evidência por inspeção de código (`file:line`)
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] `reaches` verdadeiro: texto secundário com a frase da spec
+- [x] `reaches` falso: linha em `text-warning` com o aporte a 6%
+- [x] `null` não renderiza nada
+- [x] Evidência por inspeção de código (`file:line`)
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
 
 **Tests**: none
 **Gate**: build
 
 **Commit**: `feat(apice): add the robustness line for the 6% real return`
-**Status**: Pending
+**Status**: ✅ Done
 
 ---
 

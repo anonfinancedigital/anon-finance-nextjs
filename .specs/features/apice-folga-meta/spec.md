@@ -170,13 +170,13 @@ Substitui as regras de aporte 0 com guardado abaixo do alvo de `apice-meta-alcan
 | APF-09 | P2: Bloco "Você tem folga" (AC 1, 7) | Phase 1 | Implementing |
 | APF-10 | P2: Bloco "Você tem folga" (AC 2, 3) | Phase 1 | Implementing |
 | APF-11 | P2: Bloco "Você tem folga" (AC 4, 5, 6) | Phase 1 | Implementing |
-| APF-12 | P2: Bloco "Você tem folga" (AC 8) | - | Pending |
+| APF-12 | P2: Bloco "Você tem folga" (AC 8) | Phase 2 | Implementing |
 | APF-13 | P2: Robustez da conclusão (AC 1, 4) | Phase 1 | Implementing |
 | APF-14 | P2: Robustez da conclusão (AC 2, 3) | Phase 1 | Implementing |
 | APF-15 | P3: Barra e gráfico contam a folga (AC 1, 2, 5) | Phase 1 | Implementing |
 | APF-16 | P3: Barra e gráfico contam a folga (AC 3, 4) | Phase 1 | Implementing |
 
-**Coverage:** 16 total, 16 mapped to tasks, 0 unmapped; 14 Implementing, 2 Pending
+**Coverage:** 16 total, 16 mapped to tasks, 0 unmapped; 15 Implementing, 1 Pending
 
 ---
 
