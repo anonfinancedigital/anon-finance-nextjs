@@ -181,12 +181,14 @@ T10 → T11
 
 **Done when**:
 
-- [ ] Com `showWarning` omitido, o aviso aparece com ícone (comportamento atual + ícone)
-- [ ] Com `showWarning={false}`, só select, Rebalancear e erro de ajuste são renderizados
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
+- [x] Com `showWarning` omitido, o aviso aparece com ícone (comportamento atual + ícone)
+- [x] Com `showWarning={false}`, só select, Rebalancear e erro de ajuste são renderizados
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
 
 **Tests**: none
 **Gate**: build
+
+**Status**: ✅ Complete
 
 **Commit**: `refactor(categorias): let the adjust bar omit the sum warning`
 

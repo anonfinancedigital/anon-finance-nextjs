@@ -4,8 +4,8 @@ import { useId, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { SelectField } from "@/components/ui/select-field";
+import { SumWarning } from "@/components/sum-warning";
 import { resolveAdjustKey, TOTAL_MICRO } from "@/lib/domain/percent";
-import { sumWarning } from "@/lib/domain/sum-warning";
 
 export type AdjustOption = {
   /** Stable key of the category row. */
@@ -15,19 +15,21 @@ export type AdjustOption = {
   micro: number | null;
 };
 
-/** Warning for a sum that is not 100%, with a category select and "Rebalancear" to close the gap. */
+/** Warning for a sum that is not 100% (unless `showWarning` is false), with a category select and "Rebalancear" to close the gap. */
 export function AdjustSumBar({
   sumMicro,
   incomeCents,
   options,
   onApply,
   error,
+  showWarning = true,
 }: {
   sumMicro: number;
   incomeCents: number | null;
   options: AdjustOption[];
   onApply: (key: string) => void;
   error: string | null;
+  showWarning?: boolean;
 }) {
   const selectId = useId();
   const [choice, setChoice] = useState<string | null>(null);
@@ -37,7 +39,7 @@ export function AdjustSumBar({
 
   return (
     <div className="space-y-2">
-      <p className="text-sm text-destructive">{sumWarning(sumMicro, incomeCents)}</p>
+      {showWarning && <SumWarning sumMicro={sumMicro} incomeCents={incomeCents} />}
       <div className="flex flex-wrap items-center gap-2">
         <Label htmlFor={selectId} className="text-sm">
           {sumMicro > TOTAL_MICRO ? "Descontar a diferença em" : "Acrescentar a diferença em"}
