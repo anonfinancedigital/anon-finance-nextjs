@@ -411,17 +411,18 @@ T21 → T22 → T23 → T24 → T25 → T26
 
 **Done when**:
 
-- [ ] O selecionado tem borda e fundo de destaque e ícone de check
-- [ ] A linha de retirada tem ícone ⓘ com o tooltip de `withdrawalTooltip`, acessível por hover e foco, com Escape fechando
-- [ ] Com par fora dos presets o cartão "Personalizado" aparece selecionado e nenhum preset marcado; clicar nele abre os campos de taxa
-- [ ] Sem corte de texto e sem rolagem horizontal a 320 px
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
-- [ ] Test count: a suíte unit existente passa sem alteração
+- [x] O selecionado tem borda e fundo de destaque e ícone de check
+- [x] A linha de retirada tem ícone ⓘ com o tooltip de `withdrawalTooltip`, acessível por hover e foco, com Escape fechando
+- [x] Com par fora dos presets o cartão "Personalizado" aparece selecionado e nenhum preset marcado; clicar nele abre os campos de taxa
+- [x] Sem corte de texto e sem rolagem horizontal a 320 px
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] Test count: a suíte unit existente passa sem alteração
 
 **Tests**: none
 **Gate**: build
 
 **Commit**: `feat(apice): make scenario cards clearer with a custom state`
+**Status**: ✅ Done
 
 ---
 
