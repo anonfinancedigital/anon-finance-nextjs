@@ -50,6 +50,19 @@ describe("sendMail", () => {
     expect(createTransport).toHaveBeenCalledWith({
       host: "smtp.example.com",
       port: 587,
+      secure: false,
+      auth: { user: "user@example.com", pass: "segredo" },
+    });
+  });
+
+  it("creates the transport with implicit TLS on port 465", async () => {
+    vi.stubEnv("SMTP_PORT", "465");
+    const sendMail = await loadMailer();
+    await sendMail(message);
+    expect(createTransport).toHaveBeenCalledWith({
+      host: "smtp.example.com",
+      port: 465,
+      secure: true,
       auth: { user: "user@example.com", pass: "segredo" },
     });
   });

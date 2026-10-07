@@ -89,10 +89,11 @@ T10 → T17
 T6 → T17
 ```
 
-### Phase 5: Correções do Verifier (iteração 1)
+### Phase 5: Correções (Verifier e pedido do usuário)
 
 ```
 T16 → T18
+T5 → T19
 ```
 
 ---
@@ -613,6 +614,31 @@ T16 → T18
 **Tests**: none
 **Gate**: build
 **Commit**: `fix(senha): offer a new link when the form reports an invalid link`
+
+---
+
+### T19: Suportar a porta 465 no mailer
+
+**What**: O transporte SMTP usa TLS implícito (`secure: true`) quando `SMTP_PORT` é 465; as demais portas, como a 587, seguem com STARTTLS (`secure: false`). Pedido do usuário depois do relatório do Verifier.
+**Where**: `src/lib/mailer.ts`
+**Depends on**: T5
+**Reuses**: Teste existente `src/lib/mailer.test.ts`
+**Requirement**: SENHA-02
+
+**Tools**:
+
+- MCP: NONE
+- Skill: NONE
+
+**Done when**:
+
+- [x] Porta 587 cria o transporte com `secure: false` e porta 465 com `secure: true`
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Test count: ≥15 tests pass in mailer.test.ts (no silent deletions)
+
+**Tests**: unit
+**Gate**: quick
+**Commit**: `fix(senha): use implicit TLS on SMTP port 465`
 
 ---
 
