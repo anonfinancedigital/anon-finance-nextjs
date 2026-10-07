@@ -295,13 +295,15 @@ T10 → T11
 
 **Done when**:
 
-- [ ] Indicador visível com 0 ou mais linhas, com `progressText` e `progressValue` de `allocationView`
-- [ ] Aviso de soma só com 1+ linhas e soma ≠ 100%; select e Rebalancear só com 2+ linhas e soma ≠ 100%; nenhum erro de soma com 0 linhas
-- [ ] O `role="alert"` do erro de salvar tem `AlertCircleIcon aria-hidden` antes do texto
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
+- [x] Indicador visível com 0 ou mais linhas, com `progressText` e `progressValue` de `allocationView`
+- [x] Aviso de soma só com 1+ linhas e soma ≠ 100%; select e Rebalancear só com 2+ linhas e soma ≠ 100%; nenhum erro de soma com 0 linhas
+- [x] O `role="alert"` do erro de salvar tem `AlertCircleIcon aria-hidden` antes do texto
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
 
 **Tests**: none
 **Gate**: build
+
+**Status**: ✅ Complete
 
 **Commit**: `feat(categorias): show the sum warning and rebalance controls only when useful`
 

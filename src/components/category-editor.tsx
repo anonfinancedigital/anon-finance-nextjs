@@ -1,10 +1,11 @@
 "use client";
 
-import { Trash2Icon } from "lucide-react";
+import { AlertCircleIcon, Trash2Icon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useId, useState, useTransition } from "react";
 import { saveCategories } from "@/actions/categories";
 import { AdjustSumBar } from "@/components/adjust-sum-bar";
+import { AllocationProgress } from "@/components/allocation-progress";
 import { CategorySquare } from "@/components/category-card";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -20,6 +21,7 @@ import { InputAffix } from "@/components/input-affix";
 import { Input } from "@/components/ui/input";
 import { ReferenceIncomeCard } from "@/components/reference-income-card";
 import { SubcategoryEditor, type SubcategoryRow } from "@/components/subcategory-editor";
+import { SumWarning } from "@/components/sum-warning";
 import type { ActionResult } from "@/lib/action-result";
 import { allocationView } from "@/lib/domain/allocation-view";
 import { allocateCents, type Category } from "@/lib/domain/budget";
@@ -270,6 +272,7 @@ export function CategoryEditor({
       }}
     >
       <ReferenceIncomeCard value={income} onChange={setIncome} />
+      <AllocationProgress value={view.progressValue} text={view.progressText} />
 
       {view.empty ? (
         <EmptyAllocation onAdd={add} />
@@ -402,7 +405,8 @@ export function CategoryEditor({
         </div>
       )}
 
-      {view.showSumWarning && (
+      {view.showSumWarning && <SumWarning sumMicro={sumMicro} incomeCents={incomeCents} />}
+      {view.showAdjust && (
         <AdjustSumBar
           sumMicro={sumMicro}
           incomeCents={incomeCents}
@@ -413,10 +417,12 @@ export function CategoryEditor({
           }))}
           onApply={adjust}
           error={adjustError}
+          showWarning={false}
         />
       )}
       {result && !result.ok && (
-        <p role="alert" className="text-sm text-destructive">
+        <p role="alert" className="flex items-center gap-2 text-sm text-destructive">
+          <AlertCircleIcon aria-hidden="true" className="size-4 shrink-0" />
           {result.error}
         </p>
       )}
