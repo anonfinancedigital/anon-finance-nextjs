@@ -843,7 +843,7 @@ T21 → T22 → T23 → T24 → T25 → T26
 
 ## Phase 5: Correções da verificação
 
-Gaps do `validation.md` (Verifier reprovou): APICE-14.1 (Major), APICE-19.4 (Major), APICE-19.3 e APICE-04.4 (Minor) e limpezas sem risco; T33 a T35 vêm da iteração 3 (Gaps A e B e spec); T36 e T37 vêm da iteração 4 (Gaps B' e A'). Execução sequencial T27 → T28 → T29 → T30 → T31 → T32 → T33 → T34 → T35 → T36 → T37.
+Gaps do `validation.md` (Verifier reprovou): APICE-14.1 (Major), APICE-19.4 (Major), APICE-19.3 e APICE-04.4 (Minor) e limpezas sem risco; T33 a T35 vêm da iteração 3 (Gaps A e B e spec); T36 e T37 vêm da iteração 4 (Gaps B' e A'); T38 e T39 vêm da iteração 5 (Gaps 1 e 2). Execução sequencial T27 → T28 → T29 → T30 → T31 → T32 → T33 → T34 → T35 → T36 → T37 → T38 → T39.
 
 ### T27: Resumo da gaveta fixo ao rolar
 
@@ -1157,6 +1157,63 @@ Gaps do `validation.md` (Verifier reprovou): APICE-14.1 (Major), APICE-19.4 (Maj
 
 ---
 
+### T38: Spec do eixo Y reflete a regra atual
+
+**What**: Reescrever em `spec.md` a regra 08.1 (aporte > 0: o máximo segue a meta; aporte 0: máximo = menor múltiplo do passo não abaixo de `max(meta, final)`), dar a 08.2 e 08.4 a mesma ressalva de 08.3 e remover a tolerância de 0,1%; ajustar só os rótulos de `freedom.test.ts` que ainda a ecoam (Gap 1 do `validation.md`, iteração 5).
+**Where**: `.specs/features/apice-clareza/spec.md`, `src/lib/domain/freedom.test.ts`
+**Depends on**: T37
+**Reuses**: `chartYAxis`
+**Requirement**: APICE-08
+
+**Tools**:
+
+- MCP: NONE
+- Skill: NONE
+
+**Done when**:
+
+- [x] `spec.md` 08.1 descreve as duas regras (aporte > 0 e aporte 0) e não menciona a tolerância de 0,1%; 08.2 e 08.4 trazem a ressalva do aporte maior que R$ 0
+- [x] Só comentários e rótulos de `freedom.test.ts` mudam; nenhuma assertão muda
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Test count: todos os testes existentes passam
+
+**Tests**: none (doc; testes existentes seguem iguais)
+**Gate**: quick
+
+**Commit**: `docs(apice): align the Y axis spec with the deposit-based rule`
+**Status**: ✅ Done
+
+---
+
+### T39: Rótulo da meta fora das curvas quando a meta já foi alcançada
+
+**What**: Quando a curva começa acima da linha da meta (guardado já alcança a meta com prazo restante), a placa "Meta: R$ …" cobre o início das séries. A posição vira função pura `targetLabelPlacement` (acima da linha por padrão, abaixo quando o primeiro ponto está na meta ou acima); o `TargetLabel` a usa (Gap 2 do `validation.md`).
+**Where**: `src/lib/domain/chart-label.ts`, `src/lib/domain/chart-label.test.ts`, `src/components/goal-chart.tsx`
+**Depends on**: T38
+**Reuses**: `summarize`, `TargetLabel`
+**Requirement**: APICE-09
+
+**Tools**:
+
+- MCP: NONE
+- Skill: NONE
+
+**Done when**:
+
+- [ ] `targetLabelPlacement(firstTotalCents, targetCents)` devolve "below" quando `firstTotalCents >= targetCents` e "above" nos demais casos
+- [ ] Com `summarize`, renda 2.500, Agressivo, guardado R$ 650 mil, 33 a 48 anos devolve "below"; guardado R$ 0 e R$ 500 mil de meta com aporte devolve "above"
+- [ ] `TargetLabel` desenha a placa abaixo da linha em "below" e mantém o desenho atual em "above"
+- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [ ] Test count: os testes anteriores mais os novos passam
+
+**Tests**: unit
+**Gate**: build
+
+**Commit**: `fix(apice): keep the target label off the curves when the goal is reached`
+**Status**: ⏳ Pending
+
+---
+
 ## Phase Execution Map
 
 ```
@@ -1166,7 +1223,7 @@ Phase 1:  T1 → T2 → T3 → T4 → T5 → T6 → T7
 Phase 2:  T8 → T9 → T10 → T11 → T12 → T13 → T14
 Phase 3:  T15 → T16 → T17 → T18 → T19 → T20
 Phase 4:  T21 → T22 → T23 → T24 → T25 → T26
-Phase 5:  T27 → T28 → T29 → T30 → T31 → T32 → T33 → T34 → T35 → T36 → T37
+Phase 5:  T27 → T28 → T29 → T30 → T31 → T32 → T33 → T34 → T35 → T36 → T37 → T38 → T39
 ```
 
 Execução estritamente sequencial. Com 26 tasks, o empacotamento dá 4 lotes (~7 tasks, fases inteiras); a oferta de sub-agentes é feita no Execute.
@@ -1184,8 +1241,8 @@ Execução estritamente sequencial. Com 26 tasks, o empacotamento dá 4 lotes (~
 | APICE-05 | T5, T12, T15 |
 | APICE-06 | T1, T5, T16 |
 | APICE-07 | T16, T17 |
-| APICE-08 | T2, T19, T25, T33, T35, T37 |
-| APICE-09 | T19 |
+| APICE-08 | T2, T19, T25, T33, T35, T37, T38 |
+| APICE-09 | T19, T39 |
 | APICE-10 | T6, T19, T34, T36 |
 | APICE-11 | T20 |
 | APICE-12 | T20 |

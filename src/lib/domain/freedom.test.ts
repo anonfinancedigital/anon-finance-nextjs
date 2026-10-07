@@ -263,7 +263,7 @@ describe("chartYAxis", () => {
       expect(chartYAxis(reais(500_000), reais(650_000), 0).max).toBe(reais(800_000));
     });
 
-    it("agressivo (10%) de 20 a 90 anos com meta de R$ 500 mil: o excesso passa de 0,1% e os ticks seguem 0 a 500 mil", () => {
+    it("agressivo (10%) de 20 a 90 anos com meta de R$ 500 mil: o excesso do patrimônio final sobre a meta não eleva o eixo e os ticks seguem 0 a 500 mil", () => {
       const summary = summarize(
         { monthlyIncomeCents: reais(2_500), savedCents: 0, birthDate: "2006-07-10", retirementAge: 90, annualRateBp: 1000, withdrawalRateBp: 600 },
         now,
@@ -549,7 +549,7 @@ describe("summarize com a meta pela taxa de retirada", () => {
       expect(last).toBe(projectedCents({ savedCents: 0, monthlyCents: summary.monthlyCents!, annualRateBp }, 240));
       expect(last).toBeGreaterThanOrEqual(target);
       expect(last - target).toBeLessThanOrEqual(projectedCents({ savedCents: 0, monthlyCents: 1, annualRateBp }, 240));
-      // o teto cobre a meta; o excesso de arredondamento do aporte (centavos) pode ficar acima do teto (APICE-08)
+      // o teto cobre a meta; o excesso de arredondamento do aporte pode ficar acima do teto (APICE-08)
       const { max } = chartYAxis(summary.targetCents, last, summary.monthlyCents!);
       expect(max).toBeGreaterThanOrEqual(target);
       expect(last - max).toBeLessThanOrEqual(target * 0.001);

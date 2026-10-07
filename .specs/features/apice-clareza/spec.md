@@ -205,10 +205,10 @@ Implicit-requirement dimensions: input validation (APICE-15, APICE-19, APICE-20)
 
 **Acceptance Criteria**:
 
-1. The system SHALL generate the Y axis ticks equally spaced at a round step (1, 2 or 5 × 10ⁿ), starting at 0, with 4 to 6 ticks and a maximum equal to the smallest multiple of the step not below the larger of the target and the final patrimony. The final patrimony counts as larger than the target only when it exceeds it by more than 0.1% of the target, so the cents of rounding in the required deposit do not raise the axis by a step.
-2. WHEN the target is R$ 500 mil THEN the system SHALL render the Y ticks 0, 100 mil, 200 mil, 300 mil, 400 mil, 500 mil.
+1. The system SHALL generate the Y axis ticks equally spaced at a round step (1, 2 or 5 × 10ⁿ), starting at 0, with 4 to 6 ticks. WHEN the monthly deposit is above R$ 0 THEN the maximum SHALL be the smallest multiple of the step not below the target (the excess of the final patrimony over the target is only the rounding of the deposit and does not raise the axis). WHEN the monthly deposit is R$ 0 (target already reached) THEN the maximum SHALL be the smallest multiple of the step not below the larger of the target and the final patrimony.
+2. WHEN the monthly deposit is above R$ 0 and the target is R$ 500 mil THEN the system SHALL render the Y ticks 0, 100 mil, 200 mil, 300 mil, 400 mil, 500 mil.
 3. WHEN the target is R$ 4,8 mi and the final patrimony is up to R$ 4,8 mi THEN the system SHALL render the Y ticks 0, 1 mi, 2 mi, 3 mi, 4 mi, 5 mi.
-4. WHEN the target is R$ 20 mi THEN the system SHALL render the Y ticks 0, 5 mi, 10 mi, 15 mi, 20 mi.
+4. WHEN the monthly deposit is above R$ 0 and the target is R$ 20 mi THEN the system SHALL render the Y ticks 0, 5 mi, 10 mi, 15 mi, 20 mi.
 5. The system SHALL render the label "Meta: {meta compacta}" without overlapping the curve, with a card-colored background.
 6. The system SHALL render the X axis title "Idade" and label the current age at the first tick.
 7. WHEN the user hovers, touches or focuses a point of the chart THEN the system SHALL show the tooltip with, for that age, total patrimony, total invested and earnings, and a vertical guide line that follows the cursor.
