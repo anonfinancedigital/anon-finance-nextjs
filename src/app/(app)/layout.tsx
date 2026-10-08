@@ -1,14 +1,18 @@
 import { LogOutIcon } from "lucide-react";
+import { redirect } from "next/navigation";
 import { signOutAction } from "@/actions/auth";
 import { AppNav } from "@/components/app-nav";
 import { Logo } from "@/components/brand/Logo";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Button } from "@/components/ui/button";
 import { requireSessionForPage } from "@/lib/auth-guard";
+import { usersRepo } from "@/lib/db/repos/users";
 
 /** Shell of the signed-in area: sidebar (top bar on mobile) with navigation and sign-out. Pages still guard their own data. */
 export default async function AppLayout({ children }: LayoutProps<"/">) {
-  const { isAdmin } = await requireSessionForPage();
+  const { userId, isAdmin } = await requireSessionForPage();
+  // /data-nascimento lives outside this group, so this redirect cannot loop.
+  if ((await usersRepo.getBirthDate(userId)) === null) redirect("/data-nascimento");
 
   return (
     <div className="flex flex-1 flex-col md:flex-row">
