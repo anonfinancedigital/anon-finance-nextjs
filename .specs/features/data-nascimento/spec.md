@@ -134,7 +134,7 @@ A data de nascimento só existe hoje dentro do objetivo de Liberdade (`financial
 
 | Requirement ID | Story | Phase | Status |
 | -------------- | ----- | ----- | ------ |
-| NASC-01 | P1: Data no cadastro (AC 1) | Specify | Pending |
+| NASC-01 | P1: Data no cadastro (AC 1) | Specify | Implemented |
 | NASC-02 | P1: Data no cadastro (AC 2) | Specify | Implemented |
 | NASC-03 | P1: Data no cadastro (AC 3) | Specify | Implemented |
 | NASC-04 | P1: Data no cadastro (AC 4) | Specify | Implemented |

@@ -265,11 +265,11 @@ T12 → T13 → T14 → T15 → T16 → T17 → T18
 
 **Done when**:
 
-- [ ] Campo na posição e com os atributos da spec, `name="birthDate"`
-- [ ] Erro do servidor aparece sob o campo
-- [ ] Evidência por inspeção de código (`file:line`, AD-005)
-- [ ] Build gate passa
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] Campo na posição e com os atributos da spec, `name="birthDate"`
+- [x] Erro do servidor aparece sob o campo
+- [x] Evidência por inspeção de código (`file:line`, AD-005)
+- [x] Build gate passa
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
 
 **Tests**: none
 **Gate**: build

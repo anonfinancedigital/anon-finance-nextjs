@@ -6,12 +6,14 @@ import { PasswordInput } from "@/components/password-input";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { maskDateInput } from "@/lib/domain/date-br";
 import { PASSWORD_MISMATCH_MESSAGE } from "@/lib/validation/signup";
 
 const SENT_MESSAGE = "Cadastro enviado. Você poderá entrar quando o administrador aprová-lo";
 
 export function SignupForm() {
   const [state, formAction, pending] = useActionState(signUpAction, undefined);
+  const [birthDate, setBirthDate] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
@@ -52,6 +54,21 @@ export function SignupForm() {
           aria-invalid={!!fieldErrors.email}
         />
         {fieldErrors.email && <p className="text-sm text-destructive">{fieldErrors.email}</p>}
+      </div>
+      <div className="space-y-2">
+        <Label htmlFor="birthDate">Data de nascimento</Label>
+        <Input
+          id="birthDate"
+          name="birthDate"
+          inputMode="numeric"
+          placeholder="DD/MM/AAAA"
+          autoComplete="bday"
+          required
+          value={birthDate}
+          onChange={(event) => setBirthDate(maskDateInput(event.target.value))}
+          aria-invalid={!!fieldErrors.birthDate}
+        />
+        {fieldErrors.birthDate && <p className="text-sm text-destructive">{fieldErrors.birthDate}</p>}
       </div>
       <div className="space-y-2">
         <Label htmlFor="password">Senha</Label>
