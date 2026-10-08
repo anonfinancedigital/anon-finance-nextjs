@@ -349,10 +349,10 @@ T12 → T13 → T14 → T15 → T16 → T17 → T18
 
 **Done when**:
 
-- [ ] Sem sessão aprovada redireciona para `/login` (guard existente)
-- [ ] Pré-preenche com `isoToBR` quando há data
-- [ ] Evidência por inspeção de código; build gate passa; rota coberta pelo matcher do `proxy.ts`
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] Sem sessão aprovada redireciona para `/login` (guard existente)
+- [x] Pré-preenche com `isoToBR` quando há data
+- [x] Evidência por inspeção de código; build gate passa; rota coberta pelo matcher do `proxy.ts`
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
 
 **Tests**: none
 **Gate**: build
