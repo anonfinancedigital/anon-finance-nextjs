@@ -485,11 +485,11 @@ T12 → T13 → T14 → T15 → T16 → T17 → T18
 
 **Done when**:
 
-- [ ] Nenhum `Input` de data no formulário (gaveta e estado vazio)
-- [ ] Texto "Data de nascimento" com `DD/MM/AAAA` e o link na gaveta e no estado vazio
-- [ ] Idade atual e `sliderMin` seguem calculados
-- [ ] Evidência por inspeção de código; build gate passa
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] Nenhum `Input` de data no formulário (gaveta e estado vazio)
+- [x] Texto "Data de nascimento" com `DD/MM/AAAA` e o link na gaveta e no estado vazio
+- [x] Idade atual e `sliderMin` seguem calculados
+- [x] Evidência por inspeção de código; build gate passa
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
 
 **Tests**: none
 **Gate**: build

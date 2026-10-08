@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useId, useState } from "react";
 import { AgeSlider } from "@/components/age-slider";
 import { CurrencyInput } from "@/components/currency-input";
@@ -7,7 +8,7 @@ import type { GoalFormValues } from "@/lib/validation/goal-draft";
 import { RateToggle, type RateValue } from "@/components/rate-toggle";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { brToIso, maskDateInput } from "@/lib/domain/date-br";
+import { brToIso } from "@/lib/domain/date-br";
 import { ageOn, PRESET_RATES, presetFor } from "@/lib/domain/freedom";
 import { RATE_HINT, RATE_TITLE } from "@/lib/domain/freedom-copy";
 import { maskBRLInput, parseBRL } from "@/lib/domain/money";
@@ -108,19 +109,17 @@ export function GoalFields({
           {errors.saved && <p className="text-sm text-destructive">{errors.saved}</p>}
         </div>
         <div className="space-y-1">
-          <Label htmlFor={field("birthDate")}>{labels.birthDate}</Label>
-          <div className="flex items-center gap-3">
-            <Input
-              id={field("birthDate")}
-              inputMode="numeric"
-              placeholder="DD/MM/AAAA"
-              value={values.birthDate}
-              aria-invalid={!!errors.birthDate}
-              onChange={(e) => set({ birthDate: maskDateInput(e.target.value) })}
-            />
+          <p className="text-sm leading-none font-medium">
+            {labels.birthDate}
+          </p>
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm">
+            <span>{values.birthDate}</span>
             {currentAge !== null && !errors.birthDate && (
-              <span className="shrink-0 text-sm text-muted-foreground">{currentAge} anos</span>
+              <span className="shrink-0 text-muted-foreground">{currentAge} anos</span>
             )}
+            <Link href="/data-nascimento" className="text-link underline-offset-4 hover:underline">
+              Alterar data de nascimento
+            </Link>
           </div>
           {errors.birthDate && <p className="text-sm text-destructive">{errors.birthDate}</p>}
         </div>
