@@ -237,11 +237,11 @@ T12 → T13 → T14 → T15 → T16 → T17 → T18
 
 **Done when**:
 
-- [ ] Cadastro válido cria usuário `pending` com `birth_date` = data informada e sem sessão
-- [ ] Data vazia, inválida, futura e > 120 anos: `fieldErrors.birthDate` com a mensagem exata e nenhum usuário criado
-- [ ] Hoje aceito; e-mail duplicado continua com "Este e-mail já está cadastrado"
-- [ ] Testes em `auth.int.test.ts`; contagem anterior preservada
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
+- [x] Cadastro válido cria usuário `pending` com `birth_date` = data informada e sem sessão
+- [x] Data vazia, inválida, futura e > 120 anos: `fieldErrors.birthDate` com a mensagem exata e nenhum usuário criado
+- [x] Hoje aceito; e-mail duplicado continua com "Este e-mail já está cadastrado"
+- [x] Testes em `auth.int.test.ts`; contagem anterior preservada
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
 
 **Tests**: integration
 **Gate**: full

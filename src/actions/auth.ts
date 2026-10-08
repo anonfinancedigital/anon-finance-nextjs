@@ -84,14 +84,15 @@ export async function signUpAction(
   const parsed = signupSchema.safeParse({
     name: formData.get("name") ?? "",
     email: formData.get("email") ?? "",
+    birthDate: formData.get("birthDate") ?? "",
     password: formData.get("password") ?? "",
     confirmPassword: formData.get("confirmPassword") ?? undefined,
   });
   if (!parsed.success) return invalidInput(parsed.error);
 
   try {
-    const { name, email, password } = parsed.data;
-    const result = await usersRepo.createPending({ name, email, password });
+    const { name, email, password, birthDate } = parsed.data;
+    const result = await usersRepo.createPending({ name, email, password, birthDate });
     if (!result.ok) return { ok: false, error: DUPLICATE_EMAIL, fieldErrors: { email: DUPLICATE_EMAIL } };
   } catch (error) {
     console.error("signUpAction", error);

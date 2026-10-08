@@ -251,6 +251,7 @@ describe("deleteUser", () => {
       const signup = new FormData();
       signup.set("name", "De novo");
       signup.set("email", email);
+      signup.set("birthDate", "18/09/1993");
       signup.set("password", "12345678");
       signup.set("confirmPassword", "12345678");
       expect(await signUpAction(undefined, signup)).toEqual({ ok: true });

@@ -201,13 +201,26 @@ describe("signInAction for a user who is not approved", () => {
 
 describe("signUpAction", () => {
   const DUPLICATE = "Este e-mail já está cadastrado";
-  const VALID = { name: "  Ana  ", email: " Ana@X.com ", password: "12345678", confirmPassword: "12345678" };
+  const VALID = {
+    name: "  Ana  ",
+    email: " Ana@X.com ",
+    birthDate: "18/09/1993",
+    password: "12345678",
+    confirmPassword: "12345678",
+  };
   const MISMATCH = "As senhas não coincidem";
 
-  function signupForm(input: { name: string; email: string; password: string; confirmPassword?: string }) {
+  function signupForm(input: {
+    name: string;
+    email: string;
+    birthDate?: string;
+    password: string;
+    confirmPassword?: string;
+  }) {
     const data = new FormData();
     data.set("name", input.name);
     data.set("email", input.email);
+    if (input.birthDate !== undefined) data.set("birthDate", input.birthDate);
     data.set("password", input.password);
     if (input.confirmPassword !== undefined) data.set("confirmPassword", input.confirmPassword);
     return data;
@@ -222,6 +235,14 @@ describe("signUpAction", () => {
 
   const usersWith = (email: string) => db.select().from(user).where(eq(user.email, email));
 
+  /** Day `offsetDays` from now in America/Sao_Paulo, as DD/MM/AAAA and AAAA-MM-DD. */
+  const dayFromNow = (offsetDays: number) => {
+    const [y, m, d] = new Intl.DateTimeFormat("en-CA", { timeZone: "America/Sao_Paulo" })
+      .format(new Date(Date.now() + offsetDays * 24 * 3600_000))
+      .split("-");
+    return { br: `${d}/${m}/${y}`, iso: `${y}-${m}-${d}` };
+  };
+
   afterEach(() => {
     vi.restoreAllMocks();
   });
@@ -230,9 +251,51 @@ describe("signUpAction", () => {
     expect(await signUp()).toEqual({ ok: true });
 
     const [created] = await usersWith("ana@x.com");
-    expect(created).toMatchObject({ name: "Ana", email: "ana@x.com", status: "pending" });
+    expect(created).toMatchObject({
+      name: "Ana",
+      email: "ana@x.com",
+      status: "pending",
+      birthDate: "1993-09-18",
+    });
     expect(await sessionsOf(created.id)).toBe(0);
     expect(redirect).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    ["empty", "", "Informe a data de nascimento"],
+    ["nonexistent", "31/02/1993", "Data de nascimento inválida"],
+    ["in ISO format", "1993-09-18", "Data de nascimento inválida"],
+    ["in the future", dayFromNow(2).br, "A data de nascimento não pode ser futura"],
+    ["older than 120 years", "01/01/1800", "A idade atual deve ser de no máximo 120 anos"],
+  ])("rejects a birth date %s with its message and creates no user", async (_label, birthDate, message) => {
+    expect(await signUp({ birthDate })).toEqual({
+      ok: false,
+      error: message,
+      fieldErrors: { birthDate: message },
+    });
+
+    expect(await usersWith("ana@x.com")).toEqual([]);
+    expect(await db.$count(user)).toBe(1);
+  });
+
+  it("rejects a form without birthDate and creates no user", async () => {
+    const { name, email, password } = VALID;
+    const result = await signUpAction(undefined, signupForm({ name, email, password, confirmPassword: password }));
+
+    expect(result).toEqual({
+      ok: false,
+      error: "Informe a data de nascimento",
+      fieldErrors: { birthDate: "Informe a data de nascimento" },
+    });
+    expect(await usersWith("ana@x.com")).toEqual([]);
+  });
+
+  it("accepts a birth date equal to today", async () => {
+    const { br, iso } = dayFromNow(0);
+
+    expect(await signUp({ birthDate: br })).toEqual({ ok: true });
+
+    expect((await usersWith("ana@x.com"))[0].birthDate).toBe(iso);
   });
 
   it.each([
@@ -258,9 +321,9 @@ describe("signUpAction", () => {
   });
 
   it("rejects a form without confirmPassword and creates no user", async () => {
-    const { name, email, password } = VALID;
+    const { name, email, birthDate, password } = VALID;
 
-    expect(await signUpAction(undefined, signupForm({ name, email, password }))).toEqual({
+    expect(await signUpAction(undefined, signupForm({ name, email, birthDate, password }))).toEqual({
       ok: false,
       error: MISMATCH,
       fieldErrors: { confirmPassword: MISMATCH },
