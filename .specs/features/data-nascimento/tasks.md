@@ -155,10 +155,10 @@ T12 → T13 → T14 → T15 → T16 → T17 → T18
 
 **Done when**:
 
-- [ ] `npm run db:generate` produz a `0013` e o SQL tem `ADD COLUMN "birth_date" date` seguido de `UPDATE "user" ... FROM "financial_goal"` (editado à mão se o gerador omitir o UPDATE)
-- [ ] Aplicada em banco privado `*_test` com um usuário com objetivo e outro sem: o primeiro recebe a data do objetivo, o segundo fica `NULL` (conferido por consulta, anotado em `validation.md`)
-- [ ] `financial_goal.birth_date` ainda existe (sai em T12)
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] `npm run db:generate` produz a `0013` e o SQL tem `ADD COLUMN "birth_date" date` seguido de `UPDATE "user" ... FROM "financial_goal"` (editado à mão se o gerador omitir o UPDATE)
+- [x] Aplicada em banco privado `*_test` com um usuário com objetivo e outro sem: o primeiro recebe a data do objetivo, o segundo fica `NULL` (conferido por consulta, anotado em `validation.md`)
+- [x] `financial_goal.birth_date` ainda existe (sai em T12)
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
 
 **Tests**: none
 **Gate**: build
