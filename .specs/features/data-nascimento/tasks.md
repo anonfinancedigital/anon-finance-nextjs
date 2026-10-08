@@ -322,10 +322,10 @@ T12 → T13 → T14 → T15 → T16 → T17 → T18
 
 **Done when**:
 
-- [ ] Usa `saveBirthDateAction`; valor inicial vem por prop
-- [ ] Sucesso exibe "Data de nascimento atualizada" com `role="status"`
-- [ ] Evidência por inspeção de código; build gate passa
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] Usa `saveBirthDateAction`; valor inicial vem por prop
+- [x] Sucesso exibe "Data de nascimento atualizada" com `role="status"`
+- [x] Evidência por inspeção de código; build gate passa
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
 
 **Tests**: none
 **Gate**: build
