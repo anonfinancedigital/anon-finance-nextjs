@@ -293,12 +293,12 @@ T12 → T13 → T14 → T15 → T16 → T17 → T18
 
 **Done when**:
 
-- [ ] Sem sessão aprovada → `UNAUTHORIZED` e nada gravado
-- [ ] Sem data anterior: grava e redireciona para `/`; com data anterior: grava e devolve `{ ok: true }`
-- [ ] Datas inválidas devolvem as mensagens exatas em `fieldErrors.birthDate` sem alterar o usuário
-- [ ] Com objetivo de independência aos 50, `18/09/1960` (idade 66) → "A nova data deixa a idade atual igual ou maior que a idade da independência do seu objetivo (50)" e data anterior mantida; `18/09/1990` é aceita
-- [ ] Testes em `profile.int.test.ts`
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
+- [x] Sem sessão aprovada → `UNAUTHORIZED` e nada gravado
+- [x] Sem data anterior: grava e redireciona para `/`; com data anterior: grava e devolve `{ ok: true }`
+- [x] Datas inválidas devolvem as mensagens exatas em `fieldErrors.birthDate` sem alterar o usuário
+- [x] Com objetivo de independência aos 50, `18/09/1960` (idade 66) → "A nova data deixa a idade atual igual ou maior que a idade da independência do seu objetivo (50)" e data anterior mantida; `18/09/1990` é aceita
+- [x] Testes em `profile.int.test.ts`
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
 
 **Tests**: integration
 **Gate**: full
