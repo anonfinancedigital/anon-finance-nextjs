@@ -513,10 +513,10 @@ T12 → T13 → T14 → T15 → T16 → T17 → T18
 
 **Done when**:
 
-- [ ] Sem objetivo salvo, os valores iniciais trazem a data do usuário
-- [ ] `reset` volta à data do usuário
-- [ ] Evidência por inspeção de código; build gate passa
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] Sem objetivo salvo, os valores iniciais trazem a data do usuário
+- [x] `reset` volta à data do usuário
+- [x] Evidência por inspeção de código; build gate passa
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
 
 **Tests**: none
 **Gate**: build

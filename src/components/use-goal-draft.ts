@@ -10,25 +10,30 @@ type FieldName = keyof GoalFormValues;
  * Draft of the goal shared by the drawer and the empty state. The summary, the errors and the
  * dirty flag are derived at every render (no blur or submit needed); `summary` keeps the last
  * valid result while the values are invalid. `errors` only lists fields the user has touched.
+ * `birthDate` (DD/MM/AAAA) is the user's, not editable here: without a saved goal the blank form
+ * starts with it, also after `reset`.
  */
 export function useGoalDraft({
   saved,
   initial,
+  birthDate = "",
   nowIso,
 }: {
   saved: Goal | null;
   initial?: GoalFormValues;
+  birthDate?: string;
   nowIso: string;
 }) {
   const now = useMemo(() => new Date(nowIso), [nowIso]);
   const savedSummary = useMemo(() => (saved ? summarize(saved, now) : null), [saved, now]);
   const baseline = initial ?? null;
+  const startValues = useMemo(() => initial ?? { ...BLANK_GOAL_VALUES, birthDate }, [initial, birthDate]);
 
   const [state, setState] = useState<{
     values: GoalFormValues;
     lastValid: GoalSummary | null;
     touched: Partial<Record<FieldName, true>>;
-  }>(() => ({ values: initial ?? BLANK_GOAL_VALUES, lastValid: savedSummary, touched: {} }));
+  }>(() => ({ values: startValues, lastValid: savedSummary, touched: {} }));
 
   const draft = evaluateDraft(state.values, baseline, now, state.lastValid);
 
@@ -45,8 +50,8 @@ export function useGoalDraft({
   );
 
   const reset = useCallback(
-    () => setState({ values: initial ?? BLANK_GOAL_VALUES, lastValid: savedSummary, touched: {} }),
-    [initial, savedSummary],
+    () => setState({ values: startValues, lastValid: savedSummary, touched: {} }),
+    [startValues, savedSummary],
   );
 
   const errors: GoalDraftErrors = {};
