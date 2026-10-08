@@ -1,11 +1,16 @@
 import { z } from "zod";
+import { parseBirthDate } from "./birth-date";
 
+const BIRTH_DATE_MESSAGE = "Informe a data de nascimento";
 const NAME_MESSAGE = "Informe seu nome";
 const EMAIL_MESSAGE = "Informe um e-mail válido";
 export const PASSWORD_MISMATCH_MESSAGE = "As senhas não coincidem";
 const PASSWORD_MIN_MESSAGE = "A senha deve ter pelo menos 8 caracteres";
 
-/** Signup form: name trimmed (1-80), e-mail normalized (trim + lower case), password 8-128 confirmed exactly. */
+/**
+ * Signup form: name trimmed (1-80), e-mail normalized (trim + lower case), birth date "DD/MM/AAAA" turned
+ * into "AAAA-MM-DD" (checked against the current day), password 8-128 confirmed exactly.
+ */
 export const signupSchema = z
   .object({
     name: z
@@ -18,6 +23,14 @@ export const signupSchema = z
       .trim()
       .toLowerCase()
       .pipe(z.email({ error: EMAIL_MESSAGE })),
+    birthDate: z.string({ error: BIRTH_DATE_MESSAGE }).transform((value, ctx) => {
+      const parsed = parseBirthDate(value, new Date());
+      if (!parsed.ok) {
+        ctx.addIssue({ code: "custom", message: parsed.error });
+        return z.NEVER;
+      }
+      return parsed.value.iso;
+    }),
     password: z
       .string({ error: PASSWORD_MIN_MESSAGE })
       .min(8, PASSWORD_MIN_MESSAGE)

@@ -210,10 +210,10 @@ T12 → T13 → T14 → T15 → T16 → T17 → T18
 
 **Done when**:
 
-- [ ] Cada mensagem da spec aparece em `birthDate` para vazio, inexistente, futura e idade > 120
-- [ ] Data válida sai em ISO (`18/09/1993` → `1993-09-18`); hoje é aceito
-- [ ] Testes antigos de `signup.test.ts` seguem passando com `birthDate` válido adicionado às entradas
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Cada mensagem da spec aparece em `birthDate` para vazio, inexistente, futura e idade > 120
+- [x] Data válida sai em ISO (`18/09/1993` → `1993-09-18`); hoje é aceito
+- [x] Testes antigos de `signup.test.ts` seguem passando com `birthDate` válido adicionado às entradas
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
 
 **Tests**: unit
 **Gate**: quick

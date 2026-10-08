@@ -1,7 +1,13 @@
 import { describe, expect, it } from "vitest";
 import { signupSchema } from "./signup";
 
-const valid = { name: "Ana", email: "ana@x.com", password: "12345678", confirmPassword: "12345678" };
+const valid = {
+  name: "Ana",
+  email: "ana@x.com",
+  birthDate: "18/09/1993",
+  password: "12345678",
+  confirmPassword: "12345678",
+};
 const MISMATCH = "As senhas não coincidem";
 
 /** Issues as "path → message" pairs. */
@@ -14,7 +20,7 @@ function issues(input: unknown) {
 
 describe("signupSchema", () => {
   it("accepts a valid signup", () => {
-    expect(signupSchema.parse(valid)).toEqual(valid);
+    expect(signupSchema.parse(valid)).toEqual({ ...valid, birthDate: "1993-09-18" });
   });
 
   describe("name", () => {
@@ -50,6 +56,59 @@ describe("signupSchema", () => {
     });
   });
 
+  describe("birthDate", () => {
+    const todayBR = () => {
+      const [y, m, d] = new Intl.DateTimeFormat("en-CA", { timeZone: "America/Sao_Paulo" })
+        .format(new Date())
+        .split("-");
+      return { br: `${d}/${m}/${y}`, iso: `${y}-${m}-${d}` };
+    };
+    const tomorrowBR = () => {
+      const [y, m, d] = new Intl.DateTimeFormat("en-CA", { timeZone: "America/Sao_Paulo" })
+        .format(new Date(Date.now() + 36 * 3600_000))
+        .split("-");
+      return `${d}/${m}/${y}`;
+    };
+
+    it("turns DD/MM/AAAA into ISO (NASC-02)", () => {
+      expect(signupSchema.parse({ ...valid, birthDate: "18/09/1993" }).birthDate).toBe("1993-09-18");
+    });
+
+    it.each([[""], ["   "]])("rejects %j with 'Informe a data de nascimento' (NASC-03)", (birthDate) => {
+      expect(issues({ ...valid, birthDate })).toEqual([
+        { path: "birthDate", message: "Informe a data de nascimento" },
+      ]);
+    });
+
+    it("rejects a missing birthDate with 'Informe a data de nascimento' (NASC-03)", () => {
+      const { name, email, password, confirmPassword } = valid;
+      expect(issues({ name, email, password, confirmPassword })).toEqual([{ path: "birthDate", message: "Informe a data de nascimento" }]);
+    });
+
+    it.each([["31/02/1990"], ["1990-01-01"]])("rejects %j with 'Data de nascimento inválida' (NASC-04)", (birthDate) => {
+      expect(issues({ ...valid, birthDate })).toEqual([
+        { path: "birthDate", message: "Data de nascimento inválida" },
+      ]);
+    });
+
+    it("rejects a future date (NASC-05)", () => {
+      expect(issues({ ...valid, birthDate: tomorrowBR() })).toEqual([
+        { path: "birthDate", message: "A data de nascimento não pode ser futura" },
+      ]);
+    });
+
+    it("rejects an age above 120 (NASC-06)", () => {
+      expect(issues({ ...valid, birthDate: "01/01/1800" })).toEqual([
+        { path: "birthDate", message: "A idade atual deve ser de no máximo 120 anos" },
+      ]);
+    });
+
+    it("accepts today (NASC-07)", () => {
+      const { br, iso } = todayBR();
+      expect(signupSchema.parse({ ...valid, birthDate: br }).birthDate).toBe(iso);
+    });
+  });
+
   describe("password", () => {
     it("rejects 7 characters", () => {
       expect(issues({ ...valid, password: "a".repeat(7), confirmPassword: "a".repeat(7) })).toEqual([
@@ -75,8 +134,8 @@ describe("signupSchema", () => {
     });
 
     it("rejects a missing confirmPassword", () => {
-      const { name, email, password } = valid;
-      expect(issues({ name, email, password })).toEqual([{ path: "confirmPassword", message: MISMATCH }]);
+      const { name, email, birthDate, password } = valid;
+      expect(issues({ name, email, birthDate, password })).toEqual([{ path: "confirmPassword", message: MISMATCH }]);
     });
 
     it("accepts 128 identical characters", () => {
