@@ -39,7 +39,8 @@ export function withZeroSaved(values: GoalFormValues): GoalFormValues {
   return values.saved.trim() === "" ? { ...values, saved: "0,00" } : values;
 }
 
-const FIELDS = Object.keys(BLANK_GOAL_VALUES) as (keyof GoalFormValues)[];
+/** Campos editáveis; `birthDate` vem do usuário e não conta como alteração. */
+const FIELDS = (Object.keys(BLANK_GOAL_VALUES) as (keyof GoalFormValues)[]).filter((field) => field !== "birthDate");
 
 /**
  * Avalia o rascunho do objetivo com o mesmo `goalSchema` e `summarize` do servidor. Valores válidos

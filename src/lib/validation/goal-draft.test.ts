@@ -67,13 +67,26 @@ describe("evaluateDraft: dirty", () => {
     expect(undone.dirty).toBe(false);
   });
 
-  it.each(Object.keys(savedValues) as (keyof GoalFormValues)[])("%s diferente dos salvos é alteração", (field) => {
-    const edited = { ...savedValues, [field]: `${savedValues[field]}1` };
+  it.each((Object.keys(savedValues) as (keyof GoalFormValues)[]).filter((field) => field !== "birthDate"))(
+    "%s diferente dos salvos é alteração",
+    (field) => {
+      const edited = { ...savedValues, [field]: `${savedValues[field]}1` };
+      expect(evaluateDraft(edited, savedValues, now, savedSummary).dirty).toBe(true);
+    },
+  );
+
+  it("alterar só a data de nascimento não é alteração: ela vem do usuário e não é editável (NASC-12)", () => {
+    expect(evaluateDraft({ ...savedValues, birthDate: "11/05/1993" }, savedValues, now, savedSummary).dirty).toBe(false);
+    expect(evaluateDraft({ ...BLANK_GOAL_VALUES, birthDate: "10/05/1993" }, null, now, null).dirty).toBe(false);
+  });
+
+  it("alterar a data de nascimento junto de outro campo marca alteração", () => {
+    const edited = { ...savedValues, birthDate: "11/05/1993", saved: "1,00" };
     expect(evaluateDraft(edited, savedValues, now, savedSummary).dirty).toBe(true);
   });
 
   it("uma alteração inválida também conta como alteração", () => {
-    const edited = { ...savedValues, birthDate: "10/05/2030" };
+    const edited = { ...savedValues, retirementAge: "10" };
     expect(evaluateDraft(edited, savedValues, now, savedSummary).dirty).toBe(true);
   });
 });

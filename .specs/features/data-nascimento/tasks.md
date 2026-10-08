@@ -458,10 +458,10 @@ T12 → T13 → T14 → T15 → T16 → T17 → T18
 
 **Done when**:
 
-- [ ] Alterar só `birthDate` não marca `dirty`; alterar outro campo marca
-- [ ] Resumo e erros inalterados para as mesmas entradas
-- [ ] `goal-draft.test.ts` atualizado; contagem preservada
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Alterar só `birthDate` não marca `dirty`; alterar outro campo marca
+- [x] Resumo e erros inalterados para as mesmas entradas
+- [x] `goal-draft.test.ts` atualizado; contagem preservada
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
 
 **Tests**: unit
 **Gate**: quick
