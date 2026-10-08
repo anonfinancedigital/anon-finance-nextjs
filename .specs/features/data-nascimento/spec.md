@@ -153,7 +153,7 @@ A data de nascimento só existe hoje dentro do objetivo de Liberdade (`financial
 | NASC-17 | P2: Alterar a data (AC 2) | Specify | Implemented |
 | NASC-18 | P2: Alterar a data (AC 3) | Specify | Implemented |
 
-**Coverage:** 18 total, 0 mapped to tasks, 18 unmapped ⚠️
+**Coverage:** 18 total, 18 mapped to tasks, 0 unmapped
 
 ---
 
