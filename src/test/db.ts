@@ -12,10 +12,10 @@ export function setupTestDb() {
   afterAll(() => pool.end());
 }
 
-/** Inserts a bare user row (no credentials) and returns its id. */
-export async function insertTestUser(): Promise<string> {
+/** Inserts a bare user row (no credentials, no birth date unless given as AAAA-MM-DD) and returns its id. */
+export async function insertTestUser(birthDate?: string): Promise<string> {
   const id = randomUUID();
-  await db.insert(user).values({ id, name: "Teste", email: `${id}@example.com` });
+  await db.insert(user).values({ id, name: "Teste", email: `${id}@example.com`, birthDate });
   return id;
 }
 

@@ -16,7 +16,8 @@ export async function saveGoal(input: z.input<ReturnType<typeof goalSchema>>): P
   if (!parsed.success) return invalidInput(parsed.error);
 
   try {
-    await goalsRepo.upsert(session.userId, parsed.data);
+    const { monthlyIncomeCents, savedCents, retirementAge, annualRateBp, withdrawalRateBp } = parsed.data;
+    await goalsRepo.upsert(session.userId, { monthlyIncomeCents, savedCents, retirementAge, annualRateBp, withdrawalRateBp });
   } catch (error) {
     console.error("saveGoal", error);
     return { ok: false, error: SAVE_FAILED };

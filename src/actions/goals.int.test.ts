@@ -1,4 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { eq } from "drizzle-orm";
+import { user } from "@/lib/db/auth-schema";
 import { db } from "@/lib/db/client";
 import { goalsRepo } from "@/lib/db/repos/goals";
 import { financialGoal } from "@/lib/db/schema";
@@ -39,6 +41,7 @@ beforeEach(async () => {
   vi.mocked(revalidatePath).mockClear();
   const signedIn = await createSignedInUser();
   userId = signedIn.userId;
+  await db.update(user).set({ birthDate: "1990-06-15" }).where(eq(user.id, userId));
   request.headers = new Headers({ cookie: signedIn.cookie });
 });
 
@@ -61,11 +64,12 @@ describe("saveGoal", () => {
     expect(await goalsRepo.get(userId)).toEqual({ ...SAVED, savedCents: 0, retirementAge: 95 });
   });
 
-  it("stores the chosen rates and the birth date as AAAA-MM-DD", async () => {
+  it("stores the chosen rates and leaves the birth date in the user as AAAA-MM-DD", async () => {
     expect(await saveGoal({ ...INPUT, annualRate: "6", withdrawalRate: "4" })).toEqual({ ok: true });
 
     const [row] = await db.select().from(financialGoal);
-    expect(row).toMatchObject({ userId, annualRateBp: 600, withdrawalRateBp: 400, birthDate: "1990-06-15" });
+    expect(row).toMatchObject({ userId, annualRateBp: 600, withdrawalRateBp: 400 });
+    expect(await goalsRepo.get(userId)).toMatchObject({ birthDate: "1990-06-15" });
   });
 
   it("stores a custom pair 6,5 / 4,5 as 650 and 450", async () => {

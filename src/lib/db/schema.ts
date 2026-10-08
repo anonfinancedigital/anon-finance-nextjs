@@ -157,7 +157,6 @@ export const financialGoal = pgTable(
       .references(() => user.id, { onDelete: "cascade" }),
     monthlyIncomeCents: bigint("monthly_income_cents", { mode: "number" }).notNull(),
     savedCents: bigint("saved_cents", { mode: "number" }).notNull(),
-    birthDate: date("birth_date", { mode: "string" }).notNull(),
     retirementAge: smallint("retirement_age").notNull(),
     annualRateBp: smallint("annual_rate_bp").notNull().default(800),
     withdrawalRateBp: smallint("withdrawal_rate_bp").notNull(),

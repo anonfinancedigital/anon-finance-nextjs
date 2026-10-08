@@ -349,7 +349,6 @@ async function userWithData(email: string) {
   await goalsRepo.upsert(userId, {
     monthlyIncomeCents: 1_000_000,
     savedCents: 0,
-    birthDate: "1990-06-15",
     retirementAge: 60,
     annualRateBp: 800,
     withdrawalRateBp: 600,

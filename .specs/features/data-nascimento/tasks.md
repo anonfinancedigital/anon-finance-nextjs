@@ -402,11 +402,11 @@ T12 → T13 → T14 → T15 → T16 → T17 → T18
 
 **Done when**:
 
-- [ ] `get` devolve `birthDate` de `user.birth_date`; `null` sem objetivo e `null` com objetivo mas sem data
-- [ ] `upsert` não grava data e preserva a data do usuário; substituição do objetivo continua por `user_id`
-- [ ] Schema sem `financial_goal.birth_date` e `0014` gerada; helpers de teste gravam a data em `user`
-- [ ] Testes de `goals.int.test.ts`, `users.int.test.ts` e `admin-users.int.test.ts` passam, contagem preservada
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
+- [x] `get` devolve `birthDate` de `user.birth_date`; `null` sem objetivo e `null` com objetivo mas sem data
+- [x] `upsert` não grava data e preserva a data do usuário; substituição do objetivo continua por `user_id`
+- [x] Schema sem `financial_goal.birth_date` e `0014` gerada; helpers de teste gravam a data em `user`
+- [x] Testes de `goals.int.test.ts`, `users.int.test.ts` e `admin-users.int.test.ts` passam, contagem preservada
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
 
 **Tests**: integration
 **Gate**: full

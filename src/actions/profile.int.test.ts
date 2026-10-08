@@ -40,7 +40,6 @@ async function insertGoal(userId: string, retirementAge: number) {
     userId,
     monthlyIncomeCents: 1_000_000,
     savedCents: 15_000_000,
-    birthDate: "1993-09-18",
     retirementAge,
     annualRateBp: 800,
     withdrawalRateBp: 600,
