@@ -182,11 +182,11 @@ T12 → T13 → T14 → T15 → T16 → T17 → T18
 
 **Done when**:
 
-- [ ] `getBirthDate` devolve `null` sem data e `"AAAA-MM-DD"` com data; usuário inexistente devolve `null`
-- [ ] `setBirthDate` altera só o usuário indicado
-- [ ] `createPending` com `birthDate` grava a data; sem ela grava `NULL`; e-mail duplicado continua devolvendo `duplicate` sem alterar o existente
-- [ ] Testes em `users.int.test.ts`; contagem anterior preservada
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
+- [x] `getBirthDate` devolve `null` sem data e `"AAAA-MM-DD"` com data; usuário inexistente devolve `null`
+- [x] `setBirthDate` altera só o usuário indicado
+- [x] `createPending` com `birthDate` grava a data; sem ela grava `NULL`; e-mail duplicado continua devolvendo `duplicate` sem alterar o existente
+- [x] Testes em `users.int.test.ts`; contagem anterior preservada
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
 
 **Tests**: integration
 **Gate**: full

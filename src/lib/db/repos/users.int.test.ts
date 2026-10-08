@@ -42,6 +42,28 @@ describe("usersRepo.createPending", () => {
     expect(await verifyPassword({ hash: acc.password!, password: PASSWORD })).toBe(true);
   });
 
+  it("stores the birth date when given and NULL when not (NASC-02)", async () => {
+    await usersRepo.createPending({ ...ana, birthDate: "1993-09-18" });
+    await usersRepo.createPending({ name: "Bia", email: "bia@x.com", password: PASSWORD });
+
+    const rows = await db.select().from(user);
+    expect(rows.find((r) => r.email === "ana@x.com")?.birthDate).toBe("1993-09-18");
+    expect(rows.find((r) => r.email === "bia@x.com")?.birthDate).toBeNull();
+  });
+
+  it("keeps the existing user untouched when a duplicate signup brings a birth date", async () => {
+    const id = await insertCredentialUser("ana@x.com", "outra-senha-123", "approved");
+    const before = await userRow(id);
+
+    expect(await usersRepo.createPending({ ...ana, birthDate: "1993-09-18" })).toEqual({
+      ok: false,
+      reason: "duplicate",
+    });
+
+    expect(await userRow(id)).toEqual(before);
+    expect(before.birthDate).toBeNull();
+  });
+
   it("creates no session", async () => {
     await usersRepo.createPending(ana);
     expect(await db.$count(session)).toBe(0);
@@ -76,6 +98,31 @@ describe("usersRepo.createPending", () => {
     );
     expect(await db.$count(user)).toBe(1);
     expect(await db.$count(account)).toBe(1);
+  });
+});
+
+describe("usersRepo.getBirthDate / setBirthDate", () => {
+  it("returns null without a date and the ISO date with one", async () => {
+    const id = await insertCredentialUser("ana@x.com", PASSWORD, "approved");
+    expect(await usersRepo.getBirthDate(id)).toBeNull();
+
+    await usersRepo.setBirthDate(id, "1993-09-18");
+
+    expect(await usersRepo.getBirthDate(id)).toBe("1993-09-18");
+  });
+
+  it("returns null for an unknown user", async () => {
+    expect(await usersRepo.getBirthDate(randomUUID())).toBeNull();
+  });
+
+  it("changes only the given user", async () => {
+    const ana1 = await insertCredentialUser("ana@x.com", PASSWORD, "approved");
+    const bia = await insertCredentialUser("bia@x.com", PASSWORD, "approved");
+
+    await usersRepo.setBirthDate(ana1, "1993-09-18");
+
+    expect(await usersRepo.getBirthDate(ana1)).toBe("1993-09-18");
+    expect(await usersRepo.getBirthDate(bia)).toBeNull();
   });
 });
 

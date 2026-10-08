@@ -135,14 +135,14 @@ A data de nascimento só existe hoje dentro do objetivo de Liberdade (`financial
 | Requirement ID | Story | Phase | Status |
 | -------------- | ----- | ----- | ------ |
 | NASC-01 | P1: Data no cadastro (AC 1) | Specify | Pending |
-| NASC-02 | P1: Data no cadastro (AC 2) | Specify | Pending |
+| NASC-02 | P1: Data no cadastro (AC 2) | Specify | Implemented |
 | NASC-03 | P1: Data no cadastro (AC 3) | Specify | Implemented |
 | NASC-04 | P1: Data no cadastro (AC 4) | Specify | Implemented |
 | NASC-05 | P1: Data no cadastro (AC 5) | Specify | Implemented |
 | NASC-06 | P1: Data no cadastro (AC 6) | Specify | Implemented |
 | NASC-07 | P1: Data no cadastro (AC 7) | Specify | Implemented |
 | NASC-08 | P1: Contas sem data (AC 1) | Specify | Pending |
-| NASC-09 | P1: Contas sem data (AC 2) | Specify | Pending |
+| NASC-09 | P1: Contas sem data (AC 2) | Specify | Implemented |
 | NASC-10 | P1: Contas sem data (AC 3) | Specify | Pending |
 | NASC-11 | P1: Contas sem data (AC 4) | Specify | Implemented |
 | NASC-12 | P1: Objetivo lê a data (AC 1) | Specify | Pending |

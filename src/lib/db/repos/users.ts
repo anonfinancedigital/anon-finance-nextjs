@@ -25,13 +25,20 @@ async function createPending(input: {
   name: string;
   email: string;
   password: string;
+  birthDate?: string;
 }): Promise<{ ok: true } | { ok: false; reason: "duplicate" }> {
   const hash = await hashPassword(input.password);
   return db.transaction(async (tx) => {
     const id = randomUUID();
     const inserted = await tx
       .insert(user)
-      .values({ id, name: input.name, email: normalize(input.email), status: "pending" })
+      .values({
+        id,
+        name: input.name,
+        email: normalize(input.email),
+        status: "pending",
+        birthDate: input.birthDate ?? null,
+      })
       .onConflictDoNothing({ target: user.email })
       .returning({ id: user.id });
     if (inserted.length === 0) return { ok: false, reason: "duplicate" } as const;
@@ -60,6 +67,17 @@ async function findById(id: string): Promise<{ id: string; email: string; status
     .from(user)
     .where(eq(user.id, id));
   return row ?? null;
+}
+
+/** The user's birth date as "AAAA-MM-DD"; null when not set or the user does not exist. */
+async function getBirthDate(id: string): Promise<string | null> {
+  const [row] = await db.select({ birthDate: user.birthDate }).from(user).where(eq(user.id, id));
+  return row?.birthDate ?? null;
+}
+
+/** Sets the birth date of that user only. */
+async function setBirthDate(id: string, iso: string): Promise<void> {
+  await db.update(user).set({ birthDate: iso }).where(eq(user.id, id));
 }
 
 /** Every user except the admin: pending first, then the rest, each group oldest first. */
@@ -127,6 +145,8 @@ export const usersRepo = {
   createPending,
   findByEmail,
   findById,
+  getBirthDate,
+  setBirthDate,
   listForAdmin,
   transition,
   revokeSessions,
