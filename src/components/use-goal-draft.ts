@@ -16,12 +16,12 @@ type FieldName = keyof GoalFormValues;
 export function useGoalDraft({
   saved,
   initial,
-  birthDate = "",
+  birthDate,
   nowIso,
 }: {
   saved: Goal | null;
   initial?: GoalFormValues;
-  birthDate?: string;
+  birthDate: string;
   nowIso: string;
 }) {
   const now = useMemo(() => new Date(nowIso), [nowIso]);

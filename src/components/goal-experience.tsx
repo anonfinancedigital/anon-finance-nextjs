@@ -36,15 +36,18 @@ import type { GoalFormValues } from "@/lib/validation/goal-draft";
 export function GoalExperience({
   saved,
   initial,
+  birthDate,
   nowIso,
 }: {
   saved: Goal | null;
   initial?: GoalFormValues;
+  /** The user's birth date as DD/MM/AAAA; shown in the form, not editable there. */
+  birthDate: string;
   nowIso: string;
 }) {
   const [open, setOpen] = useState(false);
   const [confirmingDiscard, setConfirmingDiscard] = useState(false);
-  const draft = useGoalDraft({ saved, initial, nowIso });
+  const draft = useGoalDraft({ saved, initial, birthDate, nowIso });
   const { summary } = draft;
 
   /** Closing with unapplied changes asks first; without changes it closes right away. */

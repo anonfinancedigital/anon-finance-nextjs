@@ -33,6 +33,7 @@ export default async function FreedomPage() {
             }
           : undefined
       }
+      birthDate={goal ? isoToBR(goal.birthDate) : ""}
       nowIso={new Date().toISOString()}
     />
   );
