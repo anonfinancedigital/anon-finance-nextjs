@@ -566,9 +566,9 @@ T12 → T13 → T14 → T15 → T16 → T17 → T18
 
 **Done when**:
 
-- [ ] Página compila sem tipo faltando; a data chega ao formulário com e sem objetivo
-- [ ] Evidência por inspeção de código; build gate passa
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] Página compila sem tipo faltando; a data chega ao formulário com e sem objetivo
+- [x] Evidência por inspeção de código; build gate passa
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
 
 **Tests**: none
 **Gate**: build

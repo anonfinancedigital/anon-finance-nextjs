@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
+import { redirect } from "next/navigation";
 import { GoalExperience } from "@/components/goal-experience";
 import { requireSessionForPage } from "@/lib/auth-guard";
 import { isoToBR } from "@/lib/domain/date-br";
 import { goalsRepo } from "@/lib/db/repos/goals";
+import { usersRepo } from "@/lib/db/repos/users";
 import { formatRate } from "@/lib/domain/freedom-copy";
 import { formatBRL } from "@/lib/domain/money";
 
@@ -16,6 +18,9 @@ const rateText = (bp: number) => formatRate(bp).replace(/%$/, "");
 
 export default async function FreedomPage() {
   const { userId } = await requireSessionForPage();
+  // The layout already sends accounts without a birth date to /data-nascimento; this keeps the types honest.
+  const birthDate = await usersRepo.getBirthDate(userId);
+  if (birthDate === null) redirect("/data-nascimento");
   const goal = await goalsRepo.get(userId);
 
   return (
@@ -26,14 +31,14 @@ export default async function FreedomPage() {
           ? {
               monthlyIncome: moneyText(goal.monthlyIncomeCents),
               saved: moneyText(goal.savedCents),
-              birthDate: isoToBR(goal.birthDate),
+              birthDate: isoToBR(birthDate),
               retirementAge: String(goal.retirementAge),
               annualRate: rateText(goal.annualRateBp),
               withdrawalRate: rateText(goal.withdrawalRateBp),
             }
           : undefined
       }
-      birthDate={goal ? isoToBR(goal.birthDate) : ""}
+      birthDate={isoToBR(birthDate)}
       nowIso={new Date().toISOString()}
     />
   );
