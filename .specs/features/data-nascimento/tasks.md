@@ -430,11 +430,11 @@ T12 → T13 → T14 → T15 → T16 → T17 → T18
 
 **Done when**:
 
-- [ ] Sem data no usuário → "Informe sua data de nascimento antes de salvar o objetivo" e nada gravado
-- [ ] `birthDate` forjado no input é ignorado: o objetivo é validado e salvo com a data do usuário
-- [ ] Idade da independência ≤ idade atual → "A idade da independência deve ser maior que a idade atual (N)"
-- [ ] Testes em `goals.int.test.ts`; contagem preservada
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
+- [x] Sem data no usuário → "Informe sua data de nascimento antes de salvar o objetivo" e nada gravado
+- [x] `birthDate` forjado no input é ignorado: o objetivo é validado e salvo com a data do usuário
+- [x] Idade da independência ≤ idade atual → "A idade da independência deve ser maior que a idade atual (N)"
+- [x] Testes em `goals.int.test.ts`; contagem preservada
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
 
 **Tests**: integration
 **Gate**: full

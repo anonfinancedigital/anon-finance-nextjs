@@ -1,5 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { eq } from "drizzle-orm";
+import { ageOn } from "@/lib/domain/freedom";
+import { today } from "@/lib/validation/goal";
 import { user } from "@/lib/db/auth-schema";
 import { db } from "@/lib/db/client";
 import { goalsRepo } from "@/lib/db/repos/goals";
@@ -20,7 +22,6 @@ setupTestDb();
 const INPUT = {
   monthlyIncome: "10.000,00",
   saved: "150.000,00",
-  birthDate: "15/06/1990",
   retirementAge: "90",
   annualRate: "8",
   withdrawalRate: "6",
@@ -90,11 +91,54 @@ describe("saveGoal", () => {
     expect(await goalsRepo.get(userId)).toBeNull();
   });
 
-  it("rejects a birth date in AAAA-MM-DD and writes nothing", async () => {
-    const result = await saveGoal({ ...INPUT, birthDate: "1990-06-15" });
+  it("ignores a forged birthDate in the input and validates with the stored one (NASC-13)", async () => {
+    // 31/02/1990 would be rejected as invalid, and a 2020 date would make age 90 impossible: neither matters.
+    for (const forged of ["31/02/1990", "1990-06-15", "15/06/2020", ""]) {
+      expect(await saveGoal({ ...INPUT, birthDate: forged })).toEqual({ ok: true });
+      expect(await goalsRepo.get(userId)).toEqual(SAVED);
+    }
+    const [row] = await db.select().from(user).where(eq(user.id, userId));
+    expect(row.birthDate).toBe("1990-06-15");
+  });
 
-    expect(result).toMatchObject({ ok: false, fieldErrors: { birthDate: "Data de nascimento inválida" } });
+  it("does not write the birth date in the goal row", async () => {
+    expect(await saveGoal({ ...INPUT, birthDate: "01/01/2000" })).toEqual({ ok: true });
+
+    const [row] = await db.select().from(financialGoal);
+    expect(row).not.toHaveProperty("birthDate");
+    expect(await goalsRepo.get(userId)).toMatchObject({ birthDate: "1990-06-15" });
+  });
+
+  it("refuses a user without a birth date and writes nothing (NASC-13)", async () => {
+    await db.update(user).set({ birthDate: null }).where(eq(user.id, userId));
+    const upsert = vi.spyOn(goalsRepo, "upsert");
+
+    expect(await saveGoal(INPUT)).toEqual({
+      ok: false,
+      error: "Informe sua data de nascimento antes de salvar o objetivo",
+    });
+    expect(upsert).not.toHaveBeenCalled();
+    expect(await db.$count(financialGoal)).toBe(0);
+    expect(revalidatePath).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    ["equal to", 0],
+    ["below", -1],
+  ])("rejects an independence age %s the current age with the exact message (NASC-14)", async (_label, delta) => {
+    const age = ageOn("1990-06-15", today(new Date()));
+    const result = await saveGoal({ ...INPUT, retirementAge: String(age + delta) });
+
+    expect(result).toMatchObject({
+      ok: false,
+      fieldErrors: { retirementAge: `A idade da independência deve ser maior que a idade atual (${age})` },
+    });
     expect(await goalsRepo.get(userId)).toBeNull();
+  });
+
+  it("accepts an independence age one above the current age", async () => {
+    const age = ageOn("1990-06-15", today(new Date()));
+    expect(await saveGoal({ ...INPUT, retirementAge: String(age + 1) })).toEqual({ ok: true });
   });
 
   it("accepts a zero saved amount", async () => {
@@ -105,7 +149,6 @@ describe("saveGoal", () => {
   it.each([
     ["monthlyIncome", "0,00"],
     ["saved", "-1"],
-    ["birthDate", "31/02/1990"],
     ["annualRate", "abc"],
     ["withdrawalRate", ""],
     ["retirementAge", "10"],

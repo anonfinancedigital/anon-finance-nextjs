@@ -146,8 +146,8 @@ A data de nascimento só existe hoje dentro do objetivo de Liberdade (`financial
 | NASC-10 | P1: Contas sem data (AC 3) | Specify | Implemented |
 | NASC-11 | P1: Contas sem data (AC 4) | Specify | Implemented |
 | NASC-12 | P1: Objetivo lê a data (AC 1) | Specify | Pending |
-| NASC-13 | P1: Objetivo lê a data (AC 2) | Specify | Pending |
-| NASC-14 | P1: Objetivo lê a data (AC 3) | Specify | Pending |
+| NASC-13 | P1: Objetivo lê a data (AC 2) | Specify | Implemented |
+| NASC-14 | P1: Objetivo lê a data (AC 3) | Specify | Implemented |
 | NASC-15 | P1: Objetivo lê a data (AC 4) | Specify | Implemented |
 | NASC-16 | P2: Alterar a data (AC 1) | Specify | Implemented |
 | NASC-17 | P2: Alterar a data (AC 2) | Specify | Implemented |
