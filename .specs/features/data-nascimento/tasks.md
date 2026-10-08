@@ -128,10 +128,10 @@ T12 → T13 → T14 → T15 → T16 → T17 → T18
 
 **Done when**:
 
-- [ ] `goal.test.ts` existente passa sem alteração de asserts
-- [ ] `import { today } from "@/lib/validation/goal"` continua válido (`goal-fields.tsx`)
-- [ ] Contagem de testes igual à anterior (sem exclusões)
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] `goal.test.ts` existente passa sem alteração de asserts
+- [x] `import { today } from "@/lib/validation/goal"` continua válido (`goal-fields.tsx`)
+- [x] Contagem de testes igual à anterior (sem exclusões)
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
 
 **Tests**: unit
 **Gate**: quick
