@@ -2202,10 +2202,10 @@ T86 → T88
 
 **Done when**:
 
-- [ ] `Senha incorreta` e a mensagem do administrador exibidas sem sair da tela
-- [ ] Sucesso limpa a DEK do dispositivo antes do redirecionamento
-- [ ] Senha real nunca enviada
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] `Senha incorreta` e a mensagem do administrador exibidas sem sair da tela
+- [x] Sucesso limpa a DEK do dispositivo antes do redirecionamento
+- [x] Senha real nunca enviada
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
 
 **Tests**: none
 **Gate**: build
