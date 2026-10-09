@@ -1,18 +1,23 @@
-import { LogOutIcon } from "lucide-react";
 import { redirect } from "next/navigation";
-import { signOutAction } from "@/actions/auth";
 import { AppNav } from "@/components/app-nav";
 import { Logo } from "@/components/brand/Logo";
+import { SignOutButton } from "@/components/sign-out-button";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { Button } from "@/components/ui/button";
+import { VaultProvider } from "@/components/vault-provider";
 import { requireSessionForPage } from "@/lib/auth-guard";
-import { usersRepo } from "@/lib/db/repos/users";
+import { legacyRepo } from "@/lib/db/repos/legacy";
+import { vaultRepo } from "@/lib/db/repos/vault";
 
-/** Shell of the signed-in area: sidebar (top bar on mobile) with navigation and sign-out. Pages still guard their own data. */
+/**
+ * Shell of the signed-in area: sidebar (top bar on mobile) with navigation and sign-out. Pages render
+ * inside `VaultProvider`, so none shows data before the DEK is open (SIGILO-17). Pages still guard their own data.
+ */
 export default async function AppLayout({ children }: LayoutProps<"/">) {
   const { userId, isAdmin } = await requireSessionForPage();
-  // /data-nascimento lives outside this group, so this redirect cannot loop.
-  if ((await usersRepo.getBirthDate(userId)) === null) redirect("/data-nascimento");
+  // Legacy first: it has no vault, so no sealed birth date either (SIGILO-22).
+  // /proteger-dados and /data-nascimento live outside this group, so neither redirect can loop.
+  if (await legacyRepo.isLegacy(userId)) redirect("/proteger-dados");
+  if ((await vaultRepo.getBirthDateSealed(userId)) === null) redirect("/data-nascimento");
 
   return (
     <div className="flex flex-1 flex-col md:flex-row">
@@ -21,16 +26,13 @@ export default async function AppLayout({ children }: LayoutProps<"/">) {
         <AppNav isAdmin={isAdmin} />
         <div className="ml-auto flex items-center gap-1 md:mt-auto md:ml-0 md:flex-col md:items-stretch">
           <ThemeToggle className="md:w-full md:justify-start" />
-          <form action={signOutAction}>
-            <Button type="submit" variant="ghost" size="sm" className="md:w-full md:justify-start">
-              <LogOutIcon aria-hidden />
-              Sair
-            </Button>
-          </form>
+          <SignOutButton />
         </div>
       </aside>
       <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-6 pb-24 sm:px-6 md:ml-[218px] md:max-w-none md:px-8 md:pb-8 lg:px-12">
-        <div className="mx-auto w-full max-w-5xl">{children}</div>
+        <div className="mx-auto w-full max-w-5xl">
+          <VaultProvider userId={userId}>{children}</VaultProvider>
+        </div>
       </main>
     </div>
   );

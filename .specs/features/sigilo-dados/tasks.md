@@ -1818,10 +1818,10 @@ T86 → T88
 
 **Done when**:
 
-- [ ] Ordem dos redirecionamentos sem laço (inspeção)
-- [ ] Nenhuma tela com dados renderiza fora do provedor
-- [ ] `SignOutButton` no lugar do formulário atual
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] Ordem dos redirecionamentos sem laço (inspeção)
+- [x] Nenhuma tela com dados renderiza fora do provedor
+- [x] `SignOutButton` no lugar do formulário atual
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
 
 **Tests**: none
 **Gate**: build
@@ -1844,10 +1844,10 @@ T86 → T88
 
 **Done when**:
 
-- [ ] Usa `computeMonthTotals`, `buildMonthlySummary`, `buildSpendingPaceViews`, `filterTransactions` e `searchTransactions` sem reimplementar regras
-- [ ] Erro mostra `Não foi possível carregar seus dados. Tente novamente`
-- [ ] Props de `searchParams` recebidas como strings do servidor
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] Usa `computeMonthTotals`, `buildMonthlySummary`, `buildSpendingPaceViews`, `filterTransactions` e `searchTransactions` sem reimplementar regras
+- [x] Erro mostra `Não foi possível carregar seus dados. Tente novamente`
+- [x] Props de `searchParams` recebidas como strings do servidor
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
 
 **Tests**: none
 **Gate**: build
@@ -1870,10 +1870,10 @@ T86 → T88
 
 **Done when**:
 
-- [ ] Nenhum valor em claro é lido ou calculado no servidor
-- [ ] `mes`, `categoria`, `subcategoria` e `busca` repassados ao cliente
-- [ ] `npm run build` passa
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] Nenhum valor em claro é lido ou calculado no servidor
+- [x] `mes`, `categoria`, `subcategoria` e `busca` repassados ao cliente
+- [x] `npm run build` passa
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
 
 **Tests**: none
 **Gate**: build
@@ -1896,10 +1896,10 @@ T86 → T88
 
 **Done when**:
 
-- [ ] Valor fora da faixa mostra a mensagem atual e nada é enviado (inspeção)
-- [ ] Edição envia `newRowId` e `insertedCt`
-- [ ] Nenhum campo em claro de valor ou descrição vai à action
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] Valor fora da faixa mostra a mensagem atual e nada é enviado (inspeção)
+- [x] Edição envia `newRowId` e `insertedCt`
+- [x] Nenhum campo em claro de valor ou descrição vai à action
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
 
 **Tests**: none
 **Gate**: build
@@ -2151,10 +2151,10 @@ T86 → T88
 
 **Done when**:
 
-- [ ] Link para `/privacidade`
-- [ ] Renderiza `ExportButton` e `DeleteAccountDialog`
-- [ ] Rota protegida pelo layout
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] Link para `/privacidade`
+- [x] Renderiza `ExportButton` e `DeleteAccountDialog`
+- [x] Rota protegida pelo layout
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
 
 **Tests**: none
 **Gate**: build
@@ -2177,9 +2177,9 @@ T86 → T88
 
 **Done when**:
 
-- [ ] Download no navegador com o nome de `exportFileName`
-- [ ] Erro mostra a mensagem fixa
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] Download no navegador com o nome de `exportFileName`
+- [x] Erro mostra a mensagem fixa
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
 
 **Tests**: none
 **Gate**: build
@@ -2202,10 +2202,10 @@ T86 → T88
 
 **Done when**:
 
-- [ ] `Senha incorreta` e a mensagem do administrador exibidas sem sair da tela
-- [ ] Sucesso limpa a DEK do dispositivo antes do redirecionamento
-- [ ] Senha real nunca enviada
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] `Senha incorreta` e a mensagem do administrador exibidas sem sair da tela
+- [x] Sucesso limpa a DEK do dispositivo antes do redirecionamento
+- [x] Senha real nunca enviada
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
 
 **Tests**: none
 **Gate**: build
@@ -2228,9 +2228,9 @@ T86 → T88
 
 **Done when**:
 
-- [ ] Item visível no menu lateral e no topo mobile
-- [ ] Estado ativo igual aos demais itens
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] Item visível no menu lateral e no topo mobile
+- [x] Estado ativo igual aos demais itens
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
 
 **Tests**: none
 **Gate**: build
