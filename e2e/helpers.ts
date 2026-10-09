@@ -3,9 +3,9 @@ import { expect, type Locator, type Page } from "@playwright/test";
 import { eq } from "drizzle-orm";
 import { db } from "../src/lib/db/client";
 import { user } from "../src/lib/db/auth-schema";
-import { categoriesRepo } from "../src/lib/db/repos/categories";
-import { transactionsRepo } from "../src/lib/db/repos/transactions";
+import { transaction } from "../src/lib/db/schema";
 import { seedAdminFromEnv } from "../src/lib/db/seed-user";
+import { insertCategory } from "../src/test/db";
 import { truncateAll } from "../src/test/db-reset";
 
 export const ADMIN = {
@@ -44,12 +44,13 @@ export async function adminUserId(): Promise<string> {
  */
 export async function seedCategories(cats: { name: string; percent: number; color?: number }[]) {
   const userId = await adminUserId();
-  const result = await categoriesRepo.replaceSet(
-    userId,
-    cats.map((c, i) => ({ name: c.name, percentMicro: c.percent * 1_000_000, color: c.color ?? (i % 8) + 1 })),
-  );
-  if (!result.ok) throw new Error(result.error);
-  return categoriesRepo.list(userId);
+  const saved = [];
+  for (const [i, c] of cats.entries()) {
+    const percentMicro = c.percent * 1_000_000;
+    const row = await insertCategory(userId, { name: c.name, percentMicro, color: c.color ?? (i % 8) + 1 });
+    saved.push({ id: row.id, name: c.name, percentMicro, color: row.color });
+  }
+  return saved;
 }
 
 /** Inserts one admin transaction straight in the database. */
@@ -60,7 +61,7 @@ export async function seedTransaction(tx: {
   categoryId?: string;
   description?: string;
 }) {
-  await transactionsRepo.create(await adminUserId(), { id: randomUUID(), ...tx });
+  await db.insert(transaction).values({ id: randomUUID(), userId: await adminUserId(), ...tx });
 }
 
 /** Chooses an option of a `SelectField` (a Radix dropdown, not a native select). */

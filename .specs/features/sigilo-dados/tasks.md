@@ -2255,11 +2255,11 @@ T86 → T88
 
 **Done when**:
 
-- [ ] Nenhum import das funções removidas
-- [ ] Casos de `deleteTransaction` mantidos e verdes
-- [ ] Contagem de testes: removidos = os portados na T `acttx` (sem perda de caso)
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
-- [ ] Contagem de testes conferida (sem remoções silenciosas)
+- [x] Nenhum import das funções removidas
+- [x] Casos de `deleteTransaction` mantidos e verdes
+- [x] Contagem de testes: removidos = os portados na T `acttx` (sem perda de caso)
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
+- [x] Contagem de testes conferida (sem remoções silenciosas)
 
 **Tests**: integration
 **Gate**: full
@@ -2282,10 +2282,10 @@ T86 → T88
 
 **Done when**:
 
-- [ ] Nenhum import restante de `@/actions/categories`
-- [ ] Todos os casos do teste antigo têm equivalente em `categories-sealed`
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
-- [ ] Contagem de testes conferida (sem remoções silenciosas)
+- [x] Nenhum import restante de `@/actions/categories`
+- [x] Todos os casos do teste antigo têm equivalente em `categories-sealed`
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
+- [x] Contagem de testes conferida (sem remoções silenciosas)
 
 **Tests**: integration
 **Gate**: full
@@ -2444,10 +2444,10 @@ T86 → T88
 
 **Done when**:
 
-- [ ] Typecheck prova que nada usa as funções removidas
-- [ ] Todo caso de teste removido tem equivalente nas versões `Sealed`
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
-- [ ] Contagem de testes conferida (sem remoções silenciosas)
+- [x] Typecheck prova que nada usa as funções removidas
+- [x] Todo caso de teste removido tem equivalente nas versões `Sealed`
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
+- [x] Contagem de testes conferida (sem remoções silenciosas)
 
 **Tests**: integration
 **Gate**: full
@@ -2470,10 +2470,10 @@ T86 → T88
 
 **Done when**:
 
-- [ ] Typecheck prova que nada usa as funções removidas
-- [ ] Casos de `categories.int.test.ts` e `categories-summary.int.test.ts` com equivalente sealed
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
-- [ ] Contagem de testes conferida (sem remoções silenciosas)
+- [x] Typecheck prova que nada usa as funções removidas
+- [x] Casos de `categories.int.test.ts` e `categories-summary.int.test.ts` com equivalente sealed
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
+- [x] Contagem de testes conferida (sem remoções silenciosas)
 
 **Tests**: integration
 **Gate**: full

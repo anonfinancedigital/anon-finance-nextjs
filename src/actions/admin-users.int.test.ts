@@ -4,7 +4,6 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { account, session, user } from "@/lib/db/auth-schema";
 import { db } from "@/lib/db/client";
 import { goalsRepo } from "@/lib/db/repos/goals";
-import { transactionsRepo } from "@/lib/db/repos/transactions";
 import { usersRepo } from "@/lib/db/repos/users";
 import { category, categoryPercent, financialGoal, transaction } from "@/lib/db/schema";
 import type { UserStatus } from "@/lib/domain/user-status";
@@ -165,8 +164,9 @@ const ADMIN_TARGET = { ok: false, error: "Não é possível revogar ou excluir o
 /** A category, an expense in it and a goal of the user; returns the category id. */
 async function addData(userId: string) {
   const cat = await insertCategory(userId, { name: "Conforto", percentMicro: 100000000, color: 1 });
-  await transactionsRepo.create(userId, {
+  await db.insert(transaction).values({
     id: randomUUID(),
+    userId,
     kind: "expense",
     amountCents: 1000,
     date: "2026-10-04",

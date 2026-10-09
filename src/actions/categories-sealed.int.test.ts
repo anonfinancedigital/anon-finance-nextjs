@@ -221,6 +221,44 @@ describe("saveCategoriesSealed", () => {
     expect(revalidatePath).not.toHaveBeenCalled();
   });
 
+  it("blocks removing a subcategory that has expenses, telling how many, and keeps the set", async () => {
+    const keepSub = { id: randomUUID(), nameCt: "v1:streaming" };
+    const dropSub = { id: randomUUID(), nameCt: "v1:restaurante" };
+    const dto: CategorySetDto = {
+      items: [item(1, { subcategories: [dropSub, keepSub] }), ...[2, 3].map((n) => item(n))],
+    };
+    await saveCategoriesSealed(dto);
+    const target = dto.items[0].clientId;
+    for (const n of [1, 2, 3]) {
+      await transactionsRepo.createSealed(userId, {
+        id: randomUUID(),
+        kind: "expense",
+        date: "2026-10-01",
+        categoryId: target,
+        subcategoryId: dropSub.id,
+        amountCt: `v1:v${n}`,
+        descriptionCt: null,
+        recurrence: "none",
+      });
+    }
+    const before = await stored();
+    vi.mocked(revalidatePath).mockClear();
+
+    const withoutSub: CategorySetDto = {
+      items: dto.items.map((i) => ({
+        ...i,
+        id: i.clientId,
+        percentChange: undefined,
+        subcategories: i.clientId === target ? [keepSub] : [],
+      })),
+    };
+    const message = "Esta subcategoria tem 3 gastos e não pode ser excluída";
+
+    expect(await saveCategoriesSealed(withoutSub)).toMatchObject({ ok: false, error: message });
+    expect(await stored()).toEqual(before);
+    expect(revalidatePath).not.toHaveBeenCalled();
+  });
+
   it("returns UNAUTHORIZED without a session and writes nothing", async () => {
     request.headers = new Headers();
     const replace = vi.spyOn(categoriesRepo, "replaceSetSealed");

@@ -671,3 +671,81 @@ describe("updateTransactionSealed start month and end month", () => {
     ]);
   });
 });
+
+describe("createTransactionSealed recurring income", () => {
+  it("stores a recurring income that shows in later months", async () => {
+    const dto = income({ recurrence: "indefinite" });
+
+    expect(await createTransactionSealed(dto)).toEqual({ ok: true });
+
+    expect(await rows()).toMatchObject([{ id: dto.id, kind: "income", recurring: true }]);
+    expect(await transactionsRepo.listByMonthSealed(userId, range("2026-11"))).toMatchObject([
+      { id: dto.id, kind: "income", date: "2026-11-05", amountCt: "v1:salario" },
+    ]);
+  });
+});
+
+describe("transaction subcategory (sealed)", () => {
+  const SUBCATEGORY_MESSAGE = "Subcategoria não pertence à categoria";
+
+  it("stores an expense without subcategory as NULL", async () => {
+    expect(await createTransactionSealed(expense({ subcategoryId: null }))).toEqual({ ok: true });
+
+    expect((await rows())[0].subcategoryId).toBeNull();
+  });
+
+  it("rejects a subcategory that does not exist, naming the field", async () => {
+    expect(await createTransactionSealed(expense({ subcategoryId: randomUUID() }))).toMatchObject({
+      ok: false,
+      fieldErrors: { subcategoryId: SUBCATEGORY_MESSAGE },
+    });
+    expect(await db.$count(transaction)).toBe(0);
+  });
+
+  it("rejects a subcategory of another user", async () => {
+    const otherOwner = await insertTestUser();
+    const otherSubcategory = await insertSealedSubcategory(otherOwner, await insertSealedCategory(otherOwner));
+
+    expect(await createTransactionSealed(expense({ subcategoryId: otherSubcategory }))).toMatchObject({
+      ok: false,
+      fieldErrors: { subcategoryId: SUBCATEGORY_MESSAGE },
+    });
+    expect(await db.$count(transaction)).toBe(0);
+  });
+
+  it("updates the subcategory of an expense and clears it with null", async () => {
+    const restaurante = await insertSealedSubcategory(userId, categoryId);
+    const streaming = await insertSealedSubcategory(userId, categoryId);
+    const original = expense({ subcategoryId: restaurante });
+    await createTransactionSealed(original);
+
+    expect(await updateTransactionSealed(edit({ ...original, subcategoryId: streaming }))).toEqual({ ok: true });
+    expect((await rows())[0].subcategoryId).toBe(streaming);
+
+    expect(await updateTransactionSealed(edit({ ...original, subcategoryId: null }))).toEqual({ ok: true });
+    expect((await rows())[0].subcategoryId).toBeNull();
+  });
+
+  it("rejects an update with a subcategory outside the category and keeps the expense", async () => {
+    const restaurante = await insertSealedSubcategory(userId, categoryId);
+    const foreign = await insertSealedSubcategory(userId, await insertSealedCategory(userId));
+    const original = expense({ subcategoryId: restaurante });
+    await createTransactionSealed(original);
+
+    expect(await updateTransactionSealed(edit({ ...original, subcategoryId: foreign }))).toMatchObject({
+      ok: false,
+      fieldErrors: { subcategoryId: SUBCATEGORY_MESSAGE },
+    });
+    expect((await rows())[0].subcategoryId).toBe(restaurante);
+  });
+
+  it("rejects an income with a subcategory and persists nothing", async () => {
+    const subcategoryId = await insertSealedSubcategory(userId, categoryId);
+
+    expect(await createTransactionSealed(income({ subcategoryId }))).toMatchObject({
+      ok: false,
+      fieldErrors: { subcategoryId: "Ganho não tem subcategoria" },
+    });
+    expect(await db.$count(transaction)).toBe(0);
+  });
+});
