@@ -1818,10 +1818,10 @@ T86 → T88
 
 **Done when**:
 
-- [ ] Ordem dos redirecionamentos sem laço (inspeção)
-- [ ] Nenhuma tela com dados renderiza fora do provedor
-- [ ] `SignOutButton` no lugar do formulário atual
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] Ordem dos redirecionamentos sem laço (inspeção)
+- [x] Nenhuma tela com dados renderiza fora do provedor
+- [x] `SignOutButton` no lugar do formulário atual
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
 
 **Tests**: none
 **Gate**: build
