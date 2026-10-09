@@ -2522,10 +2522,10 @@ T86 → T88
 
 **Done when**:
 
-- [ ] Typecheck prova que nada usa as funções removidas
-- [ ] `seedUser` e demais testes de `users.int.test.ts` seguem verdes
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
-- [ ] Contagem de testes conferida (sem remoções silenciosas)
+- [x] Typecheck prova que nada usa as funções removidas
+- [x] `seedUser` e demais testes de `users.int.test.ts` seguem verdes
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
+- [x] Contagem de testes conferida (sem remoções silenciosas)
 
 **Tests**: integration
 **Gate**: full
@@ -2552,6 +2552,8 @@ T86 → T88
 - [ ] `issue` e `isValid` seguem cobertos
 - [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
 - [ ] Contagem de testes conferida (sem remoções silenciosas)
+
+> Adiada para o follow-up de finalização (reset de contas legadas depende de `consume`).
 
 **Tests**: integration
 **Gate**: full

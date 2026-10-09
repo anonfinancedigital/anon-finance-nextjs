@@ -3,8 +3,10 @@ import { verifyPassword } from "better-auth/crypto";
 import { eq } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
 import type { VaultMaterial } from "@/lib/vault/types";
+import type { UserStatus } from "@/lib/domain/user-status";
+import { insertCredentialUser } from "@/test/auth";
 import { setupTestDb } from "@/test/db";
-import { account, user } from "../auth-schema";
+import { account, session, user } from "../auth-schema";
 import { db } from "../client";
 import { userVault } from "../schema";
 import { usersRepo } from "./users";
@@ -93,5 +95,38 @@ describe("usersRepo.createPendingSealed", () => {
     await usersRepo.createPendingSealed(data);
     const [vault] = await db.select().from(userVault).where(eq(userVault.userId, data.id));
     expect(vault.birthDateCt).toBeNull();
+  });
+
+  it("creates no session", async () => {
+    await usersRepo.createPendingSealed(input());
+    expect(await db.$count(session)).toBe(0);
+  });
+
+  it.each([["pending"], ["approved"], ["rejected"], ["revoked"]] as const)(
+    "returns duplicate for an e-mail already used by a %s user, keeping that user, account and no vault",
+    async (status: UserStatus) => {
+      const id = await insertCredentialUser("ana@example.com", "outra-senha-123", status);
+      const [before] = await db.select().from(user).where(eq(user.id, id));
+      const [accBefore] = await db.select().from(account).where(eq(account.userId, id));
+
+      expect(await usersRepo.createPendingSealed(input({ name: "Outra", email: "ANA@example.com " }))).toEqual({
+        ok: false,
+        reason: "duplicate",
+      });
+
+      expect(await db.select().from(user)).toEqual([before]);
+      expect(await db.select().from(account)).toEqual([accBefore]);
+      expect(await db.$count(userVault)).toBe(0);
+    },
+  );
+
+  it("creates exactly one user when two signups with the same e-mail arrive together", async () => {
+    const results = await Promise.all([
+      usersRepo.createPendingSealed(input({ email: "Ana@example.com" })),
+      usersRepo.createPendingSealed(input({ email: "ana@EXAMPLE.com" })),
+    ]);
+
+    expect(results).toEqual(expect.arrayContaining([{ ok: true }, { ok: false, reason: "duplicate" }]));
+    expect(await counts()).toEqual({ users: 1, accounts: 1, vaults: 1 });
   });
 });

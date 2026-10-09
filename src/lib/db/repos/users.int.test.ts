@@ -3,6 +3,7 @@ import { verifyPassword } from "better-auth/crypto";
 import { eq, sql } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
 import type { UserStatus } from "@/lib/domain/user-status";
+import type { VaultMaterial } from "@/lib/vault/types";
 import { monthRange } from "@/lib/domain/month";
 import { createSignedInUser, insertCredentialUser, signInCookie } from "@/test/auth";
 import { insertCategory, setupTestDb } from "@/test/db";
@@ -21,6 +22,26 @@ const ADMIN_EMAIL = process.env.ADMIN_EMAIL!;
 const PASSWORD = "senha-da-ana-123";
 const ana = { name: "Ana", email: "ana@x.com", password: PASSWORD };
 
+const VAULT: VaultMaterial = {
+  kdfVersion: 1,
+  salt: "AAAAAAAAAAAAAAAAAAAAAA",
+  memKib: 65536,
+  iterations: 3,
+  parallelism: 1,
+  dekWrappedPw: "v1:pw-wrapped",
+  dekWrappedRecovery: "v1:recovery-wrapped",
+};
+
+/** Sealed signup of `ana`, the auth secret standing in for the password. */
+const signupAna = () =>
+  usersRepo.createPendingSealed({
+    id: randomUUID(),
+    name: ana.name,
+    email: ana.email,
+    authSecret: ana.password,
+    vault: VAULT,
+  });
+
 const userRow = async (id: string) => (await db.select().from(user).where(eq(user.id, id)))[0];
 
 /** Inserts a credential-less user with the given status and creation instant. */
@@ -30,105 +51,9 @@ async function insertUser(status: UserStatus, createdAt: Date, email = `${random
   return id;
 }
 
-describe("usersRepo.createPending", () => {
-  it("creates a pending user and a credential account with the salted hash, e-mail normalized", async () => {
-    expect(await usersRepo.createPending({ ...ana, email: "  Ana@X.COM " })).toEqual({ ok: true });
-
-    const [row] = await db.select().from(user);
-    expect(row).toMatchObject({ name: "Ana", email: "ana@x.com", status: "pending", decidedAt: null });
-    const [acc] = await db.select().from(account).where(eq(account.userId, row.id));
-    expect(acc).toMatchObject({ providerId: "credential", accountId: row.id });
-    expect(acc.password).not.toContain(PASSWORD);
-    expect(await verifyPassword({ hash: acc.password!, password: PASSWORD })).toBe(true);
-  });
-
-  it("stores the birth date when given and NULL when not (NASC-02)", async () => {
-    await usersRepo.createPending({ ...ana, birthDate: "1993-09-18" });
-    await usersRepo.createPending({ name: "Bia", email: "bia@x.com", password: PASSWORD });
-
-    const rows = await db.select().from(user);
-    expect(rows.find((r) => r.email === "ana@x.com")?.birthDate).toBe("1993-09-18");
-    expect(rows.find((r) => r.email === "bia@x.com")?.birthDate).toBeNull();
-  });
-
-  it("keeps the existing user untouched when a duplicate signup brings a birth date", async () => {
-    const id = await insertCredentialUser("ana@x.com", "outra-senha-123", "approved");
-    const before = await userRow(id);
-
-    expect(await usersRepo.createPending({ ...ana, birthDate: "1993-09-18" })).toEqual({
-      ok: false,
-      reason: "duplicate",
-    });
-
-    expect(await userRow(id)).toEqual(before);
-    expect(before.birthDate).toBeNull();
-  });
-
-  it("creates no session", async () => {
-    await usersRepo.createPending(ana);
-    expect(await db.$count(session)).toBe(0);
-  });
-
-  it.each([["pending"], ["approved"], ["rejected"], ["revoked"]] as const)(
-    "returns duplicate for an e-mail already used by a %s user, without changing it",
-    async (status) => {
-      const id = await insertCredentialUser("ana@x.com", "outra-senha-123", status);
-      const before = await userRow(id);
-      const [accBefore] = await db.select().from(account).where(eq(account.userId, id));
-
-      expect(await usersRepo.createPending({ ...ana, name: "Outra", email: "ANA@x.com " })).toEqual({
-        ok: false,
-        reason: "duplicate",
-      });
-
-      expect(await userRow(id)).toEqual(before);
-      expect(await db.select().from(account)).toEqual([accBefore]);
-      expect(await db.$count(user)).toBe(1);
-    },
-  );
-
-  it("creates exactly one user when two signups with the same e-mail arrive together", async () => {
-    const results = await Promise.all([
-      usersRepo.createPending({ ...ana, email: "Ana@x.com" }),
-      usersRepo.createPending({ ...ana, email: "ana@X.com" }),
-    ]);
-
-    expect(results).toEqual(
-      expect.arrayContaining([{ ok: true }, { ok: false, reason: "duplicate" }]),
-    );
-    expect(await db.$count(user)).toBe(1);
-    expect(await db.$count(account)).toBe(1);
-  });
-});
-
-describe("usersRepo.getBirthDate / setBirthDate", () => {
-  it("returns null without a date and the ISO date with one", async () => {
-    const id = await insertCredentialUser("ana@x.com", PASSWORD, "approved");
-    expect(await usersRepo.getBirthDate(id)).toBeNull();
-
-    await usersRepo.setBirthDate(id, "1993-09-18");
-
-    expect(await usersRepo.getBirthDate(id)).toBe("1993-09-18");
-  });
-
-  it("returns null for an unknown user", async () => {
-    expect(await usersRepo.getBirthDate(randomUUID())).toBeNull();
-  });
-
-  it("changes only the given user", async () => {
-    const ana1 = await insertCredentialUser("ana@x.com", PASSWORD, "approved");
-    const bia = await insertCredentialUser("bia@x.com", PASSWORD, "approved");
-
-    await usersRepo.setBirthDate(ana1, "1993-09-18");
-
-    expect(await usersRepo.getBirthDate(ana1)).toBe("1993-09-18");
-    expect(await usersRepo.getBirthDate(bia)).toBeNull();
-  });
-});
-
 describe("usersRepo.findByEmail", () => {
   it("returns id, e-mail, status and password hash, ignoring case and spaces", async () => {
-    await usersRepo.createPending(ana);
+    await signupAna();
     const [row] = await db.select().from(user);
 
     const found = await usersRepo.findByEmail(" ANA@x.com ");
@@ -393,7 +318,7 @@ describe("usersRepo.remove", () => {
   it("frees the e-mail for a new signup", async () => {
     const { userId } = await userWithData("ana@x.com");
     await usersRepo.remove(userId);
-    expect(await usersRepo.createPending(ana)).toEqual({ ok: true });
+    expect(await signupAna()).toEqual({ ok: true });
   });
 
   it("deletes nothing when a write inside the deletion fails", async () => {
@@ -426,7 +351,7 @@ describe("usersRepo.remove", () => {
 describe("isolation of a new approved user (SIGNUP-07)", () => {
   it("sees no categories, transactions or goal while another user has data", async () => {
     await userWithData("admin-data@x.com");
-    await usersRepo.createPending(ana);
+    await signupAna();
     const found = await usersRepo.findByEmail(ana.email);
     expect(await usersRepo.transition(found!.id, "approve")).toBe("ok");
 
