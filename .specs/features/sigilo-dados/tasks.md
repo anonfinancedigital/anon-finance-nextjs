@@ -1763,11 +1763,11 @@ T86 → T88
 
 **Done when**:
 
-- [ ] Fluxo: senha → carregar → montar pacote → diálogo da chave → enviar (inspeção)
-- [ ] Erro do servidor mostra a mensagem e mantém a conta legada
-- [ ] Texto de aviso sobre a última passagem em texto puro
-- [ ] Sucesso guarda a DEK no dispositivo e vai para `/`
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] Fluxo: senha → carregar → montar pacote → diálogo da chave → enviar (inspeção)
+- [x] Erro do servidor mostra a mensagem e mantém a conta legada
+- [x] Texto de aviso sobre a última passagem em texto puro
+- [x] Sucesso guarda a DEK no dispositivo e vai para `/`
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
 
 **Tests**: none
 **Gate**: build
