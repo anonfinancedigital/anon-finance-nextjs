@@ -2,7 +2,7 @@ import { verifyPassword } from "better-auth/crypto";
 import { eq } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
 import type { VaultMaterial } from "@/lib/vault/types";
-import { TEST_PASSWORD } from "@/test/auth";
+import { insertCredentialUser, TEST_PASSWORD } from "@/test/auth";
 import { setupTestDb } from "@/test/db";
 import { insertLegacyAccount } from "@/test/legacy";
 import { account, user } from "../auth-schema";
@@ -27,7 +27,7 @@ const AUTH_SECRET = "segredo-de-login-novo";
 type Account = Awaited<ReturnType<typeof insertLegacyAccount>>;
 
 /** The package the browser would send for `a`, with stand-in ciphertexts `v1:<kind>-<id>`. */
-async function packageFor(a: Account): Promise<LegacyCommit> {
+async function packageFor(a: Pick<Account, "userId">): Promise<LegacyCommit> {
   const res = await legacyRepo.readPlain(a.userId);
   if (!res.ok) throw new Error("expected legacy");
   const { plain } = res;
@@ -213,5 +213,32 @@ describe("legacyRepo.commitMigration", () => {
 
     expect(await legacyRepo.commitMigration(a.userId, TEST_PASSWORD, await packageFor(a))).toBe("ok");
     expect((await rawRows(a.userId)).vaults[0].birthDateCt).toBeNull();
+  });
+
+  it("migrates a legacy account without any row: creates the vault, swaps the hash and ends legacy", async () => {
+    const userId = await insertCredentialUser("vazio@x.com");
+    const pkg = await packageFor({ userId });
+    expect(pkg).toEqual({
+      authSecret: AUTH_SECRET,
+      vault: VAULT,
+      transactions: [],
+      categories: [],
+      goal: null,
+      birthDateCt: null,
+    });
+
+    expect(await legacyRepo.commitMigration(userId, TEST_PASSWORD, pkg)).toBe("ok");
+
+    const raw = await rawRows(userId);
+    expect(raw.transactions).toEqual([]);
+    expect(raw.categories).toEqual([]);
+    expect(raw.versions).toEqual([]);
+    expect(raw.subcategories).toEqual([]);
+    expect(raw.goals).toEqual([]);
+    expect(raw.vaults).toHaveLength(1);
+    expect(raw.vaults[0]).toMatchObject({ ...VAULT, userId, birthDateCt: null });
+    expect(await verifyPassword({ hash: raw.hash, password: AUTH_SECRET })).toBe(true);
+    expect(await verifyPassword({ hash: raw.hash, password: TEST_PASSWORD })).toBe(false);
+    expect(await legacyRepo.isLegacy(userId)).toBe(false);
   });
 });
