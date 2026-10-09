@@ -1527,10 +1527,10 @@ T86 → T88
 
 **Done when**:
 
-- [ ] Sem DEK e sem KEK pendente os filhos não renderizam (inspeção de código com `file:line`)
-- [ ] KEK pendente é removida após uso, com sucesso ou falha
-- [ ] `useVault` fora do provedor lança erro claro
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] Sem DEK e sem KEK pendente os filhos não renderizam (inspeção de código com `file:line`)
+- [x] KEK pendente é removida após uso, com sucesso ou falha
+- [x] `useVault` fora do provedor lança erro claro
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
 
 **Tests**: none
 **Gate**: build
