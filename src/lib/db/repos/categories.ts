@@ -8,7 +8,7 @@ import {
 import { currentMonth, type YearMonth } from "@/lib/domain/month";
 import { monthStartOf, type PercentVersion, resolvePercent } from "@/lib/domain/percent-history";
 import { db } from "../client";
-import { category, categoryPercent, subcategory, transaction } from "../schema";
+import { category, categoryPercent, plain, subcategory, transaction } from "../schema";
 
 export type CategoryItem = {
   id?: string;
@@ -77,16 +77,21 @@ async function listForMonth(
 
   const byCategory = new Map<string, Subcategory[]>();
   for (const { id, categoryId, name } of subcategories) {
-    byCategory.set(categoryId, [...(byCategory.get(categoryId) ?? []), { id, name }]);
+    byCategory.set(categoryId, [
+      ...(byCategory.get(categoryId) ?? []),
+      { id, name: plain(name, "subcategory.name") },
+    ]);
   }
   const versionsOf = new Map<string, PercentVersion[]>();
-  for (const { categoryId, ...version } of versions) {
+  for (const { categoryId, fromMonth, percentMicro } of versions) {
+    const version = { fromMonth, percentMicro: plain(percentMicro, "category_percent.percent_micro") };
     versionsOf.set(categoryId, [...(versionsOf.get(categoryId) ?? []), version]);
   }
-  return categories.map(({ deletedFrom, ...c }) => {
+  return categories.map(({ deletedFrom, name, ...c }) => {
     const percent = resolvePercent(versionsOf.get(c.id) ?? [], resolveAt);
     return {
       ...c,
+      name: plain(name, "category.name"),
       deleted: deletedFrom !== null,
       percentMicro: percent ?? 0,
       hasPercent: percent !== null,
@@ -157,7 +162,8 @@ async function replaceSet(
       .innerJoin(category, eq(category.id, categoryPercent.categoryId))
       .where(eq(category.userId, userId));
     const versionsOf = new Map<string, PercentVersion[]>();
-    for (const { categoryId, ...version } of versions) {
+    for (const { categoryId, fromMonth, percentMicro } of versions) {
+      const version = { fromMonth, percentMicro: plain(percentMicro, "category_percent.percent_micro") };
       versionsOf.set(categoryId, [...(versionsOf.get(categoryId) ?? []), version]);
     }
 

@@ -545,7 +545,7 @@ describe("categoriesRepo.replaceSet percent versions", () => {
         .from(categoryPercent)
         .innerJoin(category, eq(category.id, categoryPercent.categoryId))
         .where(eq(category.userId, userId))
-    ).sort((x, y) => x.name.localeCompare(y.name) || x.fromMonth.localeCompare(y.fromMonth));
+    ).sort((x, y) => x.name!.localeCompare(y.name!) || x.fromMonth.localeCompare(y.fromMonth));
 
   /** Seeds A/B at 50/50 "since ever" and returns them as editable items. */
   async function seed(userId: string) {

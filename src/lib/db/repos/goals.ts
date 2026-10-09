@@ -2,7 +2,7 @@ import { eq, sql } from "drizzle-orm";
 import { user } from "../auth-schema";
 import type { Goal } from "@/lib/domain/freedom";
 import { db } from "../client";
-import { financialGoal } from "../schema";
+import { financialGoal, plain } from "../schema";
 
 export const goalsRepo = {
   /** The user's goal, or `null` when none was saved or the user has no birth date. */
@@ -20,7 +20,14 @@ export const goalsRepo = {
       .innerJoin(user, eq(user.id, financialGoal.userId))
       .where(eq(financialGoal.userId, userId));
     if (!row || row.birthDate === null) return null;
-    return { ...row, birthDate: row.birthDate };
+    return {
+      birthDate: row.birthDate,
+      monthlyIncomeCents: plain(row.monthlyIncomeCents, "financial_goal.monthly_income_cents"),
+      savedCents: plain(row.savedCents, "financial_goal.saved_cents"),
+      retirementAge: plain(row.retirementAge, "financial_goal.retirement_age"),
+      annualRateBp: plain(row.annualRateBp, "financial_goal.annual_rate_bp"),
+      withdrawalRateBp: plain(row.withdrawalRateBp, "financial_goal.withdrawal_rate_bp"),
+    };
   },
 
   /** Saves the user's goal, replacing the previous one (one row per user). */

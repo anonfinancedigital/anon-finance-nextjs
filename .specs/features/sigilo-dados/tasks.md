@@ -346,9 +346,9 @@ T86 → T88
 
 **Done when**:
 
-- [ ] Todos os tipos do design exportados, sem `any`
-- [ ] Nenhum import de servidor (arquivo isomórfico)
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] Todos os tipos do design exportados, sem `any`
+- [x] Nenhum import de servidor (arquivo isomórfico)
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
 
 **Tests**: none
 **Gate**: build
@@ -371,10 +371,10 @@ T86 → T88
 
 **Done when**:
 
-- [ ] `npm run db:generate` produz a `0010` e ela é commitada
-- [ ] Migração aplica no banco de teste privado e os testes de integração existentes seguem verdes
-- [ ] `CHECK` aceita linha só em texto puro e linha só cifrada, e recusa as duas ou nenhuma (conferido por SQL manual no banco de teste)
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
+- [x] `npm run db:generate` produz a `0010` e ela é commitada
+- [x] Migração aplica no banco de teste privado e os testes de integração existentes seguem verdes
+- [x] `CHECK` aceita linha só em texto puro e linha só cifrada, e recusa as duas ou nenhuma (conferido por SQL manual no banco de teste)
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
 
 **Tests**: none
 **Gate**: full
@@ -425,12 +425,12 @@ T86 → T88
 
 **Done when**:
 
-- [ ] `create` grava a linha e `get` devolve o mesmo material; segunda `create` do mesmo usuário falha
-- [ ] `rewrap` troca só salt/parâmetros/`dekWrappedPw`; `dekWrappedRecovery` fica igual
-- [ ] `wipeFinancialData` apaga todas as linhas financeiras do usuário e nenhuma de outro
-- [ ] ≥ 6 testes
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
-- [ ] Contagem de testes conferida (sem remoções silenciosas)
+- [x] `create` grava a linha e `get` devolve o mesmo material; segunda `create` do mesmo usuário falha
+- [x] `rewrap` troca só salt/parâmetros/`dekWrappedPw`; `dekWrappedRecovery` fica igual
+- [x] `wipeFinancialData` apaga todas as linhas financeiras do usuário e nenhuma de outro
+- [x] ≥ 6 testes
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
+- [x] Contagem de testes conferida (sem remoções silenciosas)
 
 **Tests**: integration
 **Gate**: full
@@ -453,13 +453,13 @@ T86 → T88
 
 **Done when**:
 
-- [ ] Conta com cofre devolve seu salt e parâmetros reais
-- [ ] E-mail inexistente devolve o mesmo resultado em duas chamadas e com o mesmo formato (mesmas chaves, salt de 16 bytes em base64url)
-- [ ] Resultado do chamariz difere entre e-mails diferentes
-- [ ] Conta sem cofre devolve `{mode:"legacy"}`; e-mail com outra caixa/espaços equivale ao normalizado
-- [ ] ≥ 5 testes
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
-- [ ] Contagem de testes conferida (sem remoções silenciosas)
+- [x] Conta com cofre devolve seu salt e parâmetros reais
+- [x] E-mail inexistente devolve o mesmo resultado em duas chamadas e com o mesmo formato (mesmas chaves, salt de 16 bytes em base64url)
+- [x] Resultado do chamariz difere entre e-mails diferentes
+- [x] Conta sem cofre devolve `{mode:"legacy"}`; e-mail com outra caixa/espaços equivale ao normalizado
+- [x] ≥ 5 testes
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
+- [x] Contagem de testes conferida (sem remoções silenciosas)
 
 **Tests**: integration
 **Gate**: full
@@ -482,12 +482,12 @@ T86 → T88
 
 **Done when**:
 
-- [ ] `set` grava só em `birth_date_ct` do usuário e `get` devolve o mesmo texto
-- [ ] `get` devolve `null` sem cofre ou sem data
-- [ ] Coluna crua nunca contém data legível
-- [ ] ≥ 3 testes
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
-- [ ] Contagem de testes conferida (sem remoções silenciosas)
+- [x] `set` grava só em `birth_date_ct` do usuário e `get` devolve o mesmo texto
+- [x] `get` devolve `null` sem cofre ou sem data
+- [x] Coluna crua nunca contém data legível
+- [x] ≥ 3 testes
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
+- [x] Contagem de testes conferida (sem remoções silenciosas)
 
 **Tests**: integration
 **Gate**: full
