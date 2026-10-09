@@ -10,7 +10,7 @@ Implement these tasks with the `tlc-spec-driven` skill: **activate it by name an
 
 **Design**: `.specs/features/sigilo-dados/design.md`
 **Spec**: `.specs/features/sigilo-dados/spec.md`
-**Status**: Draft
+**Status**: Done
 
 **Ordem e estratégia:** tudo é aditivo até o cutover. As fases 1 a 6 criam o núcleo de cripto, o esquema, repositórios, lógica de cliente e Server Actions *ao lado* do código antigo (sufixo `Sealed`), então cada commit compila e passa o gate. As fases 7 a 11 ligam a UI ao novo caminho. A fase 12 e a 13 removem o caminho em texto puro e entregam o script de finalização. Nada deve ser publicado em produção antes do fim da fase 11: até lá, contas legadas não conseguem usar as telas já trocadas.
 

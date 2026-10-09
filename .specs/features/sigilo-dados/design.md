@@ -1,7 +1,7 @@
 # Sigilo dos Dados Design
 
 **Spec**: `.specs/features/sigilo-dados/spec.md`
-**Status**: Draft
+**Status**: Approved
 
 ---
 

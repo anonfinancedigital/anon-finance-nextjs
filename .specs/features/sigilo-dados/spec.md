@@ -229,48 +229,48 @@ Todos os dados financeiros e pessoais do app ficam em texto puro no Postgres, e 
 
 | Requirement ID | Story | Phase | Status |
 | -------------- | ----- | ----- | ------ |
-| SIGILO-01 | P1: Dados cifrados no navegador | T1, T2, T7, T8, T12, T13, T14, T15, T16, T17, T23, T24, T61, T64, T67, T76, T77, T78, T79, T80, T83, T84, T85, T86 | In Tasks |
-| SIGILO-02 | P1: Dados cifrados no navegador | T4, T7, T23, T29, T35, T36, T37, T38, T39 | In Tasks |
-| SIGILO-03 | P1: Dados cifrados no navegador | T2, T3, T26 | In Tasks |
-| SIGILO-04 | P1: Dados cifrados no navegador | T2 | In Tasks |
-| SIGILO-05 | P1: Dados cifrados no navegador | T2, T14, T23, T26 | In Tasks |
-| SIGILO-06 | P1: Dados cifrados no navegador | T2, T26, T50, T60, T63, T66 | In Tasks |
-| SIGILO-07 | P1: Dados cifrados no navegador | T13, T15, T25, T60, T61, T63, T83 | In Tasks |
-| SIGILO-08 | P1: Dados cifrados no navegador | T13, T26, T60 | In Tasks |
-| SIGILO-09 | P1: Dados cifrados no navegador | T16, T24, T62, T65, T68, T69, T71 | In Tasks |
-| SIGILO-10 | P1: Dados cifrados no navegador | T9, T35, T36, T37, T38, T62, T65, T68, T69, T71 | In Tasks |
-| SIGILO-11 | P1: Senha única e desbloqueio | T4, T5, T10, T19, T29, T39, T54 | In Tasks |
-| SIGILO-12 | P1: Senha única e desbloqueio | T8, T10, T19, T39, T86 | In Tasks |
-| SIGILO-13 | P1: Senha única e desbloqueio | T4, T30, T34, T48, T53 | In Tasks |
-| SIGILO-14 | P1: Senha única e desbloqueio | T8, T53, T88 | In Tasks |
-| SIGILO-15 | P1: Senha única e desbloqueio | T11, T34 | In Tasks |
-| SIGILO-16 | P1: Senha única e desbloqueio | T28, T48, T52, T53 | In Tasks |
-| SIGILO-17 | P1: Senha única e desbloqueio | T30, T34, T48, T49, T59, T70 | In Tasks |
-| SIGILO-18 | P1: Senha única e desbloqueio | T6, T29, T39, T51, T54 | In Tasks |
-| SIGILO-19 | P1: Redefinir senha | T5, T20, T31, T40, T55, T81, T87 | In Tasks |
-| SIGILO-20 | P1: Redefinir senha | T6, T31, T40, T55 | In Tasks |
-| SIGILO-21 | P1: Redefinir senha | T10, T20, T40, T55 | In Tasks |
-| SIGILO-22 | P1: Migração | T21, T44, T53, T56, T57, T59 | In Tasks |
-| SIGILO-23 | P1: Migração | T21, T22, T32, T44, T46, T57 | In Tasks |
-| SIGILO-24 | P1: Migração | T22, T44, T57 | In Tasks |
-| SIGILO-25 | P1: Migração | T88 | In Tasks |
-| SIGILO-26 | P1: Sem vazamento | T33, T35, T80, T81, T82 | In Tasks |
-| SIGILO-27 | P1: Sem vazamento | T45, T46 | In Tasks |
-| SIGILO-28 | P1: Sem vazamento | T45, T47 | In Tasks |
-| SIGILO-29 | P1: Sem vazamento | T45, T47 | In Tasks |
-| SIGILO-30 | P1: Política pública | T47, T58 | In Tasks |
-| SIGILO-31 | P1: Política pública | T58 | In Tasks |
-| SIGILO-32 | P1: Política pública | T58 | In Tasks |
-| SIGILO-33 | P1: Política pública | T58 | In Tasks |
-| SIGILO-34 | P1: Política pública | T58 | In Tasks |
-| SIGILO-35 | P1: Política pública | T53, T54, T72, T75 | In Tasks |
-| SIGILO-36 | P2: Exportar | T18, T27, T72, T73 | In Tasks |
-| SIGILO-37 | P2: Exportar | T18, T41, T73 | In Tasks |
-| SIGILO-38 | P2: Excluir conta | T43, T72, T74 | In Tasks |
-| SIGILO-39 | P2: Excluir conta | T42, T43, T74 | In Tasks |
-| SIGILO-40 | P2: Excluir conta | T43, T74 | In Tasks |
+| SIGILO-01 | P1: Dados cifrados no navegador | T1, T2, T7, T8, T12, T13, T14, T15, T16, T17, T23, T24, T61, T64, T67, T76, T77, T78, T79, T80, T83, T84, T85, T86 | Verified |
+| SIGILO-02 | P1: Dados cifrados no navegador | T4, T7, T23, T29, T35, T36, T37, T38, T39 | Verified |
+| SIGILO-03 | P1: Dados cifrados no navegador | T2, T3, T26 | Verified |
+| SIGILO-04 | P1: Dados cifrados no navegador | T2 | Verified |
+| SIGILO-05 | P1: Dados cifrados no navegador | T2, T14, T23, T26 | Verified |
+| SIGILO-06 | P1: Dados cifrados no navegador | T2, T26, T50, T60, T63, T66 | Verified |
+| SIGILO-07 | P1: Dados cifrados no navegador | T13, T15, T25, T60, T61, T63, T83 | Verified |
+| SIGILO-08 | P1: Dados cifrados no navegador | T13, T26, T60 | Verified |
+| SIGILO-09 | P1: Dados cifrados no navegador | T16, T24, T62, T65, T68, T69, T71 | Verified |
+| SIGILO-10 | P1: Dados cifrados no navegador | T9, T35, T36, T37, T38, T62, T65, T68, T69, T71 | Verified |
+| SIGILO-11 | P1: Senha única e desbloqueio | T4, T5, T10, T19, T29, T39, T54 | Verified |
+| SIGILO-12 | P1: Senha única e desbloqueio | T8, T10, T19, T39, T86 | Verified |
+| SIGILO-13 | P1: Senha única e desbloqueio | T4, T30, T34, T48, T53 | Verified |
+| SIGILO-14 | P1: Senha única e desbloqueio | T8, T53, T88 | Verified |
+| SIGILO-15 | P1: Senha única e desbloqueio | T11, T34 | Verified |
+| SIGILO-16 | P1: Senha única e desbloqueio | T28, T48, T52, T53 | Verified |
+| SIGILO-17 | P1: Senha única e desbloqueio | T30, T34, T48, T49, T59, T70 | Verified |
+| SIGILO-18 | P1: Senha única e desbloqueio | T6, T29, T39, T51, T54 | Verified |
+| SIGILO-19 | P1: Redefinir senha | T5, T20, T31, T40, T55, T81, T87 | Verified |
+| SIGILO-20 | P1: Redefinir senha | T6, T31, T40, T55 | Verified |
+| SIGILO-21 | P1: Redefinir senha | T10, T20, T40, T55 | Verified |
+| SIGILO-22 | P1: Migração | T21, T44, T53, T56, T57, T59 | Verified |
+| SIGILO-23 | P1: Migração | T21, T22, T32, T44, T46, T57 | Verified |
+| SIGILO-24 | P1: Migração | T22, T44, T57 | Verified |
+| SIGILO-25 | P1: Migração | T88 | Verified |
+| SIGILO-26 | P1: Sem vazamento | T33, T35, T80, T81, T82 | Verified |
+| SIGILO-27 | P1: Sem vazamento | T45, T46 | Verified |
+| SIGILO-28 | P1: Sem vazamento | T45, T47 | Verified |
+| SIGILO-29 | P1: Sem vazamento | T45, T47 | Verified |
+| SIGILO-30 | P1: Política pública | T47, T58 | Verified |
+| SIGILO-31 | P1: Política pública | T58 | Verified |
+| SIGILO-32 | P1: Política pública | T58 | Verified |
+| SIGILO-33 | P1: Política pública | T58 | Verified |
+| SIGILO-34 | P1: Política pública | T58 | Verified |
+| SIGILO-35 | P1: Política pública | T53, T54, T72, T75 | Verified |
+| SIGILO-36 | P2: Exportar | T18, T27, T72, T73 | Verified |
+| SIGILO-37 | P2: Exportar | T18, T41, T73 | Verified |
+| SIGILO-38 | P2: Excluir conta | T43, T72, T74 | Verified |
+| SIGILO-39 | P2: Excluir conta | T42, T43, T74 | Verified |
+| SIGILO-40 | P2: Excluir conta | T43, T74 | Verified |
 
-**Coverage:** 40 total, 40 mapped to tasks, 0 unmapped
+**Coverage:** 40 total, 40 mapped to tasks, 40 verified (validation.md, iteração 2)
 
 ---
 
