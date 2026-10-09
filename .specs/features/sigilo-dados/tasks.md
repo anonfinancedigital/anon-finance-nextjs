@@ -1077,12 +1077,12 @@ T86 → T88
 
 **Done when**:
 
-- [ ] Erro do `pg` com `detail` contendo valores registra só ação e `code`
-- [ ] Entrada não-`Error` registra `unknown`
-- [ ] Nenhuma propriedade do erro além de `code` chega a `console.error` (espiado)
-- [ ] ≥ 3 testes
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
-- [ ] Contagem de testes conferida (sem remoções silenciosas)
+- [x] Erro do `pg` com `detail` contendo valores registra só ação e `code`
+- [x] Entrada não-`Error` registra `unknown`
+- [x] Nenhuma propriedade do erro além de `code` chega a `console.error` (espiado)
+- [x] ≥ 3 testes
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Contagem de testes conferida (sem remoções silenciosas)
 
 **Tests**: unit
 **Gate**: quick
@@ -1333,11 +1333,11 @@ T86 → T88
 
 **Done when**:
 
-- [ ] `signInAction` usa o novo módulo e os testes existentes de bloqueio de `auth.int.test.ts` passam sem alteração
-- [ ] Módulo não está em arquivo `"use server"`
-- [ ] Nenhum teste removido nem enfraquecido
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
-- [ ] Contagem de testes conferida (sem remoções silenciosas)
+- [x] `signInAction` usa o novo módulo e os testes existentes de bloqueio de `auth.int.test.ts` passam sem alteração
+- [x] Módulo não está em arquivo `"use server"`
+- [x] Nenhum teste removido nem enfraquecido
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
+- [x] Contagem de testes conferida (sem remoções silenciosas)
 
 **Tests**: integration
 **Gate**: full
@@ -1418,12 +1418,12 @@ T86 → T88
 
 **Done when**:
 
-- [ ] `X-Content-Type-Options`, `X-Frame-Options: DENY` e `Referrer-Policy` sempre presentes
-- [ ] `Strict-Transport-Security: max-age=63072000; includeSubDomains` só quando `NODE_ENV` é `production`
-- [ ] CSP contém `frame-ancestors 'none'`, `object-src 'none'`, `base-uri 'self'` e `script-src 'self' 'nonce-…' 'strict-dynamic'` sem origem externa; `unsafe-eval` só em desenvolvimento; `style-src 'self' 'unsafe-inline'`
-- [ ] ≥ 6 testes
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
-- [ ] Contagem de testes conferida (sem remoções silenciosas)
+- [x] `X-Content-Type-Options`, `X-Frame-Options: DENY` e `Referrer-Policy` sempre presentes
+- [x] `Strict-Transport-Security: max-age=63072000; includeSubDomains` só quando `NODE_ENV` é `production`
+- [x] CSP contém `frame-ancestors 'none'`, `object-src 'none'`, `base-uri 'self'` e `script-src 'self' 'nonce-…' 'strict-dynamic'` sem origem externa; `unsafe-eval` só em desenvolvimento; `style-src 'self' 'unsafe-inline'`
+- [x] ≥ 6 testes
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Contagem de testes conferida (sem remoções silenciosas)
 
 **Tests**: unit
 **Gate**: quick
@@ -1446,10 +1446,10 @@ T86 → T88
 
 **Done when**:
 
-- [ ] Opção de limite confirmada na documentação do Next instalado antes de escrever
-- [ ] `npm run build` passa
-- [ ] Headers vêm de `securityHeaders`, sem valores duplicados no arquivo
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] Opção de limite confirmada na documentação do Next instalado antes de escrever
+- [x] `npm run build` passa
+- [x] Headers vêm de `securityHeaders`, sem valores duplicados no arquivo
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
 
 **Tests**: none
 **Gate**: build
@@ -1472,15 +1472,41 @@ T86 → T88
 
 **Done when**:
 
-- [ ] Rotas protegidas sem cookie seguem redirecionando para `/login`
-- [ ] `/privacidade`, `/login`, `/cadastro`, `/esqueci-senha` e `/redefinir-senha` não redirecionam
-- [ ] Resposta de rota protegida leva `Cache-Control: no-store` e CSP com o mesmo nonce de `x-nonce`
-- [ ] `npm run build` passa
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] Rotas protegidas sem cookie seguem redirecionando para `/login`
+- [x] `/privacidade`, `/login`, `/cadastro`, `/esqueci-senha` e `/redefinir-senha` não redirecionam
+- [x] Resposta de rota protegida leva `Cache-Control: no-store` e CSP com o mesmo nonce de `x-nonce`
+- [x] `npm run build` passa
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
 
 **Tests**: none
 **Gate**: build
 **Commit**: `feat(sigilo): nonce, CSP e cache no proxy`
+
+---
+
+### T47a: Nonce da CSP no layout raiz
+
+**What**: `RootLayout` lê `x-nonce` via `headers()` (o que torna todas as páginas dinâmicas, requisito do nonce) e o aplica ao script inline do tema, mantendo o comportamento do tema.
+**Where**: `src/app/layout.tsx`
+**Depends on**: T47
+**Reuses**: `x-nonce` definido em `src/proxy.ts`
+**Requirement**: SIGILO-28
+
+**Tools**:
+
+- MCP: NONE
+- Skill: NONE
+
+**Done when**:
+
+- [x] Layout raiz dinâmico: `/login` deixa de ser pré-renderizada/cacheada estaticamente
+- [x] Todos os `<script>` do HTML (tema e `<script src>` do Next) levam o mesmo nonce do header CSP
+- [x] `/liberdade` sem cookie segue com 307 para `/login`; `/privacidade` não redireciona para `/login`
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+
+**Tests**: none
+**Gate**: build
+**Commit**: `fix(sigilo): nonce da CSP no layout raiz`
 
 ---
 
