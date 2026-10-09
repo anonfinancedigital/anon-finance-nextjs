@@ -2334,10 +2334,10 @@ T86 → T88
 
 **Done when**:
 
-- [ ] Nenhum import restante de `@/actions/profile`
-- [ ] Regras de idade cobertas no cliente (T `birthform`) e gravação em `profile-sealed`
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
-- [ ] Contagem de testes conferida (sem remoções silenciosas)
+- [x] Nenhum import restante de `@/actions/profile`
+- [x] Regras de idade cobertas no cliente (T `birthform`) e gravação em `profile-sealed`
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
+- [x] Contagem de testes conferida (sem remoções silenciosas)
 
 **Tests**: integration
 **Gate**: full
