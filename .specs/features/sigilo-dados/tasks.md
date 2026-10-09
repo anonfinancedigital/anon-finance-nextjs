@@ -1711,10 +1711,10 @@ T86 → T88
 
 **Done when**:
 
-- [ ] `Chave de recuperação inválida` aparece sem enviar nada ao servidor
-- [ ] Botão do modo `wipe` só habilita com a frase exata
-- [ ] Nova chave de recuperação exibida no modo `wipe`
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] `Chave de recuperação inválida` aparece sem enviar nada ao servidor
+- [x] Botão do modo `wipe` só habilita com a frase exata
+- [x] Nova chave de recuperação exibida no modo `wipe`
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
 
 **Tests**: none
 **Gate**: build
