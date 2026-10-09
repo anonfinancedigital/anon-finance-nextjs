@@ -1162,12 +1162,12 @@ T86 → T88
 
 **Done when**:
 
-- [ ] Porta os casos de `categories.int.test.ts` que dependem da ação (sessão, entrada inválida, atomicidade)
-- [ ] Cor fora de 1..8 e id não-uuid devolvem erro de campo
-- [ ] Texto cifrado malformado devolve erro e não grava
-- [ ] ≥ 6 testes novos
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
-- [ ] Contagem de testes conferida (sem remoções silenciosas)
+- [x] Porta os casos de `categories.int.test.ts` que dependem da ação (sessão, entrada inválida, atomicidade)
+- [x] Cor fora de 1..8 e id não-uuid devolvem erro de campo
+- [x] Texto cifrado malformado devolve erro e não grava
+- [x] ≥ 6 testes novos
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
+- [x] Contagem de testes conferida (sem remoções silenciosas)
 
 **Tests**: integration
 **Gate**: full
