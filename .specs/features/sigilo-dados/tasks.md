@@ -287,12 +287,12 @@ T86 → T88
 
 **Done when**:
 
-- [ ] Ida e volta devolve os 32 bytes da DEK
-- [ ] KEK errada ou `userId` errado lança `DecryptError`
-- [ ] Saída começa com `v1:`
-- [ ] ≥ 4 testes
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
-- [ ] Contagem de testes conferida (sem remoções silenciosas)
+- [x] Ida e volta devolve os 32 bytes da DEK
+- [x] KEK errada ou `userId` errado lança `DecryptError`
+- [x] Saída começa com `v1:`
+- [x] ≥ 4 testes
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Contagem de testes conferida (sem remoções silenciosas)
 
 **Tests**: unit
 **Gate**: quick
