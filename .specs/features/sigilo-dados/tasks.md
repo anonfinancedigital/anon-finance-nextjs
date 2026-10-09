@@ -1218,12 +1218,12 @@ T86 → T88
 
 **Done when**:
 
-- [ ] Grava só para o usuário da sessão e `revalidatePath("/liberdade")`
-- [ ] Texto cifrado malformado devolve `SAVE_FAILED`
-- [ ] Sem sessão devolve `UNAUTHORIZED`
-- [ ] ≥ 3 testes
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
-- [ ] Contagem de testes conferida (sem remoções silenciosas)
+- [x] Grava só para o usuário da sessão e `revalidatePath("/liberdade")`
+- [x] Texto cifrado malformado devolve `SAVE_FAILED`
+- [x] Sem sessão devolve `UNAUTHORIZED`
+- [x] ≥ 3 testes
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
+- [x] Contagem de testes conferida (sem remoções silenciosas)
 
 **Tests**: integration
 **Gate**: full
