@@ -793,12 +793,12 @@ T86 → T88
 
 **Done when**:
 
-- [ ] Saída decifra com o AAD da linha e falha com AAD de outra linha ou coluna
-- [ ] Descrição vazia/`null` vira `null`; valor e descrição nunca aparecem na saída
-- [ ] Cada campo da meta usa coluna e codec próprios
-- [ ] ≥ 6 testes
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
-- [ ] Contagem de testes conferida (sem remoções silenciosas)
+- [x] Saída decifra com o AAD da linha e falha com AAD de outra linha ou coluna
+- [x] Descrição vazia/`null` vira `null`; valor e descrição nunca aparecem na saída
+- [x] Cada campo da meta usa coluna e codec próprios
+- [x] ≥ 6 testes
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Contagem de testes conferida (sem remoções silenciosas)
 
 **Tests**: unit
 **Gate**: quick
