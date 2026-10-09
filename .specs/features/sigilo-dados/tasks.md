@@ -1924,9 +1924,9 @@ T86 → T88
 
 **Done when**:
 
-- [ ] Receita de referência vem de `computeMonthTotals` sobre as ocorrências do mês corrente
-- [ ] Erro mostra a mensagem fixa
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] Receita de referência vem de `computeMonthTotals` sobre as ocorrências do mês corrente
+- [x] Erro mostra a mensagem fixa
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
 
 **Tests**: none
 **Gate**: build
