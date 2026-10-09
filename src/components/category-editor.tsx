@@ -3,7 +3,7 @@
 import { AlertCircleIcon, Trash2Icon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useId, useState, useTransition } from "react";
-import { saveCategories } from "@/actions/categories";
+import { saveCategoriesSealed } from "@/actions/categories-sealed";
 import { AdjustSumBar } from "@/components/adjust-sum-bar";
 import { AllocationProgress } from "@/components/allocation-progress";
 import { CategorySquare } from "@/components/category-card";
@@ -22,12 +22,14 @@ import { Input } from "@/components/ui/input";
 import { ReferenceIncomeCard } from "@/components/reference-income-card";
 import { SubcategoryEditor, type SubcategoryRow } from "@/components/subcategory-editor";
 import { SumWarning } from "@/components/sum-warning";
-import type { ActionResult } from "@/lib/action-result";
+import { useVault } from "@/components/vault-provider";
+import { type ActionResult, invalidInput, SAVE_FAILED } from "@/lib/action-result";
 import { allocationView } from "@/lib/domain/allocation-view";
 import { allocateCents, type Category } from "@/lib/domain/budget";
 import { categoryDisplayName } from "@/lib/domain/category-label";
 import { CATEGORY_COLORS, colorVar, nextFreeColor } from "@/lib/domain/color";
 import { formatBRL, parseBRL } from "@/lib/domain/money";
+import { currentMonth } from "@/lib/domain/month";
 import {
   adjustToTotal,
   formatPercent,
@@ -37,6 +39,9 @@ import {
   sumLabel,
   TOTAL_MICRO,
 } from "@/lib/domain/percent";
+import { monthStartOf } from "@/lib/domain/percent-history";
+import { categorySetSchema } from "@/lib/validation/category";
+import { sealCategorySet } from "@/lib/vault/seal-categories";
 
 type Row = {
   key: string;
@@ -71,6 +76,15 @@ const toRow = (c: Category): Row => ({
   isInvestment: c.isInvestment ?? false,
   subcategories: c.subcategories.map((s) => ({ key: s.id, id: s.id, name: s.name })),
 });
+
+/** The sealed action keys name errors by `nameCt` ("0.subcategories.2.nameCt"); the fields show them by `name`. */
+function byNameField(result: ActionResult): ActionResult {
+  if (result.ok || !result.fieldErrors) return result;
+  const fieldErrors = Object.fromEntries(
+    Object.entries(result.fieldErrors).map(([key, message]) => [key.replace(/nameCt$/, "name"), message]),
+  );
+  return { ...result, fieldErrors };
+}
 
 /** Shows only the chosen color; clicking it opens a dialog with the whole palette. */
 function ColorPicker({
@@ -163,6 +177,7 @@ export function CategoryEditor({
   initialIncome?: string;
 }) {
   const router = useRouter();
+  const { dek, userId } = useVault();
   const [rows, setRows] = useState<Row[]>(() => categories.map(toRow));
   const [result, setResult] = useState<ActionResult | null>(null);
   // Kept apart from the rows so it survives the reset after a save.
@@ -247,18 +262,37 @@ export function CategoryEditor({
   }
 
   function save() {
+    // Validated in the browser before sealing, with the messages the server used to give (SIGILO-09).
+    const parsedSet = categorySetSchema.safeParse(
+      rows.map(({ id, name, percent, color, isInvestment, subcategories }) => ({
+        id,
+        name,
+        percent,
+        color,
+        isInvestment,
+        subcategories: subcategories.map((s) => ({ id: s.id, name: s.name })),
+      })),
+    );
+    if (!parsedSet.success) {
+      setResult(invalidInput(parsedSet.error));
+      return;
+    }
     startTransition(async () => {
-      const res = await saveCategories(
-        rows.map(({ id, name, percent, color, isInvestment, subcategories }) => ({
-          id,
-          name,
-          percent,
-          color,
-          isInvestment,
-          subcategories: subcategories.map((s) => ({ id: s.id, name: s.name })),
-        })),
+      const now = new Date();
+      // The percent shown is the one in force this month: an unchanged percent sends no `percentChange`.
+      const fromMonth = monthStartOf(currentMonth(now));
+      const inForce = new Map(
+        categories
+          .filter((c) => c.hasPercent !== false)
+          .map((c) => [c.id, [{ fromMonth, percentMicro: c.percentMicro }]]),
       );
-      setResult(res);
+      let res: ActionResult;
+      try {
+        res = await saveCategoriesSealed(await sealCategorySet(dek, userId, parsedSet.data, inForce, now));
+      } catch {
+        res = { ok: false, error: SAVE_FAILED };
+      }
+      setResult(byNameField(res));
       if (res.ok) router.refresh();
     });
   }

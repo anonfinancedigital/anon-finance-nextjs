@@ -1924,9 +1924,9 @@ T86 → T88
 
 **Done when**:
 
-- [ ] Receita de referência vem de `computeMonthTotals` sobre as ocorrências do mês corrente
-- [ ] Erro mostra a mensagem fixa
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] Receita de referência vem de `computeMonthTotals` sobre as ocorrências do mês corrente
+- [x] Erro mostra a mensagem fixa
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
 
 **Tests**: none
 **Gate**: build
@@ -1949,9 +1949,9 @@ T86 → T88
 
 **Done when**:
 
-- [ ] Sem cálculo de valor no servidor
-- [ ] `npm run build` passa
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] Sem cálculo de valor no servidor
+- [x] `npm run build` passa
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
 
 **Tests**: none
 **Gate**: build
@@ -1974,9 +1974,9 @@ T86 → T88
 
 **Done when**:
 
-- [ ] Soma ≠ 100% e nomes duplicados mostram as mensagens atuais antes de qualquer envio (inspeção)
-- [ ] Percentual inalterado não envia `percentChange`
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] Soma ≠ 100% e nomes duplicados mostram as mensagens atuais antes de qualquer envio (inspeção)
+- [x] Percentual inalterado não envia `percentChange`
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
 
 **Tests**: none
 **Gate**: build
@@ -1999,9 +1999,9 @@ T86 → T88
 
 **Done when**:
 
-- [ ] Props de `GoalExperience` idênticas às de hoje
-- [ ] Sem data de nascimento aberta, redireciona para `/data-nascimento`
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] Props de `GoalExperience` idênticas às de hoje
+- [x] Sem data de nascimento aberta, redireciona para `/data-nascimento`
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
 
 **Tests**: none
 **Gate**: build
@@ -2024,9 +2024,9 @@ T86 → T88
 
 **Done when**:
 
-- [ ] Sem formatação de valor no servidor
-- [ ] `npm run build` passa
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] Sem formatação de valor no servidor
+- [x] `npm run build` passa
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
 
 **Tests**: none
 **Gate**: build
@@ -2049,9 +2049,9 @@ T86 → T88
 
 **Done when**:
 
-- [ ] Validação e mensagens atuais antes do envio
-- [ ] Nenhum campo em claro enviado
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] Validação e mensagens atuais antes do envio
+- [x] Nenhum campo em claro enviado
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
 
 **Tests**: none
 **Gate**: build
@@ -2074,9 +2074,9 @@ T86 → T88
 
 **Done when**:
 
-- [ ] Mesma validação e selagem do formulário principal
-- [ ] Nenhum campo em claro enviado
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] Mesma validação e selagem do formulário principal
+- [x] Nenhum campo em claro enviado
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
 
 **Tests**: none
 **Gate**: build
@@ -2099,9 +2099,9 @@ T86 → T88
 
 **Done when**:
 
-- [ ] Conta legada é redirecionada para `/proteger-dados`
-- [ ] Sem leitura de `birth_date` em claro
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] Conta legada é redirecionada para `/proteger-dados`
+- [x] Sem leitura de `birth_date` em claro
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
 
 **Tests**: none
 **Gate**: build
@@ -2124,9 +2124,9 @@ T86 → T88
 
 **Done when**:
 
-- [ ] Mensagem `A nova data deixa a idade atual igual ou maior que a idade da independência do seu objetivo (N)` preservada
-- [ ] Primeira data redireciona para `/`
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] Mensagem `A nova data deixa a idade atual igual ou maior que a idade da independência do seu objetivo (N)` preservada
+- [x] Primeira data redireciona para `/`
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
 
 **Tests**: none
 **Gate**: build
