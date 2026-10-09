@@ -120,14 +120,16 @@ describe("deleteTransaction", () => {
   it("returns the generic message when the database fails", async () => {
     const salary = income();
     await seed(salary);
-    vi.spyOn(transactionsRepo, "deleteFrom").mockRejectedValueOnce(new Error("connection refused"));
+    vi.spyOn(transactionsRepo, "deleteFrom").mockRejectedValueOnce(
+      Object.assign(new Error("connection refused"), { code: "08006" }),
+    );
     const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
 
     expect(await deleteTransaction(salary.id)).toEqual({
       ok: false,
       error: "Não foi possível salvar. Tente novamente",
     });
-    expect(consoleError).toHaveBeenCalled();
+    expect(consoleError.mock.calls).toEqual([["deleteTransaction", "08006"]]);
   });
 });
 

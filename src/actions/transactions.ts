@@ -6,6 +6,7 @@ import { type ActionResult, SAVE_FAILED } from "@/lib/action-result";
 import { requireSessionForAction } from "@/lib/auth-guard";
 import { transactionsRepo } from "@/lib/db/repos/transactions";
 import { monthKey } from "@/lib/domain/recurrence";
+import { logActionError } from "@/lib/log";
 
 const TRANSACTION_NOT_FOUND = "Transação não encontrada";
 
@@ -29,7 +30,7 @@ export async function deleteTransaction(id: string, month?: string): Promise<Act
       return transactionNotFound;
     }
   } catch (error) {
-    console.error("deleteTransaction", error);
+    logActionError("deleteTransaction", error);
     return { ok: false, error: SAVE_FAILED };
   }
 

@@ -2414,7 +2414,7 @@ T86 → T88
 
 **Done when**:
 
-- [ ] Nenhum `console.error` com objeto de erro restante em `src/actions` (busca no repositório)
+- [x] Nenhum `console.error` com objeto de erro restante em `src/actions` (busca no repositório)
 - [x] `admin-users.int.test.ts` verde
 - [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
 - [x] Contagem de testes conferida (sem remoções silenciosas)
