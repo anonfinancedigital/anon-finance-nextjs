@@ -2911,3 +2911,21 @@ Dentro de cada fase o diagrama é a cadeia sequencial; toda dependência de fase
 | T86: Remover funções antigas de usuários | Repositórios | integration | integration | ✅ OK |
 | T87: Remover consumo antigo de redefinição | Repositórios | integration | integration | ✅ OK |
 | T88: Script de finalização do legado | Scripts do operador | integration | integration | ✅ OK |
+
+---
+
+## Fix tasks (Verifier, iteração 1)
+
+O Verifier reprovou a primeira passada (`validation.md`, intervalo `5f6e3f5..30ed719`). Lacunas ranqueadas e correções, uma por commit:
+
+| Fix | Lacuna | Requisito | Commit | Resultado |
+| --- | ------ | --------- | ------ | --------- |
+| F1 | G1 (Major): senha real podia ir na URL se o Enter fosse pressionado antes da hidratação | SIGILO-02 | `2da2bda` | Botão desabilitado até hidratar (`use-hydrated.ts`), `preventDefault` incondicional e `method="post"` em login, cadastro e `/proteger-dados` |
+| F2 | G2 (Major): mutante M04 sobrevivia (KEK com o `info` do `authSecret`) | SIGILO-02, SIGILO-11 | `45e67d8` | 3 testes de separação de domínio em `kdf.test.ts`; com M04 aplicada falham exatamente os 3 |
+| F3 | G3 (Minor): link "Privacidade" do menu apontava para `/conta` | SIGILO-35 | `dffeffb` | "Privacidade" aponta para `/privacidade`; item novo "Conta" aponta para `/conta` |
+| F4 | G4 (Minor): `consume` aceitava conta com cofre | SIGILO-02, SIGILO-19 | `2edf4af` | `consume` devolve `invalid` e desfaz tudo quando o dono tem cofre |
+| F5 | G5 (Minor): CSP não saía em `api/auth`, estáticos e imagens | SIGILO-28 | `7ebf989` | CSP estática restritiva via `next.config.ts`, complementar ao matcher do proxy |
+| F6 | G6 (Minor): edge case de migração sem dados sem teste | Edge Cases | `d146a41` | Teste de `commitMigration` com conta legada sem nenhuma linha |
+| F7 | G7 (Minor): `rawRows` sem `ORDER BY` | (estabilidade) | `20beecb` | `orderBy` determinístico; 34 de 34 em 5 execuções |
+
+Registros que seguem em aberto, de baixa gravidade: o 307 que o próprio proxy gera sai sem CSP (resposta sem corpo); `/privacidade` fica fora do grupo `(app)` e não mostra o menu; a T87 foi adiada para o follow-up de finalização (o reset de contas legadas ainda depende de `consume`).
