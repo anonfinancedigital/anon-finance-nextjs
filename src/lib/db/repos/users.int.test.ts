@@ -346,12 +346,12 @@ async function userWithData(email: string) {
     categoryId: cat.id,
     subcategoryId: sub.id,
   });
-  await goalsRepo.upsert(userId, {
-    monthlyIncomeCents: 1_000_000,
-    savedCents: 0,
-    retirementAge: 60,
-    annualRateBp: 800,
-    withdrawalRateBp: 600,
+  await goalsRepo.upsertSealed(userId, {
+    monthlyIncomeCt: "v1:renda",
+    savedCt: "v1:guardado",
+    retirementAgeCt: "v1:idade",
+    annualRateCt: "v1:retorno",
+    withdrawalRateCt: "v1:retirada",
   });
   return { userId, categoryId: cat.id };
 }
@@ -433,6 +433,6 @@ describe("isolation of a new approved user (SIGNUP-07)", () => {
     expect(await transactionsRepo.listByMonth(found!.id, monthRange({ year: 2026, month: 10 }))).toEqual(
       [],
     );
-    expect(await goalsRepo.get(found!.id)).toBeNull();
+    expect(await goalsRepo.getSealed(found!.id)).toBeNull();
   });
 });

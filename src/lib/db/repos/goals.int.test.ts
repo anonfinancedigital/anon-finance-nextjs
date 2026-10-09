@@ -4,14 +4,11 @@ import { eq } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
 import { targetCents } from "@/lib/domain/freedom";
 import { insertTestUser, setupTestDb } from "@/test/db";
-import { user } from "../auth-schema";
 import { db, pool } from "../client";
 import { financialGoal } from "../schema";
-import { goalsRepo } from "./goals";
 
 setupTestDb();
 
-/** The user's birth date lives in `user.birth_date`, not in the goal row. */
 const BIRTH_DATE = "1990-06-15";
 
 const SAVED_FIELDS = {
@@ -22,56 +19,26 @@ const SAVED_FIELDS = {
   withdrawalRateBp: 600,
 };
 
-/** What `upsert` receives. */
 const GOAL = SAVED_FIELDS;
-
-/** What `get` returns: the goal plus the birth date of its user. */
-const WITH_BIRTH = { ...SAVED_FIELDS, birthDate: BIRTH_DATE };
 
 const insertUser = () => insertTestUser(BIRTH_DATE);
 
 const rowsOf = (userId: string) => db.select().from(financialGoal).where(eq(financialGoal.userId, userId));
 
-describe("goalsRepo.get", () => {
-  it("returns null when the user has no goal", async () => {
-    const userId = await insertUser();
-    expect(await goalsRepo.get(userId)).toBeNull();
-  });
+/** Writes the legacy plain-text columns directly: these tests cover the table constraints, not the repository. */
+const putPlain = (userId: string, goal: typeof SAVED_FIELDS) =>
+  db
+    .insert(financialGoal)
+    .values({ userId, ...goal })
+    .onConflictDoUpdate({ target: financialGoal.userId, set: goal });
 
-  it("returns null when the user has a goal but no birth date", async () => {
-    const userId = await insertTestUser();
-    await goalsRepo.upsert(userId, GOAL);
-    expect(await rowsOf(userId)).toHaveLength(1);
-    expect(await goalsRepo.get(userId)).toBeNull();
-  });
-
-  it("returns the birth date of the user, not of another one", async () => {
-    const userId = await insertTestUser("1985-02-28");
-    const otherId = await insertUser();
-    await goalsRepo.upsert(userId, GOAL);
-    await goalsRepo.upsert(otherId, GOAL);
-    expect(await goalsRepo.get(userId)).toEqual({ ...GOAL, birthDate: "1985-02-28" });
-    expect(await goalsRepo.get(otherId)).toEqual(WITH_BIRTH);
-  });
-
-  it("returns the saved goal after upsert", async () => {
-    const userId = await insertUser();
-    await goalsRepo.upsert(userId, GOAL);
-    expect(await goalsRepo.get(userId)).toEqual(WITH_BIRTH);
-  });
-
-  it("does not show one user's goal to another", async () => {
-    const userId = await insertUser();
-    const otherId = await insertUser();
-    await goalsRepo.upsert(userId, GOAL);
-    expect(await goalsRepo.get(otherId)).toBeNull();
-
-    const otherGoal = { ...GOAL, savedCents: 0, retirementAge: 65 };
-    await goalsRepo.upsert(otherId, otherGoal);
-    expect(await goalsRepo.get(otherId)).toEqual({ ...otherGoal, birthDate: BIRTH_DATE });
-    expect(await goalsRepo.get(userId)).toEqual(WITH_BIRTH);
-  });
-});
+/** The plain-text columns of the user's row, or `null` when there is none. */
+async function plainOf(userId: string) {
+  const [row] = await rowsOf(userId);
+  if (!row) return null;
+  const { monthlyIncomeCents, savedCents, retirementAge, annualRateBp, withdrawalRateBp } = row;
+  return { monthlyIncomeCents, savedCents, retirementAge, annualRateBp, withdrawalRateBp };
+}
 
 /** Name of the constraint the write violated, or `null` when it succeeded. */
 async function violatedConstraint(write: Promise<unknown>): Promise<string | null> {
@@ -84,34 +51,7 @@ async function violatedConstraint(write: Promise<unknown>): Promise<string | nul
   }
 }
 
-describe("goalsRepo rates", () => {
-  it.each([
-    [600, 400],
-    [800, 600],
-    [1000, 700],
-  ])("saves and returns the preset pair %d / %d", async (annualRateBp, withdrawalRateBp) => {
-    const userId = await insertUser();
-    await goalsRepo.upsert(userId, { ...GOAL, annualRateBp, withdrawalRateBp });
-    expect(await goalsRepo.get(userId)).toMatchObject({ annualRateBp, withdrawalRateBp });
-  });
-
-  it("saves and returns a custom pair: 6,5% with 4,5% withdrawal", async () => {
-    const userId = await insertUser();
-    await goalsRepo.upsert(userId, { ...GOAL, annualRateBp: 650, withdrawalRateBp: 450 });
-
-    expect(await goalsRepo.get(userId)).toEqual({ ...WITH_BIRTH, annualRateBp: 650, withdrawalRateBp: 450 });
-    expect(await rowsOf(userId)).toMatchObject([{ annualRateBp: 650, withdrawalRateBp: 450 }]);
-  });
-
-  it("replaces both rates on a second upsert in the same row", async () => {
-    const userId = await insertUser();
-    await goalsRepo.upsert(userId, { ...GOAL, annualRateBp: 600, withdrawalRateBp: 400 });
-    await goalsRepo.upsert(userId, { ...GOAL, annualRateBp: 650, withdrawalRateBp: 450 });
-
-    expect(await goalsRepo.get(userId)).toMatchObject({ annualRateBp: 650, withdrawalRateBp: 450 });
-    expect(await rowsOf(userId)).toHaveLength(1);
-  });
-
+describe("financial_goal rate constraints (plain-text columns)", () => {
   it("returns 800 for a row inserted without an annual rate", async () => {
     const userId = await insertUser();
     const { monthlyIncomeCents, savedCents, retirementAge } = GOAL;
@@ -119,7 +59,7 @@ describe("goalsRepo rates", () => {
       .insert(financialGoal)
       .values({ userId, monthlyIncomeCents, savedCents, retirementAge, withdrawalRateBp: 600 });
 
-    expect((await goalsRepo.get(userId))?.annualRateBp).toBe(800);
+    expect((await plainOf(userId))?.annualRateBp).toBe(800);
   });
 
   it.each([
@@ -129,8 +69,8 @@ describe("goalsRepo rates", () => {
     ["withdrawal equal to the annual rate (6% / 6%)", 600, 600],
   ])("accepts the CHECK boundary (%s)", async (_label, annualRateBp, withdrawalRateBp) => {
     const userId = await insertUser();
-    await goalsRepo.upsert(userId, { ...GOAL, annualRateBp, withdrawalRateBp });
-    expect(await goalsRepo.get(userId)).toMatchObject({ annualRateBp, withdrawalRateBp });
+    await putPlain(userId, { ...GOAL, annualRateBp, withdrawalRateBp });
+    expect(await plainOf(userId)).toMatchObject({ annualRateBp, withdrawalRateBp });
   });
 
   it.each([
@@ -140,10 +80,10 @@ describe("goalsRepo rates", () => {
     ["withdrawal above the annual rate (7% / 6%)", 600, 700, "financial_goal_withdrawal_rate"],
   ])("refuses %s at the database and keeps the previous goal", async (_label, annualRateBp, withdrawalRateBp, constraint) => {
     const userId = await insertUser();
-    await goalsRepo.upsert(userId, GOAL);
+    await putPlain(userId, GOAL);
 
-    expect(await violatedConstraint(goalsRepo.upsert(userId, { ...GOAL, annualRateBp, withdrawalRateBp }))).toBe(constraint);
-    expect(await goalsRepo.get(userId)).toEqual(WITH_BIRTH);
+    expect(await violatedConstraint(putPlain(userId, { ...GOAL, annualRateBp, withdrawalRateBp }))).toBe(constraint);
+    expect(await plainOf(userId)).toEqual(GOAL);
   });
 });
 
@@ -194,43 +134,7 @@ describe("migration 0011 (withdrawal rate backfill)", () => {
   });
 });
 
-describe("goalsRepo.upsert", () => {
-  it("replaces the values on a second upsert and keeps a single row", async () => {
-    const userId = await insertUser();
-    await goalsRepo.upsert(userId, GOAL);
-    const replacement = {
-      monthlyIncomeCents: 500_000,
-      savedCents: 0,
-      retirementAge: 55,
-      annualRateBp: 1000,
-      withdrawalRateBp: 700,
-    };
-    await goalsRepo.upsert(userId, replacement);
-
-    expect(await goalsRepo.get(userId)).toEqual({ ...replacement, birthDate: BIRTH_DATE });
-    expect(await rowsOf(userId)).toHaveLength(1);
-  });
-
-  it("does not touch another user's row when replacing", async () => {
-    const userId = await insertUser();
-    const otherId = await insertUser();
-    await goalsRepo.upsert(userId, GOAL);
-    await goalsRepo.upsert(otherId, GOAL);
-    await goalsRepo.upsert(userId, { ...GOAL, savedCents: 1 });
-
-    expect(await goalsRepo.get(otherId)).toEqual(WITH_BIRTH);
-  });
-
-  it("does not write the birth date: it keeps the user's date", async () => {
-    const userId = await insertUser();
-    await goalsRepo.upsert(userId, GOAL);
-    await goalsRepo.upsert(userId, { ...GOAL, savedCents: 1 });
-
-    const [row] = await db.select({ birthDate: user.birthDate }).from(user).where(eq(user.id, userId));
-    expect(row.birthDate).toBe(BIRTH_DATE);
-    expect(Object.keys((await rowsOf(userId))[0])).not.toContain("birthDate");
-  });
-
+describe("financial_goal range constraints (plain-text columns)", () => {
   it.each([
     ["income 0", { monthlyIncomeCents: 0 }],
     ["income above R$ 1.000.000,00", { monthlyIncomeCents: 100_000_001 }],
@@ -240,10 +144,10 @@ describe("goalsRepo.upsert", () => {
     ["retirement age 121", { retirementAge: 121 }],
   ])("refuses a value outside the CHECK range (%s) and keeps the previous goal", async (_label, override) => {
     const userId = await insertUser();
-    await goalsRepo.upsert(userId, GOAL);
+    await putPlain(userId, GOAL);
 
-    await expect(goalsRepo.upsert(userId, { ...GOAL, ...override })).rejects.toThrow();
-    expect(await goalsRepo.get(userId)).toEqual(WITH_BIRTH);
+    await expect(putPlain(userId, { ...GOAL, ...override })).rejects.toThrow();
+    expect(await plainOf(userId)).toEqual(GOAL);
   });
 
   it.each([
@@ -256,7 +160,7 @@ describe("goalsRepo.upsert", () => {
   ])("accepts the CHECK boundary (%s)", async (_label, override) => {
     const userId = await insertUser();
     const goal = { ...GOAL, ...override };
-    await goalsRepo.upsert(userId, goal);
-    expect(await goalsRepo.get(userId)).toEqual({ ...goal, birthDate: BIRTH_DATE });
+    await putPlain(userId, goal);
+    expect(await plainOf(userId)).toEqual(goal);
   });
 });

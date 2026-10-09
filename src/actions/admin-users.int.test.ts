@@ -164,12 +164,12 @@ async function addData(userId: string) {
     date: "2026-10-04",
     categoryId: cat.id,
   });
-  await goalsRepo.upsert(userId, {
-    monthlyIncomeCents: 1_000_000,
-    savedCents: 0,
-    retirementAge: 60,
-    annualRateBp: 800,
-    withdrawalRateBp: 600,
+  await goalsRepo.upsertSealed(userId, {
+    monthlyIncomeCt: "v1:renda",
+    savedCt: "v1:guardado",
+    retirementAgeCt: "v1:idade",
+    annualRateCt: "v1:retorno",
+    withdrawalRateCt: "v1:retirada",
   });
   return cat.id;
 }

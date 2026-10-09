@@ -40,7 +40,8 @@ describe("goalsRepo.getSealed", () => {
 
   it("returns null for a legacy plain-text goal", async () => {
     const userId = await insertTestUser();
-    await goalsRepo.upsert(userId, {
+    await db.insert(financialGoal).values({
+      userId,
       monthlyIncomeCents: 1_000_000,
       savedCents: 0,
       retirementAge: 60,
@@ -100,7 +101,8 @@ describe("goalsRepo.upsertSealed", () => {
 
   it("converts a legacy plain-text goal into a sealed one", async () => {
     const userId = await insertTestUser();
-    await goalsRepo.upsert(userId, {
+    await db.insert(financialGoal).values({
+      userId,
       monthlyIncomeCents: 1_000_000,
       savedCents: 0,
       retirementAge: 60,
