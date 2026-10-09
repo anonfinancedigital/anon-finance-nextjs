@@ -1,5 +1,6 @@
+import { randomUUID } from "node:crypto";
 import { APIError } from "better-auth/api";
-import { hashPassword } from "better-auth/crypto";
+import { hashPassword, verifyPassword } from "better-auth/crypto";
 import { and, eq } from "drizzle-orm";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { SAVE_FAILED } from "@/lib/action-result";
@@ -7,9 +8,16 @@ import { auth } from "@/lib/auth";
 import { account, session, user, verification } from "@/lib/db/auth-schema";
 import { db } from "@/lib/db/client";
 import { passwordResetsRepo } from "@/lib/db/repos/password-resets";
-import { insertCredentialUser, signInCookie, TEST_PASSWORD } from "@/test/auth";
+import { vaultRepo } from "@/lib/db/repos/vault";
+import { category, financialGoal, transaction, userVault } from "@/lib/db/schema";
+import { createSignedInUser, insertCredentialUser, signInCookie, TEST_PASSWORD } from "@/test/auth";
 import { setupTestDb } from "@/test/db";
-import { requestPasswordResetAction, resetPasswordAction } from "./password-reset";
+import {
+  getResetVaultAction,
+  requestPasswordResetAction,
+  resetPasswordAction,
+  resetPasswordSealedAction,
+} from "./password-reset";
 
 // Tasks scheduled with `after` are kept so the test can wait for them, as the response would.
 const scheduled = vi.hoisted(() => ({ tasks: [] as Promise<unknown>[] }));
@@ -304,5 +312,240 @@ describe("resetPasswordAction", () => {
     expect(await passwordHashOf(userId)).toBe(before);
     expect(await passwordResetsRepo.isValid(token)).toBe(true);
     expect(consoleError).toHaveBeenCalled();
+  });
+});
+
+describe("sealed reset actions", () => {
+  const OLD_VAULT = {
+    kdfVersion: 1,
+    salt: "AAAAAAAAAAAAAAAAAAAAAA",
+    memKib: 65536,
+    iterations: 3,
+    parallelism: 1,
+    dekWrappedPw: "v1:old-pw",
+    dekWrappedRecovery: "v1:old-recovery",
+  } as const;
+  const NEW_VAULT = {
+    kdfVersion: 1,
+    salt: "BBBBBBBBBBBBBBBBBBBBBB",
+    memKib: 32768,
+    iterations: 2,
+    parallelism: 2,
+    dekWrappedPw: "v1:new-pw",
+    dekWrappedRecovery: "v1:new-recovery",
+  } as const;
+  const NEW_SECRET = "N".repeat(43);
+  const INVALID_LINK = { ok: false, error: "Link inválido ou expirado" };
+  const rewrap = (token: string, over: Record<string, unknown> = {}) =>
+    ({
+      mode: "rewrap",
+      token,
+      authSecret: NEW_SECRET,
+      salt: NEW_VAULT.salt,
+      params: { memKib: 32768, iterations: 2, parallelism: 2 },
+      dekWrappedPw: "v1:rewrapped-pw",
+      ...over,
+    }) as Parameters<typeof resetPasswordSealedAction>[0];
+  const wipe = (token: string, over: Record<string, unknown> = {}) =>
+    ({ mode: "wipe", token, authSecret: NEW_SECRET, vault: NEW_VAULT, ...over }) as Parameters<
+      typeof resetPasswordSealedAction
+    >[0];
+
+  async function sealedAccount() {
+    const { userId } = await createSignedInUser(EMAIL);
+    await db.transaction((tx) => vaultRepo.create(tx, userId, OLD_VAULT));
+    await vaultRepo.setBirthDateSealed(userId, "v1:birth");
+    const [cat] = await db.insert(category).values({ userId, nameCt: "v1:cat", color: 1 }).returning();
+    await db.insert(transaction).values({
+      id: randomUUID(),
+      userId,
+      kind: "expense",
+      categoryId: cat.id,
+      date: "2026-10-01",
+      amountCt: "v1:amount",
+    });
+    await db.insert(financialGoal).values({
+      userId,
+      annualRateBp: null,
+      monthlyIncomeCt: "v1:a",
+      savedCt: "v1:b",
+      retirementAgeCt: "v1:c",
+      annualRateCt: "v1:d",
+      withdrawalRateCt: "v1:e",
+    });
+    const issued = await passwordResetsRepo.issue(EMAIL);
+    return { userId, token: issued!.token };
+  }
+
+  const hashOf = async (id: string) =>
+    (await db.select().from(account).where(eq(account.userId, id)))[0].password!;
+  const vaultOf = async (id: string) => (await db.select().from(userVault).where(eq(userVault.userId, id)))[0];
+  const counts = async (id: string) => ({
+    transactions: await db.$count(transaction, eq(transaction.userId, id)),
+    categories: await db.$count(category, eq(category.userId, id)),
+    goals: await db.$count(financialGoal, eq(financialGoal.userId, id)),
+  });
+  const sessionsOf = (id: string) => db.$count(session, eq(session.userId, id));
+
+  it("getResetVaultAction returns only dekWrappedRecovery for a valid token and does not consume it", async () => {
+    const { token } = await sealedAccount();
+
+    const result = await getResetVaultAction(token);
+
+    expect(result).toEqual({ ok: true, dekWrappedRecovery: "v1:old-recovery" });
+    expect(Object.keys(result).sort()).toEqual(["dekWrappedRecovery", "ok"]);
+    expect(await passwordResetsRepo.isValid(token)).toBe(true);
+  });
+
+  it.each([["unknown", "token-desconhecido"], ["empty", ""]])(
+    "getResetVaultAction answers an invalid link for an %s token",
+    async (_label, token) => {
+      await sealedAccount();
+      expect(await getResetVaultAction(token)).toEqual(INVALID_LINK);
+    },
+  );
+
+  it("getResetVaultAction answers an invalid link for an expired token, a used one and a legacy account", async () => {
+    const { token } = await sealedAccount();
+    vi.useFakeTimers({ toFake: ["Date"] });
+    vi.setSystemTime(Date.now() + 31 * 60_000);
+    expect(await getResetVaultAction(token)).toEqual(INVALID_LINK);
+    vi.useRealTimers();
+
+    await insertCredentialUser("velho@x.com");
+    const legacy = await passwordResetsRepo.issue("velho@x.com");
+    expect(await getResetVaultAction(legacy!.token)).toEqual(INVALID_LINK);
+  });
+
+  it("getResetVaultAction answers SAVE_FAILED on a database failure, logging only the code", async () => {
+    vi.spyOn(passwordResetsRepo, "recoveryMaterialFor").mockRejectedValue(
+      Object.assign(new Error("segredo"), { code: "08006" }),
+    );
+
+    expect(await getResetVaultAction("qualquer")).toEqual({ ok: false, error: SAVE_FAILED });
+    expect(consoleError).toHaveBeenCalledWith("getResetVaultAction", "08006");
+  });
+
+  it("rewrap swaps the secret and the password-wrapped DEK, keeps the data and ends the sessions", async () => {
+    const { userId, token } = await sealedAccount();
+    const before = await counts(userId);
+
+    expect(await resetPasswordSealedAction(rewrap(token))).toEqual({ ok: true });
+
+    expect(await verifyPassword({ hash: await hashOf(userId), password: NEW_SECRET })).toBe(true);
+    expect(await vaultOf(userId)).toMatchObject({
+      salt: NEW_VAULT.salt,
+      memKib: 32768,
+      iterations: 2,
+      parallelism: 2,
+      dekWrappedPw: "v1:rewrapped-pw",
+      dekWrappedRecovery: "v1:old-recovery",
+      birthDateCt: "v1:birth",
+    });
+    expect(await counts(userId)).toEqual(before);
+    expect(before).toEqual({ transactions: 1, categories: 1, goals: 1 });
+    expect(await sessionsOf(userId)).toBe(0);
+    expect(await passwordResetsRepo.isValid(token)).toBe(false);
+  });
+
+  it("wipe erases the financial data, replaces the whole vault and the secret", async () => {
+    const { userId, token } = await sealedAccount();
+
+    expect(await resetPasswordSealedAction(wipe(token))).toEqual({ ok: true });
+
+    expect(await counts(userId)).toEqual({ transactions: 0, categories: 0, goals: 0 });
+    expect(await vaultOf(userId)).toMatchObject({
+      ...NEW_VAULT,
+      birthDateCt: null,
+    });
+    expect(await verifyPassword({ hash: await hashOf(userId), password: NEW_SECRET })).toBe(true);
+    expect(await sessionsOf(userId)).toBe(0);
+    expect(await passwordResetsRepo.isValid(token)).toBe(false);
+  });
+
+  it("lets the user sign in with the new secret after a reset and not with the old password", async () => {
+    const { userId, token } = await sealedAccount();
+    await resetPasswordSealedAction(rewrap(token));
+
+    await expect(
+      auth.api.signInEmail({ body: { email: EMAIL, password: TEST_PASSWORD } }),
+    ).rejects.toBeInstanceOf(APIError);
+    expect((await auth.api.signInEmail({ body: { email: EMAIL, password: NEW_SECRET } })).user.id).toBe(userId);
+  });
+
+  it.each([
+    ["rewrap with a short authSecret", (t: string) => rewrap(t, { authSecret: "curto" }), "authSecret"],
+    ["rewrap with a salt of the wrong size", (t: string) => rewrap(t, { salt: "AAAA" }), "salt"],
+    ["rewrap with plain-text dekWrappedPw", (t: string) => rewrap(t, { dekWrappedPw: "texto puro" }), "dekWrappedPw"],
+    ["rewrap with iterations 0", (t: string) => rewrap(t, { params: { memKib: 32768, iterations: 0, parallelism: 2 } }), "params.iterations"],
+    ["rewrap without params", (t: string) => rewrap(t, { params: undefined }), "params"],
+    ["wipe with a malformed recovery DEK", (t: string) => wipe(t, { vault: { ...NEW_VAULT, dekWrappedRecovery: "x" } }), "vault.dekWrappedRecovery"],
+    ["wipe with a wrong kdfVersion", (t: string) => wipe(t, { vault: { ...NEW_VAULT, kdfVersion: 2 } }), "vault.kdfVersion"],
+    ["wipe with a long authSecret", (t: string) => wipe(t, { authSecret: "N".repeat(44) }), "authSecret"],
+  ])("refuses %s, changing nothing and keeping the token valid", async (_label, build, field) => {
+    const { userId, token } = await sealedAccount();
+    const hash = await hashOf(userId);
+
+    expect(await resetPasswordSealedAction(build(token))).toMatchObject({
+      ok: false,
+      fieldErrors: { [field]: expect.any(String) },
+    });
+
+    expect(await hashOf(userId)).toBe(hash);
+    expect(await vaultOf(userId)).toMatchObject({ ...OLD_VAULT, birthDateCt: "v1:birth" });
+    expect(await counts(userId)).toEqual({ transactions: 1, categories: 1, goals: 1 });
+    expect(await sessionsOf(userId)).toBe(1);
+    expect(await passwordResetsRepo.isValid(token)).toBe(true);
+  });
+
+  it("refuses an unknown mode and a missing token without touching the account", async () => {
+    const { userId, token } = await sealedAccount();
+    const hash = await hashOf(userId);
+
+    expect(await resetPasswordSealedAction({ ...rewrap(token), mode: "outro" } as never)).toMatchObject({
+      ok: false,
+    });
+    expect(await resetPasswordSealedAction(rewrap("", {}))).toMatchObject({
+      ok: false,
+      error: "Link inválido ou expirado",
+    });
+    expect(await resetPasswordSealedAction(null as never)).toMatchObject({ ok: false });
+
+    expect(await hashOf(userId)).toBe(hash);
+    expect(await passwordResetsRepo.isValid(token)).toBe(true);
+  });
+
+  it.each([["rewrap" as const], ["wipe" as const]])(
+    "%s with an unknown token answers an invalid link and changes nothing",
+    async (mode) => {
+      const { userId } = await sealedAccount();
+      const hash = await hashOf(userId);
+      const body = mode === "rewrap" ? rewrap("desconhecido") : wipe("desconhecido");
+
+      expect(await resetPasswordSealedAction(body)).toEqual(INVALID_LINK);
+
+      expect(await hashOf(userId)).toBe(hash);
+      expect(await counts(userId)).toEqual({ transactions: 1, categories: 1, goals: 1 });
+    },
+  );
+
+  it("refuses a token already used", async () => {
+    const { token } = await sealedAccount();
+    expect(await resetPasswordSealedAction(rewrap(token))).toEqual({ ok: true });
+
+    expect(await resetPasswordSealedAction(rewrap(token))).toEqual(INVALID_LINK);
+  });
+
+  it("answers SAVE_FAILED via logActionError on a database failure and keeps the token valid", async () => {
+    const { userId, token } = await sealedAccount();
+    const hash = await hashOf(userId);
+    vi.mocked(hashPassword).mockRejectedValueOnce(Object.assign(new Error("segredo"), { code: "XX000" }));
+
+    expect(await resetPasswordSealedAction(wipe(token))).toEqual({ ok: false, error: SAVE_FAILED });
+
+    expect(consoleError).toHaveBeenCalledWith("resetPasswordSealedAction", "XX000");
+    expect(await hashOf(userId)).toBe(hash);
+    expect(await counts(userId)).toEqual({ transactions: 1, categories: 1, goals: 1 });
+    expect(await passwordResetsRepo.isValid(token)).toBe(true);
   });
 });
