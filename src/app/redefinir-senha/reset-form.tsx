@@ -2,8 +2,8 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { type FormEvent, useState } from "react";
-import { getResetVaultAction, resetPasswordSealedAction } from "@/actions/password-reset";
+import { type FormEvent, useEffect, useState } from "react";
+import { getResetVaultAction, resetPasswordAction, resetPasswordSealedAction } from "@/actions/password-reset";
 import { PasswordInput } from "@/components/password-input";
 import { RecoveryKeyDialog } from "@/components/recovery-key-dialog";
 import { Button } from "@/components/ui/button";
@@ -28,11 +28,31 @@ export function ResetForm({ token }: { token: string }) {
   const [wipe, setWipe] = useState(false);
   const [wipePhrase, setWipePhrase] = useState("");
   const [newRecoveryKey, setNewRecoveryKey] = useState<string | null>(null);
+  /** Whether the account has a vault yet; a legacy one resets with the old form (no recovery key). */
+  const [kind, setKind] = useState<"loading" | "legacy" | "sealed">("loading");
+
+  useEffect(() => {
+    let active = true;
+    getResetVaultAction(token)
+      .then((owner) => {
+        if (!active) return;
+        if (!owner.ok) setState({ ok: false, error: owner.error });
+        else setKind(owner.legacy ? "legacy" : "sealed");
+      })
+      .catch(() => {
+        if (active) setState({ ok: false, error: SAVE_FAILED });
+      });
+    return () => {
+      active = false;
+    };
+  }, [token]);
 
   /**
    * With the recovery key: unwraps the DEK here and rewraps it under the new password (SIGILO-19); a
    * wrong key stops before the reset is sent (SIGILO-20). Without it: a new vault replaces the old one
-   * and its recovery key is shown once before going to the login (SIGILO-21).
+   * and its recovery key is shown once before going to the login (SIGILO-21). A legacy account (no
+   * vault yet) only sets the new password: its data is still on the server and is protected on the
+   * next sign-in.
    */
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -44,9 +64,22 @@ export function ResetForm({ token }: { token: string }) {
 
     setPending(true);
     try {
+      if (kind === "legacy") {
+        const data = new FormData();
+        data.set("token", token);
+        data.set("password", password);
+        data.set("confirmPassword", confirmPassword);
+        // On success the action redirects to /login.
+        setState(await resetPasswordAction(undefined, data));
+        return;
+      }
       const owner = await getResetVaultAction(token);
       if (!owner.ok) {
         setState({ ok: false, error: owner.error });
+        return;
+      }
+      if (owner.legacy) {
+        setKind("legacy");
         return;
       }
       // Dynamic import keeps @noble/hashes out of the bundle until a reset happens.
@@ -146,7 +179,7 @@ export function ResetForm({ token }: { token: string }) {
           </p>
         )}
       </div>
-      {wipe ? (
+      {kind !== "sealed" ? null : wipe ? (
         <div className="space-y-2">
           <p role="alert" className="text-sm text-destructive">
             Sem a chave de recuperação, seus dados financeiros não podem ser abertos. Para redefinir a senha, todos
@@ -209,11 +242,11 @@ export function ResetForm({ token }: { token: string }) {
       )}
       <Button
         type="submit"
-        variant={wipe ? "destructive" : "default"}
+        variant={wipe && kind === "sealed" ? "destructive" : "default"}
         className="w-full"
-        disabled={pending || mismatch || done || (wipe && !wipeConfirmed)}
+        disabled={pending || mismatch || done || kind === "loading" || (wipe && !wipeConfirmed)}
       >
-        {wipe ? "Apagar dados e redefinir senha" : "Redefinir senha"}
+        {wipe && kind === "sealed" ? "Apagar dados e redefinir senha" : "Redefinir senha"}
       </Button>
       {newRecoveryKey !== null && (
         <RecoveryKeyDialog recoveryKey={newRecoveryKey} open onConfirmed={() => router.push("/login")} />

@@ -449,15 +449,66 @@ describe("sealed reset actions", () => {
     },
   );
 
-  it("getResetVaultAction answers an invalid link for an expired token, a used one and a legacy account", async () => {
+  it("getResetVaultAction answers an invalid link for an expired token and a used one", async () => {
     const { token } = await sealedAccount();
     vi.useFakeTimers({ toFake: ["Date"] });
     vi.setSystemTime(Date.now() + 31 * 60_000);
     expect(await getResetVaultAction(token)).toEqual(INVALID_LINK);
     vi.useRealTimers();
 
+    expect(await resetPasswordSealedAction(rewrap(token))).toEqual({
+      ok: true,
+    });
+    expect(await getResetVaultAction(token)).toEqual(INVALID_LINK);
+  });
+
+  it("getResetVaultAction answers only legacy for a valid token of an approved account without vault, and does not consume it", async () => {
     await insertCredentialUser("velho@x.com");
     const legacy = await passwordResetsRepo.issue("velho@x.com");
+
+    const result = await getResetVaultAction(legacy!.token);
+
+    expect(result).toEqual({ ok: true, legacy: true });
+    expect(Object.keys(result).sort()).toEqual(["legacy", "ok"]);
+    expect(await passwordResetsRepo.isValid(legacy!.token)).toBe(true);
+  });
+
+  it("getResetVaultAction answers an invalid link for a legacy account that is no longer approved, and for its expired token", async () => {
+    const id = await insertCredentialUser("velho@x.com");
+    const legacy = await passwordResetsRepo.issue("velho@x.com");
+    vi.useFakeTimers({ toFake: ["Date"] });
+    vi.setSystemTime(Date.now() + 31 * 60_000);
+    expect(await getResetVaultAction(legacy!.token)).toEqual(INVALID_LINK);
+    vi.useRealTimers();
+
+    await db.update(user).set({ status: "revoked" }).where(eq(user.id, id));
+    expect(await getResetVaultAction(legacy!.token)).toEqual(INVALID_LINK);
+  });
+
+  it("a legacy account told legacy resets with resetPasswordAction: new password signs in, old one does not, sessions end, no vault is created and the link is used", async () => {
+    const legacyEmail = "velho@x.com";
+    const id = await insertCredentialUser(legacyEmail);
+    await signInCookie(legacyEmail);
+    const legacy = await passwordResetsRepo.issue(legacyEmail);
+    expect(await getResetVaultAction(legacy!.token)).toEqual({
+      ok: true,
+      legacy: true,
+    });
+
+    const data = new FormData();
+    data.set("token", legacy!.token);
+    data.set("password", "nova-senha-456");
+    data.set("confirmPassword", "nova-senha-456");
+    await expect(resetPasswordAction(undefined, data)).rejects.toThrow(
+      "NEXT_REDIRECT /login",
+    );
+
+    expect(await sessionsOf(id)).toBe(0);
+    expect(await vaultOf(id)).toBeUndefined();
+    const signIn = (password: string) =>
+      auth.api.signInEmail({ body: { email: legacyEmail, password } });
+    await expect(signIn(TEST_PASSWORD)).rejects.toBeInstanceOf(APIError);
+    expect((await signIn("nova-senha-456")).user.id).toBe(id);
     expect(await getResetVaultAction(legacy!.token)).toEqual(INVALID_LINK);
   });
 

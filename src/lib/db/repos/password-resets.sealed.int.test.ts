@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { hashPassword, verifyPassword } from "better-auth/crypto";
-import { eq } from "drizzle-orm";
+import { eq, inArray } from "drizzle-orm";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import type { VaultMaterial } from "@/lib/vault/types";
 import {
@@ -132,11 +132,26 @@ describe("passwordResetsRepo.recoveryMaterialFor", () => {
     expect(await passwordResetsRepo.recoveryMaterialFor(token)).toBeNull();
   });
 
-  it("returns null when the owner has no vault (legacy account)", async () => {
-    await insertCredentialUser("velho@x.com");
+  it("returns the owner id and a null wrapped DEK when the owner has no vault (legacy account), without consuming the token", async () => {
+    const userId = await insertCredentialUser("velho@x.com");
     const issued = await passwordResetsRepo.issue("velho@x.com");
     expect(
       await passwordResetsRepo.recoveryMaterialFor(issued!.token),
+    ).toEqual({ userId, dekWrappedRecovery: null });
+    expect(await passwordResetsRepo.isValid(issued!.token)).toBe(true);
+  });
+
+  it("returns null when the owner is no longer approved, with or without a vault", async () => {
+    const { userId, token } = await sealedAccount();
+    const legacyId = await insertCredentialUser("velho@x.com");
+    const legacy = await passwordResetsRepo.issue("velho@x.com");
+    await db
+      .update(user)
+      .set({ status: "revoked" })
+      .where(inArray(user.id, [userId, legacyId]));
+    expect(await passwordResetsRepo.recoveryMaterialFor(token)).toBeNull();
+    expect(
+      await passwordResetsRepo.recoveryMaterialFor(legacy!.token),
     ).toBeNull();
   });
 });

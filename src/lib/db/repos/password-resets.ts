@@ -114,12 +114,13 @@ async function consume(
 
 /**
  * The token's owner and their recovery-wrapped DEK, for the browser to unwrap with the recovery key
- * (the owner id is part of the wrap's AAD). `null` when the token is unknown, expired or used, the owner is not approved or has no vault.
- * Does not consume the token.
+ * (the owner id is part of the wrap's AAD). `dekWrappedRecovery` is `null` when the owner has no
+ * vault yet (legacy account, reset with `consume`). `null` when the token is unknown, expired or
+ * used, or the owner is not approved. Does not consume the token.
  */
 async function recoveryMaterialFor(
   token: string,
-): Promise<{ userId: string; dekWrappedRecovery: string } | null> {
+): Promise<{ userId: string; dekWrappedRecovery: string | null } | null> {
   if (!token) return null;
   const [row] = await db
     .select({
@@ -128,7 +129,7 @@ async function recoveryMaterialFor(
     })
     .from(verification)
     .innerJoin(user, eq(user.id, verification.value))
-    .innerJoin(userVault, eq(userVault.userId, user.id))
+    .leftJoin(userVault, eq(userVault.userId, user.id))
     .where(
       and(
         eq(verification.identifier, identifierOf(token)),

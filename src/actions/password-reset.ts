@@ -88,11 +88,14 @@ export async function resetPasswordAction(
  * The token owner's id and recovery-wrapped DEK, for the browser to unwrap with the recovery key
  * (SIGILO-19); the id is part of the wrap's AAD and of a new vault's. It is not secret: the token's
  * owner owns the e-mail. Nothing else leaves the server, and the token is not consumed.
+ * An owner without a vault yet (legacy account) gets `{ ok: true, legacy: true }`: their data is
+ * still on the server, so they reset with `resetPasswordAction` and migrate after signing in.
  */
 export async function getResetVaultAction(
   token: string,
 ): Promise<
-  | { ok: true; userId: string; dekWrappedRecovery: string }
+  | { ok: true; legacy?: false; userId: string; dekWrappedRecovery: string }
+  | { ok: true; legacy: true }
   | { ok: false; error: string }
 > {
   if (typeof token !== "string" || token === "")
@@ -100,6 +103,7 @@ export async function getResetVaultAction(
   try {
     const material = await passwordResetsRepo.recoveryMaterialFor(token);
     if (material === null) return { ok: false, error: INVALID_LINK_MESSAGE };
+    if (material.dekWrappedRecovery === null) return { ok: true, legacy: true };
     return {
       ok: true,
       userId: material.userId,
