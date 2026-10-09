@@ -1418,12 +1418,12 @@ T86 → T88
 
 **Done when**:
 
-- [ ] `X-Content-Type-Options`, `X-Frame-Options: DENY` e `Referrer-Policy` sempre presentes
-- [ ] `Strict-Transport-Security: max-age=63072000; includeSubDomains` só quando `NODE_ENV` é `production`
-- [ ] CSP contém `frame-ancestors 'none'`, `object-src 'none'`, `base-uri 'self'` e `script-src 'self' 'nonce-…' 'strict-dynamic'` sem origem externa; `unsafe-eval` só em desenvolvimento; `style-src 'self' 'unsafe-inline'`
-- [ ] ≥ 6 testes
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
-- [ ] Contagem de testes conferida (sem remoções silenciosas)
+- [x] `X-Content-Type-Options`, `X-Frame-Options: DENY` e `Referrer-Policy` sempre presentes
+- [x] `Strict-Transport-Security: max-age=63072000; includeSubDomains` só quando `NODE_ENV` é `production`
+- [x] CSP contém `frame-ancestors 'none'`, `object-src 'none'`, `base-uri 'self'` e `script-src 'self' 'nonce-…' 'strict-dynamic'` sem origem externa; `unsafe-eval` só em desenvolvimento; `style-src 'self' 'unsafe-inline'`
+- [x] ≥ 6 testes
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Contagem de testes conferida (sem remoções silenciosas)
 
 **Tests**: unit
 **Gate**: quick
