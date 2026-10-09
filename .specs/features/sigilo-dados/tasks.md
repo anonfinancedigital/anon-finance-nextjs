@@ -2177,9 +2177,9 @@ T86 → T88
 
 **Done when**:
 
-- [ ] Download no navegador com o nome de `exportFileName`
-- [ ] Erro mostra a mensagem fixa
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] Download no navegador com o nome de `exportFileName`
+- [x] Erro mostra a mensagem fixa
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
 
 **Tests**: none
 **Gate**: build
