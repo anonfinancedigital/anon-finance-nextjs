@@ -2255,11 +2255,11 @@ T86 → T88
 
 **Done when**:
 
-- [ ] Nenhum import das funções removidas
-- [ ] Casos de `deleteTransaction` mantidos e verdes
-- [ ] Contagem de testes: removidos = os portados na T `acttx` (sem perda de caso)
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
-- [ ] Contagem de testes conferida (sem remoções silenciosas)
+- [x] Nenhum import das funções removidas
+- [x] Casos de `deleteTransaction` mantidos e verdes
+- [x] Contagem de testes: removidos = os portados na T `acttx` (sem perda de caso)
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
+- [x] Contagem de testes conferida (sem remoções silenciosas)
 
 **Tests**: integration
 **Gate**: full
