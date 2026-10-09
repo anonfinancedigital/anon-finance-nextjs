@@ -962,12 +962,12 @@ T86 → T88
 
 **Done when**:
 
-- [ ] O objeto enviado ao servidor não contém a senha, a DEK crua, a KEK nem a chave de recuperação (busca por valor serializado)
-- [ ] `unwrapDek` com a KEK da mesma senha recupera a DEK; com a chave de recuperação também
-- [ ] Duas chamadas geram DEK, salt e chave de recuperação diferentes
-- [ ] ≥ 5 testes
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
-- [ ] Contagem de testes conferida (sem remoções silenciosas)
+- [x] O objeto enviado ao servidor não contém a senha, a DEK crua, a KEK nem a chave de recuperação (busca por valor serializado)
+- [x] `unwrapDek` com a KEK da mesma senha recupera a DEK; com a chave de recuperação também
+- [x] Duas chamadas geram DEK, salt e chave de recuperação diferentes
+- [x] ≥ 5 testes
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Contagem de testes conferida (sem remoções silenciosas)
 
 **Tests**: unit
 **Gate**: quick
