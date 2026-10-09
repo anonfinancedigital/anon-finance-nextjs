@@ -905,12 +905,12 @@ T86 → T88
 
 **Done when**:
 
-- [ ] Arquivo contém todas as seções com os valores em claro de um conjunto fixo
-- [ ] Usuário sem dados gera listas vazias e a data de nascimento
-- [ ] `exportFileName` usa a data de America/Sao_Paulo (23h30 de 31/12 UTC-3 resulta no dia local)
-- [ ] ≥ 4 testes
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
-- [ ] Contagem de testes conferida (sem remoções silenciosas)
+- [x] Arquivo contém todas as seções com os valores em claro de um conjunto fixo
+- [x] Usuário sem dados gera listas vazias e a data de nascimento
+- [x] `exportFileName` usa a data de America/Sao_Paulo (23h30 de 31/12 UTC-3 resulta no dia local)
+- [x] ≥ 4 testes
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Contagem de testes conferida (sem remoções silenciosas)
 
 **Tests**: unit
 **Gate**: quick
