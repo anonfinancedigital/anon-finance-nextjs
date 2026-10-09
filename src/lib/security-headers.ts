@@ -39,3 +39,34 @@ export function buildCsp(nonce: string, isDev: boolean): string {
     "frame-ancestors 'none'",
   ].join("; ");
 }
+
+/**
+ * CSP for the responses the proxy does not run on (Better Auth API, Next assets, images): none of
+ * them is a page, so nothing may load, frame them or embed plugins (SIGILO-28 on every response).
+ */
+export const STATIC_CSP = "default-src 'none'; frame-ancestors 'none'; object-src 'none'; base-uri 'self'";
+
+/**
+ * Paths excluded by the proxy matcher (`src/proxy.ts`), in `next.config` `source` syntax. Pages are
+ * never among them, so they keep only the per-request nonce CSP set by the proxy.
+ */
+export const PATHS_OUTSIDE_PROXY = [
+  "/api/auth/:path*",
+  "/_next/static/:path*",
+  "/_next/image",
+  "/favicon.ico",
+  "/:path(.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico))",
+];
+
+export type HeaderRule = { source: string; headers: Header[] };
+
+/** Rules for `next.config` `headers()`: the static headers everywhere, the static CSP off-proxy. */
+export function securityHeaderRules(env: { NODE_ENV?: string }): HeaderRule[] {
+  return [
+    { source: "/:path*", headers: securityHeaders(env) },
+    ...PATHS_OUTSIDE_PROXY.map((source) => ({
+      source,
+      headers: [{ key: "Content-Security-Policy", value: STATIC_CSP }],
+    })),
+  ];
+}

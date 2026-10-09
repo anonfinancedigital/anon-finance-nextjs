@@ -1,5 +1,5 @@
 import type { NextConfig } from "next";
-import { securityHeaders } from "./src/lib/security-headers";
+import { securityHeaderRules } from "./src/lib/security-headers";
 
 const nextConfig: NextConfig = {
   experimental: {
@@ -7,7 +7,7 @@ const nextConfig: NextConfig = {
     serverActions: { bodySizeLimit: "8mb" },
   },
   async headers() {
-    return [{ source: "/:path*", headers: securityHeaders({ NODE_ENV: process.env.NODE_ENV }) }];
+    return securityHeaderRules({ NODE_ENV: process.env.NODE_ENV });
   },
 };
 

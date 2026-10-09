@@ -68,48 +68,60 @@ async function isValid(token: string): Promise<boolean> {
   return rows.length > 0;
 }
 
+/** Thrown inside the transaction to undo it without raising an error to the caller. */
+class Rollback extends Error {}
+
 /**
- * Consumes the token and sets the new password in one transaction: deletes the token if current,
- * then, for an approved owner, replaces the credential password and ends every session.
- * `invalid` when the token is unknown, expired, already used, replaced or the owner is not approved
- * (the token is deleted anyway). Any error rolls back, and the token stays valid.
+ * Consumes the token and sets the new password in one transaction (legacy accounts only): deletes
+ * the token if current, then, for an approved owner, replaces the credential password and ends every
+ * session. `invalid` when the token is unknown, expired, already used, replaced or the owner is not
+ * approved (the token is deleted anyway), or the owner has a vault: that account signs in with the
+ * `authSecret`, so a real password must never replace its hash (rolls back, the token stays valid
+ * for `consumeSealed`). Any error rolls back, and the token stays valid.
  * Of two concurrent uses, the delete lets only one find the row.
  */
 async function consume(
   token: string,
   password: string,
 ): Promise<"ok" | "invalid"> {
-  return db.transaction(async (tx) => {
-    const [row] = await tx
-      .delete(verification)
-      .where(
-        and(
-          eq(verification.identifier, identifierOf(token)),
-          gt(verification.expiresAt, new Date()),
-        ),
-      )
-      .returning({ userId: verification.value });
-    if (!row) return "invalid";
+  try {
+    return await db.transaction(async (tx) => {
+      const [row] = await tx
+        .delete(verification)
+        .where(
+          and(
+            eq(verification.identifier, identifierOf(token)),
+            gt(verification.expiresAt, new Date()),
+          ),
+        )
+        .returning({ userId: verification.value });
+      if (!row) return "invalid";
 
-    const [owner] = await tx
-      .select({ status: user.status })
-      .from(user)
-      .where(eq(user.id, row.userId));
-    if (owner?.status !== "approved") return "invalid";
+      const [owner] = await tx
+        .select({ status: user.status, hasVault: userVault.userId })
+        .from(user)
+        .leftJoin(userVault, eq(userVault.userId, user.id))
+        .where(eq(user.id, row.userId));
+      if (owner?.status !== "approved") return "invalid";
+      if (owner.hasVault) throw new Rollback();
 
-    const hash = await hashPassword(password);
-    await tx
-      .update(account)
-      .set({ password: hash })
-      .where(
-        and(
-          eq(account.userId, row.userId),
-          eq(account.providerId, "credential"),
-        ),
-      );
-    await tx.delete(session).where(eq(session.userId, row.userId));
-    return "ok";
-  });
+      const hash = await hashPassword(password);
+      await tx
+        .update(account)
+        .set({ password: hash })
+        .where(
+          and(
+            eq(account.userId, row.userId),
+            eq(account.providerId, "credential"),
+          ),
+        );
+      await tx.delete(session).where(eq(session.userId, row.userId));
+      return "ok";
+    });
+  } catch (error) {
+    if (error instanceof Rollback) return "invalid";
+    throw error;
+  }
 }
 
 /**
@@ -156,9 +168,6 @@ export type SealedResetInput =
       authSecret: string;
       vault: VaultMaterial;
     };
-
-/** Thrown inside the transaction to undo it without raising an error to the caller. */
-class Rollback extends Error {}
 
 /**
  * `consume` for a sealed account, in one transaction: deletes the token if current, then for an

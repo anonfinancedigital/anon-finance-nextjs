@@ -714,6 +714,28 @@ describe("sealed reset actions", () => {
     },
   );
 
+  it("resetPasswordAction refuses a token of an account with a vault and changes nothing", async () => {
+    const { userId, token } = await sealedAccount();
+    const hash = await hashOf(userId);
+    const vault = await vaultOf(userId);
+    const data = new FormData();
+    data.set("token", token);
+    data.set("password", "senha-real-123");
+    data.set("confirmPassword", "senha-real-123");
+
+    expect(await resetPasswordAction(undefined, data)).toEqual(INVALID_LINK);
+
+    expect(await hashOf(userId)).toBe(hash);
+    expect(await vaultOf(userId)).toEqual(vault);
+    expect(await counts(userId)).toEqual({
+      transactions: 1,
+      categories: 1,
+      goals: 1,
+    });
+    expect(await sessionsOf(userId)).toBe(1);
+    expect(await passwordResetsRepo.isValid(token)).toBe(true);
+  });
+
   it("refuses a token already used", async () => {
     const { token } = await sealedAccount();
     expect(await resetPasswordSealedAction(rewrap(token))).toEqual({
