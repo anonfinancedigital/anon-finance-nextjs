@@ -2,12 +2,15 @@
 
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
-import { saveGoal } from "@/actions/goals";
+import { saveGoalSealed } from "@/actions/goals-sealed";
 import { GoalFields } from "@/components/goal-fields";
 import type { useGoalDraft } from "@/components/use-goal-draft";
 import { Button } from "@/components/ui/button";
-import type { ActionResult } from "@/lib/action-result";
+import { useVault } from "@/components/vault-provider";
+import { type ActionResult, invalidInput, SAVE_FAILED } from "@/lib/action-result";
+import { goalSchema } from "@/lib/validation/goal";
 import { type GoalFormValues, withZeroSaved } from "@/lib/validation/goal-draft";
+import { sealGoal } from "@/lib/vault/seal";
 
 /**
  * Form of the goal in the drawer. The host owns the draft (`useGoalDraft`) and decides when the form
@@ -26,6 +29,7 @@ export function GoalForm({
   nowIso: string;
 }) {
   const router = useRouter();
+  const { dek, userId } = useVault();
   const [result, setResult] = useState<ActionResult | null>(null);
   const [pending, startTransition] = useTransition();
 
@@ -41,8 +45,19 @@ export function GoalForm({
   function submit(event: React.FormEvent) {
     event.preventDefault();
     if (pending) return;
+    // Same schema and messages the server used to apply, checked before anything is sealed (SIGILO-09).
+    const parsed = goalSchema(new Date()).safeParse(withZeroSaved(draft.values));
+    if (!parsed.success) {
+      setResult(invalidInput(parsed.error));
+      return;
+    }
     startTransition(async () => {
-      const res = await saveGoal(withZeroSaved(draft.values));
+      let res: ActionResult;
+      try {
+        res = await saveGoalSealed(await sealGoal(dek, userId, parsed.data));
+      } catch {
+        res = { ok: false, error: SAVE_FAILED };
+      }
       setResult(res);
       if (res.ok) {
         onSaved?.();
