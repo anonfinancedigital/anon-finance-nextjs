@@ -1105,12 +1105,12 @@ T86 → T88
 
 **Done when**:
 
-- [ ] E-mail inexistente e existente devolvem formas iguais; conta legada devolve `mode: "legacy"`
-- [ ] `getVaultAction` sem sessão devolve `UNAUTHORIZED` sem tocar nos dados
-- [ ] `getVaultAction` devolve só o cofre do usuário da sessão
-- [ ] ≥ 5 testes
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
-- [ ] Contagem de testes conferida (sem remoções silenciosas)
+- [x] E-mail inexistente e existente devolvem formas iguais; conta legada devolve `mode: "legacy"`
+- [x] `getVaultAction` sem sessão devolve `UNAUTHORIZED` sem tocar nos dados
+- [x] `getVaultAction` devolve só o cofre do usuário da sessão
+- [x] ≥ 5 testes
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
+- [x] Contagem de testes conferida (sem remoções silenciosas)
 
 **Tests**: integration
 **Gate**: full
@@ -1133,13 +1133,13 @@ T86 → T88
 
 **Done when**:
 
-- [ ] Porta os casos de criação e edição de `transactions.int.test.ts` (posse, subcategoria fora da categoria, mês da ocorrência, mês final)
-- [ ] Texto cifrado malformado ou > 2048 devolve `SAVE_FAILED` e não grava
-- [ ] Coluna crua guarda só `v1:`
-- [ ] Sem sessão devolve `UNAUTHORIZED`
-- [ ] ≥ 10 testes novos
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
-- [ ] Contagem de testes conferida (sem remoções silenciosas)
+- [x] Porta os casos de criação e edição de `transactions.int.test.ts` (posse, subcategoria fora da categoria, mês da ocorrência, mês final)
+- [x] Texto cifrado malformado ou > 2048 devolve `SAVE_FAILED` e não grava
+- [x] Coluna crua guarda só `v1:`
+- [x] Sem sessão devolve `UNAUTHORIZED`
+- [x] ≥ 10 testes novos
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
+- [x] Contagem de testes conferida (sem remoções silenciosas)
 
 **Tests**: integration
 **Gate**: full
@@ -1162,12 +1162,12 @@ T86 → T88
 
 **Done when**:
 
-- [ ] Porta os casos de `categories.int.test.ts` que dependem da ação (sessão, entrada inválida, atomicidade)
-- [ ] Cor fora de 1..8 e id não-uuid devolvem erro de campo
-- [ ] Texto cifrado malformado devolve erro e não grava
-- [ ] ≥ 6 testes novos
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
-- [ ] Contagem de testes conferida (sem remoções silenciosas)
+- [x] Porta os casos de `categories.int.test.ts` que dependem da ação (sessão, entrada inválida, atomicidade)
+- [x] Cor fora de 1..8 e id não-uuid devolvem erro de campo
+- [x] Texto cifrado malformado devolve erro e não grava
+- [x] ≥ 6 testes novos
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
+- [x] Contagem de testes conferida (sem remoções silenciosas)
 
 **Tests**: integration
 **Gate**: full
@@ -1190,12 +1190,12 @@ T86 → T88
 
 **Done when**:
 
-- [ ] Sem sessão devolve `UNAUTHORIZED`
-- [ ] Grava e substitui; colunas cruas só `v1:`
-- [ ] Campo malformado devolve `SAVE_FAILED`
-- [ ] ≥ 4 testes
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
-- [ ] Contagem de testes conferida (sem remoções silenciosas)
+- [x] Sem sessão devolve `UNAUTHORIZED`
+- [x] Grava e substitui; colunas cruas só `v1:`
+- [x] Campo malformado devolve `SAVE_FAILED`
+- [x] ≥ 4 testes
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
+- [x] Contagem de testes conferida (sem remoções silenciosas)
 
 **Tests**: integration
 **Gate**: full
@@ -1218,12 +1218,12 @@ T86 → T88
 
 **Done when**:
 
-- [ ] Grava só para o usuário da sessão e `revalidatePath("/liberdade")`
-- [ ] Texto cifrado malformado devolve `SAVE_FAILED`
-- [ ] Sem sessão devolve `UNAUTHORIZED`
-- [ ] ≥ 3 testes
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
-- [ ] Contagem de testes conferida (sem remoções silenciosas)
+- [x] Grava só para o usuário da sessão e `revalidatePath("/liberdade")`
+- [x] Texto cifrado malformado devolve `SAVE_FAILED`
+- [x] Sem sessão devolve `UNAUTHORIZED`
+- [x] ≥ 3 testes
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
+- [x] Contagem de testes conferida (sem remoções silenciosas)
 
 **Tests**: integration
 **Gate**: full
