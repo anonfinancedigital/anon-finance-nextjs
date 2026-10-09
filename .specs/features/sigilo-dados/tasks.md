@@ -258,13 +258,13 @@ T86 → T88
 
 **Done when**:
 
-- [ ] Mesmos senha, salt e parâmetros dão o mesmo `authSecret`; salt ou senha diferente dá outro
-- [ ] `authSecret` tem 43 caracteres do alfabeto base64url
-- [ ] Dados cifrados com a KEK de uma senha não decifram com a KEK de outra
-- [ ] Teste usa parâmetros baixos (m=64 KiB, t=1); parâmetros de produção ficam em `DEFAULT_KDF_PARAMS` (m=65536, t=3, p=1)
-- [ ] ≥ 5 testes
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
-- [ ] Contagem de testes conferida (sem remoções silenciosas)
+- [x] Mesmos senha, salt e parâmetros dão o mesmo `authSecret`; salt ou senha diferente dá outro
+- [x] `authSecret` tem 43 caracteres do alfabeto base64url
+- [x] Dados cifrados com a KEK de uma senha não decifram com a KEK de outra
+- [x] Teste usa parâmetros baixos (m=64 KiB, t=1); parâmetros de produção ficam em `DEFAULT_KDF_PARAMS` (m=65536, t=3, p=1)
+- [x] ≥ 5 testes
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Contagem de testes conferida (sem remoções silenciosas)
 
 **Tests**: unit
 **Gate**: quick
