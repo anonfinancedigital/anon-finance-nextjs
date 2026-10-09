@@ -2151,10 +2151,10 @@ T86 → T88
 
 **Done when**:
 
-- [ ] Link para `/privacidade`
-- [ ] Renderiza `ExportButton` e `DeleteAccountDialog`
-- [ ] Rota protegida pelo layout
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] Link para `/privacidade`
+- [x] Renderiza `ExportButton` e `DeleteAccountDialog`
+- [x] Rota protegida pelo layout
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
 
 **Tests**: none
 **Gate**: build
