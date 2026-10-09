@@ -1657,11 +1657,11 @@ T86 → T88
 
 **Done when**:
 
-- [ ] Senha real nunca vai em `FormData` para conta com cofre (inspeção `file:line`)
-- [ ] Erro exibe `E-mail ou senha inválidos`
-- [ ] Indicador `Protegendo seus dados` durante a derivação; `@noble/hashes` por import dinâmico
-- [ ] Link `Privacidade` para `/privacidade`
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] Senha real nunca vai em `FormData` para conta com cofre (inspeção `file:line`)
+- [x] Erro exibe `E-mail ou senha inválidos`
+- [x] Indicador `Protegendo seus dados` durante a derivação; `@noble/hashes` por import dinâmico
+- [x] Link `Privacidade` para `/privacidade`
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
 
 **Tests**: none
 **Gate**: build
