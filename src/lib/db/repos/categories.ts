@@ -6,6 +6,7 @@ import {
   validateCategorySet,
 } from "@/lib/domain/budget";
 import { currentMonth, type YearMonth } from "@/lib/domain/month";
+import type { MonthPayload } from "@/lib/vault/types";
 import { monthStartOf, type PercentVersion, resolvePercent } from "@/lib/domain/percent-history";
 import { db } from "../client";
 import { category, categoryPercent, plain, subcategory, transaction } from "../schema";
@@ -98,6 +99,74 @@ async function listForMonth(
       subcategories: byCategory.get(c.id) ?? [],
     };
   });
+}
+
+/**
+ * `listForMonth` for a sealed account: the categories in force in `month` (active, or deleted after
+ * it, flagged `deleted`), in creation order, each with its sealed name, EVERY percent version
+ * (the browser resolves the one in force) and its subcategories in creation order. `now` is kept
+ * for symmetry with `listForMonth`: nothing is resolved on the server.
+ */
+async function listForMonthSealed(
+  userId: string,
+  month: YearMonth,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- part of the T15 signature
+  _now: Date = new Date(),
+): Promise<MonthPayload["categories"]> {
+  const monthStart = monthStartOf(month);
+  const categories = await db
+    .select({
+      id: category.id,
+      color: category.color,
+      isInvestment: category.isInvestment,
+      deletedFrom: category.deletedFrom,
+      nameCt: category.nameCt,
+    })
+    .from(category)
+    .where(
+      and(
+        eq(category.userId, userId),
+        or(isNull(category.deletedFrom), gt(category.deletedFrom, monthStart)),
+      ),
+    )
+    .orderBy(asc(category.createdAt), asc(category.id));
+  const versions = await db
+    .select({
+      categoryId: categoryPercent.categoryId,
+      fromMonth: categoryPercent.fromMonth,
+      percentCt: categoryPercent.percentCt,
+    })
+    .from(categoryPercent)
+    .innerJoin(category, eq(category.id, categoryPercent.categoryId))
+    .where(eq(category.userId, userId))
+    .orderBy(asc(categoryPercent.fromMonth));
+  const subcategories = await db
+    .select({ id: subcategory.id, categoryId: subcategory.categoryId, nameCt: subcategory.nameCt })
+    .from(subcategory)
+    .where(eq(subcategory.userId, userId))
+    .orderBy(asc(subcategory.createdAt), asc(subcategory.id));
+
+  const subsOf = new Map<string, { id: string; nameCt: string }[]>();
+  for (const { id, categoryId, nameCt } of subcategories) {
+    subsOf.set(categoryId, [
+      ...(subsOf.get(categoryId) ?? []),
+      { id, nameCt: plain(nameCt, "subcategory.name_ct") },
+    ]);
+  }
+  const versionsOf = new Map<string, { fromMonth: string; percentCt: string }[]>();
+  for (const { categoryId, fromMonth, percentCt } of versions) {
+    versionsOf.set(categoryId, [
+      ...(versionsOf.get(categoryId) ?? []),
+      { fromMonth, percentCt: plain(percentCt, "category_percent.percent_ct") },
+    ]);
+  }
+  return categories.map(({ deletedFrom, nameCt, ...c }) => ({
+    ...c,
+    deleted: deletedFrom !== null,
+    nameCt: plain(nameCt, "category.name_ct"),
+    versions: versionsOf.get(c.id) ?? [],
+    subcategories: subsOf.get(c.id) ?? [],
+  }));
 }
 
 /** The user's active categories with the percent in force in the month of `now`. */
@@ -262,4 +331,10 @@ async function countExpenses(categoryId: string): Promise<number> {
   return db.$count(transaction, eq(transaction.categoryId, categoryId));
 }
 
-export const categoriesRepo = { list, listForMonth, replaceSet, countExpenses };
+export const categoriesRepo = {
+  list,
+  listForMonth,
+  listForMonthSealed,
+  replaceSet,
+  countExpenses,
+};

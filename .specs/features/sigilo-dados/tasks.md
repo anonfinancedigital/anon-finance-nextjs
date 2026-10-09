@@ -568,11 +568,11 @@ T86 → T88
 
 **Done when**:
 
-- [ ] Porta os casos de `listForMonth` (excluída depois do mês, ordem de criação, subcategorias, versões)
-- [ ] Nenhum campo de nome ou percentual em texto puro no resultado
-- [ ] ≥ 6 testes novos
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
-- [ ] Contagem de testes conferida (sem remoções silenciosas)
+- [x] Porta os casos de `listForMonth` (excluída depois do mês, ordem de criação, subcategorias, versões)
+- [x] Nenhum campo de nome ou percentual em texto puro no resultado
+- [x] ≥ 6 testes novos
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
+- [x] Contagem de testes conferida (sem remoções silenciosas)
 
 **Tests**: integration
 **Gate**: full
