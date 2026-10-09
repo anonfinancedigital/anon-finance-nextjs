@@ -849,12 +849,12 @@ T86 → T88
 
 **Done when**:
 
-- [ ] Conjunto fixo (receitas, despesas por categoria e subcategoria, despesa sem subcategoria, recorrente contada uma vez) dá os valores esperados em centavos escritos no teste
-- [ ] Mês vazio dá zeros e mapas vazios
-- [ ] `buildMonthlySummary` com esses totais devolve linhas, saldo e gasto esperados
-- [ ] ≥ 5 testes
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
-- [ ] Contagem de testes conferida (sem remoções silenciosas)
+- [x] Conjunto fixo (receitas, despesas por categoria e subcategoria, despesa sem subcategoria, recorrente contada uma vez) dá os valores esperados em centavos escritos no teste
+- [x] Mês vazio dá zeros e mapas vazios
+- [x] `buildMonthlySummary` com esses totais devolve linhas, saldo e gasto esperados
+- [x] ≥ 5 testes
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Contagem de testes conferida (sem remoções silenciosas)
 
 **Tests**: unit
 **Gate**: quick
