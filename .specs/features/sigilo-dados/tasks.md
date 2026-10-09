@@ -1190,12 +1190,12 @@ T86 → T88
 
 **Done when**:
 
-- [ ] Sem sessão devolve `UNAUTHORIZED`
-- [ ] Grava e substitui; colunas cruas só `v1:`
-- [ ] Campo malformado devolve `SAVE_FAILED`
-- [ ] ≥ 4 testes
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
-- [ ] Contagem de testes conferida (sem remoções silenciosas)
+- [x] Sem sessão devolve `UNAUTHORIZED`
+- [x] Grava e substitui; colunas cruas só `v1:`
+- [x] Campo malformado devolve `SAVE_FAILED`
+- [x] ≥ 4 testes
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
+- [x] Contagem de testes conferida (sem remoções silenciosas)
 
 **Tests**: integration
 **Gate**: full
