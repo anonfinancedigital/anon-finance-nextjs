@@ -2099,9 +2099,9 @@ T86 → T88
 
 **Done when**:
 
-- [ ] Conta legada é redirecionada para `/proteger-dados`
-- [ ] Sem leitura de `birth_date` em claro
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] Conta legada é redirecionada para `/proteger-dados`
+- [x] Sem leitura de `birth_date` em claro
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
 
 **Tests**: none
 **Gate**: build
