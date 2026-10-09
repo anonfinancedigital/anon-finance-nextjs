@@ -1999,9 +1999,9 @@ T86 → T88
 
 **Done when**:
 
-- [ ] Props de `GoalExperience` idênticas às de hoje
-- [ ] Sem data de nascimento aberta, redireciona para `/data-nascimento`
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] Props de `GoalExperience` idênticas às de hoje
+- [x] Sem data de nascimento aberta, redireciona para `/data-nascimento`
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
 
 **Tests**: none
 **Gate**: build
