@@ -1,6 +1,6 @@
 "use client";
 
-import { LayoutGridIcon, ShieldIcon, TargetIcon, TagsIcon, UsersIcon } from "lucide-react";
+import { LayoutGridIcon, ShieldIcon, TargetIcon, TagsIcon, UserIcon, UsersIcon } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
@@ -9,7 +9,8 @@ const items = [
   { href: "/", label: "Visão Geral", icon: LayoutGridIcon },
   { href: "/categorias", label: "Alocação", icon: TagsIcon },
   { href: "/liberdade", label: "Ápice", icon: TargetIcon },
-  { href: "/conta", label: "Privacidade", icon: ShieldIcon },
+  { href: "/conta", label: "Conta", icon: UserIcon },
+  { href: "/privacidade", label: "Privacidade", icon: ShieldIcon },
 ] as const;
 
 const adminItem = { href: "/admin/cadastros", label: "Cadastros", icon: UsersIcon } as const;
