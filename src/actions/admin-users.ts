@@ -6,6 +6,7 @@ import { isAdminEmail } from "@/lib/admin";
 import { requireAdminForAction } from "@/lib/auth-guard";
 import { usersRepo } from "@/lib/db/repos/users";
 import type { UserAction } from "@/lib/domain/user-status";
+import { logActionError } from "@/lib/log";
 
 const ADMIN_PATH = "/admin/cadastros";
 const NOT_FOUND = "Cadastro não encontrado";
@@ -32,7 +33,7 @@ async function decide(id: string, action: UserAction): Promise<ActionResult> {
       return { ok: false, error: action === "revoke" ? NOT_APPROVED : NOT_PENDING };
     }
   } catch (error) {
-    console.error(`${action}User`, error);
+    logActionError(`${action}User`, error);
     return { ok: false, error: SAVE_FAILED };
   }
 
@@ -64,7 +65,7 @@ export async function deleteUser(id: string): Promise<ActionResult> {
     if (await isAdminTarget(id)) return { ok: false, error: ADMIN_TARGET };
     if ((await usersRepo.remove(id)) === "not_found") return { ok: false, error: NOT_FOUND };
   } catch (error) {
-    console.error("deleteUser", error);
+    logActionError("deleteUser", error);
     return { ok: false, error: SAVE_FAILED };
   }
 

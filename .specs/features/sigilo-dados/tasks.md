@@ -2415,9 +2415,11 @@ T86 → T88
 **Done when**:
 
 - [ ] Nenhum `console.error` com objeto de erro restante em `src/actions` (busca no repositório)
-- [ ] `admin-users.int.test.ts` verde
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
-- [ ] Contagem de testes conferida (sem remoções silenciosas)
+- [x] `admin-users.int.test.ts` verde
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
+- [x] Contagem de testes conferida (sem remoções silenciosas)
+
+> Pendente da busca final: nesta branch ainda há `console.error` com objeto em `goals.ts`, `profile.ts`, `categories.ts` e `transactions.ts` (frentes B e C). B e C apagam quase todos (T76 a T79). Depois do merge sobra só `deleteTransaction` (`src/actions/transactions.ts`), que B mantém sem trocar o log. Fechar após o merge com a troca para `logActionError`.
 
 **Tests**: integration
 **Gate**: full

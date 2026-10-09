@@ -37,6 +37,9 @@ const GOAL_INPUT = {
   withdrawalRate: "6",
 };
 
+/** A database error carrying a Postgres code and a message that must not reach the log. */
+const dbFailure = () => Object.assign(new Error("connection refused"), { code: "08006" });
+
 const userRow = async (id: string) => (await db.select().from(user).where(eq(user.id, id)))[0];
 const sessionsOf = (id: string) => db.$count(session, eq(session.userId, id));
 
@@ -94,10 +97,12 @@ describe("approveUser", () => {
 
   it("returns the save error on a database failure and keeps the status", async () => {
     const { userId } = await target("pending");
-    vi.spyOn(usersRepo, "transition").mockRejectedValueOnce(new Error("connection refused"));
-    vi.spyOn(console, "error").mockImplementation(() => {});
+    vi.spyOn(usersRepo, "transition").mockRejectedValueOnce(dbFailure());
+    const log = vi.spyOn(console, "error").mockImplementation(() => {});
 
     expect(await approveUser(userId)).toEqual(SAVE_FAILED);
+
+    expect(log.mock.calls).toEqual([["approveUser", "08006"]]);
 
     expect(await userRow(userId)).toMatchObject({ status: "pending", decidedAt: DECIDED_AT });
     expect(revalidatePath).not.toHaveBeenCalled();
@@ -143,10 +148,12 @@ describe("rejectUser", () => {
 
   it("returns the save error on a database failure and keeps the status", async () => {
     const { userId } = await target("pending");
-    vi.spyOn(usersRepo, "transition").mockRejectedValueOnce(new Error("connection refused"));
-    vi.spyOn(console, "error").mockImplementation(() => {});
+    vi.spyOn(usersRepo, "transition").mockRejectedValueOnce(dbFailure());
+    const log = vi.spyOn(console, "error").mockImplementation(() => {});
 
     expect(await rejectUser(userId)).toEqual(SAVE_FAILED);
+
+    expect(log.mock.calls).toEqual([["rejectUser", "08006"]]);
 
     expect(await userRow(userId)).toMatchObject({ status: "pending", decidedAt: DECIDED_AT });
     expect(revalidatePath).not.toHaveBeenCalled();
@@ -285,10 +292,12 @@ describe("deleteUser", () => {
   it("returns the save error on a database failure and deletes nothing", async () => {
     const { userId } = await target("approved");
     await addData(userId);
-    vi.spyOn(usersRepo, "remove").mockRejectedValueOnce(new Error("connection refused"));
-    vi.spyOn(console, "error").mockImplementation(() => {});
+    vi.spyOn(usersRepo, "remove").mockRejectedValueOnce(dbFailure());
+    const log = vi.spyOn(console, "error").mockImplementation(() => {});
 
     expect(await deleteUser(userId)).toEqual(SAVE_FAILED);
+
+    expect(log.mock.calls).toEqual([["deleteUser", "08006"]]);
 
     expect(await userRow(userId)).toBeDefined();
     expect(await dataCounts(userId)).toEqual([1, 1, 1]);
@@ -318,11 +327,14 @@ describe("reject and revoke when ending the sessions fails", () => {
   it.each([
     ["rejectUser", "pending", rejectUser],
     ["revokeUser", "approved", revokeUser],
-  ] as const)("%s returns the save error and keeps the %s status", async (_, status, decide) => {
+  ] as const)("%s returns the save error and keeps the %s status", async (name, status, decide) => {
     const { userId } = await target(status);
-    vi.spyOn(console, "error").mockImplementation(() => {});
+    const log = vi.spyOn(console, "error").mockImplementation(() => {});
 
     expect(await withFailingSessionDelete(() => decide(userId))).toEqual(SAVE_FAILED);
+
+    // Only the action name and a string code: the error object never reaches the log (SIGILO-26).
+    expect(log.mock.calls).toEqual([[name, expect.any(String)]]);
 
     expect(await userRow(userId)).toMatchObject({ status, decidedAt: DECIDED_AT });
     expect(await sessionsOf(userId)).toBe(1);
