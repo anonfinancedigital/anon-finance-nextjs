@@ -821,12 +821,12 @@ T86 → T88
 
 **Done when**:
 
-- [ ] Percentual igual ao vigente não gera `percentChange`; diferente gera, com `fromMonth` do mês corrente de America/Sao_Paulo
-- [ ] Categoria e subcategoria novas recebem id e nome cifrado com AAD da própria linha
-- [ ] Subcategorias omitidas não aparecem no DTO
-- [ ] ≥ 6 testes
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
-- [ ] Contagem de testes conferida (sem remoções silenciosas)
+- [x] Percentual igual ao vigente não gera `percentChange`; diferente gera, com `fromMonth` do mês corrente de America/Sao_Paulo
+- [x] Categoria e subcategoria novas recebem id e nome cifrado com AAD da própria linha
+- [x] Subcategorias omitidas não aparecem no DTO
+- [x] ≥ 6 testes
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Contagem de testes conferida (sem remoções silenciosas)
 
 **Tests**: unit
 **Gate**: quick
