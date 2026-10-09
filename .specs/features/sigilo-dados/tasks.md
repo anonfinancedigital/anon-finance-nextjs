@@ -453,13 +453,13 @@ T86 → T88
 
 **Done when**:
 
-- [ ] Conta com cofre devolve seu salt e parâmetros reais
-- [ ] E-mail inexistente devolve o mesmo resultado em duas chamadas e com o mesmo formato (mesmas chaves, salt de 16 bytes em base64url)
-- [ ] Resultado do chamariz difere entre e-mails diferentes
-- [ ] Conta sem cofre devolve `{mode:"legacy"}`; e-mail com outra caixa/espaços equivale ao normalizado
-- [ ] ≥ 5 testes
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
-- [ ] Contagem de testes conferida (sem remoções silenciosas)
+- [x] Conta com cofre devolve seu salt e parâmetros reais
+- [x] E-mail inexistente devolve o mesmo resultado em duas chamadas e com o mesmo formato (mesmas chaves, salt de 16 bytes em base64url)
+- [x] Resultado do chamariz difere entre e-mails diferentes
+- [x] Conta sem cofre devolve `{mode:"legacy"}`; e-mail com outra caixa/espaços equivale ao normalizado
+- [x] ≥ 5 testes
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
+- [x] Contagem de testes conferida (sem remoções silenciosas)
 
 **Tests**: integration
 **Gate**: full

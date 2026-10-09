@@ -3,6 +3,7 @@ import { eq } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
 import { insertTestUser, setupTestDb } from "@/test/db";
 import type { VaultMaterial } from "@/lib/vault/types";
+import { user } from "../auth-schema";
 import { db } from "../client";
 import {
   category,
@@ -206,3 +207,70 @@ describe("vaultRepo.wipeFinancialData", () => {
   });
 });
 
+
+const emailOf = async (userId: string) => {
+  const [row] = await db.select({ email: user.email }).from(user).where(eq(user.id, userId));
+  return row.email;
+};
+
+describe("vaultRepo.kdfParamsFor", () => {
+  it("returns the real salt and parameters of an account with a vault", async () => {
+    const userId = await insertTestUser();
+    await createVault(userId, { ...MATERIAL, salt: "CCCCCCCCCCCCCCCCCCCCCC", memKib: 32768, iterations: 4, parallelism: 2 });
+
+    expect(await vaultRepo.kdfParamsFor(await emailOf(userId))).toEqual({
+      mode: "v1",
+      salt: "CCCCCCCCCCCCCCCCCCCCCC",
+      m: 32768,
+      t: 4,
+      p: 2,
+    });
+  });
+
+  it("returns the same decoy twice for an unknown e-mail, in the real format", async () => {
+    const first = await vaultRepo.kdfParamsFor("ninguem@example.com");
+    const second = await vaultRepo.kdfParamsFor("ninguem@example.com");
+
+    expect(second).toEqual(first);
+    if (first.mode !== "v1") throw new Error("decoy must be v1");
+    expect(Object.keys(first).sort()).toEqual(["m", "mode", "p", "salt", "t"]);
+    expect(first.salt).toMatch(/^[A-Za-z0-9_-]+$/);
+    expect(Buffer.from(first.salt, "base64url")).toHaveLength(16);
+    expect([first.m, first.t, first.p]).toEqual([65536, 3, 1]);
+  });
+
+  it("has the same keys as the answer for a real account", async () => {
+    const userId = await insertTestUser();
+    await createVault(userId);
+
+    const real = await vaultRepo.kdfParamsFor(await emailOf(userId));
+    const decoy = await vaultRepo.kdfParamsFor("ninguem@example.com");
+    expect(Object.keys(decoy).sort()).toEqual(Object.keys(real).sort());
+  });
+
+  it("gives different decoys to different e-mails", async () => {
+    const a = await vaultRepo.kdfParamsFor("a@example.com");
+    const b = await vaultRepo.kdfParamsFor("b@example.com");
+
+    expect(a).not.toEqual(b);
+  });
+
+  it("returns { mode: 'legacy' } for an account without a vault", async () => {
+    const userId = await insertTestUser();
+
+    expect(await vaultRepo.kdfParamsFor(await emailOf(userId))).toEqual({ mode: "legacy" });
+  });
+
+  it("treats other case and surrounding spaces as the normalized e-mail", async () => {
+    const userId = await insertTestUser();
+    await createVault(userId);
+    const email = await emailOf(userId);
+
+    const messy = await vaultRepo.kdfParamsFor(`  ${email.toUpperCase()} `);
+    expect(messy).toEqual(await vaultRepo.kdfParamsFor(email));
+    expect(messy).toMatchObject({ mode: "v1", salt: MATERIAL.salt });
+
+    const decoy = await vaultRepo.kdfParamsFor("Ninguem@Example.com");
+    expect(await vaultRepo.kdfParamsFor("  ninguem@example.com ")).toEqual(decoy);
+  });
+});
