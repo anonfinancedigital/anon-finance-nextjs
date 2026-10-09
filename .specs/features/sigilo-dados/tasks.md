@@ -2360,10 +2360,10 @@ T86 → T88
 
 **Done when**:
 
-- [ ] Nenhum `console.error` com objeto de erro em `auth.ts`
-- [ ] Testes de login/bloqueio verdes e casos de cadastro portados para `signUpSealedAction`
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
-- [ ] Contagem de testes conferida (sem remoções silenciosas)
+- [x] Nenhum `console.error` com objeto de erro em `auth.ts`
+- [x] Testes de login/bloqueio verdes e casos de cadastro portados para `signUpSealedAction`
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
+- [x] Contagem de testes conferida (sem remoções silenciosas)
 
 **Tests**: integration
 **Gate**: full

@@ -11,7 +11,6 @@ import { usersRepo } from "@/lib/db/repos/users";
 import { LOGIN_BLOCK_MESSAGE } from "@/lib/domain/user-status";
 import { logActionError } from "@/lib/log";
 import { lockedMinutes } from "@/lib/login-lock";
-import { signupSchema } from "@/lib/validation/signup";
 import { type SignUpSealedPayload, signUpSealedSchema } from "@/lib/validation/signup-sealed";
 
 const INVALID_CREDENTIALS = "E-mail ou senha inválidos";
@@ -54,31 +53,6 @@ export async function signInAction(
 
   await loginAttemptsRepo.clear(email);
   redirect("/");
-}
-
-/** Signup form action (useActionState): creates a pending user, with no session. */
-export async function signUpAction(
-  _prev: ActionResult | undefined,
-  formData: FormData,
-): Promise<ActionResult> {
-  const parsed = signupSchema.safeParse({
-    name: formData.get("name") ?? "",
-    email: formData.get("email") ?? "",
-    birthDate: formData.get("birthDate") ?? "",
-    password: formData.get("password") ?? "",
-    confirmPassword: formData.get("confirmPassword") ?? undefined,
-  });
-  if (!parsed.success) return invalidInput(parsed.error);
-
-  try {
-    const { name, email, password, birthDate } = parsed.data;
-    const result = await usersRepo.createPending({ name, email, password, birthDate });
-    if (!result.ok) return { ok: false, error: DUPLICATE_EMAIL, fieldErrors: { email: DUPLICATE_EMAIL } };
-  } catch (error) {
-    console.error("signUpAction", error);
-    return { ok: false, error: SAVE_FAILED };
-  }
-  return { ok: true };
 }
 
 /**

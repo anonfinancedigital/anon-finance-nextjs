@@ -11,7 +11,7 @@ import type { UserStatus } from "@/lib/domain/user-status";
 import { createSignedInUser, insertCredentialUser, signInCookie } from "@/test/auth";
 import { insertCategory, setupTestDb } from "@/test/db";
 import { approveUser, deleteUser, rejectUser, revokeUser } from "./admin-users";
-import { signUpAction } from "./auth";
+import { signUpSealedAction } from "./auth";
 import { saveGoal } from "./goals";
 
 const request = vi.hoisted(() => ({ headers: new Headers() }));
@@ -247,13 +247,24 @@ describe("deleteUser", () => {
       expect(await userRow(other.userId)).toBeDefined();
       expect(revalidatePath).toHaveBeenCalledWith("/admin/cadastros");
 
-      const signup = new FormData();
-      signup.set("name", "De novo");
-      signup.set("email", email);
-      signup.set("birthDate", "18/09/1993");
-      signup.set("password", "12345678");
-      signup.set("confirmPassword", "12345678");
-      expect(await signUpAction(undefined, signup)).toEqual({ ok: true });
+      expect(
+        await signUpSealedAction({
+          userId: randomUUID(),
+          name: "De novo",
+          email,
+          authSecret: "A".repeat(43),
+          vault: {
+            kdfVersion: 1,
+            salt: "AAAAAAAAAAAAAAAAAAAAAA",
+            memKib: 65536,
+            iterations: 3,
+            parallelism: 1,
+            dekWrappedPw: "v1:pw",
+            dekWrappedRecovery: "v1:recovery",
+          },
+          birthDateCt: "v1:birth",
+        }),
+      ).toEqual({ ok: true });
     },
   );
 

@@ -10,7 +10,7 @@ import { usersRepo } from "@/lib/db/repos/users";
 import { userVault } from "@/lib/db/schema";
 import { createSignedInUser, insertCredentialUser, TEST_PASSWORD } from "@/test/auth";
 import { setupTestDb } from "@/test/db";
-import { signInAction, signOutAction, signUpAction, signUpSealedAction } from "./auth";
+import { signInAction, signOutAction, signUpSealedAction } from "./auth";
 
 const request = vi.hoisted(() => ({ headers: new Headers() }));
 
@@ -202,167 +202,6 @@ describe("signInAction for a user who is not approved", () => {
   });
 });
 
-describe("signUpAction", () => {
-  const DUPLICATE = "Este e-mail já está cadastrado";
-  const VALID = {
-    name: "  Ana  ",
-    email: " Ana@X.com ",
-    birthDate: "18/09/1993",
-    password: "12345678",
-    confirmPassword: "12345678",
-  };
-  const MISMATCH = "As senhas não coincidem";
-
-  function signupForm(input: {
-    name: string;
-    email: string;
-    birthDate?: string;
-    password: string;
-    confirmPassword?: string;
-  }) {
-    const data = new FormData();
-    data.set("name", input.name);
-    data.set("email", input.email);
-    if (input.birthDate !== undefined) data.set("birthDate", input.birthDate);
-    data.set("password", input.password);
-    if (input.confirmPassword !== undefined) data.set("confirmPassword", input.confirmPassword);
-    return data;
-  }
-
-  /** Confirms the same password unless the case overrides `confirmPassword`. */
-  const signUp = (input: Partial<typeof VALID> = {}) =>
-    signUpAction(
-      undefined,
-      signupForm({ ...VALID, confirmPassword: input.password ?? VALID.confirmPassword, ...input }),
-    );
-
-  const usersWith = (email: string) => db.select().from(user).where(eq(user.email, email));
-
-  /** Day `offsetDays` from now in America/Sao_Paulo, as DD/MM/AAAA and AAAA-MM-DD. */
-  const dayFromNow = (offsetDays: number) => {
-    const [y, m, d] = new Intl.DateTimeFormat("en-CA", { timeZone: "America/Sao_Paulo" })
-      .format(new Date(Date.now() + offsetDays * 24 * 3600_000))
-      .split("-");
-    return { br: `${d}/${m}/${y}`, iso: `${y}-${m}-${d}` };
-  };
-
-  afterEach(() => {
-    vi.restoreAllMocks();
-  });
-
-  it("creates a pending user without a session and returns ok", async () => {
-    expect(await signUp()).toEqual({ ok: true });
-
-    const [created] = await usersWith("ana@x.com");
-    expect(created).toMatchObject({
-      name: "Ana",
-      email: "ana@x.com",
-      status: "pending",
-      birthDate: "1993-09-18",
-    });
-    expect(await sessionsOf(created.id)).toBe(0);
-    expect(redirect).not.toHaveBeenCalled();
-  });
-
-  it.each([
-    ["empty", "", "Informe a data de nascimento"],
-    ["nonexistent", "31/02/1993", "Data de nascimento inválida"],
-    ["in ISO format", "1993-09-18", "Data de nascimento inválida"],
-    ["in the future", dayFromNow(2).br, "A data de nascimento não pode ser futura"],
-    ["older than 120 years", "01/01/1800", "A idade atual deve ser de no máximo 120 anos"],
-  ])("rejects a birth date %s with its message and creates no user", async (_label, birthDate, message) => {
-    expect(await signUp({ birthDate })).toEqual({
-      ok: false,
-      error: message,
-      fieldErrors: { birthDate: message },
-    });
-
-    expect(await usersWith("ana@x.com")).toEqual([]);
-    expect(await db.$count(user)).toBe(1);
-  });
-
-  it("rejects a form without birthDate and creates no user", async () => {
-    const { name, email, password } = VALID;
-    const result = await signUpAction(undefined, signupForm({ name, email, password, confirmPassword: password }));
-
-    expect(result).toEqual({
-      ok: false,
-      error: "Informe a data de nascimento",
-      fieldErrors: { birthDate: "Informe a data de nascimento" },
-    });
-    expect(await usersWith("ana@x.com")).toEqual([]);
-  });
-
-  it("accepts a birth date equal to today", async () => {
-    const { br, iso } = dayFromNow(0);
-
-    expect(await signUp({ birthDate: br })).toEqual({ ok: true });
-
-    expect((await usersWith("ana@x.com"))[0].birthDate).toBe(iso);
-  });
-
-  it.each([
-    ["name", { name: "   " }, "Informe seu nome"],
-    ["name", { name: "a".repeat(81) }, "O nome deve ter no máximo 80 caracteres"],
-    ["email", { email: "ana@" }, "Informe um e-mail válido"],
-    ["password", { password: "1234567" }, "A senha deve ter pelo menos 8 caracteres"],
-    ["password", { password: "1".repeat(129) }, "A senha deve ter no máximo 128 caracteres"],
-  ] as const)("rejects an invalid %s with %j and creates no user", async (field, input, message) => {
-    expect(await signUp(input)).toEqual({ ok: false, error: message, fieldErrors: { [field]: message } });
-
-    expect(await db.$count(user)).toBe(1); // only the user created in beforeEach
-  });
-
-  it.each([["12345679"], [""]])("rejects confirmPassword %j with 'As senhas não coincidem' and creates no user", async (confirmPassword) => {
-    expect(await signUp({ confirmPassword })).toEqual({
-      ok: false,
-      error: MISMATCH,
-      fieldErrors: { confirmPassword: MISMATCH },
-    });
-
-    expect(await db.$count(user)).toBe(1);
-  });
-
-  it("rejects a form without confirmPassword and creates no user", async () => {
-    const { name, email, birthDate, password } = VALID;
-
-    expect(await signUpAction(undefined, signupForm({ name, email, birthDate, password }))).toEqual({
-      ok: false,
-      error: MISMATCH,
-      fieldErrors: { confirmPassword: MISMATCH },
-    });
-
-    expect(await db.$count(user)).toBe(1);
-  });
-
-  it.each([["pending"], ["approved"], ["rejected"], ["revoked"]] as const)(
-    "rejects an e-mail already used by a %s user, in another case, without changing it",
-    async (status) => {
-      const existingId = await insertCredentialUser("ana@x.com", TEST_PASSWORD, status);
-      const [before] = await usersWith("ana@x.com");
-
-      expect(await signUp({ name: "Outra", email: "ANA@x.COM" })).toEqual({
-        ok: false,
-        error: DUPLICATE,
-        fieldErrors: { email: DUPLICATE },
-      });
-
-      const after = await usersWith("ana@x.com");
-      expect(after).toEqual([before]);
-      expect(after[0].id).toBe(existingId);
-    },
-  );
-
-  it("returns the save error on a database failure and creates no user", async () => {
-    vi.spyOn(usersRepo, "createPending").mockRejectedValueOnce(new Error("connection refused"));
-    vi.spyOn(console, "error").mockImplementation(() => {});
-
-    expect(await signUp()).toEqual({ ok: false, error: "Não foi possível salvar. Tente novamente" });
-
-    expect(await usersWith("ana@x.com")).toEqual([]);
-  });
-});
-
 describe("signOutAction", () => {
   it("ends the session", async () => {
     const { cookie } = await createSignedInUser();
@@ -430,6 +269,36 @@ describe("signUpSealedAction", () => {
     expect(await sessionsOf(body.userId)).toBe(1);
   });
 
+  it("trims the name, stores the normalized e-mail and neither opens a session nor redirects", async () => {
+    const body = payload({ name: "  Ana  ", email: " Ana@X.com " });
+
+    expect(await signUpSealedAction(body)).toEqual({ ok: true });
+
+    const [created] = await usersWith("ana@x.com");
+    expect(created).toMatchObject({ id: body.userId, name: "Ana", email: "ana@x.com", status: "pending" });
+    expect(await sessionsOf(body.userId)).toBe(0);
+    expect(redirect).not.toHaveBeenCalled();
+  });
+
+  it.each([["pending"], ["approved"], ["rejected"], ["revoked"]] as const)(
+    "answers an e-mail already used by a %s account, in another case, with the duplicate message without changing it",
+    async (status) => {
+      const existingId = await insertCredentialUser("ana@x.com", TEST_PASSWORD, status);
+      const [before] = await usersWith("ana@x.com");
+
+      expect(await signUpSealedAction(payload({ name: "Outra", email: "ANA@x.COM" }))).toEqual({
+        ok: false,
+        error: "Este e-mail já está cadastrado",
+        fieldErrors: { email: "Este e-mail já está cadastrado" },
+      });
+
+      const after = await usersWith("ana@x.com");
+      expect(after).toEqual([before]);
+      expect(after[0].id).toBe(existingId);
+      expect(await vaults()).toEqual([]);
+    },
+  );
+
   it("answers a repeated e-mail in another case with the duplicate message and writes nothing", async () => {
     expect(await signUpSealedAction(payload())).toEqual({ ok: true });
 
@@ -459,6 +328,7 @@ describe("signUpSealedAction", () => {
   it.each([
     ["userId that is not a uuid", { userId: "nao-e-uuid" }, "userId"],
     ["empty name", { name: "  " }, "name"],
+    ["name over 80 characters", { name: "a".repeat(81) }, "name"],
     ["invalid e-mail", { email: "ana@" }, "email"],
     ["birthDateCt in plain text", { birthDateCt: "1993-09-18" }, "birthDateCt"],
     ["missing birthDateCt", { birthDateCt: undefined }, "birthDateCt"],
