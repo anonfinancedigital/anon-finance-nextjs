@@ -1019,12 +1019,12 @@ T86 → T88
 
 **Done when**:
 
-- [ ] Chave correta: o novo `dekWrappedPw` abre com a KEK da nova senha e a DEK é a original
-- [ ] Chave inválida (formato ou errada) lança `InvalidRecoveryKey` e não devolve material
-- [ ] Salt novo difere do antigo
-- [ ] ≥ 4 testes
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
-- [ ] Contagem de testes conferida (sem remoções silenciosas)
+- [x] Chave correta: o novo `dekWrappedPw` abre com a KEK da nova senha e a DEK é a original
+- [x] Chave inválida (formato ou errada) lança `InvalidRecoveryKey` e não devolve material
+- [x] Salt novo difere do antigo
+- [x] ≥ 4 testes
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Contagem de testes conferida (sem remoções silenciosas)
 
 **Tests**: unit
 **Gate**: quick
