@@ -1333,11 +1333,11 @@ T86 → T88
 
 **Done when**:
 
-- [ ] `signInAction` usa o novo módulo e os testes existentes de bloqueio de `auth.int.test.ts` passam sem alteração
-- [ ] Módulo não está em arquivo `"use server"`
-- [ ] Nenhum teste removido nem enfraquecido
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
-- [ ] Contagem de testes conferida (sem remoções silenciosas)
+- [x] `signInAction` usa o novo módulo e os testes existentes de bloqueio de `auth.int.test.ts` passam sem alteração
+- [x] Módulo não está em arquivo `"use server"`
+- [x] Nenhum teste removido nem enfraquecido
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
+- [x] Contagem de testes conferida (sem remoções silenciosas)
 
 **Tests**: integration
 **Gate**: full
