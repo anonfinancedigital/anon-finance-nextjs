@@ -540,12 +540,12 @@ T86 → T88
 
 **Done when**:
 
-- [ ] Porta todos os casos de `updateFrom` de `transactions.int.test.ts` (série dividida, truncada, editada no primeiro mês, fora do mês)
-- [ ] O segmento novo é gravado com o id `newRowId`; `newRowId` já existente falha sem alterar nada
-- [ ] Série truncada mantém o texto cifrado antigo
-- [ ] ≥ 8 testes novos
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
-- [ ] Contagem de testes conferida (sem remoções silenciosas)
+- [x] Porta todos os casos de `updateFrom` de `transactions.int.test.ts` (série dividida, truncada, editada no primeiro mês, fora do mês)
+- [x] O segmento novo é gravado com o id `newRowId`; `newRowId` já existente falha sem alterar nada
+- [x] Série truncada mantém o texto cifrado antigo
+- [x] ≥ 8 testes novos
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
+- [x] Contagem de testes conferida (sem remoções silenciosas)
 
 **Tests**: integration
 **Gate**: full
