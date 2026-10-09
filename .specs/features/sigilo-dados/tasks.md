@@ -173,12 +173,12 @@ T86 → T88
 
 **Done when**:
 
-- [ ] Ida e volta devolve os mesmos bytes (vazio, 1, 2, 3 e 32 bytes)
-- [ ] Saída usa só `A-Za-z0-9_-` e nunca termina em `=`
-- [ ] `fromBase64Url` lança em `+`, `/`, `=` e espaço
-- [ ] ≥ 5 testes
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
-- [ ] Contagem de testes conferida (sem remoções silenciosas)
+- [x] Ida e volta devolve os mesmos bytes (vazio, 1, 2, 3 e 32 bytes)
+- [x] Saída usa só `A-Za-z0-9_-` e nunca termina em `=`
+- [x] `fromBase64Url` lança em `+`, `/`, `=` e espaço
+- [x] ≥ 5 testes
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Contagem de testes conferida (sem remoções silenciosas)
 
 **Tests**: unit
 **Gate**: quick
