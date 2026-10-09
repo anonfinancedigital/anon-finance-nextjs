@@ -1579,9 +1579,9 @@ T86 → T88
 
 **Done when**:
 
-- [ ] Em erro `data` é `null` e nenhum dado parcial é exposto
-- [ ] Cancela o resultado de efeito obsoleto ao trocar `deps`
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] Em erro `data` é `null` e nenhum dado parcial é exposto
+- [x] Cancela o resultado de efeito obsoleto ao trocar `deps`
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
 
 **Tests**: none
 **Gate**: build
