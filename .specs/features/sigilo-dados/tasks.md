@@ -1484,6 +1484,32 @@ T86 → T88
 
 ---
 
+### T47a: Nonce da CSP no layout raiz
+
+**What**: `RootLayout` lê `x-nonce` via `headers()` (o que torna todas as páginas dinâmicas, requisito do nonce) e o aplica ao script inline do tema, mantendo o comportamento do tema.
+**Where**: `src/app/layout.tsx`
+**Depends on**: T47
+**Reuses**: `x-nonce` definido em `src/proxy.ts`
+**Requirement**: SIGILO-28
+
+**Tools**:
+
+- MCP: NONE
+- Skill: NONE
+
+**Done when**:
+
+- [x] Layout raiz dinâmico: `/login` deixa de ser pré-renderizada/cacheada estaticamente
+- [x] Todos os `<script>` do HTML (tema e `<script src>` do Next) levam o mesmo nonce do header CSP
+- [x] `/liberdade` sem cookie segue com 307 para `/login`; `/privacidade` não redireciona para `/login`
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+
+**Tests**: none
+**Gate**: build
+**Commit**: `fix(sigilo): nonce da CSP no layout raiz`
+
+---
+
 ### Phase 7: Runtime do cofre na UI
 
 ### T48: Provedor do cofre
