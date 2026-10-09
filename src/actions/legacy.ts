@@ -3,7 +3,10 @@
 import { type ActionResult, SAVE_FAILED, UNAUTHORIZED } from "@/lib/action-result";
 import { requireSessionForAction } from "@/lib/auth-guard";
 import { legacyRepo } from "@/lib/db/repos/legacy";
+import { loginAttemptsRepo } from "@/lib/db/repos/login-attempts";
+import { usersRepo } from "@/lib/db/repos/users";
 import { logActionError } from "@/lib/log";
+import { lockedMinutes } from "@/lib/login-lock";
 import {
   type CommitLegacyMigrationPayload,
   commitLegacyMigrationSchema,
@@ -33,7 +36,8 @@ export async function loadLegacyDataAction(): Promise<
 /**
  * Finishes the migration of a legacy account in one transaction (SIGILO-23/24): seals every row,
  * removes the plain text and swaps the password hash for the login secret's. The old password is
- * checked against the stored hash. A malformed or incomplete package changes nothing.
+ * checked against the stored hash under the login lock (5 failures in 15 minutes per e-mail; a
+ * wrong one counts as a failure, a success clears them). A malformed or incomplete package changes nothing.
  */
 export async function commitLegacyMigrationAction(payload: CommitLegacyMigrationPayload): Promise<ActionResult> {
   const session = await requireSessionForAction();
@@ -44,10 +48,23 @@ export async function commitLegacyMigrationAction(payload: CommitLegacyMigration
 
   const { oldPassword, authSecret, vault, pkg } = parsed.data;
   try {
+    const owner = await usersRepo.findById(session.userId);
+    if (!owner) return { ok: false, error: UNAUTHORIZED };
+
+    const minutes = await lockedMinutes(owner.email);
+    if (minutes > 0) {
+      const unit = minutes === 1 ? "minuto" : "minutos";
+      return { ok: false, error: `Muitas tentativas. Tente novamente em ${minutes} ${unit}` };
+    }
+
     const outcome = await legacyRepo.commitMigration(session.userId, oldPassword, { ...pkg, authSecret, vault });
-    if (outcome === "wrong_password") return { ok: false, error: WRONG_PASSWORD };
+    if (outcome === "wrong_password") {
+      await loginAttemptsRepo.recordFailure(owner.email);
+      return { ok: false, error: WRONG_PASSWORD };
+    }
     if (outcome === "not_legacy") return { ok: false, error: NOT_LEGACY };
     if (outcome === "mismatch") return { ok: false, error: SAVE_FAILED };
+    await loginAttemptsRepo.clear(owner.email);
   } catch (error) {
     logActionError("commitLegacyMigrationAction", error);
     return { ok: false, error: SAVE_FAILED };

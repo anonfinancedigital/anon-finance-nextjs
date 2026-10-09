@@ -6,6 +6,7 @@ import { auth } from "@/lib/auth";
 import { account, user } from "@/lib/db/auth-schema";
 import { db } from "@/lib/db/client";
 import { legacyRepo } from "@/lib/db/repos/legacy";
+import { loginAttemptsRepo } from "@/lib/db/repos/login-attempts";
 import { vaultRepo } from "@/lib/db/repos/vault";
 import { category, categoryPercent, financialGoal, subcategory, transaction, userVault } from "@/lib/db/schema";
 import { createSignedInUser, signInCookie, TEST_PASSWORD } from "@/test/auth";
@@ -226,6 +227,41 @@ describe("commitLegacyMigrationAction", () => {
     });
 
     expect(await rawRows(ana.userId)).toEqual(before);
+  });
+
+  it("records a failure for the account e-mail on a wrong old password", async () => {
+    const ana = await legacyAccount();
+    signInAs(ana.cookie);
+
+    await commitLegacyMigrationAction(await payloadFor(ana.userId, { oldPassword: "senha-errada-000" }));
+
+    expect(await loginAttemptsRepo.countRecentFailures(ana.email, new Date(Date.now() - 60_000))).toBe(1);
+  });
+
+  it("locks after 5 failures: even the right password is refused and nothing is migrated", async () => {
+    const ana = await legacyAccount();
+    signInAs(ana.cookie);
+    for (let i = 0; i < 5; i++) await loginAttemptsRepo.recordFailure(ana.email);
+    const before = await rawRows(ana.userId);
+    const commit = vi.spyOn(legacyRepo, "commitMigration");
+
+    expect(await commitLegacyMigrationAction(await payloadFor(ana.userId))).toEqual({
+      ok: false,
+      error: "Muitas tentativas. Tente novamente em 15 minutos",
+    });
+
+    expect(commit).not.toHaveBeenCalled();
+    expect(await rawRows(ana.userId)).toEqual(before);
+  });
+
+  it("clears the e-mail failures after a successful migration", async () => {
+    const ana = await legacyAccount();
+    signInAs(ana.cookie);
+    await loginAttemptsRepo.recordFailure(ana.email);
+
+    expect(await commitLegacyMigrationAction(await payloadFor(ana.userId))).toEqual({ ok: true });
+
+    expect(await loginAttemptsRepo.latestFailure(ana.email)).toBeNull();
   });
 
   it("answers SAVE_FAILED for an incomplete package and leaves everything intact", async () => {
