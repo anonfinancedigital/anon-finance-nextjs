@@ -1389,13 +1389,13 @@ T86 → T88
 
 **Done when**:
 
-- [ ] Conta com cofre recebe erro em ambas e nada é lido ou gravado
-- [ ] Sucesso migra e a conta passa a logar com `authSecret`
-- [ ] Senha antiga errada devolve `Senha incorreta`; pacote incompleto devolve `SAVE_FAILED` com tudo intacto
-- [ ] Sem sessão devolve `UNAUTHORIZED`
-- [ ] ≥ 6 testes
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
-- [ ] Contagem de testes conferida (sem remoções silenciosas)
+- [x] Conta com cofre recebe erro em ambas e nada é lido ou gravado
+- [x] Sucesso migra e a conta passa a logar com `authSecret`
+- [x] Senha antiga errada devolve `Senha incorreta`; pacote incompleto devolve `SAVE_FAILED` com tudo intacto
+- [x] Sem sessão devolve `UNAUTHORIZED`
+- [x] ≥ 6 testes
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
+- [x] Contagem de testes conferida (sem remoções silenciosas)
 
 **Tests**: integration
 **Gate**: full
