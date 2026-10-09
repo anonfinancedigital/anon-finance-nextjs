@@ -1630,9 +1630,9 @@ T86 → T88
 
 **Done when**:
 
-- [ ] `deviceKey.clear()` roda antes do envio do formulário
-- [ ] Mantém o visual do botão atual do layout
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] `deviceKey.clear()` roda antes do envio do formulário
+- [x] Mantém o visual do botão atual do layout
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
 
 **Tests**: none
 **Gate**: build
