@@ -1305,12 +1305,12 @@ T86 → T88
 
 **Done when**:
 
-- [ ] Sem sessão devolve `UNAUTHORIZED` sem linhas
-- [ ] Com dois usuários populados devolve só as linhas do usuário da sessão
-- [ ] Nada em texto puro no payload
-- [ ] ≥ 3 testes
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
-- [ ] Contagem de testes conferida (sem remoções silenciosas)
+- [x] Sem sessão devolve `UNAUTHORIZED` sem linhas
+- [x] Com dois usuários populados devolve só as linhas do usuário da sessão
+- [x] Nada em texto puro no payload
+- [x] ≥ 3 testes
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
+- [x] Contagem de testes conferida (sem remoções silenciosas)
 
 **Tests**: integration
 **Gate**: full
