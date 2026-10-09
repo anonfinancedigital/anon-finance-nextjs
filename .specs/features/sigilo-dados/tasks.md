@@ -2074,9 +2074,9 @@ T86 → T88
 
 **Done when**:
 
-- [ ] Mesma validação e selagem do formulário principal
-- [ ] Nenhum campo em claro enviado
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] Mesma validação e selagem do formulário principal
+- [x] Nenhum campo em claro enviado
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
 
 **Tests**: none
 **Gate**: build

@@ -2,13 +2,14 @@
 
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
-import { saveGoal } from "@/actions/goals";
+import { saveGoalSealed } from "@/actions/goals-sealed";
 import { AssumptionChips } from "@/components/assumption-chips";
 import { GoalChart } from "@/components/goal-chart";
 import { GoalFields } from "@/components/goal-fields";
 import { Button } from "@/components/ui/button";
 import { useGoalDraft } from "@/components/use-goal-draft";
-import type { ActionResult } from "@/lib/action-result";
+import { useVault } from "@/components/vault-provider";
+import { type ActionResult, invalidInput, SAVE_FAILED } from "@/lib/action-result";
 import {
   DEFAULT_ANNUAL_RATE_BP,
   DEFAULT_WITHDRAWAL_RATE_BP,
@@ -21,8 +22,9 @@ import {
   type Premises,
   summarySentence,
 } from "@/lib/domain/freedom-copy";
-import { parseRate } from "@/lib/validation/goal";
+import { goalSchema, parseRate } from "@/lib/validation/goal";
 import { withZeroSaved } from "@/lib/validation/goal-draft";
+import { sealGoal } from "@/lib/vault/seal";
 
 const HEADLINE = "Quanto você precisa para viver de renda?";
 const SUPPORT =
@@ -75,6 +77,7 @@ export function GoalEmptyState({
   nowIso: string;
 }) {
   const router = useRouter();
+  const { dek, userId } = useVault();
   const [result, setResult] = useState<ActionResult | null>(null);
   const [pending, startTransition] = useTransition();
   const { summary } = draft;
@@ -90,8 +93,19 @@ export function GoalEmptyState({
   function save(event: React.FormEvent) {
     event.preventDefault();
     if (pending) return;
+    // Same validation and sealing as the drawer form (SIGILO-09): nothing leaves in plain text.
+    const parsed = goalSchema(new Date()).safeParse(withZeroSaved(draft.values));
+    if (!parsed.success) {
+      setResult(invalidInput(parsed.error));
+      return;
+    }
     startTransition(async () => {
-      const res = await saveGoal(withZeroSaved(draft.values));
+      let res: ActionResult;
+      try {
+        res = await saveGoalSealed(await sealGoal(dek, userId, parsed.data));
+      } catch {
+        res = { ok: false, error: SAVE_FAILED };
+      }
       setResult(res);
       if (res.ok) router.refresh();
     });
