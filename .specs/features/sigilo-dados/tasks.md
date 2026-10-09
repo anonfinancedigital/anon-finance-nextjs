@@ -1684,11 +1684,11 @@ T86 → T88
 
 **Done when**:
 
-- [ ] Payload enviado contém só os campos do SIGILO-11 (inspeção)
-- [ ] Dialogo da chave aparece antes da mensagem de cadastro concluído
-- [ ] Mensagens de validação atuais preservadas
-- [ ] Link `Privacidade`
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] Payload enviado contém só os campos do SIGILO-11 (inspeção)
+- [x] Dialogo da chave aparece antes da mensagem de cadastro concluído
+- [x] Mensagens de validação atuais preservadas
+- [x] Link `Privacidade`
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
 
 **Tests**: none
 **Gate**: build
