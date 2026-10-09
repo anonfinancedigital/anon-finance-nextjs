@@ -877,12 +877,12 @@ T86 → T88
 
 **Done when**:
 
-- [ ] Ida e volta com `seal*` reproduz tipos e valores originais
-- [ ] Tag adulterada em qualquer campo faz a função lançar `DecryptError` sem devolver resultado parcial
-- [ ] Busca por descrição e filtro por categoria/subcategoria sobre o resultado dão as mesmas transações do conjunto fixo
-- [ ] ≥ 6 testes
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
-- [ ] Contagem de testes conferida (sem remoções silenciosas)
+- [x] Ida e volta com `seal*` reproduz tipos e valores originais
+- [x] Tag adulterada em qualquer campo faz a função lançar `DecryptError` sem devolver resultado parcial
+- [x] Busca por descrição e filtro por categoria/subcategoria sobre o resultado dão as mesmas transações do conjunto fixo
+- [x] ≥ 6 testes
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Contagem de testes conferida (sem remoções silenciosas)
 
 **Tests**: unit
 **Gate**: quick
