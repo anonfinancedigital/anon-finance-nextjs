@@ -5,7 +5,9 @@ import { isAdminEmail } from "@/lib/admin";
 import { fromStatuses, targetStatus, type UserAction, type UserStatus } from "@/lib/domain/user-status";
 import { account, session, user } from "../auth-schema";
 import { db } from "../client";
-import { loginAttempt } from "../schema";
+import { loginAttempt, userVault } from "../schema";
+import type { VaultMaterial } from "@/lib/vault/types";
+import { vaultRepo } from "./vault";
 
 const normalize = (email: string) => email.trim().toLowerCase();
 
@@ -45,6 +47,44 @@ async function createPending(input: {
     await tx
       .insert(account)
       .values({ id: randomUUID(), userId: id, accountId: id, providerId: "credential", password: hash });
+    return { ok: true } as const;
+  });
+}
+
+/**
+ * `createPending` for the sealed signup: the id comes from the client (the AAD of its sealed fields
+ * already names it), the credential hash is Better Auth's `hashPassword(authSecret)` (the server
+ * never sees the password), and the vault row (key material + sealed birth date) is written in the
+ * same transaction. A repeated e-mail (any case) is `duplicate` and nothing is written; a repeated
+ * id throws (primary key) and rolls everything back.
+ */
+async function createPendingSealed(input: {
+  id: string;
+  name: string;
+  email: string;
+  authSecret: string;
+  vault: VaultMaterial;
+  birthDateCt?: string | null;
+}): Promise<{ ok: true } | { ok: false; reason: "duplicate" }> {
+  const hash = await hashPassword(input.authSecret);
+  return db.transaction(async (tx) => {
+    const inserted = await tx
+      .insert(user)
+      .values({ id: input.id, name: input.name, email: normalize(input.email), status: "pending" })
+      .onConflictDoNothing({ target: user.email })
+      .returning({ id: user.id });
+    if (inserted.length === 0) return { ok: false, reason: "duplicate" } as const;
+    await tx.insert(account).values({
+      id: randomUUID(),
+      userId: input.id,
+      accountId: input.id,
+      providerId: "credential",
+      password: hash,
+    });
+    await vaultRepo.create(tx, input.id, input.vault);
+    if (input.birthDateCt) {
+      await tx.update(userVault).set({ birthDateCt: input.birthDateCt }).where(eq(userVault.userId, input.id));
+    }
     return { ok: true } as const;
   });
 }
@@ -143,6 +183,7 @@ async function remove(id: string): Promise<"ok" | "not_found"> {
 
 export const usersRepo = {
   createPending,
+  createPendingSealed,
   findByEmail,
   findById,
   getBirthDate,
