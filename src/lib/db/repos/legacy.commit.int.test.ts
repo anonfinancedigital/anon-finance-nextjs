@@ -1,5 +1,5 @@
 import { verifyPassword } from "better-auth/crypto";
-import { eq } from "drizzle-orm";
+import { asc, eq } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
 import type { VaultMaterial } from "@/lib/vault/types";
 import { insertCredentialUser, TEST_PASSWORD } from "@/test/auth";
@@ -62,16 +62,17 @@ const hashOf = async (userId: string) =>
 /** Raw rows of the user, every column as stored. */
 async function rawRows(userId: string) {
   return {
-    transactions: await db.select().from(transaction).where(eq(transaction.userId, userId)),
-    categories: await db.select().from(category).where(eq(category.userId, userId)),
+    transactions: await db.select().from(transaction).where(eq(transaction.userId, userId)).orderBy(asc(transaction.id)),
+    categories: await db.select().from(category).where(eq(category.userId, userId)).orderBy(asc(category.id)),
     versions: (
       await db
         .select({ v: categoryPercent })
         .from(categoryPercent)
         .innerJoin(category, eq(category.id, categoryPercent.categoryId))
         .where(eq(category.userId, userId))
+        .orderBy(asc(categoryPercent.categoryId), asc(categoryPercent.fromMonth))
     ).map((r) => r.v),
-    subcategories: await db.select().from(subcategory).where(eq(subcategory.userId, userId)),
+    subcategories: await db.select().from(subcategory).where(eq(subcategory.userId, userId)).orderBy(asc(subcategory.id)),
     goals: await db.select().from(financialGoal).where(eq(financialGoal.userId, userId)),
     vaults: await db.select().from(userVault).where(eq(userVault.userId, userId)),
     owner: (await db.select().from(user).where(eq(user.id, userId)))[0],
