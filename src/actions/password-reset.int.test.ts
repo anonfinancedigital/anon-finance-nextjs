@@ -141,24 +141,32 @@ describe("requestPasswordResetAction", () => {
     },
   );
 
-  it("logs a failed delivery and still answers like the approved case", async () => {
+  it("logs a failed delivery with only the action and the error code, and still answers like the approved case", async () => {
     await insertCredentialUser(EMAIL);
-    const failure = new Error("SMTP fora do ar");
+    const failure = Object.assign(new Error("SMTP fora do ar"), {
+      code: "ECONNREFUSED",
+    });
     vi.mocked(sendMail).mockRejectedValue(failure);
 
     expect(await request(EMAIL)).toEqual({ ok: true });
     expect(sendMail).toHaveBeenCalledTimes(1);
-    expect(consoleError).toHaveBeenCalledWith(expect.any(String), failure);
+    expect(consoleError.mock.calls).toEqual([
+      ["requestPasswordResetAction: sendMail", "ECONNREFUSED"],
+    ]);
   });
 
-  it("logs a repository failure and still answers like the approved case", async () => {
+  it("logs a repository failure with only the action and the error code, and still answers like the approved case", async () => {
     await insertCredentialUser(EMAIL);
-    const failure = new Error("banco fora do ar");
+    const failure = Object.assign(new Error("banco fora do ar"), {
+      code: "08006",
+    });
     vi.spyOn(passwordResetsRepo, "issue").mockRejectedValue(failure);
 
     expect(await request(EMAIL)).toEqual({ ok: true });
     expect(sendMail).not.toHaveBeenCalled();
-    expect(consoleError).toHaveBeenCalledWith(expect.any(String), failure);
+    expect(consoleError.mock.calls).toEqual([
+      ["requestPasswordResetAction", "08006"],
+    ]);
   });
 
   it("invalidates the first link when a second one is requested", async () => {
@@ -335,7 +343,8 @@ describe("resetPasswordAction", () => {
     });
     expect(await passwordHashOf(userId)).toBe(before);
     expect(await passwordResetsRepo.isValid(token)).toBe(true);
-    expect(consoleError).toHaveBeenCalled();
+    // Only the action name and the code: the error object and its message stay out of the log.
+    expect(consoleError.mock.calls).toEqual([["resetPasswordAction", "unknown"]]);
   });
 });
 

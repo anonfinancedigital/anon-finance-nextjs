@@ -45,12 +45,12 @@ export async function requestPasswordResetAction(
       });
       after(() =>
         sendMail(message).catch((error) =>
-          console.error("requestPasswordResetAction: sendMail", error),
+          logActionError("requestPasswordResetAction: sendMail", error),
         ),
       );
     }
   } catch (error) {
-    console.error("requestPasswordResetAction", error);
+    logActionError("requestPasswordResetAction", error);
   }
   return { ok: true };
 }
@@ -77,7 +77,7 @@ export async function resetPasswordAction(
       parsed.data.password,
     );
   } catch (error) {
-    console.error("resetPasswordAction", error);
+    logActionError("resetPasswordAction", error);
     return { ok: false, error: SAVE_FAILED };
   }
   if (outcome === "invalid") return { ok: false, error: INVALID_LINK_MESSAGE };

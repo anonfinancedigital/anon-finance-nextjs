@@ -2386,10 +2386,12 @@ T86 → T88
 
 **Done when**:
 
-- [ ] Pedido de redefinição por e-mail segue igual e verde
-- [ ] Casos da ação antiga cobertos pelas ações com cofre
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
-- [ ] Contagem de testes conferida (sem remoções silenciosas)
+- [x] Pedido de redefinição por e-mail segue igual e verde
+- [x] Casos da ação antiga cobertos pelas ações com cofre
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
+- [x] Contagem de testes conferida (sem remoções silenciosas)
+
+> Escopo reduzido (decisão do orquestrador): `resetPasswordAction` e `passwordResetsRepo.consume` ficam, pois são o caminho de redefinição das contas legadas (sem cofre); saem no follow-up de finalização. Seus casos seguem verdes em `password-reset.int.test.ts`. Esta task só trocou `console.error` por `logActionError`.
 
 **Tests**: integration
 **Gate**: full
