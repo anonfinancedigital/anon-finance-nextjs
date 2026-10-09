@@ -397,12 +397,12 @@ T86 → T88
 
 **Done when**:
 
-- [ ] Aceita `v1:abc_-` e 2048 caracteres exatos
-- [ ] Recusa sem prefixo, `v2:`, payload vazio, `+`, `/`, `=` e 2049 caracteres
-- [ ] `nullable` aceita `null` e recusa `undefined`
-- [ ] ≥ 7 testes
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
-- [ ] Contagem de testes conferida (sem remoções silenciosas)
+- [x] Aceita `v1:abc_-` e 2048 caracteres exatos
+- [x] Recusa sem prefixo, `v2:`, payload vazio, `+`, `/`, `=` e 2049 caracteres
+- [x] `nullable` aceita `null` e recusa `undefined`
+- [x] ≥ 7 testes
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Contagem de testes conferida (sem remoções silenciosas)
 
 **Tests**: unit
 **Gate**: quick
