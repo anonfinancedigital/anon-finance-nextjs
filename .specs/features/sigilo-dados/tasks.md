@@ -1077,12 +1077,12 @@ T86 → T88
 
 **Done when**:
 
-- [ ] Erro do `pg` com `detail` contendo valores registra só ação e `code`
-- [ ] Entrada não-`Error` registra `unknown`
-- [ ] Nenhuma propriedade do erro além de `code` chega a `console.error` (espiado)
-- [ ] ≥ 3 testes
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
-- [ ] Contagem de testes conferida (sem remoções silenciosas)
+- [x] Erro do `pg` com `detail` contendo valores registra só ação e `code`
+- [x] Entrada não-`Error` registra `unknown`
+- [x] Nenhuma propriedade do erro além de `code` chega a `console.error` (espiado)
+- [x] ≥ 3 testes
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Contagem de testes conferida (sem remoções silenciosas)
 
 **Tests**: unit
 **Gate**: quick
