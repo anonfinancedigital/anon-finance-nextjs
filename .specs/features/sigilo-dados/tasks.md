@@ -1896,10 +1896,10 @@ T86 → T88
 
 **Done when**:
 
-- [ ] Valor fora da faixa mostra a mensagem atual e nada é enviado (inspeção)
-- [ ] Edição envia `newRowId` e `insertedCt`
-- [ ] Nenhum campo em claro de valor ou descrição vai à action
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] Valor fora da faixa mostra a mensagem atual e nada é enviado (inspeção)
+- [x] Edição envia `newRowId` e `insertedCt`
+- [x] Nenhum campo em claro de valor ou descrição vai à action
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
 
 **Tests**: none
 **Gate**: build

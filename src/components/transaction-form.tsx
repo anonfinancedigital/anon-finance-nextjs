@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useId, useState, useTransition } from "react";
-import { createTransaction, updateTransaction } from "@/actions/transactions";
+import { createTransactionSealed, updateTransactionSealed } from "@/actions/transactions-sealed";
 import { KindToggle } from "@/components/kind-toggle";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,12 +10,16 @@ import { Label } from "@/components/ui/label";
 import { SelectField } from "@/components/ui/select-field";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Switch } from "@/components/ui/switch";
-import type { ActionResult } from "@/lib/action-result";
+import { useVault } from "@/components/vault-provider";
+import { type ActionResult, invalidInput } from "@/lib/action-result";
 import {
   categoryDisplayName,
   pickSelection,
 } from "@/lib/domain/category-label";
 import { maskBRLInput } from "@/lib/domain/money";
+import { transactionSchema } from "@/lib/validation/transaction";
+import { sealTransaction } from "@/lib/vault/seal";
+import type { TransactionDto } from "@/lib/vault/types";
 import { cn } from "cn";
 
 type Kind = "income" | "expense";
@@ -75,9 +79,25 @@ const blank = (date: string): TransactionFormValues => ({
   recurrenceStart: "",
 });
 
+/** The browser validates with the plain-text field names; errors use the sealed DTO's names. */
+const sealedFieldName: Record<string, string> = {
+  recurrenceStart: "recurrenceStartMonth",
+  recurrenceEnd: "recurrenceEndMonth",
+};
+
+function clientInvalidInput(result: ActionResult): ActionResult {
+  if (result.ok || !result.fieldErrors) return result;
+  const fieldErrors = Object.fromEntries(
+    Object.entries(result.fieldErrors).map(([key, message]) => [sealedFieldName[key] ?? key, message]),
+  );
+  return { ...result, fieldErrors };
+}
+
 /**
  * Creates (id generated on mount, so a double submit creates one row) or edits a transaction.
  * It does not reset after saving: the parent closes the dialog, which unmounts it.
+ * Validates in the browser with the current rules, then seals amount and description before sending:
+ * an invalid value sends nothing (SIGILO-09) and no plain amount or description reaches the action.
  */
 export function TransactionForm({
   categories,
@@ -90,6 +110,7 @@ export function TransactionForm({
   onDelete,
 }: Props) {
   const uid = useId();
+  const { dek, userId } = useVault();
   const [values, setValues] = useState<TransactionFormValues>(
     () => transaction ?? blank(defaultDate),
   );
@@ -138,10 +159,40 @@ export function TransactionForm({
           }
         : { id, kind, amount, date, description, ...recurrence };
 
+    // Same rules and messages as before, now checked before sealing: nothing is sent when invalid.
+    const parsed = transactionSchema.safeParse(input);
+    if (!parsed.success) {
+      setResult(clientInvalidInput(invalidInput(parsed.error)));
+      return;
+    }
+    const data = parsed.data;
+
     startTransition(async () => {
-      const res = await (transaction
-        ? updateTransaction(input, month)
-        : createTransaction(input));
+      const plain = { amountCents: data.amountCents, description: data.description };
+      const dto: TransactionDto = {
+        id: data.id,
+        kind: data.kind,
+        date: data.date,
+        categoryId: data.kind === "expense" ? data.categoryId : null,
+        subcategoryId: data.kind === "expense" ? (data.subcategoryId ?? null) : null,
+        ...(await sealTransaction(dek, userId, data.id, plain)),
+        recurrence: data.recurrence === "forever" ? "indefinite" : data.recurrence,
+        ...(data.recurrence === "until"
+          ? {
+              recurrenceStartMonth: data.recurrenceStartMonth ?? undefined,
+              recurrenceEndMonth: data.recurrenceEndMonth ?? undefined,
+            }
+          : {}),
+      };
+      let res: ActionResult;
+      if (transaction) {
+        // An edit may split a series: the new segment gets its own id, so its ciphertext has its own AAD.
+        const newRowId = crypto.randomUUID();
+        const insertedCt = await sealTransaction(dek, userId, newRowId, plain);
+        res = await updateTransactionSealed({ ...dto, newRowId, insertedCt }, month);
+      } else {
+        res = await createTransactionSealed(dto);
+      }
       setResult(res);
       if (res.ok) onSaved?.();
     });
@@ -336,12 +387,12 @@ export function TransactionForm({
               type="month"
               value={values.recurrenceStart ?? ""}
               disabled={startLocked}
-              aria-invalid={!!fieldErrors.recurrenceStart}
+              aria-invalid={!!fieldErrors.recurrenceStartMonth}
               onChange={(e) => set("recurrenceStart", e.target.value)}
             />
-            {fieldErrors.recurrenceStart && (
+            {fieldErrors.recurrenceStartMonth && (
               <p className="text-sm text-destructive">
-                {fieldErrors.recurrenceStart}
+                {fieldErrors.recurrenceStartMonth}
               </p>
             )}
           </div>
@@ -354,12 +405,12 @@ export function TransactionForm({
               id={field("recurrenceEnd")}
               type="month"
               value={values.recurrenceEnd ?? ""}
-              aria-invalid={!!fieldErrors.recurrenceEnd}
+              aria-invalid={!!fieldErrors.recurrenceEndMonth}
               onChange={(e) => set("recurrenceEnd", e.target.value)}
             />
-            {fieldErrors.recurrenceEnd && (
+            {fieldErrors.recurrenceEndMonth && (
               <p className="text-sm text-destructive">
-                {fieldErrors.recurrenceEnd}
+                {fieldErrors.recurrenceEndMonth}
               </p>
             )}
           </div>
