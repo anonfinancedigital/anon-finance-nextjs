@@ -2228,9 +2228,9 @@ T86 → T88
 
 **Done when**:
 
-- [ ] Item visível no menu lateral e no topo mobile
-- [ ] Estado ativo igual aos demais itens
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] Item visível no menu lateral e no topo mobile
+- [x] Estado ativo igual aos demais itens
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
 
 **Tests**: none
 **Gate**: build
