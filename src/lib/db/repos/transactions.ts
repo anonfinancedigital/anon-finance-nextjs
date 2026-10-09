@@ -11,6 +11,7 @@ import {
   planEdit,
   startOfSeries,
 } from "@/lib/domain/recurrence";
+import type { MonthPayload, TransactionDto, UpdateTransactionDto } from "@/lib/vault/types";
 import { db } from "../client";
 import { plain, transaction } from "../schema";
 
@@ -363,6 +364,139 @@ async function listByMonth(userId: string, range: MonthRange): Promise<Occurrenc
     .sort((a, b) => b.date.localeCompare(a.date));
 }
 
+/** Recurrence fields of the sealed DTO in the shape the shared helpers read ("indefinite" = "forever"). */
+const recurrenceData = (dto: TransactionDto) => ({
+  date: dto.date,
+  recurrence: dto.recurrence === "indefinite" ? ("forever" as const) : dto.recurrence,
+  recurrenceStartMonth: dto.recurrenceStartMonth ?? null,
+  recurrenceEndMonth: dto.recurrenceEndMonth ?? null,
+});
+
+/** Sealed columns of a row: the plain-text twins stay NULL. */
+const sealedFields = (
+  dto: Pick<TransactionDto, "kind" | "categoryId" | "subcategoryId">,
+  ct: { amountCt: string; descriptionCt: string | null },
+) => ({
+  kind: dto.kind,
+  categoryId: dto.categoryId,
+  subcategoryId: dto.subcategoryId,
+  amountCents: null,
+  description: null,
+  amountCt: ct.amountCt,
+  descriptionCt: ct.descriptionCt,
+});
+
+/** Idempotent by the client-generated id: a repeated id is ignored. */
+async function createSealed(userId: string, dto: TransactionDto): Promise<void> {
+  await db
+    .insert(transaction)
+    .values({
+      id: dto.id,
+      userId,
+      ...sealedFields(dto, dto),
+      ...recurrenceFields(dto.id, { kind: dto.kind, amountCents: 0, ...recurrenceData(dto) }),
+    })
+    .onConflictDoNothing({ target: transaction.id });
+}
+
+/**
+ * Same as `updateFrom` for a sealed account: the edited row takes `dto.amountCt`/`descriptionCt`;
+ * the new segment of a split series is inserted with the client's `newRowId` and `insertedCt`.
+ * A `newRowId` that already exists fails and rolls the whole edit back.
+ */
+async function updateFromSealed(
+  userId: string,
+  id: string,
+  month: string,
+  dto: UpdateTransactionDto,
+): Promise<boolean> {
+  return db.transaction(async (tx) => {
+    const segments = await lockSeries(tx, userId, id, month);
+    if (!segments) return false;
+    const plan = planEdit({
+      segments,
+      id,
+      month,
+      next: {
+        date: dto.date,
+        recurring: dto.recurrence !== "none",
+        endMonth: dto.recurrence === "until" ? (dto.recurrenceEndMonth ?? null) : null,
+        startMonth: dto.recurrence === "until" ? (dto.recurrenceStartMonth ?? null) : null,
+      },
+    });
+    const now = sql`clock_timestamp()`;
+    if (plan.deleteIds.length > 0) {
+      await tx
+        .delete(transaction)
+        .where(and(eq(transaction.userId, userId), inArray(transaction.id, plan.deleteIds)));
+    }
+    if (plan.truncate) {
+      await tx
+        .update(transaction)
+        .set({ recurrenceEnd: `${plan.truncate.endMonth}-01`, updatedAt: now })
+        .where(ownedBy(userId, plan.truncate.id));
+    }
+    if (plan.updateInPlace) {
+      await tx
+        .update(transaction)
+        .set({ ...sealedFields(dto, dto), ...segmentFields(plan.updateInPlace), updatedAt: now })
+        .where(ownedBy(userId, plan.updateInPlace.id));
+    }
+    if (plan.insert) {
+      await tx.insert(transaction).values({
+        id: dto.newRowId,
+        userId,
+        ...sealedFields(dto, dto.insertedCt),
+        ...segmentFields(plan.insert),
+      });
+    }
+    return true;
+  });
+}
+
+/** `listByMonth` for a sealed account: same occurrences, order and installments, values as ciphertext. */
+async function listByMonthSealed(
+  userId: string,
+  range: MonthRange,
+): Promise<MonthPayload["occurrences"]> {
+  const rows = await db
+    .select({
+      id: transaction.id,
+      kind: transaction.kind,
+      date: transaction.date,
+      categoryId: transaction.categoryId,
+      subcategoryId: transaction.subcategoryId,
+      amountCt: transaction.amountCt,
+      descriptionCt: transaction.descriptionCt,
+      recurring: transaction.recurring,
+      recurrenceDay: transaction.recurrenceDay,
+      seriesId: transaction.seriesId,
+    })
+    .from(transaction)
+    .where(applicableInMonth(userId, range))
+    .orderBy(desc(transaction.createdAt));
+  const month = monthKey(range.start);
+  const series = await loadSeries(userId, [
+    ...new Set(rows.flatMap((r) => (r.seriesId ? [r.seriesId] : []))),
+  ]);
+  return rows
+    .map(({ recurrenceDay, seriesId, amountCt, ...row }) => {
+      const segments = seriesId ? series.get(seriesId) : undefined;
+      return {
+        ...row,
+        amountCt: plain(amountCt, "transaction.amount_ct"),
+        date: occurrenceDate(
+          { id: row.id, seriesId: null, date: row.date, recurringDay: recurrenceDay, endMonth: null },
+          month,
+        ),
+        month,
+        installment: segments ? installmentOf(segments, month) : null,
+        seriesStart: segments ? startOfSeries(segments) : null,
+      };
+    })
+    .sort((a, b) => b.date.localeCompare(a.date));
+}
+
 export type MonthTotals = {
   incomeCents: number;
   spentByCategory: Map<string, number>;
@@ -421,6 +555,9 @@ export const transactionsRepo = {
   delete: remove,
   deleteFrom,
   listByMonth,
+  createSealed,
+  updateFromSealed,
+  listByMonthSealed,
   monthTotals,
   countAll,
 };

@@ -512,12 +512,12 @@ T86 → T88
 
 **Done when**:
 
-- [ ] Coluna crua `amount_ct`/`description_ct` guarda o texto e `amount_cents`/`description` ficam `NULL`
-- [ ] Id repetido é ignorado; descrição `NULL` continua `NULL`
-- [ ] Porta de `transactions.int.test.ts` todos os casos de criação e listagem por mês (recorrentes, fronteira de mês, outro usuário, ordenação)
-- [ ] ≥ 10 testes novos
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
-- [ ] Contagem de testes conferida (sem remoções silenciosas)
+- [x] Coluna crua `amount_ct`/`description_ct` guarda o texto e `amount_cents`/`description` ficam `NULL`
+- [x] Id repetido é ignorado; descrição `NULL` continua `NULL`
+- [x] Porta de `transactions.int.test.ts` todos os casos de criação e listagem por mês (recorrentes, fronteira de mês, outro usuário, ordenação)
+- [x] ≥ 10 testes novos
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
+- [x] Contagem de testes conferida (sem remoções silenciosas)
 
 **Tests**: integration
 **Gate**: full
