@@ -2,10 +2,10 @@ import { randomUUID } from "node:crypto";
 import { eq } from "drizzle-orm";
 import { beforeEach, describe, expect, it } from "vitest";
 import { monthRange } from "@/lib/domain/month";
-import type { TransactionDto } from "@/lib/vault/types";
+import type { TransactionDto, UpdateTransactionDto } from "@/lib/vault/types";
 import { insertCategory, insertTestUser, setupTestDb } from "@/test/db";
 import { db } from "../client";
-import { transaction } from "../schema";
+import { subcategory, transaction } from "../schema";
 import { transactionsRepo } from "./transactions";
 
 setupTestDb();
@@ -606,5 +606,186 @@ describe("transactionsRepo.updateFromSealed", () => {
     await expect(transactionsRepo.updateFromSealed(userId, tx.id, "2026-12", dto)).rejects.toThrow();
 
     expect(await snapshot()).toEqual(before);
+  });
+});
+
+describe("transactionsRepo sealed subcategory", () => {
+  let restaurante: string;
+  let streaming: string;
+
+  beforeEach(async () => {
+    [restaurante, streaming] = (
+      await db
+        .insert(subcategory)
+        .values([
+          { userId, categoryId: conforto, nameCt: "v1:restaurante" },
+          { userId, categoryId: conforto, nameCt: "v1:streaming" },
+        ])
+        .returning({ id: subcategory.id })
+    ).map((s) => s.id);
+  });
+
+  it("stores the subcategory on create and returns it from listByMonthSealed", async () => {
+    const withSub = { ...expense("2026-10-04", 8000), subcategoryId: restaurante };
+    const withoutSub = expense("2026-10-03", 4000);
+    await transactionsRepo.createSealed(userId, withSub);
+    await transactionsRepo.createSealed(userId, withoutSub);
+
+    const listed = await transactionsRepo.listByMonthSealed(userId, OCTOBER);
+    expect(listed.map((t) => [t.id, t.subcategoryId])).toEqual([
+      [withSub.id, restaurante],
+      [withoutSub.id, null],
+    ]);
+  });
+
+  it("applies category, subcategory, description and day of a mid-series edit from that month on", async () => {
+    const tx: TransactionDto = {
+      ...expense("2026-10-15", 10000),
+      subcategoryId: restaurante,
+      descriptionCt: "v1:aluguel",
+      recurrence: "indefinite",
+    };
+    await transactionsRepo.createSealed(userId, tx);
+    const month = (y: number, m: number) => monthRange({ year: y, month: m });
+    const first = async (y: number, m: number) =>
+      (await transactionsRepo.listByMonthSealed(userId, month(y, m)))[0];
+    const fields = (t: Awaited<ReturnType<typeof first>>) => [
+      t.kind,
+      t.categoryId,
+      t.subcategoryId,
+      t.descriptionCt,
+      t.date,
+    ];
+    const dto = (over: Partial<UpdateTransactionDto>): UpdateTransactionDto => ({
+      ...tx,
+      newRowId: randomUUID(),
+      insertedCt: { amountCt: tx.amountCt, descriptionCt: "v1:streaming" },
+      ...over,
+    });
+
+    expect(
+      await transactionsRepo.updateFromSealed(
+        userId,
+        tx.id,
+        "2026-12",
+        dto({ date: "2026-12-20", subcategoryId: streaming }),
+      ),
+    ).toBe(true);
+    const dec = await first(2026, 12);
+    const jan = await first(2027, 1);
+    const nov = await first(2026, 11);
+    expect(fields(dec)).toEqual(["expense", conforto, streaming, "v1:streaming", "2026-12-20"]);
+    expect(fields(jan)).toEqual(["expense", conforto, streaming, "v1:streaming", "2027-01-20"]);
+    expect(fields(nov)).toEqual(["expense", conforto, restaurante, "v1:aluguel", "2026-11-15"]);
+
+    expect(
+      await transactionsRepo.updateFromSealed(
+        userId,
+        jan.id,
+        "2027-01",
+        dto({
+          date: "2027-01-20",
+          categoryId: lazer,
+          subcategoryId: null,
+          insertedCt: { amountCt: tx.amountCt, descriptionCt: "v1:cinema" },
+        }),
+      ),
+    ).toBe(true);
+    expect(fields(await first(2027, 2))).toEqual(["expense", lazer, null, "v1:cinema", "2027-02-20"]);
+  });
+});
+
+describe("transactionsRepo sealed start month of an 'until' series", () => {
+  const month = (key: string) =>
+    monthRange({ year: Number(key.slice(0, 4)), month: Number(key.slice(5, 7)) });
+  const listIn = (key: string) => transactionsRepo.listByMonthSealed(userId, month(key));
+  const until = (date: string, start: string, end: string): TransactionDto => ({
+    ...expense(date, 4000),
+    recurrence: "until",
+    recurrenceStartMonth: start,
+    recurrenceEndMonth: end,
+  });
+  const editOf = (tx: TransactionDto, over: Partial<UpdateTransactionDto> = {}): UpdateTransactionDto => ({
+    ...tx,
+    newRowId: randomUUID(),
+    insertedCt: { amountCt: tx.amountCt, descriptionCt: null },
+    ...over,
+  });
+
+  it("clamps day 31 to the last day of a 30-day start month and keeps day 31 as the intended day", async () => {
+    const tx = until("2026-01-31", "2026-04", "2026-06");
+    await transactionsRepo.createSealed(userId, tx);
+
+    expect(await stored(tx.id)).toMatchObject({ date: "2026-04-30", recurrenceDay: 31 });
+    expect((await listIn("2026-05")).map((t) => t.date)).toEqual(["2026-05-31"]);
+  });
+
+  it("ignores the start month for 'indefinite' and non-recurring rows", async () => {
+    const forever: TransactionDto = {
+      ...expense("2026-04-10"),
+      recurrence: "indefinite",
+      recurrenceStartMonth: "2026-08",
+    };
+    const none: TransactionDto = { ...expense("2026-04-12"), recurrenceStartMonth: "2026-08" };
+    await transactionsRepo.createSealed(userId, forever);
+    await transactionsRepo.createSealed(userId, none);
+
+    expect((await stored(forever.id)).date).toBe("2026-04-10");
+    expect((await stored(none.id)).date).toBe("2026-04-12");
+  });
+
+  it("moves the start when editing the first month of the series", async () => {
+    const tx = until("2026-04-10", "2026-04", "2026-12");
+    await transactionsRepo.createSealed(userId, tx);
+
+    expect(
+      await transactionsRepo.updateFromSealed(userId, tx.id, "2026-04", editOf(tx, { recurrenceStartMonth: "2026-06" })),
+    ).toBe(true);
+
+    expect(await db.$count(transaction)).toBe(1);
+    expect(await stored(tx.id)).toMatchObject({ date: "2026-06-10", recurrenceEnd: "2026-12-01" });
+    expect(await listIn("2026-05")).toEqual([]);
+    expect((await listIn("2026-06")).map((t) => t.date)).toEqual(["2026-06-10"]);
+  });
+
+  it("ignores the start month sent when editing a month in the middle of the series", async () => {
+    const tx = until("2026-04-10", "2026-04", "2026-12");
+    await transactionsRepo.createSealed(userId, tx);
+
+    await transactionsRepo.updateFromSealed(
+      userId,
+      tx.id,
+      "2026-08",
+      editOf(tx, {
+        date: "2026-08-10",
+        amountCt: amountCt(5000),
+        insertedCt: { amountCt: amountCt(5000), descriptionCt: null },
+        recurrenceStartMonth: "2026-02",
+      }),
+    );
+
+    const rows = await db.select().from(transaction);
+    expect(rows.map((r) => [r.date, r.recurrenceEnd, r.amountCt]).sort()).toEqual([
+      ["2026-04-10", "2026-07-01", amountCt(4000)],
+      ["2026-08-10", "2026-12-01", amountCt(5000)],
+    ]);
+  });
+
+  it("starts at the chosen month when a single row becomes an 'until' series", async () => {
+    const single = expense("2026-04-10", 4000);
+    await transactionsRepo.createSealed(userId, single);
+
+    await transactionsRepo.updateFromSealed(
+      userId,
+      single.id,
+      "2026-04",
+      editOf(single, { recurrence: "until", recurrenceStartMonth: "2026-05", recurrenceEndMonth: "2026-07" }),
+    );
+
+    expect(await stored(single.id)).toMatchObject({
+      date: "2026-05-10",
+      recurring: true,
+      recurrenceEnd: "2026-07-01",
+    });
   });
 });

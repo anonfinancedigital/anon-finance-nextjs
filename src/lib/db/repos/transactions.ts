@@ -1,4 +1,3 @@
-import { randomUUID } from "node:crypto";
 import { and, desc, eq, gte, inArray, isNull, lt, not, or, sql } from "drizzle-orm";
 import {
   type Installment,
@@ -58,27 +57,6 @@ export type Occurrence = Transaction & {
   seriesStart: string | null;
 };
 
-const columns = {
-  id: transaction.id,
-  kind: transaction.kind,
-  amountCents: transaction.amountCents,
-  date: transaction.date,
-  categoryId: transaction.categoryId,
-  subcategoryId: transaction.subcategoryId,
-  description: transaction.description,
-  createdAt: transaction.createdAt,
-  updatedAt: transaction.updatedAt,
-};
-
-const fields = (tx: TransactionData) => ({
-  kind: tx.kind,
-  amountCents: tx.amountCents,
-  date: tx.date,
-  categoryId: tx.categoryId ?? null,
-  subcategoryId: tx.subcategoryId ?? null,
-  description: tx.description ?? null,
-});
-
 const ownedBy = (userId: string, id: string) =>
   and(eq(transaction.id, id), eq(transaction.userId, userId));
 
@@ -122,24 +100,6 @@ const recurrenceFields = (id: string, tx: TransactionData) => {
     seriesId: recurring ? id : null,
   };
 };
-
-/** Idempotent by the client-generated id: a repeated id is ignored. */
-async function create(userId: string, tx: TransactionData & { id: string }): Promise<void> {
-  await db
-    .insert(transaction)
-    .values({ id: tx.id, userId, ...fields(tx), ...recurrenceFields(tx.id, tx) })
-    .onConflictDoNothing({ target: transaction.id });
-}
-
-/** Last write wins. Returns false when the user has no transaction with this id. */
-async function update(userId: string, id: string, tx: TransactionData): Promise<boolean> {
-  const rows = await db
-    .update(transaction)
-    .set({ ...fields(tx), updatedAt: sql`clock_timestamp()` })
-    .where(ownedBy(userId, id))
-    .returning({ id: transaction.id });
-  return rows.length > 0;
-}
 
 /** Recurrence columns of a planned segment. */
 const segmentFields = (seg: Omit<Segment, "id">) => ({
@@ -186,59 +146,6 @@ async function lockSeries(tx: Tx, userId: string, id: string, month: string) {
     .where(and(eq(transaction.userId, userId), eq(transaction.seriesId, row.seriesId)))
     .for("update");
   return rows.map(toSegment);
-}
-
-/**
- * Edits the occurrence of `month` (AAAA-MM) of row `id`: the data applies to that month and every
- * later one; earlier months keep their values (splits the series, see `planEdit`). Returns false
- * when the user has no such row or it has no occurrence in `month`.
- */
-async function updateFrom(
-  userId: string,
-  id: string,
-  month: string,
-  data: TransactionData,
-): Promise<boolean> {
-  return db.transaction(async (tx) => {
-    const segments = await lockSeries(tx, userId, id, month);
-    if (!segments) return false;
-    const recurring = (data.recurrence ?? "none") !== "none";
-    const plan = planEdit({
-      segments,
-      id,
-      month,
-      next: {
-        date: data.date,
-        recurring,
-        endMonth: data.recurrence === "until" ? (data.recurrenceEndMonth ?? null) : null,
-        startMonth: data.recurrence === "until" ? (data.recurrenceStartMonth ?? null) : null,
-      },
-    });
-    const now = sql`clock_timestamp()`;
-    if (plan.deleteIds.length > 0) {
-      await tx
-        .delete(transaction)
-        .where(and(eq(transaction.userId, userId), inArray(transaction.id, plan.deleteIds)));
-    }
-    if (plan.truncate) {
-      await tx
-        .update(transaction)
-        .set({ recurrenceEnd: `${plan.truncate.endMonth}-01`, updatedAt: now })
-        .where(ownedBy(userId, plan.truncate.id));
-    }
-    if (plan.updateInPlace) {
-      await tx
-        .update(transaction)
-        .set({ ...fields(data), ...segmentFields(plan.updateInPlace), updatedAt: now })
-        .where(ownedBy(userId, plan.updateInPlace.id));
-    }
-    if (plan.insert) {
-      await tx
-        .insert(transaction)
-        .values({ id: randomUUID(), userId, ...fields(data), ...segmentFields(plan.insert) });
-    }
-    return true;
-  });
 }
 
 /**
@@ -326,42 +233,6 @@ async function remove(userId: string, id: string): Promise<boolean> {
     .where(ownedBy(userId, id))
     .returning({ id: transaction.id });
   return rows.length > 0;
-}
-
-/** The month's occurrences, latest projected date first (ties: most recently created first). */
-async function listByMonth(userId: string, range: MonthRange): Promise<Occurrence[]> {
-  const rows = await db
-    .select({
-      ...columns,
-      recurring: transaction.recurring,
-      recurrenceDay: transaction.recurrenceDay,
-      recurrenceEnd: transaction.recurrenceEnd,
-      seriesId: transaction.seriesId,
-    })
-    .from(transaction)
-    .where(applicableInMonth(userId, range))
-    // Ties keep this order (stable sort below): createdAt at full database precision.
-    .orderBy(desc(transaction.createdAt));
-  const month = monthKey(range.start);
-  const series = await loadSeries(userId, [
-    ...new Set(rows.flatMap((r) => (r.seriesId ? [r.seriesId] : []))),
-  ]);
-  return rows
-    .map(({ recurrenceDay, seriesId, amountCents, ...row }) => {
-      const segments = seriesId ? series.get(seriesId) : undefined;
-      return {
-        ...row,
-        amountCents: plain(amountCents, "transaction.amount_cents"),
-        date: occurrenceDate(
-          { id: row.id, seriesId: null, date: row.date, recurringDay: recurrenceDay, endMonth: null },
-          month,
-        ),
-        month,
-        installment: segments ? installmentOf(segments, month) : null,
-        seriesStart: segments ? startOfSeries(segments) : null,
-      };
-    })
-    .sort((a, b) => b.date.localeCompare(a.date));
 }
 
 /** Recurrence fields of the sealed DTO in the shape the shared helpers read ("indefinite" = "forever"). */
@@ -507,40 +378,6 @@ export type MonthTotals = {
   spentBySubcategory: Map<string, Map<string | null, number>>;
 };
 
-/** Month income and spending per category and subcategory, from a single SUM … GROUP BY. */
-async function monthTotals(userId: string, range: MonthRange): Promise<MonthTotals> {
-  const rows = await db
-    .select({
-      kind: transaction.kind,
-      categoryId: transaction.categoryId,
-      subcategoryId: transaction.subcategoryId,
-      cents: sql<number>`sum(${transaction.amountCents})`.mapWith(Number),
-    })
-    .from(transaction)
-    .where(applicableInMonth(userId, range))
-    .groupBy(transaction.kind, transaction.categoryId, transaction.subcategoryId);
-
-  const totals: MonthTotals = {
-    incomeCents: 0,
-    spentByCategory: new Map(),
-    spentBySubcategory: new Map(),
-  };
-  for (const row of rows) {
-    if (row.kind === "income") {
-      totals.incomeCents += row.cents;
-    } else if (row.categoryId) {
-      totals.spentByCategory.set(
-        row.categoryId,
-        (totals.spentByCategory.get(row.categoryId) ?? 0) + row.cents,
-      );
-      const bySub = totals.spentBySubcategory.get(row.categoryId) ?? new Map();
-      bySub.set(row.subcategoryId, row.cents);
-      totals.spentBySubcategory.set(row.categoryId, bySub);
-    }
-  }
-  return totals;
-}
-
 /** Stored transactions of the user in any month (not occurrences), to tell first access from an empty month. */
 async function countAll(userId: string): Promise<number> {
   const [row] = await db
@@ -551,16 +388,11 @@ async function countAll(userId: string): Promise<number> {
 }
 
 export const transactionsRepo = {
-  create,
-  update,
-  updateFrom,
   findStored,
   delete: remove,
   deleteFrom,
-  listByMonth,
   createSealed,
   updateFromSealed,
   listByMonthSealed,
-  monthTotals,
   countAll,
 };

@@ -2440,10 +2440,10 @@ T86 → T88
 
 **Done when**:
 
-- [ ] Typecheck prova que nada usa as funções removidas
-- [ ] Todo caso de teste removido tem equivalente nas versões `Sealed`
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
-- [ ] Contagem de testes conferida (sem remoções silenciosas)
+- [x] Typecheck prova que nada usa as funções removidas
+- [x] Todo caso de teste removido tem equivalente nas versões `Sealed`
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
+- [x] Contagem de testes conferida (sem remoções silenciosas)
 
 **Tests**: integration
 **Gate**: full

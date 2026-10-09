@@ -4,7 +4,7 @@ import { eq } from "drizzle-orm";
 import { db } from "../src/lib/db/client";
 import { user } from "../src/lib/db/auth-schema";
 import { categoriesRepo } from "../src/lib/db/repos/categories";
-import { transactionsRepo } from "../src/lib/db/repos/transactions";
+import { transaction } from "../src/lib/db/schema";
 import { seedAdminFromEnv } from "../src/lib/db/seed-user";
 import { truncateAll } from "../src/test/db-reset";
 
@@ -60,7 +60,7 @@ export async function seedTransaction(tx: {
   categoryId?: string;
   description?: string;
 }) {
-  await transactionsRepo.create(await adminUserId(), { id: randomUUID(), ...tx });
+  await db.insert(transaction).values({ id: randomUUID(), userId: await adminUserId(), ...tx });
 }
 
 /** Chooses an option of a `SelectField` (a Radix dropdown, not a native select). */

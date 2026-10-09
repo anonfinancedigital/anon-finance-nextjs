@@ -338,8 +338,9 @@ async function userWithData(email: string) {
     .insert(subcategory)
     .values({ userId, categoryId: cat.id, name: "Restaurante" })
     .returning();
-  await transactionsRepo.create(userId, {
+  await db.insert(transaction).values({
     id: randomUUID(),
+    userId,
     kind: "expense",
     amountCents: 1000,
     date: "2026-10-04",
@@ -430,7 +431,7 @@ describe("isolation of a new approved user (SIGNUP-07)", () => {
     expect(await usersRepo.transition(found!.id, "approve")).toBe("ok");
 
     expect(await categoriesRepo.list(found!.id, new Date("2026-10-15T12:00:00Z"))).toEqual([]);
-    expect(await transactionsRepo.listByMonth(found!.id, monthRange({ year: 2026, month: 10 }))).toEqual(
+    expect(await transactionsRepo.listByMonthSealed(found!.id, monthRange({ year: 2026, month: 10 }))).toEqual(
       [],
     );
     expect(await goalsRepo.get(found!.id)).toBeNull();

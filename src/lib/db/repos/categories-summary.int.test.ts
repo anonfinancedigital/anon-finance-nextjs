@@ -1,12 +1,13 @@
 import { randomUUID } from "node:crypto";
+import { and, eq, gte, lt } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
 import { insertTestUser, setupTestDb } from "@/test/db";
 import { buildMonthlySummary } from "@/lib/domain/budget";
+import { computeMonthTotals } from "@/lib/vault/month-totals";
 import { monthRange, type YearMonth } from "@/lib/domain/month";
 import { db } from "../client";
 import { categoryPercent, transaction } from "../schema";
 import { categoriesRepo } from "./categories";
-import { transactionsRepo } from "./transactions";
 
 setupTestDb();
 
@@ -16,12 +17,30 @@ const SEP: YearMonth = { year: 2026, month: 9 };
 const OCT_M: YearMonth = { year: 2026, month: 10 };
 const NOV: YearMonth = { year: 2026, month: 11 };
 
+/** Totals of the single plain-text rows dated in the range, as the vault computes them for a month. */
+async function monthTotals(userId: string, range: { start: string; endExclusive: string }) {
+  const rows = await db
+    .select()
+    .from(transaction)
+    .where(
+      and(eq(transaction.userId, userId), gte(transaction.date, range.start), lt(transaction.date, range.endExclusive)),
+    );
+  return computeMonthTotals(
+    rows.map((r) => ({
+      kind: r.kind,
+      amountCents: r.amountCents!,
+      categoryId: r.categoryId,
+      subcategoryId: r.subcategoryId,
+    })),
+  );
+}
+
 /** Same wiring as the summary page: month categories + month totals -> buildMonthlySummary. */
 async function summaryFor(userId: string, month: YearMonth, now: Date) {
   const range = monthRange(month);
   const [categories, totals] = await Promise.all([
     categoriesRepo.listForMonth(userId, month, now),
-    transactionsRepo.monthTotals(userId, range),
+    monthTotals(userId, range),
   ]);
   return buildMonthlySummary({ categories, ...totals });
 }
