@@ -1446,10 +1446,10 @@ T86 → T88
 
 **Done when**:
 
-- [ ] Opção de limite confirmada na documentação do Next instalado antes de escrever
-- [ ] `npm run build` passa
-- [ ] Headers vêm de `securityHeaders`, sem valores duplicados no arquivo
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] Opção de limite confirmada na documentação do Next instalado antes de escrever
+- [x] `npm run build` passa
+- [x] Headers vêm de `securityHeaders`, sem valores duplicados no arquivo
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
 
 **Tests**: none
 **Gate**: build
