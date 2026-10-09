@@ -623,11 +623,11 @@ T86 → T88
 
 **Done when**:
 
-- [ ] `upsertSealed` cria e depois substitui a linha única; colunas em texto puro ficam `NULL`
-- [ ] `getSealed` devolve `null` sem meta
-- [ ] ≥ 4 testes
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
-- [ ] Contagem de testes conferida (sem remoções silenciosas)
+- [x] `upsertSealed` cria e depois substitui a linha única; colunas em texto puro ficam `NULL`
+- [x] `getSealed` devolve `null` sem meta
+- [x] ≥ 4 testes
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
+- [x] Contagem de testes conferida (sem remoções silenciosas)
 
 **Tests**: integration
 **Gate**: full
