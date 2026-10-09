@@ -425,12 +425,12 @@ T86 → T88
 
 **Done when**:
 
-- [ ] `create` grava a linha e `get` devolve o mesmo material; segunda `create` do mesmo usuário falha
-- [ ] `rewrap` troca só salt/parâmetros/`dekWrappedPw`; `dekWrappedRecovery` fica igual
-- [ ] `wipeFinancialData` apaga todas as linhas financeiras do usuário e nenhuma de outro
-- [ ] ≥ 6 testes
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
-- [ ] Contagem de testes conferida (sem remoções silenciosas)
+- [x] `create` grava a linha e `get` devolve o mesmo material; segunda `create` do mesmo usuário falha
+- [x] `rewrap` troca só salt/parâmetros/`dekWrappedPw`; `dekWrappedRecovery` fica igual
+- [x] `wipeFinancialData` apaga todas as linhas financeiras do usuário e nenhuma de outro
+- [x] ≥ 6 testes
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
+- [x] Contagem de testes conferida (sem remoções silenciosas)
 
 **Tests**: integration
 **Gate**: full
