@@ -933,13 +933,13 @@ T86 → T88
 
 **Done when**:
 
-- [ ] Com adaptador em memória: `save` seguido de `load` devolve a chave; `clear` apaga
-- [ ] `load` de outro `userId` devolve `null`; `pendingKek.take` devolve e remove
-- [ ] Falha do adaptador em `save` não lança (SIGILO-16 degrada para memória)
-- [ ] Chaves importadas pelo store são não extraíveis (`extractable === false`)
-- [ ] ≥ 5 testes (o adaptador IndexedDB em si fica por inspeção, AD-005)
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
-- [ ] Contagem de testes conferida (sem remoções silenciosas)
+- [x] Com adaptador em memória: `save` seguido de `load` devolve a chave; `clear` apaga
+- [x] `load` de outro `userId` devolve `null`; `pendingKek.take` devolve e remove
+- [x] Falha do adaptador em `save` não lança (SIGILO-16 degrada para memória)
+- [x] Chaves importadas pelo store são não extraíveis (`extractable === false`)
+- [x] ≥ 5 testes (o adaptador IndexedDB em si fica por inspeção, AD-005)
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Contagem de testes conferida (sem remoções silenciosas)
 
 **Tests**: unit
 **Gate**: quick
