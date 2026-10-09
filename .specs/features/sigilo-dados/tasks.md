@@ -2124,9 +2124,9 @@ T86 → T88
 
 **Done when**:
 
-- [ ] Mensagem `A nova data deixa a idade atual igual ou maior que a idade da independência do seu objetivo (N)` preservada
-- [ ] Primeira data redireciona para `/`
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] Mensagem `A nova data deixa a idade atual igual ou maior que a idade da independência do seu objetivo (N)` preservada
+- [x] Primeira data redireciona para `/`
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
 
 **Tests**: none
 **Gate**: build

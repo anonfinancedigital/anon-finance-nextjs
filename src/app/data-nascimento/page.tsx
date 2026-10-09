@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { Logo } from "@/components/brand/Logo";
 import { VaultProvider } from "@/components/vault-provider";
 import { requireSessionForPage } from "@/lib/auth-guard";
+import { goalsRepo } from "@/lib/db/repos/goals";
 import { legacyRepo } from "@/lib/db/repos/legacy";
 import { vaultRepo } from "@/lib/db/repos/vault";
 import { BirthDateForm } from "./birth-date-form";
@@ -14,8 +15,11 @@ export const metadata: Metadata = { title: "Data de nascimento" };
 export default async function BirthDatePage() {
   const { userId } = await requireSessionForPage();
   if (await legacyRepo.isLegacy(userId)) redirect("/proteger-dados");
-  // Only the sealed date: whether there is one decides the texts; the browser opens it.
-  const birthDateCt = await vaultRepo.getBirthDateSealed(userId);
+  // Sealed rows only: whether there is a date decides the texts; the browser opens both.
+  const [birthDateCt, goalDto] = await Promise.all([
+    vaultRepo.getBirthDateSealed(userId),
+    goalsRepo.getSealed(userId),
+  ]);
   const hasDate = birthDateCt !== null;
 
   return (
@@ -30,7 +34,7 @@ export default async function BirthDatePage() {
           </p>
         </div>
         <VaultProvider userId={userId}>
-          <BirthDateForm initial="" />
+          <BirthDateForm birthDateCt={birthDateCt} goalDto={goalDto} />
         </VaultProvider>
         {hasDate && (
           <p className="text-center text-sm">
