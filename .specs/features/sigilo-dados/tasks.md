@@ -1790,10 +1790,10 @@ T86 → T88
 
 **Done when**:
 
-- [ ] As três frases aparecem literalmente como na spec (inspeção `file:line`)
-- [ ] Lista distingue cifrado (valores, descrições, nomes de categoria, percentuais, meta, data de nascimento) de não cifrado (e-mail, nome, datas e tipo das transações)
-- [ ] Acessível sem sessão (rota pública no proxy)
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] As três frases aparecem literalmente como na spec (inspeção `file:line`)
+- [x] Lista distingue cifrado (valores, descrições, nomes de categoria, percentuais, meta, data de nascimento) de não cifrado (e-mail, nome, datas e tipo das transações)
+- [x] Acessível sem sessão (rota pública no proxy)
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
 
 **Tests**: none
 **Gate**: build
