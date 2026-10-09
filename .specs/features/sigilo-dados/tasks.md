@@ -1844,10 +1844,10 @@ T86 → T88
 
 **Done when**:
 
-- [ ] Usa `computeMonthTotals`, `buildMonthlySummary`, `buildSpendingPaceViews`, `filterTransactions` e `searchTransactions` sem reimplementar regras
-- [ ] Erro mostra `Não foi possível carregar seus dados. Tente novamente`
-- [ ] Props de `searchParams` recebidas como strings do servidor
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] Usa `computeMonthTotals`, `buildMonthlySummary`, `buildSpendingPaceViews`, `filterTransactions` e `searchTransactions` sem reimplementar regras
+- [x] Erro mostra `Não foi possível carregar seus dados. Tente novamente`
+- [x] Props de `searchParams` recebidas como strings do servidor
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
 
 **Tests**: none
 **Gate**: build
