@@ -1,5 +1,13 @@
+import { getPathMatch } from "next/dist/shared/lib/router/utils/path-match";
 import { describe, expect, it } from "vitest";
-import { buildCsp, securityHeaders } from "./security-headers";
+import { config as proxyConfig } from "@/proxy";
+import {
+  buildCsp,
+  PATHS_OUTSIDE_PROXY,
+  STATIC_CSP,
+  securityHeaderRules,
+  securityHeaders,
+} from "./security-headers";
 
 const value = (env: string, key: string) =>
   securityHeaders({ NODE_ENV: env }).find((h) => h.key === key)?.value;
@@ -58,5 +66,77 @@ describe("buildCsp", () => {
   it("embeds a different nonce for each call", () => {
     expect(buildCsp("a", false)).toContain("'nonce-a'");
     expect(buildCsp("b", false)).not.toContain("'nonce-a'");
+  });
+});
+
+describe("securityHeaderRules", () => {
+  it("sends the static headers on every path and the static CSP on the paths outside the proxy", () => {
+    expect(securityHeaderRules({ NODE_ENV: "production" })).toEqual([
+      { source: "/:path*", headers: securityHeaders({ NODE_ENV: "production" }) },
+      ...[
+        "/api/auth/:path*",
+        "/_next/static/:path*",
+        "/_next/image",
+        "/favicon.ico",
+        "/:path(.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico))",
+      ].map((source) => ({
+        source,
+        headers: [
+          {
+            key: "Content-Security-Policy",
+            value: "default-src 'none'; frame-ancestors 'none'; object-src 'none'; base-uri 'self'",
+          },
+        ],
+      })),
+    ]);
+  });
+
+  it("never puts a CSP on the /:path* rule, so pages keep only the proxy nonce CSP", () => {
+    const [all] = securityHeaderRules({ NODE_ENV: "production" });
+    expect(all.headers.some((h) => h.key === "Content-Security-Policy")).toBe(false);
+  });
+
+  // Same options Next uses to match `headers()` sources (server/lib/router-utils/filesystem.js).
+  const staticCspCovers = (path: string) =>
+    PATHS_OUTSIDE_PROXY.some((source) => getPathMatch(source, { strict: true, removeUnnamedParams: true })(path) !== false);
+  const proxyCovers = (path: string) => new RegExp(`^${proxyConfig.matcher[0]}$`).test(path);
+
+  it.each([
+    "/",
+    "/login",
+    "/cadastro",
+    "/redefinir-senha",
+    "/privacidade",
+    "/conta",
+    "/lancamentos/novo",
+    "/api/outra",
+  ])("leaves the page %s to the proxy CSP only", (path) => {
+    expect(proxyCovers(path)).toBe(true);
+    expect(staticCspCovers(path)).toBe(false);
+  });
+
+  it.each([
+    "/api/auth/get-session",
+    "/api/auth/sign-in/email",
+    "/_next/static/chunks/main-abc123.js",
+    "/_next/static/css/app.css",
+    "/_next/image",
+    "/favicon.ico",
+    "/icon.svg",
+    "/favicon.svg",
+    "/img/logo.png",
+    "/foto.jpeg",
+  ])("covers %s, which the proxy skips, with the static CSP", (path) => {
+    expect(proxyCovers(path)).toBe(false);
+    expect(staticCspCovers(path)).toBe(true);
+  });
+
+  it("keeps the static CSP closed to any fetch, frame, plugin and foreign base URI", () => {
+    expect(STATIC_CSP.split("; ")).toEqual([
+      "default-src 'none'",
+      "frame-ancestors 'none'",
+      "object-src 'none'",
+      "base-uri 'self'",
+    ]);
   });
 });
