@@ -274,3 +274,51 @@ describe("vaultRepo.kdfParamsFor", () => {
     expect(await vaultRepo.kdfParamsFor("  ninguem@example.com ")).toEqual(decoy);
   });
 });
+
+describe("vaultRepo birth date (sealed)", () => {
+  it("set writes only the user's birth_date_ct and get returns the same text", async () => {
+    const a = await insertTestUser();
+    const b = await insertTestUser();
+    await createVault(a);
+    await createVault(b);
+
+    await vaultRepo.setBirthDateSealed(a, "v1:sealed-birth-a");
+
+    expect(await vaultRepo.getBirthDateSealed(a)).toBe("v1:sealed-birth-a");
+    expect(await vaultRepo.getBirthDateSealed(b)).toBeNull();
+    expect(await vaultRepo.get(a)).toEqual(MATERIAL);
+  });
+
+  it("get returns null without a vault or without a date", async () => {
+    const legacy = await insertTestUser();
+    const sealedNoDate = await insertTestUser();
+    await createVault(sealedNoDate);
+
+    expect(await vaultRepo.getBirthDateSealed(legacy)).toBeNull();
+    expect(await vaultRepo.getBirthDateSealed(sealedNoDate)).toBeNull();
+    await vaultRepo.setBirthDateSealed(legacy, "v1:ignored");
+    expect(await vaultRepo.getBirthDateSealed(legacy)).toBeNull();
+  });
+
+  it("the raw column holds sealed text, never a readable date, and user.birth_date is untouched", async () => {
+    const userId = await insertTestUser();
+    await createVault(userId);
+
+    await vaultRepo.setBirthDateSealed(userId, "v1:c2VhbGVk");
+
+    const [vault] = await db.select().from(userVault).where(eq(userVault.userId, userId));
+    expect(vault.birthDateCt).toMatch(/^v1:[A-Za-z0-9_-]+$/);
+    expect(vault.birthDateCt).not.toMatch(/\d{4}-\d{2}-\d{2}/);
+    const [u] = await db.select({ birthDate: user.birthDate }).from(user).where(eq(user.id, userId));
+    expect(u.birthDate).toBeNull();
+  });
+
+  it("set replaces a previous value", async () => {
+    const userId = await insertTestUser();
+    await createVault(userId);
+    await vaultRepo.setBirthDateSealed(userId, "v1:first");
+    await vaultRepo.setBirthDateSealed(userId, "v1:second");
+
+    expect(await vaultRepo.getBirthDateSealed(userId)).toBe("v1:second");
+  });
+});

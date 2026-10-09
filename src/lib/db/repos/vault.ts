@@ -112,4 +112,18 @@ export const vaultRepo = {
       p: material.parallelism,
     };
   },
+
+  /** The sealed birth date, or `null` when the user has no vault or no date. */
+  async getBirthDateSealed(userId: string): Promise<string | null> {
+    const [row] = await db
+      .select({ birthDateCt: userVault.birthDateCt })
+      .from(userVault)
+      .where(eq(userVault.userId, userId));
+    return row?.birthDateCt ?? null;
+  },
+
+  /** Stores the sealed birth date of that user's vault only (no vault row: nothing is written). */
+  async setBirthDateSealed(userId: string, ct: string): Promise<void> {
+    await db.update(userVault).set({ birthDateCt: ct }).where(eq(userVault.userId, userId));
+  },
 };

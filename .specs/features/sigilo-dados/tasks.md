@@ -482,12 +482,12 @@ T86 → T88
 
 **Done when**:
 
-- [ ] `set` grava só em `birth_date_ct` do usuário e `get` devolve o mesmo texto
-- [ ] `get` devolve `null` sem cofre ou sem data
-- [ ] Coluna crua nunca contém data legível
-- [ ] ≥ 3 testes
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
-- [ ] Contagem de testes conferida (sem remoções silenciosas)
+- [x] `set` grava só em `birth_date_ct` do usuário e `get` devolve o mesmo texto
+- [x] `get` devolve `null` sem cofre ou sem data
+- [x] Coluna crua nunca contém data legível
+- [x] ≥ 3 testes
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
+- [x] Contagem de testes conferida (sem remoções silenciosas)
 
 **Tests**: integration
 **Gate**: full
