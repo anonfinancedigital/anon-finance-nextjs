@@ -650,12 +650,12 @@ T86 → T88
 
 **Done when**:
 
-- [ ] Devolve só linhas do usuário pedido, com dois usuários populados
-- [ ] Inclui categoria excluída e todas as versões de percentual
-- [ ] Usuário sem dados devolve listas vazias e `birthDateCt` `null`
-- [ ] ≥ 4 testes
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
-- [ ] Contagem de testes conferida (sem remoções silenciosas)
+- [x] Devolve só linhas do usuário pedido, com dois usuários populados
+- [x] Inclui categoria excluída e todas as versões de percentual
+- [x] Usuário sem dados devolve listas vazias e `birthDateCt` `null`
+- [x] ≥ 4 testes
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
+- [x] Contagem de testes conferida (sem remoções silenciosas)
 
 **Tests**: integration
 **Gate**: full
