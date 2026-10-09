@@ -12,7 +12,8 @@ import { type KdfParamValues, vaultRepo } from "./vault";
 const PREFIX = "password-reset:";
 
 /** Only the SHA-256 of the token is stored; the token itself exists only in the e-mail. */
-const identifierOf = (token: string) => `${PREFIX}${createHash("sha256").update(token).digest("hex")}`;
+const identifierOf = (token: string) =>
+  `${PREFIX}${createHash("sha256").update(token).digest("hex")}`;
 
 /**
  * Issues a reset token for an approved account (e-mail in any case). In one transaction it deletes
@@ -20,7 +21,9 @@ const identifierOf = (token: string) => `${PREFIX}${createHash("sha256").update(
  * Returns the raw token, or null when there is no approved account.
  * Expiry follows the app clock (`Date.now()`), like the login lockout.
  */
-async function issue(email: string): Promise<{ token: string; email: string } | null> {
+async function issue(
+  email: string,
+): Promise<{ token: string; email: string } | null> {
   const owner = await usersRepo.findByEmail(email);
   if (!owner || owner.status !== "approved") return null;
 
@@ -32,7 +35,10 @@ async function issue(email: string): Promise<{ token: string; email: string } | 
       .where(
         and(
           like(verification.identifier, `${PREFIX}%`),
-          or(eq(verification.value, owner.id), lte(verification.expiresAt, now)),
+          or(
+            eq(verification.value, owner.id),
+            lte(verification.expiresAt, now),
+          ),
         ),
       );
     await tx.insert(verification).values({
@@ -69,36 +75,57 @@ async function isValid(token: string): Promise<boolean> {
  * (the token is deleted anyway). Any error rolls back, and the token stays valid.
  * Of two concurrent uses, the delete lets only one find the row.
  */
-async function consume(token: string, password: string): Promise<"ok" | "invalid"> {
+async function consume(
+  token: string,
+  password: string,
+): Promise<"ok" | "invalid"> {
   return db.transaction(async (tx) => {
     const [row] = await tx
       .delete(verification)
-      .where(and(eq(verification.identifier, identifierOf(token)), gt(verification.expiresAt, new Date())))
+      .where(
+        and(
+          eq(verification.identifier, identifierOf(token)),
+          gt(verification.expiresAt, new Date()),
+        ),
+      )
       .returning({ userId: verification.value });
     if (!row) return "invalid";
 
-    const [owner] = await tx.select({ status: user.status }).from(user).where(eq(user.id, row.userId));
+    const [owner] = await tx
+      .select({ status: user.status })
+      .from(user)
+      .where(eq(user.id, row.userId));
     if (owner?.status !== "approved") return "invalid";
 
     const hash = await hashPassword(password);
     await tx
       .update(account)
       .set({ password: hash })
-      .where(and(eq(account.userId, row.userId), eq(account.providerId, "credential")));
+      .where(
+        and(
+          eq(account.userId, row.userId),
+          eq(account.providerId, "credential"),
+        ),
+      );
     await tx.delete(session).where(eq(session.userId, row.userId));
     return "ok";
   });
 }
 
 /**
- * The recovery-wrapped DEK of the token's owner, for the browser to unwrap with the recovery key.
- * `null` when the token is unknown, expired or used, the owner is not approved or has no vault.
+ * The token's owner and their recovery-wrapped DEK, for the browser to unwrap with the recovery key
+ * (the owner id is part of the wrap's AAD). `null` when the token is unknown, expired or used, the owner is not approved or has no vault.
  * Does not consume the token.
  */
-async function recoveryMaterialFor(token: string): Promise<string | null> {
+async function recoveryMaterialFor(
+  token: string,
+): Promise<{ userId: string; dekWrappedRecovery: string } | null> {
   if (!token) return null;
   const [row] = await db
-    .select({ dekWrappedRecovery: userVault.dekWrappedRecovery })
+    .select({
+      userId: user.id,
+      dekWrappedRecovery: userVault.dekWrappedRecovery,
+    })
     .from(verification)
     .innerJoin(user, eq(user.id, verification.value))
     .innerJoin(userVault, eq(userVault.userId, user.id))
@@ -109,7 +136,7 @@ async function recoveryMaterialFor(token: string): Promise<string | null> {
         eq(user.status, "approved"),
       ),
     );
-  return row?.dekWrappedRecovery ?? null;
+  return row ?? null;
 }
 
 /** What the browser sends to finish a reset of a sealed account. */
@@ -142,12 +169,20 @@ class Rollback extends Error {}
  * user has no vault (the last two roll back and leave the token valid, unlike `consume`).
  * Any error rolls back, and the token stays valid.
  */
-async function consumeSealed(token: string, input: SealedResetInput): Promise<"ok" | "invalid"> {
+async function consumeSealed(
+  token: string,
+  input: SealedResetInput,
+): Promise<"ok" | "invalid"> {
   try {
     return await db.transaction(async (tx) => {
       const [row] = await tx
         .delete(verification)
-        .where(and(eq(verification.identifier, identifierOf(token)), gt(verification.expiresAt, new Date())))
+        .where(
+          and(
+            eq(verification.identifier, identifierOf(token)),
+            gt(verification.expiresAt, new Date()),
+          ),
+        )
         .returning({ userId: verification.value });
       if (!row) return "invalid";
 
@@ -167,14 +202,22 @@ async function consumeSealed(token: string, input: SealedResetInput): Promise<"o
         });
       } else {
         await vaultRepo.wipeFinancialData(tx, row.userId);
-        await tx.update(user).set({ birthDate: null }).where(eq(user.id, row.userId));
+        await tx
+          .update(user)
+          .set({ birthDate: null })
+          .where(eq(user.id, row.userId));
         await tx.delete(userVault).where(eq(userVault.userId, row.userId));
         await vaultRepo.create(tx, row.userId, input.vault);
       }
       await tx
         .update(account)
         .set({ password: hash })
-        .where(and(eq(account.userId, row.userId), eq(account.providerId, "credential")));
+        .where(
+          and(
+            eq(account.userId, row.userId),
+            eq(account.providerId, "credential"),
+          ),
+        );
       await tx.delete(session).where(eq(session.userId, row.userId));
       return "ok";
     });
@@ -184,4 +227,10 @@ async function consumeSealed(token: string, input: SealedResetInput): Promise<"o
   }
 }
 
-export const passwordResetsRepo = { issue, isValid, consume, recoveryMaterialFor, consumeSealed };
+export const passwordResetsRepo = {
+  issue,
+  isValid,
+  consume,
+  recoveryMaterialFor,
+  consumeSealed,
+};

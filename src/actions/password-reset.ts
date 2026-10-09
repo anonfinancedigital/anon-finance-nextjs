@@ -2,7 +2,11 @@
 
 import { redirect } from "next/navigation";
 import { after } from "next/server";
-import { type ActionResult, invalidInput, SAVE_FAILED } from "@/lib/action-result";
+import {
+  type ActionResult,
+  invalidInput,
+  SAVE_FAILED,
+} from "@/lib/action-result";
 import { passwordResetsRepo } from "@/lib/db/repos/password-resets";
 import { buildPasswordResetEmail } from "@/lib/domain/password-reset-email";
 import { logActionError } from "@/lib/log";
@@ -26,7 +30,9 @@ export async function requestPasswordResetAction(
   _prev: ActionResult | undefined,
   formData: FormData,
 ): Promise<ActionResult> {
-  const parsed = requestResetSchema.safeParse({ email: formData.get("email") ?? "" });
+  const parsed = requestResetSchema.safeParse({
+    email: formData.get("email") ?? "",
+  });
   if (!parsed.success) return invalidInput(parsed.error);
 
   try {
@@ -38,7 +44,9 @@ export async function requestPasswordResetAction(
         baseUrl: process.env.BETTER_AUTH_URL ?? "",
       });
       after(() =>
-        sendMail(message).catch((error) => console.error("requestPasswordResetAction: sendMail", error)),
+        sendMail(message).catch((error) =>
+          console.error("requestPasswordResetAction: sendMail", error),
+        ),
       );
     }
   } catch (error) {
@@ -64,7 +72,10 @@ export async function resetPasswordAction(
 
   let outcome: "ok" | "invalid";
   try {
-    outcome = await passwordResetsRepo.consume(parsed.data.token, parsed.data.password);
+    outcome = await passwordResetsRepo.consume(
+      parsed.data.token,
+      parsed.data.password,
+    );
   } catch (error) {
     console.error("resetPasswordAction", error);
     return { ok: false, error: SAVE_FAILED };
@@ -74,17 +85,26 @@ export async function resetPasswordAction(
 }
 
 /**
- * The recovery-wrapped DEK of the token's owner, for the browser to unwrap with the recovery key
- * (SIGILO-19). Nothing else leaves the server, and the token is not consumed.
+ * The token owner's id and recovery-wrapped DEK, for the browser to unwrap with the recovery key
+ * (SIGILO-19); the id is part of the wrap's AAD and of a new vault's. It is not secret: the token's
+ * owner owns the e-mail. Nothing else leaves the server, and the token is not consumed.
  */
 export async function getResetVaultAction(
   token: string,
-): Promise<{ ok: true; dekWrappedRecovery: string } | { ok: false; error: string }> {
-  if (typeof token !== "string" || token === "") return { ok: false, error: INVALID_LINK_MESSAGE };
+): Promise<
+  | { ok: true; userId: string; dekWrappedRecovery: string }
+  | { ok: false; error: string }
+> {
+  if (typeof token !== "string" || token === "")
+    return { ok: false, error: INVALID_LINK_MESSAGE };
   try {
-    const dekWrappedRecovery = await passwordResetsRepo.recoveryMaterialFor(token);
-    if (dekWrappedRecovery === null) return { ok: false, error: INVALID_LINK_MESSAGE };
-    return { ok: true, dekWrappedRecovery };
+    const material = await passwordResetsRepo.recoveryMaterialFor(token);
+    if (material === null) return { ok: false, error: INVALID_LINK_MESSAGE };
+    return {
+      ok: true,
+      userId: material.userId,
+      dekWrappedRecovery: material.dekWrappedRecovery,
+    };
   } catch (error) {
     logActionError("getResetVaultAction", error);
     return { ok: false, error: SAVE_FAILED };
@@ -97,7 +117,9 @@ export async function getResetVaultAction(
  * session. No redirect: after `wipe` the browser still has to show the new recovery key once.
  * A malformed payload or a failure keeps the token valid.
  */
-export async function resetPasswordSealedAction(payload: ResetPasswordSealedPayload): Promise<ActionResult> {
+export async function resetPasswordSealedAction(
+  payload: ResetPasswordSealedPayload,
+): Promise<ActionResult> {
   const parsed = resetPasswordSealedSchema.safeParse(payload);
   if (!parsed.success) return invalidInput(parsed.error);
 

@@ -3,7 +3,11 @@ import { hashPassword, verifyPassword } from "better-auth/crypto";
 import { eq } from "drizzle-orm";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import type { VaultMaterial } from "@/lib/vault/types";
-import { createSignedInUser, insertCredentialUser, TEST_PASSWORD } from "@/test/auth";
+import {
+  createSignedInUser,
+  insertCredentialUser,
+  TEST_PASSWORD,
+} from "@/test/auth";
 import { setupTestDb } from "@/test/db";
 import { account, session, user, verification } from "../auth-schema";
 import { db } from "../client";
@@ -47,7 +51,10 @@ async function sealedAccount(email = "ana@x.com") {
   const { userId } = await createSignedInUser(email);
   await db.transaction((tx) => vaultRepo.create(tx, userId, OLD_VAULT));
   await vaultRepo.setBirthDateSealed(userId, "v1:birth");
-  const [cat] = await db.insert(category).values({ userId, nameCt: "v1:cat", color: 1 }).returning();
+  const [cat] = await db
+    .insert(category)
+    .values({ userId, nameCt: "v1:cat", color: 1 })
+    .returning();
   await db.insert(transaction).values({
     id: randomUUID(),
     userId,
@@ -76,30 +83,49 @@ const REWRAP = {
   params: { memKib: 32768, iterations: 2, parallelism: 2 },
   dekWrappedPw: "v1:rewrapped-pw",
 } as const;
-const WIPE = { mode: "wipe", authSecret: "novo-segredo", vault: NEW_VAULT } as const;
+const WIPE = {
+  mode: "wipe",
+  authSecret: "novo-segredo",
+  vault: NEW_VAULT,
+} as const;
 
 const hashOf = async (userId: string) =>
-  (await db.select().from(account).where(eq(account.userId, userId)))[0].password!;
+  (await db.select().from(account).where(eq(account.userId, userId)))[0]
+    .password!;
 const vaultOf = async (userId: string) =>
   (await db.select().from(userVault).where(eq(userVault.userId, userId)))[0];
 const dataCounts = async (userId: string) => ({
-  transactions: (await db.select().from(transaction).where(eq(transaction.userId, userId))).length,
-  categories: (await db.select().from(category).where(eq(category.userId, userId))).length,
-  goals: (await db.select().from(financialGoal).where(eq(financialGoal.userId, userId))).length,
+  transactions: (
+    await db.select().from(transaction).where(eq(transaction.userId, userId))
+  ).length,
+  categories: (
+    await db.select().from(category).where(eq(category.userId, userId))
+  ).length,
+  goals: (
+    await db
+      .select()
+      .from(financialGoal)
+      .where(eq(financialGoal.userId, userId))
+  ).length,
 });
 const sessionsOf = async (userId: string) =>
   (await db.select().from(session).where(eq(session.userId, userId))).length;
 
 describe("passwordResetsRepo.recoveryMaterialFor", () => {
-  it("returns the recovery-wrapped DEK for a valid token without consuming it", async () => {
-    const { token } = await sealedAccount();
-    expect(await passwordResetsRepo.recoveryMaterialFor(token)).toBe("v1:old-recovery");
+  it("returns the owner id and the recovery-wrapped DEK for a valid token without consuming it", async () => {
+    const { userId, token } = await sealedAccount();
+    expect(await passwordResetsRepo.recoveryMaterialFor(token)).toEqual({
+      userId,
+      dekWrappedRecovery: "v1:old-recovery",
+    });
     expect(await passwordResetsRepo.isValid(token)).toBe(true);
   });
 
   it("returns null for an unknown, empty or expired token", async () => {
     const { token } = await sealedAccount();
-    expect(await passwordResetsRepo.recoveryMaterialFor("desconhecido")).toBeNull();
+    expect(
+      await passwordResetsRepo.recoveryMaterialFor("desconhecido"),
+    ).toBeNull();
     expect(await passwordResetsRepo.recoveryMaterialFor("")).toBeNull();
     vi.useFakeTimers({ toFake: ["Date"] });
     vi.setSystemTime(Date.now() + 31 * 60_000);
@@ -109,7 +135,9 @@ describe("passwordResetsRepo.recoveryMaterialFor", () => {
   it("returns null when the owner has no vault (legacy account)", async () => {
     await insertCredentialUser("velho@x.com");
     const issued = await passwordResetsRepo.issue("velho@x.com");
-    expect(await passwordResetsRepo.recoveryMaterialFor(issued!.token)).toBeNull();
+    expect(
+      await passwordResetsRepo.recoveryMaterialFor(issued!.token),
+    ).toBeNull();
   });
 });
 
@@ -120,8 +148,18 @@ describe("passwordResetsRepo.consumeSealed rewrap", () => {
 
     expect(await passwordResetsRepo.consumeSealed(token, REWRAP)).toBe("ok");
 
-    expect(await verifyPassword({ hash: await hashOf(userId), password: "novo-segredo" })).toBe(true);
-    expect(await verifyPassword({ hash: await hashOf(userId), password: TEST_PASSWORD })).toBe(false);
+    expect(
+      await verifyPassword({
+        hash: await hashOf(userId),
+        password: "novo-segredo",
+      }),
+    ).toBe(true);
+    expect(
+      await verifyPassword({
+        hash: await hashOf(userId),
+        password: TEST_PASSWORD,
+      }),
+    ).toBe(false);
     expect(await vaultOf(userId)).toMatchObject({
       salt: NEW_VAULT.salt,
       memKib: 32768,
@@ -142,7 +180,9 @@ describe("passwordResetsRepo.consumeSealed rewrap", () => {
     const hash = await hashOf(userId);
     vi.mocked(hashPassword).mockRejectedValueOnce(new Error("hash falhou"));
 
-    await expect(passwordResetsRepo.consumeSealed(token, REWRAP)).rejects.toThrow("hash falhou");
+    await expect(
+      passwordResetsRepo.consumeSealed(token, REWRAP),
+    ).rejects.toThrow("hash falhou");
 
     expect(await hashOf(userId)).toBe(hash);
     expect(await vaultOf(userId)).toMatchObject({ dekWrappedPw: "v1:old-pw" });
@@ -157,7 +197,11 @@ describe("passwordResetsRepo.consumeSealed wipe", () => {
 
     expect(await passwordResetsRepo.consumeSealed(token, WIPE)).toBe("ok");
 
-    expect(await dataCounts(userId)).toEqual({ transactions: 0, categories: 0, goals: 0 });
+    expect(await dataCounts(userId)).toEqual({
+      transactions: 0,
+      categories: 0,
+      goals: 0,
+    });
     expect(await vaultOf(userId)).toMatchObject({
       salt: NEW_VAULT.salt,
       memKib: 32768,
@@ -167,8 +211,15 @@ describe("passwordResetsRepo.consumeSealed wipe", () => {
       dekWrappedRecovery: "v1:new-recovery",
       birthDateCt: null,
     });
-    expect(await db.select().from(userVault).where(eq(userVault.userId, userId))).toHaveLength(1);
-    expect(await verifyPassword({ hash: await hashOf(userId), password: "novo-segredo" })).toBe(true);
+    expect(
+      await db.select().from(userVault).where(eq(userVault.userId, userId)),
+    ).toHaveLength(1);
+    expect(
+      await verifyPassword({
+        hash: await hashOf(userId),
+        password: "novo-segredo",
+      }),
+    ).toBe(true);
     expect(await sessionsOf(userId)).toBe(0);
     expect(await passwordResetsRepo.isValid(token)).toBe(false);
   });
@@ -184,8 +235,15 @@ describe("passwordResetsRepo.consumeSealed wipe", () => {
       }),
     ).rejects.toThrow();
 
-    expect(await dataCounts(userId)).toEqual({ transactions: 1, categories: 1, goals: 1 });
-    expect(await vaultOf(userId)).toMatchObject({ dekWrappedPw: "v1:old-pw", birthDateCt: "v1:birth" });
+    expect(await dataCounts(userId)).toEqual({
+      transactions: 1,
+      categories: 1,
+      goals: 1,
+    });
+    expect(await vaultOf(userId)).toMatchObject({
+      dekWrappedPw: "v1:old-pw",
+      birthDateCt: "v1:birth",
+    });
     expect(await hashOf(userId)).toBe(hash);
     expect(await sessionsOf(userId)).toBe(1);
     expect(await passwordResetsRepo.isValid(token)).toBe(true);
@@ -197,10 +255,16 @@ describe("passwordResetsRepo.consumeSealed invalid tokens", () => {
     const { userId, token } = await sealedAccount();
     const hash = await hashOf(userId);
 
-    expect(await passwordResetsRepo.consumeSealed("desconhecido", WIPE)).toBe("invalid");
+    expect(await passwordResetsRepo.consumeSealed("desconhecido", WIPE)).toBe(
+      "invalid",
+    );
 
     expect(await hashOf(userId)).toBe(hash);
-    expect(await dataCounts(userId)).toEqual({ transactions: 1, categories: 1, goals: 1 });
+    expect(await dataCounts(userId)).toEqual({
+      transactions: 1,
+      categories: 1,
+      goals: 1,
+    });
     expect(await vaultOf(userId)).toMatchObject({ dekWrappedPw: "v1:old-pw" });
     expect(await passwordResetsRepo.isValid(token)).toBe(true);
   });
@@ -209,14 +273,24 @@ describe("passwordResetsRepo.consumeSealed invalid tokens", () => {
     const { userId, token } = await sealedAccount();
     vi.useFakeTimers({ toFake: ["Date"] });
     vi.setSystemTime(Date.now() + 31 * 60_000);
-    expect(await passwordResetsRepo.consumeSealed(token, REWRAP)).toBe("invalid");
+    expect(await passwordResetsRepo.consumeSealed(token, REWRAP)).toBe(
+      "invalid",
+    );
     vi.useRealTimers();
     expect(await vaultOf(userId)).toMatchObject({ dekWrappedPw: "v1:old-pw" });
 
     const second = await passwordResetsRepo.issue("ana@x.com");
-    expect(await passwordResetsRepo.consumeSealed(second!.token, REWRAP)).toBe("ok");
-    expect(await passwordResetsRepo.consumeSealed(second!.token, WIPE)).toBe("invalid");
-    expect(await dataCounts(userId)).toEqual({ transactions: 1, categories: 1, goals: 1 });
+    expect(await passwordResetsRepo.consumeSealed(second!.token, REWRAP)).toBe(
+      "ok",
+    );
+    expect(await passwordResetsRepo.consumeSealed(second!.token, WIPE)).toBe(
+      "invalid",
+    );
+    expect(await dataCounts(userId)).toEqual({
+      transactions: 1,
+      categories: 1,
+      goals: 1,
+    });
   });
 
   it("returns invalid and keeps the token when the owner has no vault", async () => {
@@ -224,7 +298,9 @@ describe("passwordResetsRepo.consumeSealed invalid tokens", () => {
     const issued = await passwordResetsRepo.issue("velho@x.com");
     const hash = await hashOf(id);
 
-    expect(await passwordResetsRepo.consumeSealed(issued!.token, REWRAP)).toBe("invalid");
+    expect(await passwordResetsRepo.consumeSealed(issued!.token, REWRAP)).toBe(
+      "invalid",
+    );
 
     expect(await hashOf(id)).toBe(hash);
     expect(await db.select().from(userVault)).toHaveLength(0);
@@ -236,6 +312,10 @@ describe("passwordResetsRepo.consumeSealed invalid tokens", () => {
     await db.update(user).set({ status: "revoked" }).where(eq(user.id, userId));
 
     expect(await passwordResetsRepo.consumeSealed(token, WIPE)).toBe("invalid");
-    expect(await dataCounts(userId)).toEqual({ transactions: 1, categories: 1, goals: 1 });
+    expect(await dataCounts(userId)).toEqual({
+      transactions: 1,
+      categories: 1,
+      goals: 1,
+    });
   });
 });
