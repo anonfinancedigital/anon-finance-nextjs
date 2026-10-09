@@ -83,8 +83,14 @@ export interface MonthPayload {
     amountCt: Ct;
     descriptionCt: Ct | null;
     recurring: boolean;
+    // SPEC_DEVIATION: `recurrenceEnd`, `createdAt` and `updatedAt` are not in the design's MonthPayload.
+    // Reason: `openMonth` must return the `Occurrence` type the UI already uses (the edit form reads `recurrenceEnd`).
+    /** First day of the final month; null = no end (or not recurring). */
+    recurrenceEnd: string | null;
     installment: { number: number; total: number } | null;
     seriesStart: string | null;
+    createdAt: Date;
+    updatedAt: Date;
   }[];
   totalTransactions: number;
 }

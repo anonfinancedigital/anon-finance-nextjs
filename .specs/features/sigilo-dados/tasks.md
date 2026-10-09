@@ -173,12 +173,12 @@ T86 → T88
 
 **Done when**:
 
-- [ ] Ida e volta devolve os mesmos bytes (vazio, 1, 2, 3 e 32 bytes)
-- [ ] Saída usa só `A-Za-z0-9_-` e nunca termina em `=`
-- [ ] `fromBase64Url` lança em `+`, `/`, `=` e espaço
-- [ ] ≥ 5 testes
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
-- [ ] Contagem de testes conferida (sem remoções silenciosas)
+- [x] Ida e volta devolve os mesmos bytes (vazio, 1, 2, 3 e 32 bytes)
+- [x] Saída usa só `A-Za-z0-9_-` e nunca termina em `=`
+- [x] `fromBase64Url` lança em `+`, `/`, `=` e espaço
+- [x] ≥ 5 testes
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Contagem de testes conferida (sem remoções silenciosas)
 
 **Tests**: unit
 **Gate**: quick
@@ -201,13 +201,13 @@ T86 → T88
 
 **Done when**:
 
-- [ ] Ida e volta devolve o texto original (vazio, ASCII, acentos, 2 KB)
-- [ ] Duas cifragens do mesmo texto e AAD diferem
-- [ ] AAD de outra linha, outra coluna ou outro usuário lança `DecryptError`
-- [ ] Byte alterado, prefixo `v2:`, base64 inválido e payload curto lançam `DecryptError`
-- [ ] ≥ 8 testes
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
-- [ ] Contagem de testes conferida (sem remoções silenciosas)
+- [x] Ida e volta devolve o texto original (vazio, ASCII, acentos, 2 KB)
+- [x] Duas cifragens do mesmo texto e AAD diferem
+- [x] AAD de outra linha, outra coluna ou outro usuário lança `DecryptError`
+- [x] Byte alterado, prefixo `v2:`, base64 inválido e payload curto lançam `DecryptError`
+- [x] ≥ 8 testes
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Contagem de testes conferida (sem remoções silenciosas)
 
 **Tests**: unit
 **Gate**: quick
@@ -230,12 +230,12 @@ T86 → T88
 
 **Done when**:
 
-- [ ] Ida e volta de cada codec nos limites (1 e 99.999.999.999 centavos; 1 e 100.000.000 micro; data `AAAA-MM-DD`)
-- [ ] `decode` lança em texto não canônico (`007`, `1e3`, ` 5`, `-0`, vazio)
-- [ ] `null` ↔ `null` em `sealNullable`/`openNullable`
-- [ ] ≥ 8 testes
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
-- [ ] Contagem de testes conferida (sem remoções silenciosas)
+- [x] Ida e volta de cada codec nos limites (1 e 99.999.999.999 centavos; 1 e 100.000.000 micro; data `AAAA-MM-DD`)
+- [x] `decode` lança em texto não canônico (`007`, `1e3`, ` 5`, `-0`, vazio)
+- [x] `null` ↔ `null` em `sealNullable`/`openNullable`
+- [x] ≥ 8 testes
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Contagem de testes conferida (sem remoções silenciosas)
 
 **Tests**: unit
 **Gate**: quick
@@ -258,13 +258,13 @@ T86 → T88
 
 **Done when**:
 
-- [ ] Mesmos senha, salt e parâmetros dão o mesmo `authSecret`; salt ou senha diferente dá outro
-- [ ] `authSecret` tem 43 caracteres do alfabeto base64url
-- [ ] Dados cifrados com a KEK de uma senha não decifram com a KEK de outra
-- [ ] Teste usa parâmetros baixos (m=64 KiB, t=1); parâmetros de produção ficam em `DEFAULT_KDF_PARAMS` (m=65536, t=3, p=1)
-- [ ] ≥ 5 testes
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
-- [ ] Contagem de testes conferida (sem remoções silenciosas)
+- [x] Mesmos senha, salt e parâmetros dão o mesmo `authSecret`; salt ou senha diferente dá outro
+- [x] `authSecret` tem 43 caracteres do alfabeto base64url
+- [x] Dados cifrados com a KEK de uma senha não decifram com a KEK de outra
+- [x] Teste usa parâmetros baixos (m=64 KiB, t=1); parâmetros de produção ficam em `DEFAULT_KDF_PARAMS` (m=65536, t=3, p=1)
+- [x] ≥ 5 testes
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Contagem de testes conferida (sem remoções silenciosas)
 
 **Tests**: unit
 **Gate**: quick
@@ -287,12 +287,12 @@ T86 → T88
 
 **Done when**:
 
-- [ ] Ida e volta devolve os 32 bytes da DEK
-- [ ] KEK errada ou `userId` errado lança `DecryptError`
-- [ ] Saída começa com `v1:`
-- [ ] ≥ 4 testes
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
-- [ ] Contagem de testes conferida (sem remoções silenciosas)
+- [x] Ida e volta devolve os 32 bytes da DEK
+- [x] KEK errada ou `userId` errado lança `DecryptError`
+- [x] Saída começa com `v1:`
+- [x] ≥ 4 testes
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Contagem de testes conferida (sem remoções silenciosas)
 
 **Tests**: unit
 **Gate**: quick
@@ -315,13 +315,13 @@ T86 → T88
 
 **Done when**:
 
-- [ ] Chave gerada tem 16 bytes e `parse(display)` devolve os mesmos bytes
-- [ ] `parse` aceita minúsculas, espaços e sem `-`
-- [ ] `parse` lança `InvalidRecoveryKey` com caractere inválido ou tamanho errado
-- [ ] Duas chaves geradas diferem
-- [ ] ≥ 5 testes
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
-- [ ] Contagem de testes conferida (sem remoções silenciosas)
+- [x] Chave gerada tem 16 bytes e `parse(display)` devolve os mesmos bytes
+- [x] `parse` aceita minúsculas, espaços e sem `-`
+- [x] `parse` lança `InvalidRecoveryKey` com caractere inválido ou tamanho errado
+- [x] Duas chaves geradas diferem
+- [x] ≥ 5 testes
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Contagem de testes conferida (sem remoções silenciosas)
 
 **Tests**: unit
 **Gate**: quick
@@ -793,12 +793,12 @@ T86 → T88
 
 **Done when**:
 
-- [ ] Saída decifra com o AAD da linha e falha com AAD de outra linha ou coluna
-- [ ] Descrição vazia/`null` vira `null`; valor e descrição nunca aparecem na saída
-- [ ] Cada campo da meta usa coluna e codec próprios
-- [ ] ≥ 6 testes
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
-- [ ] Contagem de testes conferida (sem remoções silenciosas)
+- [x] Saída decifra com o AAD da linha e falha com AAD de outra linha ou coluna
+- [x] Descrição vazia/`null` vira `null`; valor e descrição nunca aparecem na saída
+- [x] Cada campo da meta usa coluna e codec próprios
+- [x] ≥ 6 testes
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Contagem de testes conferida (sem remoções silenciosas)
 
 **Tests**: unit
 **Gate**: quick
@@ -821,12 +821,12 @@ T86 → T88
 
 **Done when**:
 
-- [ ] Percentual igual ao vigente não gera `percentChange`; diferente gera, com `fromMonth` do mês corrente de America/Sao_Paulo
-- [ ] Categoria e subcategoria novas recebem id e nome cifrado com AAD da própria linha
-- [ ] Subcategorias omitidas não aparecem no DTO
-- [ ] ≥ 6 testes
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
-- [ ] Contagem de testes conferida (sem remoções silenciosas)
+- [x] Percentual igual ao vigente não gera `percentChange`; diferente gera, com `fromMonth` do mês corrente de America/Sao_Paulo
+- [x] Categoria e subcategoria novas recebem id e nome cifrado com AAD da própria linha
+- [x] Subcategorias omitidas não aparecem no DTO
+- [x] ≥ 6 testes
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Contagem de testes conferida (sem remoções silenciosas)
 
 **Tests**: unit
 **Gate**: quick
@@ -849,12 +849,12 @@ T86 → T88
 
 **Done when**:
 
-- [ ] Conjunto fixo (receitas, despesas por categoria e subcategoria, despesa sem subcategoria, recorrente contada uma vez) dá os valores esperados em centavos escritos no teste
-- [ ] Mês vazio dá zeros e mapas vazios
-- [ ] `buildMonthlySummary` com esses totais devolve linhas, saldo e gasto esperados
-- [ ] ≥ 5 testes
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
-- [ ] Contagem de testes conferida (sem remoções silenciosas)
+- [x] Conjunto fixo (receitas, despesas por categoria e subcategoria, despesa sem subcategoria, recorrente contada uma vez) dá os valores esperados em centavos escritos no teste
+- [x] Mês vazio dá zeros e mapas vazios
+- [x] `buildMonthlySummary` com esses totais devolve linhas, saldo e gasto esperados
+- [x] ≥ 5 testes
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Contagem de testes conferida (sem remoções silenciosas)
 
 **Tests**: unit
 **Gate**: quick
@@ -877,12 +877,12 @@ T86 → T88
 
 **Done when**:
 
-- [ ] Ida e volta com `seal*` reproduz tipos e valores originais
-- [ ] Tag adulterada em qualquer campo faz a função lançar `DecryptError` sem devolver resultado parcial
-- [ ] Busca por descrição e filtro por categoria/subcategoria sobre o resultado dão as mesmas transações do conjunto fixo
-- [ ] ≥ 6 testes
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
-- [ ] Contagem de testes conferida (sem remoções silenciosas)
+- [x] Ida e volta com `seal*` reproduz tipos e valores originais
+- [x] Tag adulterada em qualquer campo faz a função lançar `DecryptError` sem devolver resultado parcial
+- [x] Busca por descrição e filtro por categoria/subcategoria sobre o resultado dão as mesmas transações do conjunto fixo
+- [x] ≥ 6 testes
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Contagem de testes conferida (sem remoções silenciosas)
 
 **Tests**: unit
 **Gate**: quick
@@ -905,12 +905,12 @@ T86 → T88
 
 **Done when**:
 
-- [ ] Arquivo contém todas as seções com os valores em claro de um conjunto fixo
-- [ ] Usuário sem dados gera listas vazias e a data de nascimento
-- [ ] `exportFileName` usa a data de America/Sao_Paulo (23h30 de 31/12 UTC-3 resulta no dia local)
-- [ ] ≥ 4 testes
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
-- [ ] Contagem de testes conferida (sem remoções silenciosas)
+- [x] Arquivo contém todas as seções com os valores em claro de um conjunto fixo
+- [x] Usuário sem dados gera listas vazias e a data de nascimento
+- [x] `exportFileName` usa a data de America/Sao_Paulo (23h30 de 31/12 UTC-3 resulta no dia local)
+- [x] ≥ 4 testes
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Contagem de testes conferida (sem remoções silenciosas)
 
 **Tests**: unit
 **Gate**: quick
@@ -933,13 +933,13 @@ T86 → T88
 
 **Done when**:
 
-- [ ] Com adaptador em memória: `save` seguido de `load` devolve a chave; `clear` apaga
-- [ ] `load` de outro `userId` devolve `null`; `pendingKek.take` devolve e remove
-- [ ] Falha do adaptador em `save` não lança (SIGILO-16 degrada para memória)
-- [ ] Chaves importadas pelo store são não extraíveis (`extractable === false`)
-- [ ] ≥ 5 testes (o adaptador IndexedDB em si fica por inspeção, AD-005)
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
-- [ ] Contagem de testes conferida (sem remoções silenciosas)
+- [x] Com adaptador em memória: `save` seguido de `load` devolve a chave; `clear` apaga
+- [x] `load` de outro `userId` devolve `null`; `pendingKek.take` devolve e remove
+- [x] Falha do adaptador em `save` não lança (SIGILO-16 degrada para memória)
+- [x] Chaves importadas pelo store são não extraíveis (`extractable === false`)
+- [x] ≥ 5 testes (o adaptador IndexedDB em si fica por inspeção, AD-005)
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Contagem de testes conferida (sem remoções silenciosas)
 
 **Tests**: unit
 **Gate**: quick
@@ -962,12 +962,12 @@ T86 → T88
 
 **Done when**:
 
-- [ ] O objeto enviado ao servidor não contém a senha, a DEK crua, a KEK nem a chave de recuperação (busca por valor serializado)
-- [ ] `unwrapDek` com a KEK da mesma senha recupera a DEK; com a chave de recuperação também
-- [ ] Duas chamadas geram DEK, salt e chave de recuperação diferentes
-- [ ] ≥ 5 testes
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
-- [ ] Contagem de testes conferida (sem remoções silenciosas)
+- [x] O objeto enviado ao servidor não contém a senha, a DEK crua, a KEK nem a chave de recuperação (busca por valor serializado)
+- [x] `unwrapDek` com a KEK da mesma senha recupera a DEK; com a chave de recuperação também
+- [x] Duas chamadas geram DEK, salt e chave de recuperação diferentes
+- [x] ≥ 5 testes
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Contagem de testes conferida (sem remoções silenciosas)
 
 **Tests**: unit
 **Gate**: quick
@@ -990,13 +990,13 @@ T86 → T88
 
 **Done when**:
 
-- [ ] Senha correta devolve DEK que decifra um campo selado antes
-- [ ] Senha errada lança `WrongPasswordError`
-- [ ] DEK devolvida é não extraível
-- [ ] `deriveLoginSecret` coincide com o `authSecret` de `createVaultMaterial` para a mesma senha e salt
-- [ ] ≥ 4 testes
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
-- [ ] Contagem de testes conferida (sem remoções silenciosas)
+- [x] Senha correta devolve DEK que decifra um campo selado antes
+- [x] Senha errada lança `WrongPasswordError`
+- [x] DEK devolvida é não extraível
+- [x] `deriveLoginSecret` coincide com o `authSecret` de `createVaultMaterial` para a mesma senha e salt
+- [x] ≥ 4 testes
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Contagem de testes conferida (sem remoções silenciosas)
 
 **Tests**: unit
 **Gate**: quick
@@ -1019,12 +1019,12 @@ T86 → T88
 
 **Done when**:
 
-- [ ] Chave correta: o novo `dekWrappedPw` abre com a KEK da nova senha e a DEK é a original
-- [ ] Chave inválida (formato ou errada) lança `InvalidRecoveryKey` e não devolve material
-- [ ] Salt novo difere do antigo
-- [ ] ≥ 4 testes
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
-- [ ] Contagem de testes conferida (sem remoções silenciosas)
+- [x] Chave correta: o novo `dekWrappedPw` abre com a KEK da nova senha e a DEK é a original
+- [x] Chave inválida (formato ou errada) lança `InvalidRecoveryKey` e não devolve material
+- [x] Salt novo difere do antigo
+- [x] ≥ 4 testes
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Contagem de testes conferida (sem remoções silenciosas)
 
 **Tests**: unit
 **Gate**: quick
@@ -1047,12 +1047,12 @@ T86 → T88
 
 **Done when**:
 
-- [ ] Conjunto de ids do pacote é igual ao de `plain` (transações, categorias, subcategorias, versões, meta)
-- [ ] Abrir o pacote com `open*` reproduz `plain`
-- [ ] Nenhum valor em texto puro na saída serializada
-- [ ] ≥ 4 testes
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
-- [ ] Contagem de testes conferida (sem remoções silenciosas)
+- [x] Conjunto de ids do pacote é igual ao de `plain` (transações, categorias, subcategorias, versões, meta)
+- [x] Abrir o pacote com `open*` reproduz `plain`
+- [x] Nenhum valor em texto puro na saída serializada
+- [x] ≥ 4 testes
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Contagem de testes conferida (sem remoções silenciosas)
 
 **Tests**: unit
 **Gate**: quick
