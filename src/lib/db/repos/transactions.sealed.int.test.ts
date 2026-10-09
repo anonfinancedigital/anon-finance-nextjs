@@ -203,8 +203,11 @@ describe("transactionsRepo.listByMonthSealed", () => {
         amountCt: "v1:a500000",
         descriptionCt: "v1:salario",
         recurring: false,
+        recurrenceEnd: null,
         installment: null,
         seriesStart: null,
+        createdAt: expect.any(Date),
+        updatedAt: expect.any(Date),
       },
     ]);
     expect(Object.keys(listed[0])).not.toContain("amountCents");
@@ -245,6 +248,22 @@ describe("transactionsRepo.listByMonthSealed recurrence", () => {
         seriesStart: "2026-10",
       }),
     ]);
+  });
+
+  it("returns recurrenceEnd (null without end) and the stored timestamps", async () => {
+    const until = recurringExpense("2026-10-15", 10000, "2026-12");
+    const open = recurringExpense("2026-10-16", 10000);
+    await transactionsRepo.createSealed(userId, until);
+    await transactionsRepo.createSealed(userId, open);
+
+    const listed = await transactionsRepo.listByMonthSealed(userId, month(2026, 11));
+    const byId = new Map(listed.map((t) => [t.id, t]));
+    expect(byId.get(until.id)!.recurrenceEnd).toBe("2026-12-01");
+    expect(byId.get(open.id)!.recurrenceEnd).toBeNull();
+    const row = await stored(until.id);
+    expect(byId.get(until.id)!.createdAt).toBeInstanceOf(Date);
+    expect(byId.get(until.id)!.createdAt).toEqual(row.createdAt);
+    expect(byId.get(until.id)!.updatedAt).toEqual(row.updatedAt);
   });
 
   it("lists an expense of day 31 on 28/02/2026 in February", async () => {

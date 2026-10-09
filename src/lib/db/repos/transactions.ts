@@ -470,7 +470,10 @@ async function listByMonthSealed(
       descriptionCt: transaction.descriptionCt,
       recurring: transaction.recurring,
       recurrenceDay: transaction.recurrenceDay,
+      recurrenceEnd: transaction.recurrenceEnd,
       seriesId: transaction.seriesId,
+      createdAt: transaction.createdAt,
+      updatedAt: transaction.updatedAt,
     })
     .from(transaction)
     .where(applicableInMonth(userId, range))
