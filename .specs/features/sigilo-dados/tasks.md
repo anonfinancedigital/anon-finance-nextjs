@@ -230,12 +230,12 @@ T86 → T88
 
 **Done when**:
 
-- [ ] Ida e volta de cada codec nos limites (1 e 99.999.999.999 centavos; 1 e 100.000.000 micro; data `AAAA-MM-DD`)
-- [ ] `decode` lança em texto não canônico (`007`, `1e3`, ` 5`, `-0`, vazio)
-- [ ] `null` ↔ `null` em `sealNullable`/`openNullable`
-- [ ] ≥ 8 testes
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
-- [ ] Contagem de testes conferida (sem remoções silenciosas)
+- [x] Ida e volta de cada codec nos limites (1 e 99.999.999.999 centavos; 1 e 100.000.000 micro; data `AAAA-MM-DD`)
+- [x] `decode` lança em texto não canônico (`007`, `1e3`, ` 5`, `-0`, vazio)
+- [x] `null` ↔ `null` em `sealNullable`/`openNullable`
+- [x] ≥ 8 testes
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Contagem de testes conferida (sem remoções silenciosas)
 
 **Tests**: unit
 **Gate**: quick
