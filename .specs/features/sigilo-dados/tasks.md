@@ -1360,13 +1360,13 @@ T86 → T88
 
 **Done when**:
 
-- [ ] Senha correta apaga o usuário e nenhuma linha dele resta em nenhuma tabela
-- [ ] Senha errada devolve `Senha incorreta`, registra falha e não apaga
-- [ ] Administrador devolve `Não é possível revogar ou excluir o administrador`
-- [ ] 5 falhas bloqueiam a próxima tentativa como no login
-- [ ] ≥ 6 testes
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
-- [ ] Contagem de testes conferida (sem remoções silenciosas)
+- [x] Senha correta apaga o usuário e nenhuma linha dele resta em nenhuma tabela
+- [x] Senha errada devolve `Senha incorreta`, registra falha e não apaga
+- [x] Administrador devolve `Não é possível revogar ou excluir o administrador`
+- [x] 5 falhas bloqueiam a próxima tentativa como no login
+- [x] ≥ 6 testes
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
+- [x] Contagem de testes conferida (sem remoções silenciosas)
 
 **Tests**: integration
 **Gate**: full
