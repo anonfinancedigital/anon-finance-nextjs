@@ -9,8 +9,10 @@ import { auth } from "@/lib/auth";
 import { loginAttemptsRepo } from "@/lib/db/repos/login-attempts";
 import { usersRepo } from "@/lib/db/repos/users";
 import { LOGIN_BLOCK_MESSAGE } from "@/lib/domain/user-status";
+import { logActionError } from "@/lib/log";
 import { lockedMinutes } from "@/lib/login-lock";
 import { signupSchema } from "@/lib/validation/signup";
+import { type SignUpSealedPayload, signUpSealedSchema } from "@/lib/validation/signup-sealed";
 
 const INVALID_CREDENTIALS = "E-mail ou senha inválidos";
 const DUPLICATE_EMAIL = "Este e-mail já está cadastrado";
@@ -74,6 +76,25 @@ export async function signUpAction(
     if (!result.ok) return { ok: false, error: DUPLICATE_EMAIL, fieldErrors: { email: DUPLICATE_EMAIL } };
   } catch (error) {
     console.error("signUpAction", error);
+    return { ok: false, error: SAVE_FAILED };
+  }
+  return { ok: true };
+}
+
+/**
+ * Sealed signup: the browser sends the client-chosen id, name, e-mail, the login secret (stored only
+ * as Better Auth's hash), the key material and the sealed birth date. Creates a pending user, with no session.
+ */
+export async function signUpSealedAction(payload: SignUpSealedPayload): Promise<ActionResult> {
+  const parsed = signUpSealedSchema.safeParse(payload);
+  if (!parsed.success) return invalidInput(parsed.error);
+
+  try {
+    const { userId, name, email, authSecret, vault, birthDateCt } = parsed.data;
+    const result = await usersRepo.createPendingSealed({ id: userId, name, email, authSecret, vault, birthDateCt });
+    if (!result.ok) return { ok: false, error: DUPLICATE_EMAIL, fieldErrors: { email: DUPLICATE_EMAIL } };
+  } catch (error) {
+    logActionError("signUpSealedAction", error);
     return { ok: false, error: SAVE_FAILED };
   }
   return { ok: true };

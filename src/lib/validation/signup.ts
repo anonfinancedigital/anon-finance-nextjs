@@ -7,22 +7,28 @@ const EMAIL_MESSAGE = "Informe um e-mail válido";
 export const PASSWORD_MISMATCH_MESSAGE = "As senhas não coincidem";
 const PASSWORD_MIN_MESSAGE = "A senha deve ter pelo menos 8 caracteres";
 
+/** Name trimmed (1-80). */
+export const nameSchema = z
+  .string({ error: NAME_MESSAGE })
+  .trim()
+  .min(1, NAME_MESSAGE)
+  .max(80, "O nome deve ter no máximo 80 caracteres");
+
+/** E-mail normalized (trim + lower case) and valid. */
+export const emailSchema = z
+  .string({ error: EMAIL_MESSAGE })
+  .trim()
+  .toLowerCase()
+  .pipe(z.email({ error: EMAIL_MESSAGE }));
+
 /**
  * Signup form: name trimmed (1-80), e-mail normalized (trim + lower case), birth date "DD/MM/AAAA" turned
  * into "AAAA-MM-DD" (checked against the current day), password 8-128 confirmed exactly.
  */
 export const signupSchema = z
   .object({
-    name: z
-      .string({ error: NAME_MESSAGE })
-      .trim()
-      .min(1, NAME_MESSAGE)
-      .max(80, "O nome deve ter no máximo 80 caracteres"),
-    email: z
-      .string({ error: EMAIL_MESSAGE })
-      .trim()
-      .toLowerCase()
-      .pipe(z.email({ error: EMAIL_MESSAGE })),
+    name: nameSchema,
+    email: emailSchema,
     birthDate: z.string({ error: BIRTH_DATE_MESSAGE }).transform((value, ctx) => {
       const parsed = parseBirthDate(value, new Date());
       if (!parsed.ok) {

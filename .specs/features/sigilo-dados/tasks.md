@@ -1248,13 +1248,13 @@ T86 → T88
 
 **Done when**:
 
-- [ ] Cadastro grava usuário pendente, cofre e `birth_date_ct`; o hash guardado verifica o `authSecret`
-- [ ] E-mail repetido devolve `Este e-mail já está cadastrado`
-- [ ] `authSecret` com tamanho errado ou campo malformado devolve erro e não grava
-- [ ] Login com o `authSecret` pelo `signInAction` existente funciona após aprovação
-- [ ] ≥ 6 testes novos
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
-- [ ] Contagem de testes conferida (sem remoções silenciosas)
+- [x] Cadastro grava usuário pendente, cofre e `birth_date_ct`; o hash guardado verifica o `authSecret`
+- [x] E-mail repetido devolve `Este e-mail já está cadastrado`
+- [x] `authSecret` com tamanho errado ou campo malformado devolve erro e não grava
+- [x] Login com o `authSecret` pelo `signInAction` existente funciona após aprovação
+- [x] ≥ 6 testes novos
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
+- [x] Contagem de testes conferida (sem remoções silenciosas)
 
 **Tests**: integration
 **Gate**: full

@@ -1,13 +1,16 @@
+import { randomUUID } from "node:crypto";
+import { verifyPassword } from "better-auth/crypto";
 import { eq } from "drizzle-orm";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { auth } from "@/lib/auth";
-import { session, user } from "@/lib/db/auth-schema";
+import { account, session, user } from "@/lib/db/auth-schema";
 import { db } from "@/lib/db/client";
 import { loginAttemptsRepo } from "@/lib/db/repos/login-attempts";
 import { usersRepo } from "@/lib/db/repos/users";
+import { userVault } from "@/lib/db/schema";
 import { createSignedInUser, insertCredentialUser, TEST_PASSWORD } from "@/test/auth";
 import { setupTestDb } from "@/test/db";
-import { signInAction, signOutAction, signUpAction } from "./auth";
+import { signInAction, signOutAction, signUpAction, signUpSealedAction } from "./auth";
 
 const request = vi.hoisted(() => ({ headers: new Headers() }));
 
@@ -369,5 +372,132 @@ describe("signOutAction", () => {
     await expect(signOutAction()).rejects.toThrow("NEXT_REDIRECT /login");
 
     expect(await auth.api.getSession({ headers: new Headers({ cookie }) })).toBeNull();
+  });
+});
+
+describe("signUpSealedAction", () => {
+  const AUTH_SECRET = "A".repeat(43);
+  const VAULT = {
+    kdfVersion: 1,
+    salt: "AAAAAAAAAAAAAAAAAAAAAA",
+    memKib: 65536,
+    iterations: 3,
+    parallelism: 1,
+    dekWrappedPw: "v1:pw",
+    dekWrappedRecovery: "v1:recovery",
+  } as const;
+  const payload = (over: Record<string, unknown> = {}) =>
+    ({
+      userId: randomUUID(),
+      name: "Ana",
+      email: "ana@x.com",
+      authSecret: AUTH_SECRET,
+      vault: VAULT,
+      birthDateCt: "v1:birth",
+      ...over,
+    }) as Parameters<typeof signUpSealedAction>[0];
+
+  const usersWith = (email: string) => db.select().from(user).where(eq(user.email, email));
+  const vaults = () => db.select().from(userVault);
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it("stores a pending user, the vault and the sealed birth date, with a hash that verifies the authSecret", async () => {
+    const body = payload();
+
+    expect(await signUpSealedAction(body)).toEqual({ ok: true });
+
+    const [created] = await usersWith("ana@x.com");
+    expect(created).toMatchObject({ id: body.userId, name: "Ana", status: "pending", birthDate: null });
+    expect(await sessionsOf(created.id)).toBe(0);
+    const [stored] = await vaults();
+    expect(stored).toMatchObject({ userId: body.userId, ...VAULT, birthDateCt: "v1:birth" });
+    const [credential] = await db.select().from(account).where(eq(account.userId, body.userId));
+    expect(credential.password).not.toBe(AUTH_SECRET);
+    expect(await verifyPassword({ hash: credential.password!, password: AUTH_SECRET })).toBe(true);
+  });
+
+  it("normalizes the e-mail and lets the approved user sign in with the authSecret as password", async () => {
+    const body = payload({ email: "  ANA@x.com " });
+    expect(await signUpSealedAction(body)).toEqual({ ok: true });
+    expect(await usersWith("ana@x.com")).toHaveLength(1);
+
+    expect(await usersRepo.transition(body.userId, "approve")).toBe("ok");
+
+    await expect(signIn("ana@x.com", AUTH_SECRET)).rejects.toThrow("NEXT_REDIRECT /");
+    expect(await sessionsOf(body.userId)).toBe(1);
+  });
+
+  it("answers a repeated e-mail in another case with the duplicate message and writes nothing", async () => {
+    expect(await signUpSealedAction(payload())).toEqual({ ok: true });
+
+    expect(await signUpSealedAction(payload({ email: "ANA@x.COM", name: "Outra" }))).toEqual({
+      ok: false,
+      error: "Este e-mail já está cadastrado",
+      fieldErrors: { email: "Este e-mail já está cadastrado" },
+    });
+
+    expect(await usersWith("ana@x.com")).toHaveLength(1);
+    expect(await vaults()).toHaveLength(1);
+  });
+
+  it.each([
+    ["short", "A".repeat(42)],
+    ["long", "A".repeat(44)],
+    ["outside base64url", `${"A".repeat(42)}+`],
+    ["empty", ""],
+  ])("refuses an authSecret that is %s and writes nothing", async (_label, authSecret) => {
+    const result = await signUpSealedAction(payload({ authSecret }));
+
+    expect(result).toMatchObject({ ok: false, fieldErrors: { authSecret: "Dados inválidos" } });
+    expect(await usersWith("ana@x.com")).toEqual([]);
+    expect(await vaults()).toEqual([]);
+  });
+
+  it.each([
+    ["userId that is not a uuid", { userId: "nao-e-uuid" }, "userId"],
+    ["empty name", { name: "  " }, "name"],
+    ["invalid e-mail", { email: "ana@" }, "email"],
+    ["birthDateCt in plain text", { birthDateCt: "1993-09-18" }, "birthDateCt"],
+    ["missing birthDateCt", { birthDateCt: undefined }, "birthDateCt"],
+    ["dekWrappedPw in plain text", { vault: { ...VAULT, dekWrappedPw: "texto puro" } }, "vault.dekWrappedPw"],
+    ["dekWrappedRecovery over 2048 characters", { vault: { ...VAULT, dekWrappedRecovery: `v1:${"a".repeat(2046)}` } }, "vault.dekWrappedRecovery"],
+    ["salt of the wrong size", { vault: { ...VAULT, salt: "AAAA" } }, "vault.salt"],
+    ["zero iterations", { vault: { ...VAULT, iterations: 0 } }, "vault.iterations"],
+    ["memory above the limit", { vault: { ...VAULT, memKib: 2_000_000 } }, "vault.memKib"],
+    ["fractional parallelism", { vault: { ...VAULT, parallelism: 1.5 } }, "vault.parallelism"],
+    ["unknown kdfVersion", { vault: { ...VAULT, kdfVersion: 2 } }, "vault.kdfVersion"],
+    ["missing vault", { vault: undefined }, "vault"],
+  ])("refuses a payload with %s and writes nothing", async (_label, over, field) => {
+    const result = await signUpSealedAction(payload(over));
+
+    expect(result).toMatchObject({ ok: false, fieldErrors: { [field]: expect.any(String) } });
+    expect(await db.$count(user)).toBe(1); // only the user created in beforeEach
+    expect(await vaults()).toEqual([]);
+  });
+
+  it("refuses a payload that is not an object", async () => {
+    const result = await signUpSealedAction(null as never);
+
+    expect(result.ok).toBe(false);
+    expect(await vaults()).toEqual([]);
+  });
+
+  it("returns the save error on a repeated id, logging only the code, and keeps the first user intact", async () => {
+    const log = vi.spyOn(console, "error").mockImplementation(() => {});
+    const first = payload();
+    expect(await signUpSealedAction(first)).toEqual({ ok: true });
+
+    expect(await signUpSealedAction(payload({ userId: first.userId, email: "outra@x.com" }))).toEqual({
+      ok: false,
+      error: "Não foi possível salvar. Tente novamente",
+    });
+
+    expect(log).toHaveBeenCalledWith("signUpSealedAction", expect.any(String));
+    expect(log.mock.calls[0]).toHaveLength(2);
+    expect(await usersWith("outra@x.com")).toEqual([]);
+    expect(await vaults()).toHaveLength(1);
   });
 });
