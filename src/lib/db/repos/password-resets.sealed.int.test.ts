@@ -334,3 +334,43 @@ describe("passwordResetsRepo.consumeSealed invalid tokens", () => {
     });
   });
 });
+
+describe("passwordResetsRepo.consume on an account with a vault", () => {
+  it("returns invalid and changes nothing: hash, sessions, vault, data and token stay", async () => {
+    const { userId, token } = await sealedAccount();
+    const hash = await hashOf(userId);
+    const vault = await vaultOf(userId);
+
+    expect(await passwordResetsRepo.consume(token, "senha-real-123")).toBe(
+      "invalid",
+    );
+
+    expect(await hashOf(userId)).toBe(hash);
+    expect(await verifyPassword({ hash, password: "senha-real-123" })).toBe(
+      false,
+    );
+    expect(await sessionsOf(userId)).toBe(1);
+    expect(await vaultOf(userId)).toEqual(vault);
+    expect(await dataCounts(userId)).toEqual({
+      transactions: 1,
+      categories: 1,
+      goals: 1,
+    });
+    expect(await passwordResetsRepo.isValid(token)).toBe(true);
+  });
+
+  it("still resets a legacy account without a vault", async () => {
+    const id = await insertCredentialUser("velho@x.com");
+    const issued = await passwordResetsRepo.issue("velho@x.com");
+
+    expect(await passwordResetsRepo.consume(issued!.token, "nova-senha-456")).toBe(
+      "ok",
+    );
+
+    expect(
+      await verifyPassword({ hash: await hashOf(id), password: "nova-senha-456" }),
+    ).toBe(true);
+    expect(await db.select().from(userVault)).toHaveLength(0);
+    expect(await passwordResetsRepo.isValid(issued!.token)).toBe(false);
+  });
+});
