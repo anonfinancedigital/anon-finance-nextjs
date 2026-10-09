@@ -595,12 +595,12 @@ T86 → T88
 
 **Done when**:
 
-- [ ] Porta os casos de `replaceSet` (criar, renomear, excluir, bloqueio com gastos, subcategoria de outra categoria, atomicidade)
-- [ ] Sem `percentChange` não grava versão; com ele faz upsert no mês corrente de America/Sao_Paulo
-- [ ] Mensagens `Esta categoria tem N gasto(s) e não pode ser excluída` e `Categoria não encontrada` preservadas
-- [ ] ≥ 10 testes novos
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
-- [ ] Contagem de testes conferida (sem remoções silenciosas)
+- [x] Porta os casos de `replaceSet` (criar, renomear, excluir, bloqueio com gastos, subcategoria de outra categoria, atomicidade)
+- [x] Sem `percentChange` não grava versão; com ele faz upsert no mês corrente de America/Sao_Paulo
+- [x] Mensagens `Esta categoria tem N gasto(s) e não pode ser excluída` e `Categoria não encontrada` preservadas
+- [x] ≥ 10 testes novos
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
+- [x] Contagem de testes conferida (sem remoções silenciosas)
 
 **Tests**: integration
 **Gate**: full
