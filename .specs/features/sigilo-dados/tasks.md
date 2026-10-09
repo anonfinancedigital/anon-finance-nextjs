@@ -706,12 +706,12 @@ T86 → T88
 
 **Done when**:
 
-- [ ] `rewrap` troca hash e `dekWrappedPw`, consome o token e apaga sessões; dados financeiros intactos
-- [ ] `wipe` apaga os dados, troca o cofre inteiro e o hash
-- [ ] Token inválido/expirado/usado devolve `invalid` sem alterar nada; erro no meio faz rollback e o token segue válido
-- [ ] ≥ 7 testes
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
-- [ ] Contagem de testes conferida (sem remoções silenciosas)
+- [x] `rewrap` troca hash e `dekWrappedPw`, consome o token e apaga sessões; dados financeiros intactos
+- [x] `wipe` apaga os dados, troca o cofre inteiro e o hash
+- [x] Token inválido/expirado/usado devolve `invalid` sem alterar nada; erro no meio faz rollback e o token segue válido
+- [x] ≥ 7 testes
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
+- [x] Contagem de testes conferida (sem remoções silenciosas)
 
 **Tests**: integration
 **Gate**: full
