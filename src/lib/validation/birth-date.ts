@@ -33,3 +33,12 @@ export function parseBirthDate(text: string, now: Date): Result<{ iso: string; a
   if (age > MAX_AGE) return { ok: false, error: `A idade atual deve ser de no máximo ${MAX_AGE} anos` };
   return { ok: true, value: { iso, age } };
 }
+
+/**
+ * Error message when a new current `age` reaches the independence age of the saved goal, `null` when it
+ * is compatible (or there is no goal).
+ */
+export function birthDateGoalConflict(age: number, retirementAge: number | null): string | null {
+  if (retirementAge === null || age < retirementAge) return null;
+  return `A nova data deixa a idade atual igual ou maior que a idade da independência do seu objetivo (${retirementAge})`;
+}

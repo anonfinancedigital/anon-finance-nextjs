@@ -2308,10 +2308,10 @@ T86 → T88
 
 **Done when**:
 
-- [ ] Nenhum import restante de `@/actions/goals`
-- [ ] Casos do teste antigo cobertos em `goals-sealed`
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
-- [ ] Contagem de testes conferida (sem remoções silenciosas)
+- [x] Nenhum import restante de `@/actions/goals`
+- [x] Casos do teste antigo cobertos em `goals-sealed`
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
+- [x] Contagem de testes conferida (sem remoções silenciosas)
 
 **Tests**: integration
 **Gate**: full
@@ -2334,10 +2334,10 @@ T86 → T88
 
 **Done when**:
 
-- [ ] Nenhum import restante de `@/actions/profile`
-- [ ] Regras de idade cobertas no cliente (T `birthform`) e gravação em `profile-sealed`
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
-- [ ] Contagem de testes conferida (sem remoções silenciosas)
+- [x] Nenhum import restante de `@/actions/profile`
+- [x] Regras de idade cobertas no cliente (T `birthform`) e gravação em `profile-sealed`
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
+- [x] Contagem de testes conferida (sem remoções silenciosas)
 
 **Tests**: integration
 **Gate**: full
@@ -2496,10 +2496,10 @@ T86 → T88
 
 **Done when**:
 
-- [ ] Typecheck prova que nada usa as funções removidas
-- [ ] Casos de `goals.int.test.ts` com equivalente sealed
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
-- [ ] Contagem de testes conferida (sem remoções silenciosas)
+- [x] Typecheck prova que nada usa as funções removidas
+- [x] Casos de `goals.int.test.ts` com equivalente sealed
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
+- [x] Contagem de testes conferida (sem remoções silenciosas)
 
 **Tests**: integration
 **Gate**: full

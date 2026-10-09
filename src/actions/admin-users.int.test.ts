@@ -11,7 +11,7 @@ import { createSignedInUser, insertCredentialUser, signInCookie } from "@/test/a
 import { insertCategory, setupTestDb } from "@/test/db";
 import { approveUser, deleteUser, rejectUser, revokeUser } from "./admin-users";
 import { signUpSealedAction } from "./auth";
-import { saveGoal } from "./goals";
+import { saveGoalSealed } from "./goals-sealed";
 
 const request = vi.hoisted(() => ({ headers: new Headers() }));
 
@@ -27,13 +27,12 @@ const NOT_FOUND = { ok: false, error: "Cadastro não encontrado" };
 const UNAUTHORIZED = { ok: false, error: "UNAUTHORIZED" };
 const SAVE_FAILED = { ok: false, error: "Não foi possível salvar. Tente novamente" };
 const DECIDED_AT = new Date("2026-01-02T03:04:05Z");
-const GOAL_INPUT = {
-  monthlyIncome: "10.000,00",
-  saved: "150.000,00",
-  birthDate: "15/06/1990",
-  retirementAge: "90",
-  annualRate: "8",
-  withdrawalRate: "6",
+const GOAL_DTO = {
+  monthlyIncomeCt: "v1:renda",
+  savedCt: "v1:guardado",
+  retirementAgeCt: "v1:idade",
+  annualRateCt: "v1:retorno",
+  withdrawalRateCt: "v1:retirada",
 };
 
 /** A database error carrying a Postgres code and a message that must not reach the log. */
@@ -172,12 +171,12 @@ async function addData(userId: string) {
     date: "2026-10-04",
     categoryId: cat.id,
   });
-  await goalsRepo.upsert(userId, {
-    monthlyIncomeCents: 1_000_000,
-    savedCents: 0,
-    retirementAge: 60,
-    annualRateBp: 800,
-    withdrawalRateBp: 600,
+  await goalsRepo.upsertSealed(userId, {
+    monthlyIncomeCt: "v1:renda",
+    savedCt: "v1:guardado",
+    retirementAgeCt: "v1:idade",
+    annualRateCt: "v1:retorno",
+    withdrawalRateCt: "v1:retirada",
   });
   return cat.id;
 }
@@ -229,7 +228,7 @@ describe("revokeUser", () => {
     expect(await revokeUser(userId)).toEqual({ ok: true });
 
     request.headers = new Headers({ cookie });
-    expect(await saveGoal(GOAL_INPUT)).toEqual(UNAUTHORIZED);
+    expect(await saveGoalSealed(GOAL_DTO)).toEqual(UNAUTHORIZED);
     expect(await db.$count(financialGoal, eq(financialGoal.userId, userId))).toBe(0);
   });
 });
