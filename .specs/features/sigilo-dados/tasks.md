@@ -1870,10 +1870,10 @@ T86 → T88
 
 **Done when**:
 
-- [ ] Nenhum valor em claro é lido ou calculado no servidor
-- [ ] `mes`, `categoria`, `subcategoria` e `busca` repassados ao cliente
-- [ ] `npm run build` passa
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] Nenhum valor em claro é lido ou calculado no servidor
+- [x] `mes`, `categoria`, `subcategoria` e `busca` repassados ao cliente
+- [x] `npm run build` passa
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
 
 **Tests**: none
 **Gate**: build
