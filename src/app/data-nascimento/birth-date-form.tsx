@@ -11,7 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { type ActionResult, SAVE_FAILED } from "@/lib/action-result";
 import { isoToBR, maskDateInput } from "@/lib/domain/date-br";
-import { parseBirthDate } from "@/lib/validation/birth-date";
+import { birthDateGoalConflict, parseBirthDate } from "@/lib/validation/birth-date";
 import { openBirthDate, openGoal } from "@/lib/vault/open";
 import { sealBirthDate } from "@/lib/vault/seal";
 import type { Ct, GoalDto } from "@/lib/vault/types";
@@ -67,12 +67,9 @@ export function BirthDateForm({ birthDateCt, goalDto }: { birthDateCt: Ct | null
       return;
     }
     const { retirementAge } = opened.data;
-    if (retirementAge !== null && parsed.value.age >= retirementAge) {
-      setState(
-        fieldError(
-          `A nova data deixa a idade atual igual ou maior que a idade da independência do seu objetivo (${retirementAge})`,
-        ),
-      );
+    const conflict = birthDateGoalConflict(parsed.value.age, retirementAge);
+    if (conflict) {
+      setState(fieldError(conflict));
       return;
     }
     startTransition(async () => {

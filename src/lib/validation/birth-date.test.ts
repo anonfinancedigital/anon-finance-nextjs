@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { parseBirthDate, today } from "./birth-date";
+import { birthDateGoalConflict, parseBirthDate, today } from "./birth-date";
 
 // 2026-06-15 12:00 em São Paulo.
 const now = new Date("2026-06-15T15:00:00Z");
@@ -54,5 +54,30 @@ describe("parseBirthDate", () => {
 describe("today", () => {
   it("usa o dia de America/Sao_Paulo", () => {
     expect(today(new Date("2026-06-16T01:00:00Z"))).toEqual({ year: 2026, month: 6, day: 15 });
+  });
+});
+
+describe("birthDateGoalConflict (NASC-18)", () => {
+  const CONFLICT =
+    "A nova data deixa a idade atual igual ou maior que a idade da independência do seu objetivo (50)";
+
+  it("recusa idade acima da independência: 18/09/1960 tem 65 anos em 2026-06-15", () => {
+    const parsed = parseBirthDate("18/09/1960", now);
+    expect(parsed.ok && birthDateGoalConflict(parsed.value.age, 50)).toBe(CONFLICT);
+  });
+
+  it("recusa idade igual à da independência: 01/01/1976 tem exatamente 50 anos", () => {
+    const parsed = parseBirthDate("01/01/1976", now);
+    expect(parsed.ok && parsed.value.age).toBe(50);
+    expect(parsed.ok && birthDateGoalConflict(parsed.value.age, 50)).toBe(CONFLICT);
+  });
+
+  it("aceita idade abaixo da independência: 18/09/1990 tem 35 anos", () => {
+    const parsed = parseBirthDate("18/09/1990", now);
+    expect(parsed.ok && birthDateGoalConflict(parsed.value.age, 50)).toBeNull();
+  });
+
+  it("sem objetivo salvo nunca há conflito", () => {
+    expect(birthDateGoalConflict(120, null)).toBeNull();
   });
 });
