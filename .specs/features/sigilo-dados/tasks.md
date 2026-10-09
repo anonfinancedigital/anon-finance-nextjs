@@ -2576,12 +2576,12 @@ T86 → T88
 
 **Done when**:
 
-- [ ] Com uma conta legada, `finalizeVault` lança e o esquema permanece idêntico
-- [ ] Sem contas legadas, remove as colunas (testado dentro de transação com rollback no fim, sem afetar outros testes)
-- [ ] Documenta no cabeçalho do script o backup prévio obrigatório do operador
-- [ ] ≥ 3 testes
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
-- [ ] Contagem de testes conferida (sem remoções silenciosas)
+- [x] Com uma conta legada, `finalizeVault` lança e o esquema permanece idêntico
+- [x] Sem contas legadas, remove as colunas (testado dentro de transação com rollback no fim, sem afetar outros testes)
+- [x] Documenta no cabeçalho do script o backup prévio obrigatório do operador
+- [x] ≥ 3 testes
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
+- [x] Contagem de testes conferida (sem remoções silenciosas)
 
 **Tests**: integration
 **Gate**: full

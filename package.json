@@ -14,7 +14,8 @@
     "db:up": "sh scripts/db-up.sh",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
-    "db:seed": "tsx scripts/seed-user.ts"
+    "db:seed": "tsx scripts/seed-user.ts",
+    "db:finalize-vault": "tsx scripts/finalize-vault.ts"
   },
   "dependencies": {
     "@better-auth/infra": "^0.4.14",
