@@ -346,9 +346,9 @@ T86 → T88
 
 **Done when**:
 
-- [ ] Todos os tipos do design exportados, sem `any`
-- [ ] Nenhum import de servidor (arquivo isomórfico)
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] Todos os tipos do design exportados, sem `any`
+- [x] Nenhum import de servidor (arquivo isomórfico)
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
 
 **Tests**: none
 **Gate**: build
