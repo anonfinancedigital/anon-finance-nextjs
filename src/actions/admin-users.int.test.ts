@@ -12,7 +12,7 @@ import { createSignedInUser, insertCredentialUser, signInCookie } from "@/test/a
 import { insertCategory, setupTestDb } from "@/test/db";
 import { approveUser, deleteUser, rejectUser, revokeUser } from "./admin-users";
 import { signUpAction } from "./auth";
-import { saveGoal } from "./goals";
+import { saveGoalSealed } from "./goals-sealed";
 
 const request = vi.hoisted(() => ({ headers: new Headers() }));
 
@@ -28,13 +28,12 @@ const NOT_FOUND = { ok: false, error: "Cadastro não encontrado" };
 const UNAUTHORIZED = { ok: false, error: "UNAUTHORIZED" };
 const SAVE_FAILED = { ok: false, error: "Não foi possível salvar. Tente novamente" };
 const DECIDED_AT = new Date("2026-01-02T03:04:05Z");
-const GOAL_INPUT = {
-  monthlyIncome: "10.000,00",
-  saved: "150.000,00",
-  birthDate: "15/06/1990",
-  retirementAge: "90",
-  annualRate: "8",
-  withdrawalRate: "6",
+const GOAL_DTO = {
+  monthlyIncomeCt: "v1:renda",
+  savedCt: "v1:guardado",
+  retirementAgeCt: "v1:idade",
+  annualRateCt: "v1:retorno",
+  withdrawalRateCt: "v1:retirada",
 };
 
 const userRow = async (id: string) => (await db.select().from(user).where(eq(user.id, id)))[0];
@@ -222,7 +221,7 @@ describe("revokeUser", () => {
     expect(await revokeUser(userId)).toEqual({ ok: true });
 
     request.headers = new Headers({ cookie });
-    expect(await saveGoal(GOAL_INPUT)).toEqual(UNAUTHORIZED);
+    expect(await saveGoalSealed(GOAL_DTO)).toEqual(UNAUTHORIZED);
     expect(await db.$count(financialGoal, eq(financialGoal.userId, userId))).toBe(0);
   });
 });
