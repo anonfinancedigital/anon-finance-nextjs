@@ -1047,12 +1047,12 @@ T86 → T88
 
 **Done when**:
 
-- [ ] Conjunto de ids do pacote é igual ao de `plain` (transações, categorias, subcategorias, versões, meta)
-- [ ] Abrir o pacote com `open*` reproduz `plain`
-- [ ] Nenhum valor em texto puro na saída serializada
-- [ ] ≥ 4 testes
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
-- [ ] Contagem de testes conferida (sem remoções silenciosas)
+- [x] Conjunto de ids do pacote é igual ao de `plain` (transações, categorias, subcategorias, versões, meta)
+- [x] Abrir o pacote com `open*` reproduz `plain`
+- [x] Nenhum valor em texto puro na saída serializada
+- [x] ≥ 4 testes
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Contagem de testes conferida (sem remoções silenciosas)
 
 **Tests**: unit
 **Gate**: quick
