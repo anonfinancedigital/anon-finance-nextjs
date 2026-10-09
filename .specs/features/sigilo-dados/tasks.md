@@ -734,12 +734,12 @@ T86 → T88
 
 **Done when**:
 
-- [ ] Conta com dados em texto puro devolve todas as tabelas, inclusive recorrentes e categoria excluída
-- [ ] Conta com cofre devolve erro `not_legacy`
-- [ ] Só lê linhas do usuário pedido
-- [ ] ≥ 4 testes
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
-- [ ] Contagem de testes conferida (sem remoções silenciosas)
+- [x] Conta com dados em texto puro devolve todas as tabelas, inclusive recorrentes e categoria excluída
+- [x] Conta com cofre devolve erro `not_legacy`
+- [x] Só lê linhas do usuário pedido
+- [x] ≥ 4 testes
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
+- [x] Contagem de testes conferida (sem remoções silenciosas)
 
 **Tests**: integration
 **Gate**: full
