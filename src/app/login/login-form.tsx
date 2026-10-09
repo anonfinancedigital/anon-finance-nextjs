@@ -6,6 +6,7 @@ import { signInAction } from "@/actions/auth";
 import { getKdfParamsAction } from "@/actions/vault";
 import { Button } from "@/components/ui/button";
 import { PasswordInput } from "@/components/password-input";
+import { useHydrated } from "@/components/use-hydrated";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { fromBase64Url } from "@/lib/crypto/base64url";
@@ -16,6 +17,7 @@ export function LoginForm() {
   const [email, setEmail] = useState("");
   const [deriving, setDeriving] = useState(false);
   const [prepareError, setPrepareError] = useState<string | null>(null);
+  const hydrated = useHydrated();
   const forgotHref = email.trim() ? `/esqueci-senha?email=${encodeURIComponent(email.trim())}` : "/esqueci-senha";
   const error = prepareError ?? (state && !state.ok ? state.error : null);
 
@@ -65,7 +67,7 @@ export function LoginForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form method="post" onSubmit={handleSubmit} className="space-y-4">
       <div className="space-y-2">
         <Label htmlFor="email">E-mail</Label>
         <Input
@@ -92,7 +94,7 @@ export function LoginForm() {
           {error}
         </p>
       )}
-      <Button type="submit" className="w-full" disabled={pending || deriving}>
+      <Button type="submit" className="w-full" disabled={!hydrated || pending || deriving}>
         Entrar
       </Button>
       <p className="flex justify-between text-sm">

@@ -5,6 +5,7 @@ import { type FormEvent, useState } from "react";
 import { signUpSealedAction } from "@/actions/auth";
 import { PasswordInput } from "@/components/password-input";
 import { RecoveryKeyDialog } from "@/components/recovery-key-dialog";
+import { useHydrated } from "@/components/use-hydrated";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -22,6 +23,7 @@ export function SignupForm() {
   const [birthDate, setBirthDate] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const hydrated = useHydrated();
 
   /**
    * Validates here, builds the vault in the browser and sends only the SIGILO-11 fields: the
@@ -89,7 +91,7 @@ export function SignupForm() {
   const generalError = state && !state.ok && !state.fieldErrors ? state.error : undefined;
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form method="post" onSubmit={handleSubmit} className="space-y-4">
       <div className="space-y-2">
         <Label htmlFor="name">Nome</Label>
         <Input
@@ -169,7 +171,7 @@ export function SignupForm() {
           {generalError}
         </p>
       )}
-      <Button type="submit" className="w-full" disabled={pending || mismatch || recoveryKey !== null}>
+      <Button type="submit" className="w-full" disabled={!hydrated || pending || mismatch || recoveryKey !== null}>
         Cadastrar
       </Button>
       <p className="text-center text-sm">

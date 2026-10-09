@@ -5,6 +5,7 @@ import { type FormEvent, useState } from "react";
 import { commitLegacyMigrationAction, loadLegacyDataAction } from "@/actions/legacy";
 import { PasswordInput } from "@/components/password-input";
 import { RecoveryKeyDialog } from "@/components/recovery-key-dialog";
+import { useHydrated } from "@/components/use-hydrated";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { SAVE_FAILED } from "@/lib/action-result";
@@ -28,6 +29,7 @@ export function ProtectForm({ userId }: { userId: string }) {
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [prepared, setPrepared] = useState<Prepared | null>(null);
+  const hydrated = useHydrated();
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -79,7 +81,7 @@ export function ProtectForm({ userId }: { userId: string }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form method="post" onSubmit={handleSubmit} className="space-y-4">
       <p className="text-sm">
         Seus dados passarão a ser cifrados no seu navegador. Nesta única passagem o servidor ainda vê sua senha e
         seus dados em texto puro; depois disso eles ficam cifrados.
@@ -105,7 +107,7 @@ export function ProtectForm({ userId }: { userId: string }) {
           {error}
         </p>
       )}
-      <Button type="submit" className="w-full" disabled={pending || prepared !== null}>
+      <Button type="submit" className="w-full" disabled={!hydrated || pending || prepared !== null}>
         Proteger meus dados
       </Button>
       {prepared !== null && (
