@@ -1105,12 +1105,12 @@ T86 → T88
 
 **Done when**:
 
-- [ ] E-mail inexistente e existente devolvem formas iguais; conta legada devolve `mode: "legacy"`
-- [ ] `getVaultAction` sem sessão devolve `UNAUTHORIZED` sem tocar nos dados
-- [ ] `getVaultAction` devolve só o cofre do usuário da sessão
-- [ ] ≥ 5 testes
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
-- [ ] Contagem de testes conferida (sem remoções silenciosas)
+- [x] E-mail inexistente e existente devolvem formas iguais; conta legada devolve `mode: "legacy"`
+- [x] `getVaultAction` sem sessão devolve `UNAUTHORIZED` sem tocar nos dados
+- [x] `getVaultAction` devolve só o cofre do usuário da sessão
+- [x] ≥ 5 testes
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
+- [x] Contagem de testes conferida (sem remoções silenciosas)
 
 **Tests**: integration
 **Gate**: full
