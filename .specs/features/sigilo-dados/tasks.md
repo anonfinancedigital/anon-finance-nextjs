@@ -1974,9 +1974,9 @@ T86 → T88
 
 **Done when**:
 
-- [ ] Soma ≠ 100% e nomes duplicados mostram as mensagens atuais antes de qualquer envio (inspeção)
-- [ ] Percentual inalterado não envia `percentChange`
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] Soma ≠ 100% e nomes duplicados mostram as mensagens atuais antes de qualquer envio (inspeção)
+- [x] Percentual inalterado não envia `percentChange`
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
 
 **Tests**: none
 **Gate**: build
