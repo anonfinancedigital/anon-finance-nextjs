@@ -762,13 +762,13 @@ T86 → T88
 
 **Done when**:
 
-- [ ] Sucesso: nenhuma coluna em texto puro resta para o usuário, cofre criado, hash novo verifica `authSecret`
-- [ ] Senha antiga errada devolve `wrong_password` e nada muda
-- [ ] Pacote sem uma linha existente devolve `mismatch` e rollback total (texto puro e hash intactos)
-- [ ] Conta já com cofre devolve `not_legacy`
-- [ ] ≥ 6 testes
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
-- [ ] Contagem de testes conferida (sem remoções silenciosas)
+- [x] Sucesso: nenhuma coluna em texto puro resta para o usuário, cofre criado, hash novo verifica `authSecret`
+- [x] Senha antiga errada devolve `wrong_password` e nada muda
+- [x] Pacote sem uma linha existente devolve `mismatch` e rollback total (texto puro e hash intactos)
+- [x] Conta já com cofre devolve `not_legacy`
+- [x] ≥ 6 testes
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
+- [x] Contagem de testes conferida (sem remoções silenciosas)
 
 **Tests**: integration
 **Gate**: full
