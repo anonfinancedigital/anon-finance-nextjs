@@ -2024,9 +2024,9 @@ T86 → T88
 
 **Done when**:
 
-- [ ] Sem formatação de valor no servidor
-- [ ] `npm run build` passa
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] Sem formatação de valor no servidor
+- [x] `npm run build` passa
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
 
 **Tests**: none
 **Gate**: build
