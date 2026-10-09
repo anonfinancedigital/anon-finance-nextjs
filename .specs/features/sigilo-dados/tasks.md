@@ -1604,10 +1604,10 @@ T86 → T88
 
 **Done when**:
 
-- [ ] `Continuar` desabilitado até marcar a caixa
-- [ ] Texto da caixa exatamente `Guardei minha chave de recuperação`
-- [ ] Fechar sem confirmar não é possível
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] `Continuar` desabilitado até marcar a caixa
+- [x] Texto da caixa exatamente `Guardei minha chave de recuperação`
+- [x] Fechar sem confirmar não é possível
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
 
 **Tests**: none
 **Gate**: build
