@@ -990,13 +990,13 @@ T86 → T88
 
 **Done when**:
 
-- [ ] Senha correta devolve DEK que decifra um campo selado antes
-- [ ] Senha errada lança `WrongPasswordError`
-- [ ] DEK devolvida é não extraível
-- [ ] `deriveLoginSecret` coincide com o `authSecret` de `createVaultMaterial` para a mesma senha e salt
-- [ ] ≥ 4 testes
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
-- [ ] Contagem de testes conferida (sem remoções silenciosas)
+- [x] Senha correta devolve DEK que decifra um campo selado antes
+- [x] Senha errada lança `WrongPasswordError`
+- [x] DEK devolvida é não extraível
+- [x] `deriveLoginSecret` coincide com o `authSecret` de `createVaultMaterial` para a mesma senha e salt
+- [x] ≥ 4 testes
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Contagem de testes conferida (sem remoções silenciosas)
 
 **Tests**: unit
 **Gate**: quick
