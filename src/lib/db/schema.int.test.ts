@@ -57,7 +57,7 @@ describe("category constraints", () => {
     await createCategory(userId, "Mínimo", 1);
     await createCategory(userId, "Máximo", 100000000);
     const rows = await db.select().from(categoryPercent);
-    expect(rows.map((r) => r.percentMicro).sort((a, b) => a - b)).toEqual([1, 100000000]);
+    expect(rows.map((r) => r.percentMicro).sort((a, b) => a! - b!)).toEqual([1, 100000000]);
   });
 
   it("rejects a percent version of 0", async () => {

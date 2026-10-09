@@ -12,7 +12,7 @@ import {
   startOfSeries,
 } from "@/lib/domain/recurrence";
 import { db } from "../client";
-import { transaction } from "../schema";
+import { plain, transaction } from "../schema";
 
 export type MonthRange = { start: string; endExclusive: string };
 
@@ -34,8 +34,15 @@ export type TransactionData = {
 
 export type Transaction = Omit<
   typeof transaction.$inferSelect,
-  "userId" | "recurring" | "recurrenceDay" | "recurrenceEnd" | "seriesId"
->;
+  | "userId"
+  | "recurring"
+  | "recurrenceDay"
+  | "recurrenceEnd"
+  | "seriesId"
+  | "amountCents"
+  | "amountCt"
+  | "descriptionCt"
+> & { amountCents: number };
 
 /** A transaction as shown in a month: recurring rows carry the occurrence's projected date. */
 export type Occurrence = Transaction & {
@@ -339,10 +346,11 @@ async function listByMonth(userId: string, range: MonthRange): Promise<Occurrenc
     ...new Set(rows.flatMap((r) => (r.seriesId ? [r.seriesId] : []))),
   ]);
   return rows
-    .map(({ recurrenceDay, seriesId, ...row }) => {
+    .map(({ recurrenceDay, seriesId, amountCents, ...row }) => {
       const segments = seriesId ? series.get(seriesId) : undefined;
       return {
         ...row,
+        amountCents: plain(amountCents, "transaction.amount_cents"),
         date: occurrenceDate(
           { id: row.id, seriesId: null, date: row.date, recurringDay: recurrenceDay, endMonth: null },
           month,

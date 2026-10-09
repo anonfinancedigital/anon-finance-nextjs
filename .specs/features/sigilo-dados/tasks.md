@@ -371,10 +371,10 @@ T86 → T88
 
 **Done when**:
 
-- [ ] `npm run db:generate` produz a `0010` e ela é commitada
-- [ ] Migração aplica no banco de teste privado e os testes de integração existentes seguem verdes
-- [ ] `CHECK` aceita linha só em texto puro e linha só cifrada, e recusa as duas ou nenhuma (conferido por SQL manual no banco de teste)
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
+- [x] `npm run db:generate` produz a `0010` e ela é commitada
+- [x] Migração aplica no banco de teste privado e os testes de integração existentes seguem verdes
+- [x] `CHECK` aceita linha só em texto puro e linha só cifrada, e recusa as duas ou nenhuma (conferido por SQL manual no banco de teste)
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
 
 **Tests**: none
 **Gate**: full
