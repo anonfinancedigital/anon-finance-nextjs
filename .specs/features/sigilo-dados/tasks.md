@@ -201,13 +201,13 @@ T86 → T88
 
 **Done when**:
 
-- [ ] Ida e volta devolve o texto original (vazio, ASCII, acentos, 2 KB)
-- [ ] Duas cifragens do mesmo texto e AAD diferem
-- [ ] AAD de outra linha, outra coluna ou outro usuário lança `DecryptError`
-- [ ] Byte alterado, prefixo `v2:`, base64 inválido e payload curto lançam `DecryptError`
-- [ ] ≥ 8 testes
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
-- [ ] Contagem de testes conferida (sem remoções silenciosas)
+- [x] Ida e volta devolve o texto original (vazio, ASCII, acentos, 2 KB)
+- [x] Duas cifragens do mesmo texto e AAD diferem
+- [x] AAD de outra linha, outra coluna ou outro usuário lança `DecryptError`
+- [x] Byte alterado, prefixo `v2:`, base64 inválido e payload curto lançam `DecryptError`
+- [x] ≥ 8 testes
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Contagem de testes conferida (sem remoções silenciosas)
 
 **Tests**: unit
 **Gate**: quick
