@@ -250,6 +250,18 @@ describe("categoriesRepo.replaceSetSealed", () => {
     expect(s.name).toBeNull();
   });
 
+  it("resending an existing category toggles the investment flag both ways", async () => {
+    const userId = await insertTestUser();
+    const items = [created("v1:A", "v1:pa"), created("v1:B", "v1:pb", { isInvestment: true })];
+    await save(userId, items);
+    const flags = async () => (await list(userId)).map((c) => [c.nameCt, c.isInvestment]);
+    expect(await flags()).toEqual([["v1:A", false], ["v1:B", true]]);
+
+    await save(userId, items.map((i) => kept(i.clientId, i.nameCt, { isInvestment: !i.isInvestment })));
+
+    expect(await flags()).toEqual([["v1:A", true], ["v1:B", false]]);
+  });
+
   it("updates existing categories in place when ids are sent (rename and recolor)", async () => {
     const userId = await insertTestUser();
     const [a, b, c] = await seed(userId);
@@ -540,5 +552,26 @@ describe("categoriesRepo.replaceSetSealed", () => {
     ).rejects.toThrow();
 
     expect((await list(userId)).map((c) => c.nameCt)).toEqual(["v1:A"]);
+  });
+});
+
+describe("categoriesRepo.countExpenses", () => {
+  it("counts the expenses linked to a category", async () => {
+    const userId = await insertTestUser();
+    const withExpenses = await insertSealed(userId, { nameCt: "v1:a" });
+    const without = await insertSealed(userId, { nameCt: "v1:b" });
+    for (let i = 0; i < 3; i++) {
+      await db.insert(transaction).values({
+        id: randomUUID(),
+        userId,
+        kind: "expense",
+        amountCt: "v1:g",
+        date: "2026-10-04",
+        categoryId: withExpenses,
+      });
+    }
+
+    expect(await categoriesRepo.countExpenses(withExpenses)).toBe(3);
+    expect(await categoriesRepo.countExpenses(without)).toBe(0);
   });
 });

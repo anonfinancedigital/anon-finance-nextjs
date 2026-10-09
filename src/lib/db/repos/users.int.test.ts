@@ -430,7 +430,7 @@ describe("isolation of a new approved user (SIGNUP-07)", () => {
     const found = await usersRepo.findByEmail(ana.email);
     expect(await usersRepo.transition(found!.id, "approve")).toBe("ok");
 
-    expect(await categoriesRepo.list(found!.id, new Date("2026-10-15T12:00:00Z"))).toEqual([]);
+    expect(await categoriesRepo.listForMonthSealed(found!.id, { year: 2026, month: 10 }, new Date("2026-10-15T12:00:00Z"))).toEqual([]);
     expect(await transactionsRepo.listByMonthSealed(found!.id, monthRange({ year: 2026, month: 10 }))).toEqual(
       [],
     );
