@@ -315,13 +315,13 @@ T86 → T88
 
 **Done when**:
 
-- [ ] Chave gerada tem 16 bytes e `parse(display)` devolve os mesmos bytes
-- [ ] `parse` aceita minúsculas, espaços e sem `-`
-- [ ] `parse` lança `InvalidRecoveryKey` com caractere inválido ou tamanho errado
-- [ ] Duas chaves geradas diferem
-- [ ] ≥ 5 testes
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
-- [ ] Contagem de testes conferida (sem remoções silenciosas)
+- [x] Chave gerada tem 16 bytes e `parse(display)` devolve os mesmos bytes
+- [x] `parse` aceita minúsculas, espaços e sem `-`
+- [x] `parse` lança `InvalidRecoveryKey` com caractere inválido ou tamanho errado
+- [x] Duas chaves geradas diferem
+- [x] ≥ 5 testes
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Contagem de testes conferida (sem remoções silenciosas)
 
 **Tests**: unit
 **Gate**: quick
