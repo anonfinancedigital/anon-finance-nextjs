@@ -1472,11 +1472,11 @@ T86 → T88
 
 **Done when**:
 
-- [ ] Rotas protegidas sem cookie seguem redirecionando para `/login`
-- [ ] `/privacidade`, `/login`, `/cadastro`, `/esqueci-senha` e `/redefinir-senha` não redirecionam
-- [ ] Resposta de rota protegida leva `Cache-Control: no-store` e CSP com o mesmo nonce de `x-nonce`
-- [ ] `npm run build` passa
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] Rotas protegidas sem cookie seguem redirecionando para `/login`
+- [x] `/privacidade`, `/login`, `/cadastro`, `/esqueci-senha` e `/redefinir-senha` não redirecionam
+- [x] Resposta de rota protegida leva `Cache-Control: no-store` e CSP com o mesmo nonce de `x-nonce`
+- [x] `npm run build` passa
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
 
 **Tests**: none
 **Gate**: build

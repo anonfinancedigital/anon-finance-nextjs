@@ -1,20 +1,41 @@
 import { getSessionCookie } from "better-auth/cookies";
 import { type NextRequest, NextResponse } from "next/server";
+import { buildCsp } from "@/lib/security-headers";
+
+const PUBLIC_PATHS = ["/login", "/cadastro", "/esqueci-senha", "/redefinir-senha", "/privacidade"];
+
+function isPublic(pathname: string): boolean {
+  return PUBLIC_PATHS.some((path) => pathname === path || pathname.startsWith(`${path}/`));
+}
 
 /**
- * Optimistic check only (UX): sends visitors without a session cookie to /login.
+ * Runs on every page (public ones too) so that all of them get a per-request CSP nonce.
+ * Optimistic check only (UX): sends visitors without a session cookie to /login when the page is protected.
  * The real access control is requireSession* in every page and action.
  */
 export function proxy(request: NextRequest) {
-  if (!getSessionCookie(request)) {
+  const protectedRoute = !isPublic(request.nextUrl.pathname);
+  if (protectedRoute && !getSessionCookie(request)) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
-  return NextResponse.next();
+
+  const nonce = Buffer.from(crypto.randomUUID()).toString("base64");
+  const csp = buildCsp(nonce, process.env.NODE_ENV === "development");
+
+  // Next.js reads the nonce from the CSP header of the request while rendering.
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set("x-nonce", nonce);
+  requestHeaders.set("Content-Security-Policy", csp);
+
+  const response = NextResponse.next({ request: { headers: requestHeaders } });
+  response.headers.set("Content-Security-Policy", csp);
+  if (protectedRoute) response.headers.set("Cache-Control", "no-store");
+  return response;
 }
 
 export const config = {
   matcher: [
-    // Everything except the login, signup and password reset pages, Better Auth routes, Next assets and public images.
-    "/((?!login|cadastro|esqueci-senha|redefinir-senha|api/auth|_next/static|_next/image|favicon\\.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)",
+    // Everything except Better Auth routes, Next assets and public images.
+    "/((?!api/auth|_next/static|_next/image|favicon\\.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)",
   ],
 };
