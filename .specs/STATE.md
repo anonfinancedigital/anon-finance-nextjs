@@ -8,7 +8,7 @@
 - **Trade-off**: Sem API reutilizável por outros clientes (ex.: app mobile); expor uma API depois exige criar Route Handlers.
 - **Scope**: Todo o projeto (UI, escrita, leitura)
 - **Date**: 2026-10-04
-- **Status**: active
+- **Status**: superseded by AD-011 (só quanto à leitura de dados financeiros; Server Actions de escrita e a ausência de API REST continuam valendo)
 
 ### AD-002
 - **Decision**: Stack de dados e auth: Postgres (Neon via Vercel) + Drizzle ORM com driver `node-postgres` em todos os ambientes + Better Auth (e-mail/senha, sessão em banco).
@@ -80,6 +80,22 @@
 - **Trade-off**: Reimplementa um fluxo que a biblioteca já oferece; futuras mudanças do Better Auth nesse fluxo não chegam sozinhas.
 - **Scope**: `password-resets` (repo), ações de redefinição, `auth.ts` (não configurar `sendResetPassword`)
 - **Date**: 2026-10-07
+- **Status**: active
+
+### AD-011
+- **Decision**: Os campos financeiros e a data de nascimento são cifrados no navegador (AES-256-GCM) com uma DEK aleatória por usuário, embrulhada pela KEK derivada da senha (Argon2id + HKDF) e pela chave de recuperação; o servidor guarda só `v1:<base64url>` e a estrutura em claro (datas, tipo, ids, recorrência). Totais, resumo, filtros e prévia da meta rodam no cliente sobre dados decifrados; Server Components entregam linhas cifradas por mês. Substitui AD-001 na leitura financeira.
+- **Reason**: Pedido do usuário: nem o administrador, nem o banco, nem backups podem ler os dados.
+- **Trade-off**: Esquecer senha e chave de recuperação perde os dados; sem `SUM`/busca em SQL; páginas viram esqueleto até decifrar; o operador que publica código malicioso ainda pode capturar a senha.
+- **Scope**: Schema financeiro, repos, Server Actions de dados, páginas `(app)`, cadastro, login, redefinição de senha, `src/lib/crypto`, `src/lib/vault`
+- **Date**: 2026-10-09
+- **Status**: active
+
+### AD-012
+- **Decision**: Contas existentes migram por usuário: colunas `*_ct` ao lado das em claro, `user_vault` ausente = conta legada, que é redirecionada a `/proteger-dados`; repos normais nunca leem texto puro. O legado sai por `scripts/finalize-vault.ts`, que recusa se resta conta legada, e por um follow-up que remove as colunas do `schema.ts`.
+- **Reason**: Migrar sem a senha derivada só é possível no navegador do dono da conta, no próximo login.
+- **Trade-off**: Código legado transitório (`legacyRepo`, `/proteger-dados`) até todas as contas migrarem; na migração o servidor vê senha e dados em claro uma vez.
+- **Scope**: Migração `0010`, `legacyRepo`, `/proteger-dados`, `scripts/finalize-vault.ts`
+- **Date**: 2026-10-09
 - **Status**: active
 
 ## Handoff
