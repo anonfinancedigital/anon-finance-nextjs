@@ -2282,10 +2282,10 @@ T86 → T88
 
 **Done when**:
 
-- [ ] Nenhum import restante de `@/actions/categories`
-- [ ] Todos os casos do teste antigo têm equivalente em `categories-sealed`
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
-- [ ] Contagem de testes conferida (sem remoções silenciosas)
+- [x] Nenhum import restante de `@/actions/categories`
+- [x] Todos os casos do teste antigo têm equivalente em `categories-sealed`
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
+- [x] Contagem de testes conferida (sem remoções silenciosas)
 
 **Tests**: integration
 **Gate**: full
