@@ -1737,10 +1737,10 @@ T86 → T88
 
 **Done when**:
 
-- [ ] Conta com cofre é redirecionada para `/`
-- [ ] Conta sem sessão vai para `/login`
-- [ ] Fora do grupo `(app)` para não entrar em laço de redirecionamento
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] Conta com cofre é redirecionada para `/`
+- [x] Conta sem sessão vai para `/login`
+- [x] Fora do grupo `(app)` para não entrar em laço de redirecionamento
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
 
 **Tests**: none
 **Gate**: build
