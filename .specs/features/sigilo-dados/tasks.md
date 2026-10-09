@@ -1553,10 +1553,10 @@ T86 → T88
 
 **Done when**:
 
-- [ ] Fluxo usa `getVaultAction` e `unlockVault`, sem enviar a senha ao servidor (inspeção)
-- [ ] Mensagem `Senha incorreta` em erro
-- [ ] Usa `PasswordInput` e o visual das telas públicas
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
+- [x] Fluxo usa `getVaultAction` e `unlockVault`, sem enviar a senha ao servidor (inspeção)
+- [x] Mensagem `Senha incorreta` em erro
+- [x] Usa `PasswordInput` e o visual das telas públicas
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit`
 
 **Tests**: none
 **Gate**: build

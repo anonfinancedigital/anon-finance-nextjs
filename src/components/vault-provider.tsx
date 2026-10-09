@@ -5,6 +5,7 @@ import { getVaultAction } from "@/actions/vault";
 import { LOAD_ERROR_MESSAGE } from "@/components/load-error";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
+import { UnlockScreen } from "@/components/unlock-screen";
 import { DecryptError } from "@/lib/crypto/aead";
 import { unwrapDek } from "@/lib/crypto/wrap";
 import { deviceKey } from "@/lib/vault/device-store";
@@ -89,8 +90,10 @@ export function VaultProvider({ userId, children }: { userId: string; children: 
   const vault = useMemo(() => (dek ? { dek, userId } : null), [dek, userId]);
 
   if (state.status === "loading") return <VaultSkeleton />;
-  // Locked: no child renders without the DEK (SIGILO-17).
-  if (state.status === "locked") return null;
+  // Locked: "Desbloquear" replaces the children, none renders without the DEK (SIGILO-17).
+  if (state.status === "locked") {
+    return <UnlockScreen userId={userId} onUnlocked={(unlocked) => setState({ status: "ready", dek: unlocked })} />;
+  }
   if (state.status === "error" || !vault) {
     return (
       <Alert variant="destructive" className="flex flex-wrap items-center justify-between gap-3">
