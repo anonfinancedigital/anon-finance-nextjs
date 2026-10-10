@@ -4,11 +4,12 @@ import { MenuIcon, XIcon } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import { Logo } from "@/components/brand/Logo";
+import { BRAND_NAME } from "@/lib/brand";
 import { primaryButton } from "./styles";
 
 const LINKS = [
   { href: "/#cockpit", label: "Cockpit" },
-  { href: "/#apice", label: "O Ápice" },
+  { href: "/#liberdade", label: "A Liberdade" },
   { href: "/privacidade", label: "Segurança" },
   { href: "/#manifesto", label: "Manifesto" },
 ];
@@ -23,7 +24,7 @@ export function Navbar() {
   return (
     <header className="sticky top-0 z-50 border-b border-white/[0.08] bg-black/50 backdrop-blur-xl">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
-        <Link href="/" aria-label="Vértice, página inicial" onClick={close}>
+        <Link href="/" aria-label={`${BRAND_NAME}, página inicial`} onClick={close}>
           <Logo />
         </Link>
 

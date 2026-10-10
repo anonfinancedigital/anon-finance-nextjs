@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Logo } from "@/components/brand/Logo";
+import { BRAND_NAME, BRAND_TAGLINE } from "@/lib/brand";
 
 const FOOTER_COLUMNS = [
   {
@@ -7,7 +8,7 @@ const FOOTER_COLUMNS = [
     links: [
       { href: "/#cockpit", label: "Cockpit" },
       { href: "/#pilares", label: "Alocação" },
-      { href: "/#apice", label: "Ápice" },
+      { href: "/#liberdade", label: "Liberdade" },
     ],
   },
   {
@@ -26,7 +27,7 @@ export function SiteFooter() {
       <div className="mx-auto grid max-w-6xl gap-10 px-6 py-12 md:grid-cols-4">
         <div className="space-y-3 md:col-span-2">
           <Logo />
-          <p className="max-w-xs text-sm text-zinc-500">Da renda mensal ao ápice patrimonial.</p>
+          <p className="max-w-xs text-sm text-zinc-500">{BRAND_TAGLINE}</p>
         </div>
         {FOOTER_COLUMNS.map((column) => (
           <nav key={column.title} aria-label={column.title} className="space-y-3">
@@ -44,7 +45,7 @@ export function SiteFooter() {
         ))}
       </div>
       <div className="border-t border-white/[0.08] px-6 py-5 text-center text-xs text-zinc-600">
-        © 2026 Vértice. Desenvolvido para quem leva patrimônio a sério.
+        © 2026 {BRAND_NAME}. Desenvolvido para quem leva patrimônio a sério.
       </div>
     </footer>
   );

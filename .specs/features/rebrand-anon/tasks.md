@@ -356,14 +356,16 @@ T9 → T10 → T11 → T12
 
 **Done when**:
 
-- [ ] aria-label "ANON, página inicial"; item "A Liberdade" com `href="/#liberdade"`
-- [ ] Rodapé: link "Liberdade", slogan e "© 2026 ANON. Desenvolvido para quem leva patrimônio a sério."
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] aria-label "ANON, página inicial"; item "A Liberdade" com `href="/#liberdade"`
+- [x] Rodapé: link "Liberdade", slogan e "© 2026 ANON. Desenvolvido para quem leva patrimônio a sério."
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
 
 **Tests**: none
 **Gate**: build
 
 **Commit**: `feat(brand): update the landing navbar and footer for ANON`
+
+**Status**: ✅ Done
 
 ---
 
