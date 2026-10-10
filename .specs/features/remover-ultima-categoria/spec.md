@@ -88,16 +88,16 @@ Na tela Alocação, com uma única categoria, clicar na lixeira remove a linha d
 
 | Requirement ID | Story | Phase | Status |
 | -------------- | ----- | ----- | ------ |
-| REMOVE-01 | P1: Gravar a remoção | - | Implementing |
-| REMOVE-02 | P1: Gravar a remoção | - | Implementing |
-| REMOVE-03 | P1: Gravar a remoção | - | Implementing |
-| REMOVE-04 | P1: Gravar a remoção | - | Implementing |
-| REMOVE-05 | P1: Gravar a remoção | - | Implementing |
-| REMOVE-06 | P1: Gravar a remoção | - | Implementing |
-| REMOVE-07 | P1: Gravar a remoção | - | Implementing |
-| REMOVE-08 | P2: Voltar atrás | - | Implementing |
-| REMOVE-09 | P1: Gravar a remoção | - | Implementing |
-| REMOVE-10 | P1: Gravar a remoção | - | Implementing |
+| REMOVE-01 | P1: Gravar a remoção | - | Verified |
+| REMOVE-02 | P1: Gravar a remoção | - | Verified |
+| REMOVE-03 | P1: Gravar a remoção | - | Verified |
+| REMOVE-04 | P1: Gravar a remoção | - | Verified |
+| REMOVE-05 | P1: Gravar a remoção | - | Verified |
+| REMOVE-06 | P1: Gravar a remoção | - | Verified |
+| REMOVE-07 | P1: Gravar a remoção | - | Verified |
+| REMOVE-08 | P2: Voltar atrás | - | Verified |
+| REMOVE-09 | P1: Gravar a remoção | - | Verified |
+| REMOVE-10 | P1: Gravar a remoção | - | Verified |
 
 **Coverage:** 10 total, 10 mapped to tasks, 0 unmapped
 

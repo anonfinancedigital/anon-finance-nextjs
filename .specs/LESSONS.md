@@ -300,6 +300,72 @@ Seen once or not yet corroborated. Tracked, not trusted.
 - evidence: validation.md APICE-09.5 (placa below sobre o preenchimento de Total investido) (charts)
 - last seen: 2026-10-07T14:48:57Z
 
+### L-049 - For every threshold or rounding rule in the spec, add a test whose input lands exactly on the boundary (equality, fraction >= 0.5) so >= vs > and floor vs round are distinguishable.
+- signal: `surviving_mutant` · recurrence: 1 feature(s) · scope: `src/lib/domain` · harmful: 0
+- features: apice-folga-meta
+- evidence: src/lib/domain/slack.ts:18-20 (M8, M9); src/lib/domain/freedom.ts:152 (M3) (src/lib/domain)
+- last seen: 2026-10-07T15:50:25Z
+
+### L-050 - Props made optional only to keep intermediate commits compiling must become required in the task that wires the last caller; otherwise UI silently disappears.
+- signal: `spec_deviation` · recurrence: 1 feature(s) · scope: `src/components` · harmful: 0
+- features: apice-folga-meta
+- evidence: src/components/goal-hero.tsx:108 (src/components)
+- last seen: 2026-10-07T15:50:25Z
+
+### L-051 - Cover redirect guards in layouts and pages with a unit test that mocks the repo and redirect, since e2e is suspended and code inspection does not kill a removed guard
+- signal: `surviving_mutant` · recurrence: 1 feature(s) · scope: `layout` · harmful: 0
+- features: data-nascimento
+- evidence: mutant M7 src/app/(app)/layout.tsx:99 (layout)
+- last seen: 2026-10-08T08:46:47Z
+
+### L-052 - Prove data-copying migrations with an integration test that rebuilds the prior schema, not only a manual psql run recorded in validation.md
+- signal: `ac_gap` · recurrence: 1 feature(s) · scope: `migrations` · harmful: 0
+- features: data-nascimento
+- evidence: NASC-11 drizzle/0013_user_birth_date.sql:2 (migrations)
+- last seen: 2026-10-08T08:46:47Z
+
+### L-053 - Assert with a test that public Better Auth endpoints ignore server-owned user columns instead of relying on the field being absent from additionalFields
+- signal: `ac_gap` · recurrence: 1 feature(s) · scope: `auth` · harmful: 0
+- features: data-nascimento
+- evidence: edge case Better Auth input false src/lib/auth.ts (auth)
+- last seen: 2026-10-08T08:46:47Z
+
+### L-054 - When two keys come from one secret via HKDF, test domain separation against an independent reference derivation and prove the login secret cannot open data encrypted by the data key.
+- signal: `surviving_mutant` · recurrence: 1 feature(s) · scope: `crypto` · harmful: 0
+- features: sigilo-dados
+- evidence: M04 src/lib/crypto/kdf.ts:30 (crypto)
+- last seen: 2026-10-09T23:19:29Z
+
+### L-055 - A form that submits through onSubmit without an action leaks the password in a native GET before hydration; keep the submit button disabled until hydrated, set method=post and call preventDefault unconditionally.
+- signal: `ac_gap` · recurrence: 1 feature(s) · scope: `ui/forms` · harmful: 0
+- features: sigilo-dados
+- evidence: SIGILO-02 G1 login-form.tsx:68 (ui/forms)
+- last seen: 2026-10-09T23:19:29Z
+
+### L-056 - When a task names a link target that differs from the spec criterion, follow the spec text and add a separate item for the extra page instead of redirecting the spec link.
+- signal: `ac_gap` · recurrence: 1 feature(s) · scope: `ui/nav` · harmful: 0
+- features: sigilo-dados
+- evidence: SIGILO-35 G3 app-nav.tsx:12 (ui/nav)
+- last seen: 2026-10-09T23:19:29Z
+
+### L-057 - Put enabled/disabled rules of a submit button in a tested pure view function, not only in component JSX
+- signal: `surviving_mutant` · recurrence: 1 feature(s) · scope: `components` · harmful: 0
+- features: remover-ultima-categoria
+- evidence: mutant M7 category-editor.tsx:588 (components)
+- last seen: 2026-10-10T12:44:47Z
+
+### L-058 - Cover a new save-path exception, such as an empty set, with a unit or integration test that submits it
+- signal: `ac_gap` · recurrence: 1 feature(s) · scope: `components` · harmful: 0
+- features: remover-ultima-categoria
+- evidence: REMOVE-03 category-editor.tsx:294 (components)
+- last seen: 2026-10-10T12:44:47Z
+
+### L-059 - When a fix relies on the server accepting a boundary input, add an integration test with that exact input
+- signal: `ac_gap` · recurrence: 1 feature(s) · scope: `repo-layer` · harmful: 0
+- features: remover-ultima-categoria
+- evidence: REMOVE-05 repos/categories.ts:130 (repo-layer)
+- last seen: 2026-10-10T12:44:47Z
+
 ## Quarantined (failed when applied - ignore)
 
 A confirmed lesson that recurred alongside failure. Kept for the maintainer to review.
