@@ -46,7 +46,7 @@ const PILLARS: {
 const ENCRYPTED = [
   "Valores e descrições exatas de cada lançamento",
   "Nomes das suas categorias e subcategorias",
-  "Meta do Ápice e percentuais das categorias",
+  "Meta de liberdade e percentuais das categorias",
   "Data de nascimento",
 ];
 
@@ -68,7 +68,7 @@ export function PrivacyContent() {
         </h1>
         <p className="max-w-3xl text-muted-foreground">
           Arquitetura Zero-Knowledge: seus registros financeiros são cifrados no seu dispositivo antes de trafegar. Nem
-          mesmo a equipe do Vértice tem acesso aos seus números.
+          mesmo a equipe da ANON tem acesso aos seus números.
         </p>
       </header>
 
@@ -137,7 +137,7 @@ export function PrivacyContent() {
 
           <div className="space-y-3 border-t border-border pt-6">
             <p className="flex items-center gap-2 text-sm font-medium">
-              <EyeIcon aria-hidden className="size-4 text-muted-foreground" />O que o Vértice processa
+              <EyeIcon aria-hidden className="size-4 text-muted-foreground" />O que a ANON processa
               <span className="font-normal text-muted-foreground">· metadados técnicos necessários</span>
             </p>
             <ul className="space-y-2 text-sm text-muted-foreground">

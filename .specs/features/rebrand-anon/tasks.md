@@ -300,13 +300,15 @@ T9 → T10 → T11 → T12
 
 **Done when**:
 
-- [ ] "a equipe da ANON", "O que a ANON processa" e "Meta de liberdade e percentuais das categorias"
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] "a equipe da ANON", "O que a ANON processa" e "Meta de liberdade e percentuais das categorias"
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
 
 **Tests**: none
 **Gate**: build
 
 **Commit**: `feat(brand): rename the product in the privacy page`
+
+**Status**: ✅ Done
 
 ---
 
