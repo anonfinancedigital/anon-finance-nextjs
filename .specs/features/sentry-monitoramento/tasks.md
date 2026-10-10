@@ -456,13 +456,15 @@ T8 → T9 → T10 → T11 → T12 → T13 → T14
 
 **Done when**:
 
-- [ ] As três variáveis aparecem com comentário e sem valor (o DSN real fica só no `.env` e na Vercel)
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] As três variáveis aparecem com comentário e sem valor (o DSN real fica só no `.env` e na Vercel)
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
 
 **Tests**: none
 **Gate**: build
 
 **Commit**: `docs(sentry): document the Sentry environment variables`
+
+**Status**: ✅ Done
 
 ---
 
