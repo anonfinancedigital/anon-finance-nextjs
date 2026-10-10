@@ -384,15 +384,17 @@ T9 → T10 → T11 → T12
 
 **Done when**:
 
-- [ ] Download chamado "chave-de-recuperacao-anon.txt"
-- [ ] design-system: "Tokens e componentes base do ANON."
-- [ ] Roadmap cita "ANON", `name: "ANON"` e `docs/marca/anon_favicon_dark.svg`
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Download chamado "chave-de-recuperacao-anon.txt"
+- [x] design-system: "Tokens e componentes base do ANON."
+- [x] Roadmap cita "ANON", `name: "ANON"` e `docs/marca/anon_favicon_dark.svg`
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
 
 **Tests**: none
 **Gate**: build
 
 **Commit**: `feat(brand): rename the recovery file, design system page and roadmap`
+
+**Status**: ✅ Done
 
 ---
 

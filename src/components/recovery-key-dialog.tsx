@@ -6,8 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-
-const FILE_NAME = "chave-de-recuperacao-vertice.txt";
+import { RECOVERY_KEY_FILE_NAME } from "@/lib/brand";
 
 /**
  * Shows the recovery key once (SIGILO-18). The dialog cannot be dismissed: no close button, Esc and
@@ -39,7 +38,7 @@ export function RecoveryKeyDialog({
     const url = URL.createObjectURL(new Blob([`${recoveryKey}\n`], { type: "text/plain" }));
     const link = document.createElement("a");
     link.href = url;
-    link.download = FILE_NAME;
+    link.download = RECOVERY_KEY_FILE_NAME;
     link.click();
     URL.revokeObjectURL(url);
   }

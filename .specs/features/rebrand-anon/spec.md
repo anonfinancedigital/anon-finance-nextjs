@@ -154,7 +154,7 @@ As marcas "Vértice" (produto) e "Ápice" (nome da meta de independência financ
 | ANON-11 | P1: Landing (AC3) | 3 | Implementing |
 | ANON-12 | P2: Arquivos (AC1) | 1 | Implementing |
 | ANON-13 | P2: Arquivos (AC2, AC4) | 1 | Implementing |
-| ANON-14 | P2: Arquivos (AC3) | - | Pending |
+| ANON-14 | P2: Arquivos (AC3) | 3 | Implementing |
 
 **Coverage:** 14 total, 0 mapped to tasks, 14 unmapped ⚠️
 

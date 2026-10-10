@@ -1,6 +1,6 @@
 # Roadmap mobile: do PWA às lojas
 
-Documento de referência para decidir, fase a fase, como levar o Vértice ao celular.
+Documento de referência para decidir, fase a fase, como levar a ANON ao celular.
 As fases estão em ordem lógica: cada uma reaproveita a anterior e custa mais que ela.
 Os prazos são estimativas para uma pessoa só, feitas a partir do tamanho e do acoplamento do código em 2026-10; não foram medidos.
 
@@ -45,10 +45,10 @@ Caminho recomendado: 0, 1, 2, depois 5 se quiser a experiência de loja. As fase
 
 ## Fase 1: PWA instalável
 
-**Objetivo:** o usuário adiciona o Vértice à tela inicial e ele abre em tela cheia, sem barra do navegador.
+**Objetivo:** o usuário adiciona a ANON à tela inicial e ele abre em tela cheia, sem barra do navegador.
 
-1. Criar `src/app/manifest.ts` com `name: "Vértice"`, `short_name`, `start_url: "/"`, `display: "standalone"`, `background_color` e `theme_color`.
-2. Gerar ícones PNG de **192 e 512 px** e uma versão **maskable**, a partir de `docs/vertice_favicon.svg`, e colocar em `public/`.
+1. Criar `src/app/manifest.ts` com `name: "ANON"`, `short_name`, `start_url: "/"`, `display: "standalone"`, `background_color` e `theme_color`.
+2. Gerar ícones PNG de **192 e 512 px** e uma versão **maskable**, a partir de `docs/marca/anon_favicon_dark.svg`, e colocar em `public/`.
 3. **Ajustar o matcher do proxy.** O [src/proxy.ts](../src/proxy.ts) hoje redireciona qualquer rota fora da lista de exceções para `/login`. O navegador busca o `manifest.webmanifest` sem cookie, então receberia um redirect em vez do JSON e o app não seria instalável. Excluir `manifest.webmanifest` (e `sw.js`, se houver) do matcher. Os `.png` já estão excluídos.
 4. No layout raiz ([src/app/layout.tsx](../src/app/layout.tsx)): adicionar `viewport.themeColor` e `appleWebApp` ao metadata, que o iOS usa para o modo standalone.
 5. Opcional: um aviso "Adicionar à tela inicial" para iOS, que não mostra prompt de instalação. O `beforeinstallprompt` não funciona no Safari e não é recomendado pelo guia do Next.
