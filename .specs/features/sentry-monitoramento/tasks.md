@@ -370,15 +370,17 @@ T8 → T9 → T10 → T11 → T12 → T13 → T14
 
 **Done when**:
 
-- [ ] Com `NODE_ENV=production` responde 404 sem lançar
-- [ ] Com outro valor lança o erro de exemplo
-- [ ] Gate check passes: `npm run test:unit`
-- [ ] Test count: 2 testes novos passam
+- [x] Com `NODE_ENV=production` responde 404 sem lançar
+- [x] Com outro valor lança o erro de exemplo
+- [x] Gate check passes: `npm run test:unit`
+- [x] Test count: 2 testes novos passam
 
 **Tests**: unit
 **Gate**: quick
 
 **Commit**: `feat(sentry): add the example API route`
+
+**Status**: ✅ Done
 
 ---
 
