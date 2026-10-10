@@ -135,15 +135,16 @@ T7 → T8
 
 **Done when**:
 
-- [ ] `decideRoute("/api/health", false)` devolve `{ action: "next", noStore: false }`
-- [ ] `decideRoute("/api/healthz", false)` e `decideRoute("/api/health-x", false)` redirecionam para `/login`
-- [ ] Uma rota protegida existente (`/transacoes`) continua redirecionando anônimos para `/login`
-- [ ] Gate check passes: `npm run test:unit`
-- [ ] Test count: 3 testes novos passam, nenhum removido
+- [x] `decideRoute("/api/health", false)` devolve `{ action: "next", noStore: false }`
+- [x] `decideRoute("/api/healthz", false)` e `decideRoute("/api/health-x", false)` redirecionam para `/login`
+- [x] Uma rota protegida existente (`/transacoes`) continua redirecionando anônimos para `/login`
+- [x] Gate check passes: `npm run test:unit`
+- [x] Test count: 3 testes novos passam, nenhum removido
 
 **Tests**: unit
 **Gate**: quick
 **Commit**: `feat(health): let the proxy pass /api/health without a session`
+**Status**: Done
 
 ---
 

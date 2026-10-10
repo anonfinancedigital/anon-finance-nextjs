@@ -79,4 +79,18 @@ describe("decideRoute", () => {
       expect(decideRoute(path, false)).toEqual({ action: "next", noStore: false });
     },
   );
+
+  it("lets anonymous visitors reach /api/health without a redirect (HOSTING-06)", () => {
+    expect(decideRoute("/api/health", false)).toEqual({ action: "next", noStore: false });
+  });
+
+  it("only matches /api/health exactly or as a prefix segment (HOSTING-09)", () => {
+    for (const path of ["/api/healthz", "/api/health-x"]) {
+      expect(decideRoute(path, false)).toEqual({ action: "redirect", to: "/login", noStore: true });
+    }
+  });
+
+  it("keeps protected routes redirecting anonymous visitors to /login (HOSTING-09)", () => {
+    expect(decideRoute("/transacoes", false)).toEqual({ action: "redirect", to: "/login", noStore: true });
+  });
 });

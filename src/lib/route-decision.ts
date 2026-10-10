@@ -7,6 +7,7 @@ const PUBLIC_PATHS = [
   "/privacidade",
   "/sentry-example-page",
   "/api/sentry-example-api",
+  "/api/health",
 ];
 
 export type RouteDecision =

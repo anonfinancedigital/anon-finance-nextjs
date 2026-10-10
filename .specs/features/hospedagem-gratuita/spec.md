@@ -142,10 +142,10 @@ O plano `docs/hospedagem-gratuita.md` coloca o app no ar a custo zero (Vercel Ho
 | HOSTING-03 | P1: pool — `idleTimeoutMillis` 10000 | - | Implementing |
 | HOSTING-04 | P1: pool — `connectionString` de `DATABASE_URL` | - | Implementing |
 | HOSTING-05 | P1: health — 200 e corpo | - | Pending |
-| HOSTING-06 | P1: health — sem redirect ao login | - | Pending |
+| HOSTING-06 | P1: health — sem redirect ao login | - | Implementing |
 | HOSTING-07 | P1: health — sem conexão ao banco | - | Pending |
 | HOSTING-08 | P1: health — `Cache-Control: no-store` | - | Pending |
-| HOSTING-09 | P1: health — demais rotas continuam protegidas | - | Pending |
+| HOSTING-09 | P1: health — demais rotas continuam protegidas | - | Implementing |
 | HOSTING-10 | P1: URL — inválida não envia e-mail | - | Pending |
 | HOSTING-11 | P1: URL — inválida registra o erro | - | Pending |
 | HOSTING-12 | P1: URL — inválida ainda devolve `ok: true` | - | Pending |
