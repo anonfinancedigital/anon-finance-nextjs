@@ -123,6 +123,39 @@ export interface ExportPayload {
   birthDateCt: Ct | null;
 }
 
+/**
+ * What the browser sends to import an exported file into an empty account: every row sealed for the
+ * destination user, under new ids (IMPORT-03, IMPORT-06). `goal` is `null` when the file has none or
+ * it conflicts with the account's birth date; `birthDateCt` is `null` when the file has none.
+ */
+export interface ImportPayload {
+  categories: {
+    id: string;
+    color: number;
+    isInvestment: boolean;
+    deletedFrom: string | null;
+    nameCt: Ct;
+    versions: { fromMonth: string; percentCt: Ct }[];
+    subcategories: { id: string; nameCt: Ct }[];
+  }[];
+  transactions: {
+    id: string;
+    kind: TransactionKind;
+    date: string;
+    categoryId: string | null;
+    subcategoryId: string | null;
+    amountCt: Ct;
+    descriptionCt: Ct | null;
+    recurring: boolean;
+    recurrenceDay: number | null;
+    recurrenceEnd: string | null;
+    /** New id shared by every segment of a series. */
+    seriesId: string | null;
+  }[];
+  goal: GoalDto | null;
+  birthDateCt: Ct | null;
+}
+
 /** Plain-text rows of a legacy account, read once for the migration. */
 export interface LegacyPlain {
   transactions: {
