@@ -327,15 +327,17 @@ T9 → T10 → T11 → T12
 
 **Done when**:
 
-- [ ] Slogan da opção 3 como tagline; `metadata.title` "ANON – Finanças Privadas"
-- [ ] `id="liberdade"` e título "A Liberdade: engenharia de juros compostos"
-- [ ] Manifesto "Por que a ANON?" e demais menções sem "Vértice"/"Ápice"
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Slogan da opção 3 como tagline; `metadata.title` "ANON – Finanças Privadas"
+- [x] `id="liberdade"` e título "A Liberdade: engenharia de juros compostos"
+- [x] Manifesto "Por que a ANON?" e demais menções sem "Vértice"/"Ápice"
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
 
 **Tests**: none
 **Gate**: build
 
 **Commit**: `feat(brand): rewrite the landing page for ANON`
+
+**Status**: ✅ Done
 
 ---
 

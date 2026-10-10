@@ -19,9 +19,10 @@ import { Navbar } from "@/components/landing/navbar";
 import { SiteFooter } from "@/components/landing/site-footer";
 import { ghostButton, glassCard, heroButton } from "@/components/landing/styles";
 import { redirectIfSignedIn } from "@/lib/auth-guard";
+import { BRAND_DESCRIPTION } from "@/lib/brand";
 
 export const metadata: Metadata = {
-  title: "Da renda mensal ao ápice patrimonial",
+  title: { absolute: BRAND_DESCRIPTION },
   description:
     "Gestão financeira de precisão e projeção da sua independência, com cifragem no seu navegador: seus números chegam ao servidor ilegíveis.",
 };
@@ -56,11 +57,11 @@ const COMPARISON = [
     ],
   },
   {
-    name: "Vértice",
+    name: "ANON",
     icon: TrendingUpIcon,
     highlight: true,
     points: [
-      "Foco exclusivo na construção do seu ápice patrimonial",
+      "Foco exclusivo na construção do seu patrimônio-alvo",
       "Dados cifrados no seu navegador, antes do envio",
       "Simulação da sua independência financeira",
     ],
@@ -77,7 +78,7 @@ function SectionTitle({ eyebrow, title, text }: { eyebrow: string; title: string
   );
 }
 
-/** Product preview: a cockpit panel and the Ápice curve in a browser frame. Illustrative, fictional figures. */
+/** Product preview: a cockpit panel and the Liberdade curve in a browser frame. Illustrative, fictional figures. */
 function HeroMockup() {
   return (
     <div
@@ -88,7 +89,7 @@ function HeroMockup() {
         <span className="size-2.5 rounded-full bg-white/15" />
         <span className="size-2.5 rounded-full bg-white/15" />
         <span className="size-2.5 rounded-full bg-white/15" />
-        <span className="mx-auto rounded-md bg-white/5 px-4 py-0.5 text-[11px] text-zinc-500">vértice · cockpit</span>
+        <span className="mx-auto rounded-md bg-white/5 px-4 py-0.5 text-[11px] text-zinc-500">anon · visão geral</span>
       </div>
       <div className="grid gap-3 rounded-xl border border-white/[0.06] bg-zinc-950 p-3 sm:p-4 lg:grid-cols-5">
         <div className="space-y-3 lg:col-span-2">
@@ -126,7 +127,7 @@ function HeroMockup() {
         <div className="rounded-lg border border-white/[0.06] bg-white/[0.03] p-4 lg:col-span-3">
           <div className="flex flex-wrap items-start justify-between gap-2">
             <div>
-              <p className="text-xs font-medium text-zinc-300">Ápice · patrimônio projetado</p>
+              <p className="text-xs font-medium text-zinc-300">Liberdade · patrimônio projetado</p>
               <p className="mt-1 font-display text-2xl font-bold">
                 R$ 1,0 mi <span className="text-sm font-normal text-zinc-500">em ~14 anos</span>
               </p>
@@ -177,9 +178,9 @@ export default async function LandingPage() {
           </Link>
 
           <h1 className="mx-auto mt-8 max-w-4xl font-display text-4xl leading-[1.05] font-extrabold tracking-tight text-balance sm:text-6xl lg:text-7xl">
-            Da renda mensal ao{" "}
+            O planejamento do seu patrimônio com{" "}
             <span className="bg-linear-to-r from-purple-400 to-emerald-400 bg-clip-text text-transparent">
-              ápice patrimonial.
+              privacidade absoluta.
             </span>
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-base text-balance text-zinc-400 sm:text-lg">
@@ -209,11 +210,11 @@ export default async function LandingPage() {
             text="Tudo o que você precisa para enxergar o caminho até a independência, e nada que exponha o seu dinheiro."
           />
           <div className="mt-12 grid grid-cols-1 gap-4 md:grid-cols-3">
-            <article id="apice" className={`${glassCard} scroll-mt-24 space-y-4 md:col-span-2`}>
+            <article id="liberdade" className={`${glassCard} scroll-mt-24 space-y-4 md:col-span-2`}>
               <span className="inline-flex size-10 items-center justify-center rounded-xl bg-purple-500/10 ring-1 ring-purple-500/30">
                 <TrendingUpIcon aria-hidden className="size-5 text-purple-300" />
               </span>
-              <h3 className="text-xl font-semibold">O Ápice: engenharia de juros compostos</h3>
+              <h3 className="text-xl font-semibold">A Liberdade: engenharia de juros compostos</h3>
               <p className="max-w-xl text-sm text-zinc-400">
                 Descubra com exatidão matemática o momento em que seus rendimentos cobrirão seu custo de vida. Simule
                 taxas reais, retiradas seguras e marcos de patrimônio em tempo real.
@@ -245,7 +246,7 @@ export default async function LandingPage() {
               </span>
               <h3 className="text-xl font-semibold">Privacidade Zero-Knowledge (AES-256)</h3>
               <p className="text-sm text-zinc-400">
-                Seus dados financeiros são cifrados localmente antes de trafegar. Nem a equipe do Vértice tem acesso aos
+                Seus dados financeiros são cifrados localmente antes de trafegar. Nem a equipe da ANON tem acesso aos
                 seus saldos, investimentos ou compras.
               </p>
             </article>
@@ -270,7 +271,7 @@ export default async function LandingPage() {
         </section>
 
         <section id="manifesto" className="mx-auto max-w-6xl scroll-mt-24 px-6 py-20">
-          <SectionTitle eyebrow="Manifesto" title="Por que o Vértice?" text="Direto ao ponto, sem enrolação." />
+          <SectionTitle eyebrow="Manifesto" title="Por que a ANON?" text="Direto ao ponto, sem enrolação." />
           <div className="mt-12 grid grid-cols-1 gap-4 md:grid-cols-3">
             {COMPARISON.map(({ name, icon: Icon, highlight, points }) => (
               <article
