@@ -228,15 +228,17 @@ T8 → T9 → T10 → T11 → T12 → T13 → T14
 
 **Done when**:
 
-- [ ] `useEffect` chama `Sentry.captureException(error)`
-- [ ] Mostra "Tentar novamente" que chama `reset()` e não renderiza `error.message`
-- [ ] Define `<html lang="pt-BR">` e `<body>` próprios
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] `useEffect` chama `Sentry.captureException(error)`
+- [x] Mostra "Tentar novamente" que chama `reset()` e não renderiza `error.message`
+- [x] Define `<html lang="pt-BR">` e `<body>` próprios
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
 
 **Tests**: none
 **Gate**: build
 
 **Commit**: `feat(sentry): add the global error screen`
+
+**Status**: ✅ Done (SPEC_DEVIATION: usa `retry()` em vez de `reset()`, conforme `error.md` do Next 16.3)
 
 ---
 
