@@ -145,13 +145,15 @@ T8 → T9 → T10 → T11 → T12 → T13 → T14
 
 **Done when**:
 
-- [ ] Chama `Sentry.init(sentryInitOptions({ dsn: process.env.SENTRY_DSN, nodeEnv: process.env.NODE_ENV }))` e nada mais
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Chama `Sentry.init(sentryInitOptions({ dsn: process.env.SENTRY_DSN, nodeEnv: process.env.NODE_ENV }))` e nada mais
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
 
 **Tests**: none
 **Gate**: build
 
 **Commit**: `feat(sentry): initialize Sentry on the server`
+
+**Status**: ✅ Done
 
 ---
 
