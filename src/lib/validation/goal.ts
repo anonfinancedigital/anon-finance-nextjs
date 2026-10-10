@@ -5,9 +5,9 @@ import { MAX_AGE, parseBirthDate, today } from "@/lib/validation/birth-date";
 
 export { today };
 
-const MAX_INCOME_CENTS = 100_000_000;
-const MIN_RATE_BP = 100;
-const MAX_RATE_BP = 1500;
+export const MAX_INCOME_CENTS = 100_000_000;
+export const MIN_RATE_BP = 100;
+export const MAX_RATE_BP = 1500;
 const RATE_FORMAT_MESSAGE = "Informe a taxa com até 2 casas decimais, ex.: 6,5";
 const ANNUAL_RATE_RANGE_MESSAGE = "A rentabilidade deve estar entre 1% e 15% ao ano";
 const WITHDRAWAL_RATE_RANGE_MESSAGE = "A taxa de retirada deve estar entre 1% e 15% ao ano";

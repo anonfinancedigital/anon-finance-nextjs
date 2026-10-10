@@ -7,6 +7,8 @@ export type AllocationView = {
   /** Select and "Rebalancear": only when there are at least two rows to rebalance between. */
   showAdjust: boolean;
   showSave: boolean;
+  /** Save is blocked while rows exist and their sum is not 100%; an empty set has no sum to check. */
+  saveDisabled: boolean;
   /** Why saving is blocked, or null when it is allowed (or the button is hidden). */
   saveHint: string | null;
   /** Bar fill in percent, clamped to 0..100. */
@@ -30,6 +32,7 @@ export function allocationView(
     showSumWarning: rowCount >= 1 && !complete,
     showAdjust: rowCount >= 2 && !complete,
     showSave,
+    saveDisabled: rowCount >= 1 && !complete,
     saveHint: rowCount >= 1 && !complete ? "Some 100% para salvar" : null,
     progressValue: Math.min(100, Math.max(0, sumMicro / MICRO_PER_PERCENT)),
     progressText: `${sumMicro === 0 ? "0%" : sumLabel(sumMicro)} de 100% alocado`,

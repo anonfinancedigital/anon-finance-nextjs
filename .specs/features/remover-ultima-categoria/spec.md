@@ -56,6 +56,9 @@ Na tela Alocação, com uma única categoria, clicar na lixeira remove a linha d
 6. IF a categoria removida tem lançamentos THEN the system SHALL exibir a mensagem de lançamentos existentes retornada pelo servidor e manter o editor com 0 linhas.  <!-- unwanted-behavior; REMOVE-06 -->
 7. WHEN o usuário remove a última categoria THEN the system SHALL NOT exibir o aviso `A soma deve ser 100%`.  <!-- event-driven; REMOVE-07 -->
 
+8. WHEN o servidor recebe a lista vazia e nenhuma categoria tem lançamentos THEN the system SHALL marcar todas as categorias do usuário como removidas e retornar sucesso.  <!-- event-driven; REMOVE-09 -->
+9. The system SHALL aceitar a lista vazia na validação do navegador e continuar exigindo soma 100% para listas com 1+ categorias.  <!-- ubiquitous; REMOVE-10 -->
+
 **Independent Test**: Com uma categoria sem lançamentos, clicar na lixeira, ver o Salvar, clicar em Salvar, ver "Categorias salvas" e, ao recarregar, o estado vazio.
 
 ---
@@ -93,8 +96,10 @@ Na tela Alocação, com uma única categoria, clicar na lixeira remove a linha d
 | REMOVE-06 | P1: Gravar a remoção | - | Implementing |
 | REMOVE-07 | P1: Gravar a remoção | - | Implementing |
 | REMOVE-08 | P2: Voltar atrás | - | Implementing |
+| REMOVE-09 | P1: Gravar a remoção | - | Implementing |
+| REMOVE-10 | P1: Gravar a remoção | - | Implementing |
 
-**Coverage:** 8 total, 8 mapped to tasks, 0 unmapped
+**Coverage:** 10 total, 10 mapped to tasks, 0 unmapped
 
 ---
 

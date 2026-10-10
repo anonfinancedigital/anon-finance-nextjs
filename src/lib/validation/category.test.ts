@@ -131,3 +131,13 @@ describe("categorySetSchema", () => {
     });
   });
 });
+
+describe("categorySetSchema empty set", () => {
+  it("accepts an empty set, which removes every category", () => {
+    expect(categorySetSchema.safeParse([])).toMatchObject({ success: true, data: [] });
+  });
+
+  it("still requires 100% for a non-empty set", () => {
+    expect(categorySetSchema.safeParse(set("40")).success).toBe(false);
+  });
+});

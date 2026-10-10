@@ -221,6 +221,41 @@ describe("saveCategoriesSealed", () => {
     expect(revalidatePath).not.toHaveBeenCalled();
   });
 
+  it("removes the last category when the set is saved empty, and keeps nothing stored", async () => {
+    const dto: CategorySetDto = { items: [item(1)] };
+    await saveCategoriesSealed(dto);
+    const only = dto.items[0].clientId;
+    vi.mocked(revalidatePath).mockClear();
+
+    expect(await saveCategoriesSealed({ items: [] })).toEqual({ ok: true });
+
+    expect(await stored()).toEqual([]);
+    expect((await rawCategories()).find((c) => c.id === only)?.deletedFrom).not.toBeNull();
+    expect(revalidatePath).toHaveBeenCalledWith("/");
+  });
+
+  it("blocks removing the last category when it has expenses, telling how many, and keeps it", async () => {
+    const dto: CategorySetDto = { items: [item(1)] };
+    await saveCategoriesSealed(dto);
+    await transactionsRepo.createSealed(userId, {
+      id: randomUUID(),
+      kind: "expense",
+      date: "2026-10-01",
+      categoryId: dto.items[0].clientId,
+      subcategoryId: null,
+      amountCt: "v1:v1",
+      descriptionCt: null,
+      recurrence: "none",
+    });
+    const before = await stored();
+
+    expect(await saveCategoriesSealed({ items: [] })).toEqual({
+      ok: false,
+      error: "Esta categoria tem 1 gasto e não pode ser excluída",
+    });
+    expect(await stored()).toEqual(before);
+  });
+
   it("blocks removing a subcategory that has expenses, telling how many, and keeps the set", async () => {
     const keepSub = { id: randomUUID(), nameCt: "v1:streaming" };
     const dropSub = { id: randomUUID(), nameCt: "v1:restaurante" };

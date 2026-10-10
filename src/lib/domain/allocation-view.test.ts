@@ -8,6 +8,7 @@ describe("allocationView", () => {
       showSumWarning: false,
       showAdjust: false,
       showSave: false,
+      saveDisabled: false,
       saveHint: null,
       progressValue: 0,
       progressText: "0% de 100% alocado",
@@ -20,6 +21,7 @@ describe("allocationView", () => {
       showSumWarning: true,
       showAdjust: false,
       showSave: true,
+      saveDisabled: true,
       saveHint: "Some 100% para salvar",
       progressValue: 40,
       progressText: "40,00% de 100% alocado",
@@ -61,9 +63,7 @@ describe("allocationView", () => {
   });
 
   it("keeps the precision of a sum just below 100%", () => {
-    expect(allocationView(3, 99_999_999).progressText).toBe(
-      "99,999999% de 100% alocado",
-    );
+    expect(allocationView(3, 99_999_999).progressText).toBe("99,999999% de 100% alocado");
   });
 
   it("shows an enabled save with no hint and no sum warning when the last saved category was removed", () => {
@@ -72,6 +72,7 @@ describe("allocationView", () => {
       showSumWarning: false,
       showAdjust: false,
       showSave: true,
+      saveDisabled: false,
       saveHint: null,
       progressValue: 0,
       progressText: "0% de 100% alocado",
@@ -85,7 +86,13 @@ describe("allocationView", () => {
   it("requires 100% again once a row is added after removing the last saved category", () => {
     expect(allocationView(1, 0, 1)).toMatchObject({
       showSave: true,
+      saveDisabled: true,
       saveHint: "Some 100% para salvar",
     });
+  });
+
+  it("enables save at exactly 100% and disables it at 99,999999%", () => {
+    expect(allocationView(2, 100_000_000).saveDisabled).toBe(false);
+    expect(allocationView(2, 99_999_999).saveDisabled).toBe(true);
   });
 });
