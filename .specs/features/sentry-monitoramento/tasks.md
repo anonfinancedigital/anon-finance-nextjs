@@ -10,7 +10,7 @@ Implement these tasks with the `tlc-spec-driven` skill: **activate it by name an
 
 **Design**: `.specs/features/sentry-monitoramento/design.md`
 **Spec**: `.specs/features/sentry-monitoramento/spec.md`
-**Status**: In Progress
+**Status**: Done
 
 **Ordem:** T1 instala o SDK e confirma a API real contra os tipos (a documentação web não confirmou três pontos); T2 cria o núcleo puro testável; a fase 2 liga servidor, navegador, tela de erro e `logActionError`; a fase 3 mexe em CSP, proxy, rotas de exemplo e build. Cada commit compila e passa o gate.
 

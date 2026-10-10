@@ -148,30 +148,30 @@ Hoje um erro em produção só aparece como `console.error(action, code)` (`src/
 
 | Requirement ID | Story | Phase | Status |
 | -------------- | ----- | ----- | ------ |
-| SENTRY-01 | P1: servidor — captura de erro não tratado | - | Pending |
-| SENTRY-02 | P1: servidor — `onRequestError` | - | Pending |
-| SENTRY-03 | P1: servidor — desligado sem DSN | - | Pending |
-| SENTRY-04 | P1: servidor — `sendDefaultPii` falso | - | Pending |
-| SENTRY-05 | P1: servidor — scrubbing do evento | - | Pending |
-| SENTRY-06 | P1: servidor — `logActionError` reporta só ação e código | - | Pending |
-| SENTRY-07 | P1: navegador — captura via `/monitoring` | - | Pending |
-| SENTRY-08 | P1: navegador — `connect-src 'self'` preservado | - | Pending |
-| SENTRY-09 | P1: navegador — `/monitoring` pública | - | Pending |
-| SENTRY-10 | P1: navegador — tela `global-error` em pt-BR | - | Pending |
-| SENTRY-11 | P1: navegador — sem Replay nem breadcrumbs de console/DOM/rede | - | Pending |
-| SENTRY-12 | P2: source maps enviados no build | - | Pending |
-| SENTRY-13 | P2: build não falha sem token | - | Pending |
-| SENTRY-14 | P2: `.map` não servido publicamente | - | Pending |
-| SENTRY-15 | P2: credenciais só em variáveis de ambiente | - | Pending |
-| SENTRY-16 | P2: taxa de tracing 0.1 em produção | - | Pending |
-| SENTRY-17 | P2: taxa de tracing 0 fora de produção | - | Pending |
-| SENTRY-18 | P2: transação sem query string nem fragmento | - | Pending |
-| SENTRY-19 | P2: transação sem corpo, cookies nem headers | - | Pending |
-| SENTRY-20 | P3: página de exemplo fora de produção | - | Pending |
-| SENTRY-21 | P3: página de exemplo responde 404 em produção | - | Pending |
-| SENTRY-22 | P3: página de exemplo pública fora de produção | - | Pending |
+| SENTRY-01 | P1: servidor — captura de erro não tratado | - | Verified |
+| SENTRY-02 | P1: servidor — `onRequestError` | - | Verified |
+| SENTRY-03 | P1: servidor — desligado sem DSN | - | Verified |
+| SENTRY-04 | P1: servidor — `sendDefaultPii` falso | - | Verified |
+| SENTRY-05 | P1: servidor — scrubbing do evento | - | Verified |
+| SENTRY-06 | P1: servidor — `logActionError` reporta só ação e código | - | Verified |
+| SENTRY-07 | P1: navegador — captura via `/monitoring` | - | Verified |
+| SENTRY-08 | P1: navegador — `connect-src 'self'` preservado | - | Verified |
+| SENTRY-09 | P1: navegador — `/monitoring` pública | - | Verified |
+| SENTRY-10 | P1: navegador — tela `global-error` em pt-BR | - | Verified |
+| SENTRY-11 | P1: navegador — sem Replay nem breadcrumbs de console/DOM/rede | - | Verified |
+| SENTRY-12 | P2: source maps enviados no build | - | Verified |
+| SENTRY-13 | P2: build não falha sem token | - | Verified |
+| SENTRY-14 | P2: `.map` não servido publicamente | - | Verified |
+| SENTRY-15 | P2: credenciais só em variáveis de ambiente | - | Verified |
+| SENTRY-16 | P2: taxa de tracing 0.1 em produção | - | Verified |
+| SENTRY-17 | P2: taxa de tracing 0 fora de produção | - | Verified |
+| SENTRY-18 | P2: transação sem query string nem fragmento | - | Verified |
+| SENTRY-19 | P2: transação sem corpo, cookies nem headers | - | Verified |
+| SENTRY-20 | P3: página de exemplo fora de produção | - | Verified |
+| SENTRY-21 | P3: página de exemplo responde 404 em produção | - | Verified |
+| SENTRY-22 | P3: página de exemplo pública fora de produção | - | Verified |
 
-**Coverage:** 22 total, 0 mapped to tasks, 22 unmapped ⚠️
+**Coverage:** 22 total, 22 mapped to tasks, 0 unmapped
 
 ---
 
