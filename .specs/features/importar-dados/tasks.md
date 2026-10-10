@@ -9,7 +9,7 @@ Implement these tasks with the `tlc-spec-driven` skill: **activate it by name an
 ---
 
 **Design**: `.specs/features/importar-dados/design.md`
-**Status**: In Progress
+**Status**: Done
 
 ---
 
@@ -289,13 +289,14 @@ T1 → T2 → T3 → T4 → T5 → T6 → T7 → T8
 
 **Done when**:
 
-- [ ] Cartão "Importar dados" aparece junto do "Exportar meus dados" (IMPORT-01)
-- [ ] `canImport` vem de `importRepo.isEmpty(userId)` calculado no servidor (IMPORT-18)
-- [ ] A página continua guardada pelo layout `(app)` e a página de conta de conta legada segue redirecionada (sem mudança de guard)
-- [ ] Evidência de UI registrada por inspeção de código (`file:line`), sem e2e (AD-005)
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
-- [ ] Test count: igual ao anterior (nenhum teste removido)
+- [x] Cartão "Importar dados" aparece junto do "Exportar meus dados" (IMPORT-01)
+- [x] `canImport` vem de `importRepo.isEmpty(userId)` calculado no servidor (IMPORT-18)
+- [x] A página continua guardada pelo layout `(app)` e a página de conta de conta legada segue redirecionada (sem mudança de guard)
+- [x] Evidência de UI registrada por inspeção de código (`file:line`), sem e2e (AD-005)
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
+- [x] Test count: igual ao anterior (nenhum teste removido)
 
+**Status**: ✅ Done
 **Tests**: none
 **Gate**: build
 **Commit**: `feat(import): offer the import on the account page`

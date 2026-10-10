@@ -3,12 +3,22 @@ import Link from "next/link";
 import { ContentCard } from "@/components/content-card";
 import { DeleteAccountDialog } from "@/components/delete-account-dialog";
 import { ExportButton } from "@/components/export-button";
+import { ImportCard } from "@/components/import-card";
 import { PageHeader } from "@/components/page-header";
+import { requireSessionForPage } from "@/lib/auth-guard";
+import { importRepo } from "@/lib/db/repos/import";
+import { vaultRepo } from "@/lib/db/repos/vault";
 
 export const metadata: Metadata = { title: "Privacidade e conta" };
 
-/** What is sealed, the full policy, and the user's own export and deletion (SIGILO-35, 36, 38). Guarded by the (app) layout. */
-export default function AccountPage() {
+/** What is sealed, the full policy, and the user's own export, import and deletion (SIGILO-35, 36, 38; IMPORT-01). Guarded by the (app) layout. */
+export default async function AccountPage() {
+  const { userId } = await requireSessionForPage();
+  const [canImport, accountBirthDateCt] = await Promise.all([
+    importRepo.isEmpty(userId),
+    vaultRepo.getBirthDateSealed(userId),
+  ]);
+
   return (
     <div className="space-y-6">
       <PageHeader title="Privacidade e conta" />
@@ -34,6 +44,14 @@ export default function AccountPage() {
         bodyClassName="px-6 pb-6"
       >
         <ExportButton />
+      </ContentCard>
+
+      <ContentCard
+        title="Importar dados"
+        description="Carregue o arquivo exportado de outra conta. A importação só funciona em uma conta sem transações nem categorias."
+        bodyClassName="px-6 pb-6"
+      >
+        <ImportCard canImport={canImport} accountBirthDateCt={accountBirthDateCt} />
       </ContentCard>
 
       <ContentCard
