@@ -257,16 +257,18 @@ T8 → T9 → T10 → T11 → T12 → T13 → T14
 
 **Done when**:
 
-- [ ] `captureException` recebe `new Error("server_action_failed")` e `tags` `{ action, code }`; o erro original nunca é passado
-- [ ] Os 3 testes existentes continuam passando sem alteração
-- [ ] Teste novo afirma as tags e que `detail` e `message` do erro original não aparecem nos argumentos
-- [ ] Gate check passes: `npm run test:unit`
-- [ ] Test count: 3 existentes mais 2 novos ou mais passam
+- [x] `captureException` recebe `new Error("server_action_failed")` e `tags` `{ action, code }`; o erro original nunca é passado
+- [x] Os 3 testes existentes continuam passando sem alteração
+- [x] Teste novo afirma as tags e que `detail` e `message` do erro original não aparecem nos argumentos
+- [x] Gate check passes: `npm run test:unit`
+- [x] Test count: 3 existentes mais 2 novos ou mais passam
 
 **Tests**: unit
 **Gate**: quick
 
 **Commit**: `feat(sentry): report failed server actions by action and code`
+
+**Status**: ✅ Done
 
 ---
 
