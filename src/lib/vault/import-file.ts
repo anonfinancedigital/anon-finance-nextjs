@@ -9,6 +9,7 @@ import { isValidCalendarDate } from "@/lib/domain/month";
 import type { OpenedExport } from "./export";
 
 export const IMPORT_INVALID = "Arquivo inválido. Use o arquivo exportado pelo Orçamento.";
+export const IMPORT_NOT_EMPTY = "Só é possível importar em uma conta sem transações nem categorias";
 export const IMPORT_TOO_LARGE = "Arquivo muito grande (máximo 20 MB)";
 
 export const MAX_IMPORT_FILE_BYTES = 20 * 1024 * 1024;

@@ -225,15 +225,16 @@ T1 → T2 → T3 → T4 → T5 → T6 → T7 → T8
 
 **Done when**:
 
-- [ ] Sem sessão devolve UNAUTHORIZED e não toca o banco (IMPORT-19)
-- [ ] Payload válido em conta vazia devolve `ok` com as contagens e grava para o `userId` da sessão (IMPORT-04, IMPORT-19)
-- [ ] Payload estruturalmente inválido devolve `SAVE_FAILED` e não grava
-- [ ] Conta com dados devolve exatamente "Só é possível importar em uma conta sem transações nem categorias" (IMPORT-15); duas ações concorrentes: uma `ok`, outra com essa mensagem (IMPORT-17)
-- [ ] Falha de banco devolve `SAVE_FAILED` ("Não foi possível salvar. Tente novamente") e não grava (IMPORT-14)
-- [ ] `revalidatePath` é chamado só no sucesso
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
-- [ ] Test count: testes novos em `src/actions/import-data.int.test.ts`, nenhum removido
+- [x] Sem sessão devolve UNAUTHORIZED e não toca o banco (IMPORT-19)
+- [x] Payload válido em conta vazia devolve `ok` com as contagens e grava para o `userId` da sessão (IMPORT-04, IMPORT-19)
+- [x] Payload estruturalmente inválido devolve `SAVE_FAILED` e não grava
+- [x] Conta com dados devolve exatamente "Só é possível importar em uma conta sem transações nem categorias" (IMPORT-15); duas ações concorrentes: uma `ok`, outra com essa mensagem (IMPORT-17)
+- [x] Falha de banco devolve `SAVE_FAILED` ("Não foi possível salvar. Tente novamente") e não grava (IMPORT-14)
+- [x] `revalidatePath` é chamado só no sucesso
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
+- [x] Test count: testes novos em `src/actions/import-data.int.test.ts`, nenhum removido
 
+**Status**: ✅ Done
 **Tests**: integration
 **Gate**: full
 **Commit**: `feat(import): add the import server action`
