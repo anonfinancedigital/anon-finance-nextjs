@@ -3,7 +3,7 @@
   "promote_threshold": 2,
   "window_days": 45,
   "quarantine_threshold": 2,
-  "next_id": 60,
+  "next_id": 62,
   "lessons": [
     {
       "id": "L-001",
@@ -1069,6 +1069,42 @@
       ],
       "created": "2026-10-10T12:44:47Z",
       "last_seen": "2026-10-10T12:44:47Z"
+    },
+    {
+      "id": "L-060",
+      "key": "surviving_mutant::force the overlap deterministically in concurrency tests hold the lock or pause inside the first transaction instead of relying on promise all timing",
+      "text": "Force the overlap deterministically in concurrency tests (hold the lock or pause inside the first transaction) instead of relying on Promise.all timing",
+      "signal": "surviving_mutant",
+      "scope": "repo-layer",
+      "status": "candidate",
+      "features": [
+        "importar-dados"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "M3 src/lib/db/repos/import.ts:31 (IMPORT-17) (repo-layer)"
+      ],
+      "created": "2026-10-10T13:08:50Z",
+      "last_seen": "2026-10-10T13:08:50Z"
+    },
+    {
+      "id": "L-061",
+      "key": "spec_precision_gap::when an acceptance criterion promises an equal derived view summary totals assert the derived output itself not only the round trip of its inputs",
+      "text": "When an acceptance criterion promises an equal derived view (summary, totals), assert the derived output itself, not only the round-trip of its inputs",
+      "signal": "spec_precision_gap",
+      "scope": "validation",
+      "status": "candidate",
+      "features": [
+        "importar-dados"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "IMPORT-07 (validation)"
+      ],
+      "created": "2026-10-10T13:08:50Z",
+      "last_seen": "2026-10-10T13:08:50Z"
     }
   ]
 }

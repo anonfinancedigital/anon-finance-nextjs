@@ -366,6 +366,18 @@ Seen once or not yet corroborated. Tracked, not trusted.
 - evidence: REMOVE-05 repos/categories.ts:130 (repo-layer)
 - last seen: 2026-10-10T12:44:47Z
 
+### L-060 - Force the overlap deterministically in concurrency tests (hold the lock or pause inside the first transaction) instead of relying on Promise.all timing
+- signal: `surviving_mutant` · recurrence: 1 feature(s) · scope: `repo-layer` · harmful: 0
+- features: importar-dados
+- evidence: M3 src/lib/db/repos/import.ts:31 (IMPORT-17) (repo-layer)
+- last seen: 2026-10-10T13:08:50Z
+
+### L-061 - When an acceptance criterion promises an equal derived view (summary, totals), assert the derived output itself, not only the round-trip of its inputs
+- signal: `spec_precision_gap` · recurrence: 1 feature(s) · scope: `validation` · harmful: 0
+- features: importar-dados
+- evidence: IMPORT-07 (validation)
+- last seen: 2026-10-10T13:08:50Z
+
 ## Quarantined (failed when applied - ignore)
 
 A confirmed lesson that recurred alongside failure. Kept for the maintainer to review.
