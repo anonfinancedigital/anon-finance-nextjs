@@ -315,13 +315,15 @@ T8 → T9 → T10 → T11 → T12 → T13 → T14
 
 **Done when**:
 
-- [ ] O matcher exclui `monitoring` (ao lado de `api/auth`), e a lista em `PATHS_OUTSIDE_PROXY` concorda
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] O matcher exclui `monitoring` (ao lado de `api/auth`), e a lista em `PATHS_OUTSIDE_PROXY` concorda
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
 
 **Tests**: none
 **Gate**: build
 
 **Commit**: `feat(sentry): keep the tunnel route outside the proxy`
+
+**Status**: ✅ Done
 
 ---
 

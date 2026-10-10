@@ -125,6 +125,8 @@ describe("securityHeaderRules", () => {
   it.each([
     "/api/auth/get-session",
     "/api/auth/sign-in/email",
+    "/monitoring",
+    "/monitoring/envelope",
     "/_next/static/chunks/main-abc123.js",
     "/_next/static/css/app.css",
     "/_next/image",
