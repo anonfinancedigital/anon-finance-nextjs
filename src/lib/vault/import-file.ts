@@ -3,6 +3,7 @@ import { MAX_CATEGORY_NAME, MAX_SUBCATEGORIES, MAX_SUBCATEGORY_NAME } from "@/li
 import { isCategoryColor } from "@/lib/domain/color";
 import { MAX_AGE } from "@/lib/validation/birth-date";
 import { MAX_INCOME_CENTS, MAX_RATE_BP, MIN_RATE_BP } from "@/lib/validation/goal";
+import { MAX_IMPORT_CATEGORIES, MAX_IMPORT_TRANSACTIONS, MAX_IMPORT_VERSIONS } from "@/lib/validation/import-sealed";
 import { MAX_CENTS } from "@/lib/domain/money";
 import { isValidCalendarDate } from "@/lib/domain/month";
 import type { OpenedExport } from "./export";
@@ -11,9 +12,6 @@ export const IMPORT_INVALID = "Arquivo inválido. Use o arquivo exportado pelo O
 export const IMPORT_TOO_LARGE = "Arquivo muito grande (máximo 20 MB)";
 
 export const MAX_IMPORT_FILE_BYTES = 20 * 1024 * 1024;
-export const MAX_IMPORT_TRANSACTIONS = 15_000;
-export const MAX_IMPORT_CATEGORIES = 1_000;
-export const MAX_IMPORT_VERSIONS = 100;
 const MAX_DESCRIPTION = 120;
 const MAX_PERCENT_MICRO = 100_000_000;
 

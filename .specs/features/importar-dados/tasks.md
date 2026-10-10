@@ -161,14 +161,15 @@ T1 → T2 → T3 → T4 → T5 → T6 → T7 → T8
 
 **Done when**:
 
-- [ ] Payload produzido por `buildImportPayload` passa
-- [ ] Rejeita id que não é UUID, cifra fora de `v1:<base64url>` ou acima de 2048, data inexistente e cor fora de 1..8
-- [ ] Rejeita gasto sem categoria, ganho com categoria, subcategoria fora da categoria, `categoryId`/`subcategoryId`/`seriesId` que não existem no payload (IMPORT-11)
-- [ ] Rejeita `recurring` sem `recurrenceDay`/`seriesId` e o inverso, `recurrenceDay` fora de 1..31 e `recurrenceEnd` anterior ao mês da data
-- [ ] Rejeita 15.001 transações, 1.001 categorias, 101 vigências e 31 subcategorias; aceita o limite exato (IMPORT-13)
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
-- [ ] Test count: testes novos em `src/lib/validation/import-sealed.test.ts`, nenhum removido
+- [x] Payload produzido por `buildImportPayload` passa
+- [x] Rejeita id que não é UUID, cifra fora de `v1:<base64url>` ou acima de 2048, data inexistente e cor fora de 1..8
+- [x] Rejeita gasto sem categoria, ganho com categoria, subcategoria fora da categoria, `categoryId`/`subcategoryId`/`seriesId` que não existem no payload (IMPORT-11)
+- [x] Rejeita `recurring` sem `recurrenceDay`/`seriesId` e o inverso, `recurrenceDay` fora de 1..31 e `recurrenceEnd` anterior ao mês da data
+- [x] Rejeita 15.001 transações, 1.001 categorias, 101 vigências e 31 subcategorias; aceita o limite exato (IMPORT-13)
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Test count: testes novos em `src/lib/validation/import-sealed.test.ts`, nenhum removido
 
+**Status**: ✅ Done
 **Tests**: unit
 **Gate**: quick
 **Commit**: `feat(import): validate the sealed import structure`

@@ -101,7 +101,7 @@ Fluxo do clique em "Importar":
 
 - **Purpose**: Valida a estrutura do payload no servidor, sem ver conteúdo.
 - **Location**: `src/lib/validation/import-sealed.ts`
-- **Interfaces**: `sealedImportSchema` (Zod). Ids `z.uuid`; datas válidas; cor 1..8; cifras `ciphertextSchema`; limites de quantidade; regras de referência (gasto exige categoria, subcategoria da categoria, ganho sem ambas, trio de recorrência, `recurrenceEnd`); todo `categoryId`, `subcategoryId` e `seriesId` referenciado existe no próprio payload.
+- **Interfaces**: `sealedImportSchema` (Zod). Ids `z.uuid`; datas válidas; cor 1..8; cifras `ciphertextSchema`; limites de quantidade; regras de referência (gasto exige categoria, subcategoria da categoria, ganho sem ambas, trio de recorrência, `recurrenceEnd`); todo `categoryId` e `subcategoryId` referenciado existe no próprio payload.
 - **Reuses**: `ciphertextSchema`, `isValidCalendarDate`, `isCategoryColor`, `MAX_SUBCATEGORIES`.
 
 ### importRepo
