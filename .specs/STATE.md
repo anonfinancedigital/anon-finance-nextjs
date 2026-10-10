@@ -98,4 +98,12 @@
 - **Date**: 2026-10-09
 - **Status**: active
 
+### AD-013
+- **Decision**: Nenhum dado do usuário sai para serviços de terceiros. O monitoramento (Sentry) envia só tipo de exceção, stack trace, rota sem query string e tags, filtrado por `scrubEvent`; o navegador só fala com a própria origem (túnel `/monitoring`) e o CSP mantém `connect-src 'self'`. Sem Session Replay, sem breadcrumbs, sem `setUser`.
+- **Reason**: AD-011 promete que dados decifrados nunca saem do navegador; mensagens de erro podem conter esses valores.
+- **Trade-off**: Eventos têm menos contexto para depuração; o scrubber descarta o evento se falhar.
+- **Scope**: `src/lib/sentry`, instrumentação, `logActionError`, CSP e proxy
+- **Date**: 2026-10-10
+- **Status**: active
+
 ## Handoff
