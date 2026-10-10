@@ -2,10 +2,19 @@ import { getSessionCookie } from "better-auth/cookies";
 import { type NextRequest, NextResponse } from "next/server";
 import { buildCsp } from "@/lib/security-headers";
 
-const PUBLIC_PATHS = ["/login", "/cadastro", "/esqueci-senha", "/redefinir-senha", "/privacidade"];
+const PUBLIC_PATHS = [
+  "/bem-vindo",
+  "/login",
+  "/cadastro",
+  "/esqueci-senha",
+  "/redefinir-senha",
+  "/privacidade",
+];
 
 function isPublic(pathname: string): boolean {
-  return PUBLIC_PATHS.some((path) => pathname === path || pathname.startsWith(`${path}/`));
+  return PUBLIC_PATHS.some(
+    (path) => pathname === path || pathname.startsWith(`${path}/`),
+  );
 }
 
 /**
@@ -14,8 +23,12 @@ function isPublic(pathname: string): boolean {
  * The real access control is requireSession* in every page and action.
  */
 export function proxy(request: NextRequest) {
-  const protectedRoute = !isPublic(request.nextUrl.pathname);
-  if (protectedRoute && !getSessionCookie(request)) {
+  const { pathname } = request.nextUrl;
+  const protectedRoute = !isPublic(pathname);
+  const hasSession = Boolean(getSessionCookie(request));
+  // Visitors at the root see the landing page (URL stays `/`); other protected pages still go to /login.
+  const showLanding = pathname === "/" && !hasSession;
+  if (protectedRoute && !hasSession && !showLanding) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
@@ -27,7 +40,11 @@ export function proxy(request: NextRequest) {
   requestHeaders.set("x-nonce", nonce);
   requestHeaders.set("Content-Security-Policy", csp);
 
-  const response = NextResponse.next({ request: { headers: requestHeaders } });
+  const response = showLanding
+    ? NextResponse.rewrite(new URL("/bem-vindo", request.url), {
+        request: { headers: requestHeaders },
+      })
+    : NextResponse.next({ request: { headers: requestHeaders } });
   response.headers.set("Content-Security-Policy", csp);
   if (protectedRoute) response.headers.set("Cache-Control", "no-store");
   return response;

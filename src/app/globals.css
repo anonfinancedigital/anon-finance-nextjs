@@ -242,3 +242,9 @@
     cursor: pointer;
   }
 }
+/* Landing page anchors (#cockpit, #apice, …) scroll smoothly unless the visitor prefers reduced motion. */
+@media (prefers-reduced-motion: no-preference) {
+  html:has([data-landing]) {
+    scroll-behavior: smooth;
+  }
+}
