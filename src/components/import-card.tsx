@@ -1,11 +1,10 @@
 "use client";
 
-import { UploadIcon } from "lucide-react";
-import { type ChangeEvent, useState } from "react";
+import { FileUpIcon, UploadIcon } from "lucide-react";
+import { type ChangeEvent, useRef, useState } from "react";
 import { importDataAction } from "@/actions/import-data";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { useVault } from "@/components/vault-provider";
 import { SAVE_FAILED } from "@/lib/action-result";
 import type { OpenedExport } from "@/lib/vault/export";
@@ -33,10 +32,14 @@ type State =
 export function ImportCard({ canImport, accountBirthDateCt }: { canImport: boolean; accountBirthDateCt: string | null }) {
   const { dek, userId } = useVault();
   const [state, setState] = useState<State>({ step: "idle" });
+  const [fileName, setFileName] = useState<string | null>(null);
+  const picker = useRef<HTMLInputElement>(null);
 
   async function choose(event: ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
+    event.target.value = ""; // lets the same file be chosen again
     setState({ step: "idle" });
+    setFileName(file?.name ?? null);
     if (!file) return;
     const tooLarge = checkImportFileSize(file.size);
     if (tooLarge) return setState({ step: "invalid", message: tooLarge });
@@ -89,7 +92,22 @@ export function ImportCard({ canImport, accountBirthDateCt }: { canImport: boole
 
   return (
     <div className="space-y-3">
-      <Input type="file" accept=".json,application/json" aria-label="Arquivo de dados exportado" disabled={pending} onChange={choose} />
+      <div className="flex flex-wrap items-center gap-3">
+        <input
+          ref={picker}
+          type="file"
+          accept=".json,application/json"
+          aria-label="Arquivo de dados exportado"
+          className="sr-only"
+          disabled={pending}
+          onChange={choose}
+        />
+        <Button type="button" variant="outline" disabled={pending} onClick={() => picker.current?.click()}>
+          <FileUpIcon aria-hidden />
+          {fileName ? "Trocar arquivo" : "Escolher arquivo"}
+        </Button>
+        {fileName && <span className="min-w-0 truncate text-sm text-muted-foreground">{fileName}</span>}
+      </div>
       {state.step === "invalid" && (
         <p role="alert" className="text-sm text-destructive">
           {state.message}
