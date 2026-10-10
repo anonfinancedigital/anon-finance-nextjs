@@ -172,14 +172,16 @@ T8 → T9 → T10 → T11 → T12 → T13 → T14
 
 **Done when**:
 
-- [ ] `register` importa `./sentry.server.config` apenas com `NEXT_RUNTIME === "nodejs"`
-- [ ] `onRequestError` exportado
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] `register` importa `./sentry.server.config` apenas com `NEXT_RUNTIME === "nodejs"`
+- [x] `onRequestError` exportado
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
 
 **Tests**: none
 **Gate**: build
 
 **Commit**: `feat(sentry): report unhandled request errors`
+
+**Status**: ✅ Done
 
 ---
 
