@@ -61,6 +61,31 @@ describe("allocationView", () => {
   });
 
   it("keeps the precision of a sum just below 100%", () => {
-    expect(allocationView(3, 99_999_999).progressText).toBe("99,999999% de 100% alocado");
+    expect(allocationView(3, 99_999_999).progressText).toBe(
+      "99,999999% de 100% alocado",
+    );
+  });
+
+  it("shows an enabled save with no hint and no sum warning when the last saved category was removed", () => {
+    expect(allocationView(0, 0, 1)).toEqual({
+      empty: true,
+      showSumWarning: false,
+      showAdjust: false,
+      showSave: true,
+      saveHint: null,
+      progressValue: 0,
+      progressText: "0% de 100% alocado",
+    });
+  });
+
+  it("keeps the save hidden with no rows when nothing is saved", () => {
+    expect(allocationView(0, 0, 0).showSave).toBe(false);
+  });
+
+  it("requires 100% again once a row is added after removing the last saved category", () => {
+    expect(allocationView(1, 0, 1)).toMatchObject({
+      showSave: true,
+      saveHint: "Some 100% para salvar",
+    });
   });
 });

@@ -14,16 +14,23 @@ export type AllocationView = {
   progressText: string;
 };
 
-/** What the allocation editor shows, from its number of rows and the sum of their percentages in micro-percent. */
-export function allocationView(rowCount: number, sumMicro: number): AllocationView {
+/**
+ * What the allocation editor shows, from its number of rows and the sum of their percentages in micro-percent.
+ * `savedCount` is how many categories are stored: with no rows, saving stays available to store their removal.
+ */
+export function allocationView(
+  rowCount: number,
+  sumMicro: number,
+  savedCount = 0,
+): AllocationView {
   const complete = sumMicro === TOTAL_MICRO;
-  const showSave = rowCount >= 1;
+  const showSave = rowCount >= 1 || savedCount >= 1;
   return {
     empty: rowCount === 0,
     showSumWarning: rowCount >= 1 && !complete,
     showAdjust: rowCount >= 2 && !complete,
     showSave,
-    saveHint: showSave && !complete ? "Some 100% para salvar" : null,
+    saveHint: rowCount >= 1 && !complete ? "Some 100% para salvar" : null,
     progressValue: Math.min(100, Math.max(0, sumMicro / MICRO_PER_PERCENT)),
     progressText: `${sumMicro === 0 ? "0%" : sumLabel(sumMicro)} de 100% alocado`,
   };
