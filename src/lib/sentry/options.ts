@@ -113,7 +113,7 @@ export function sentryInitOptions(env: { dsn?: string; nodeEnv?: string }): Node
 export function sentryBuildOptions(env: { token?: string; ci?: boolean }): SentryBuildOptions {
   return {
     org: "anon-finance",
-    project: "javascript-nextjs",
+    project: "anon-finance-nextjs",
     tunnelRoute: "/monitoring",
     silent: !env.ci,
     telemetry: false,

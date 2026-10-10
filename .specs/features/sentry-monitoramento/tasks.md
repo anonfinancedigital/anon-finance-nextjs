@@ -117,7 +117,7 @@ T8 → T9 → T10 → T11 → T12 → T13 → T14
 - [x] `tracesSampleRate` 0.1 com `NODE_ENV=production` e 0 nos demais
 - [x] `scrubEvent` com evento contendo e-mail, cookie, mensagem, breadcrumb, `request`, `user`, `extra` devolve só tipo, stack trace, rota sem query, release, ambiente e `tags`; evento sem `exception` não lança; falha interna devolve `null`
 - [x] `scrubTransaction` remove `?mes=2026-10` e `#x` do nome e remove `request`
-- [x] `sentryBuildOptions` traz org `anon-finance`, projeto `javascript-nextjs` e `tunnelRoute` `/monitoring`; sem token não há upload e o build não falha; token só vem do argumento
+- [x] `sentryBuildOptions` traz org `anon-finance`, projeto `anon-finance-nextjs` e `tunnelRoute` `/monitoring`; sem token não há upload e o build não falha; token só vem do argumento
 - [x] Gate check passes: `npm run test:unit`
 - [x] Test count: 10 ou mais testes novos passam, nenhum removido
 

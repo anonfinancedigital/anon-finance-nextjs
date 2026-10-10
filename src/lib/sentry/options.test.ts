@@ -218,7 +218,7 @@ describe("sentryBuildOptions", () => {
   it("carries org, project and the tunnel route", () => {
     const opts = sentryBuildOptions({ token: "t" });
     expect(opts.org).toBe("anon-finance");
-    expect(opts.project).toBe("javascript-nextjs");
+    expect(opts.project).toBe("anon-finance-nextjs");
     expect(opts.tunnelRoute).toBe("/monitoring");
   });
 

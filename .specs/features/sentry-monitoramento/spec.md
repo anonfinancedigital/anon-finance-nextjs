@@ -6,7 +6,7 @@ Hoje um erro em produção só aparece como `console.error(action, code)` (`src/
 
 ## Goals
 
-- [ ] Erros não tratados do servidor e do navegador chegam ao projeto `javascript-nextjs` (org `anon-finance`) do Sentry com stack trace legível (source maps).
+- [ ] Erros não tratados do servidor e do navegador chegam ao projeto `anon-finance-nextjs` (org `anon-finance`) do Sentry com stack trace legível (source maps).
 - [ ] Nenhum evento enviado contém dado pessoal ou financeiro: e-mail, IP, cookies, headers, corpo de requisição, mensagens de erro, breadcrumbs, valores decifrados.
 - [ ] O navegador nunca fala direto com o domínio do Sentry: `connect-src` continua `'self'`.
 - [ ] Sem DSN configurado (dev, testes), o Sentry fica desligado e o app funciona igual.
@@ -92,7 +92,7 @@ Hoje um erro em produção só aparece como `console.error(action, code)` (`src/
 
 **Acceptance Criteria**:
 
-1. WHEN `next build` runs with `SENTRY_AUTH_TOKEN`, org `anon-finance` and project `javascript-nextjs` THEN the system SHALL upload the source maps to Sentry.
+1. WHEN `next build` runs with `SENTRY_AUTH_TOKEN`, org `anon-finance` and project `anon-finance-nextjs` THEN the system SHALL upload the source maps to Sentry.
 2. IF `SENTRY_AUTH_TOKEN` is missing THEN the build SHALL finish successfully without uploading and without failing.
 3. WHEN source maps are uploaded THEN the system SHALL NOT serve `.map` files publicly from the app.
 4. The system SHALL read org, project and token only from environment variables, never from committed files.

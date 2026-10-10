@@ -46,7 +46,7 @@ Fluxo de um erro de navegador: SDK captura → `beforeSend` (scrub) → POST sam
 | System | Integration Method |
 | --- | --- |
 | Next 16 | `src/instrumentation.ts` (`register`, `onRequestError`) e `src/instrumentation-client.ts` (documentado em `node_modules/next/dist/docs/01-app/03-api-reference/03-file-conventions/`) |
-| Sentry (org `anon-finance`, projeto `javascript-nextjs`) | DSN por variável de ambiente; token só no build |
+| Sentry (org `anon-finance`, projeto `anon-finance-nextjs`) | DSN por variável de ambiente; token só no build |
 | CSP por nonce (`src/lib/security-headers.ts:27`) | Sem alteração; o túnel evita `connect-src` externo |
 
 ---
@@ -61,7 +61,7 @@ Fluxo de um erro de navegador: SDK captura → `beforeSend` (scrub) → POST sam
   - `sentryInitOptions(env: { dsn?: string; nodeEnv?: string }): InitOptions` - `enabled` só com DSN; `dataCollection` com todas as categorias desligadas (sem `sendDefaultPii`, que não existe no v11); `tracesSampleRate` 0.1 em produção, senão 0; `maxBreadcrumbs: 0`; `beforeBreadcrumb: () => null`; `beforeSend`/`beforeSendTransaction` abaixo.
   - `scrubEvent<T extends ErrorEvent>(event: T): T` - mantém `exception.values[].type` e `stacktrace`, `tags`, `release`, `environment`, `transaction` (rota sem query), `contexts.{runtime,os,browser}`; remove o resto. Nunca lança em evento sem `exception`.
   - `scrubTransaction(event)` - tira query string e fragmento de `transaction`, `request.url` (que então é removido por inteiro) e do nome do span raiz.
-  - `sentryBuildOptions(env: { token?: string; ci?: boolean }): SentryBuildOptions` - `org: "anon-finance"`, `project: "javascript-nextjs"`, `tunnelRoute: "/monitoring"`, `silent: !ci`, `authToken: token`, `telemetry: false`, `sourcemaps.deleteSourcemapsAfterUpload: true`; sem token, `sourcemaps.disable: "disable-upload"`.
+  - `sentryBuildOptions(env: { token?: string; ci?: boolean }): SentryBuildOptions` - `org: "anon-finance"`, `project: "anon-finance-nextjs"`, `tunnelRoute: "/monitoring"`, `silent: !ci`, `authToken: token`, `telemetry: false`, `sourcemaps.deleteSourcemapsAfterUpload: true`; sem token, `sourcemaps.disable: "disable-upload"`.
 - **Dependencies**: só tipos de `@sentry/nextjs` (import de tipo; o módulo roda sem o SDK).
 - **Reuses**: padrão de funções puras com teste de `security-headers.ts`.
 
