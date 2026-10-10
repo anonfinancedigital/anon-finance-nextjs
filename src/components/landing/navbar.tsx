@@ -27,10 +27,7 @@ export function Navbar() {
           <Logo />
         </Link>
 
-        <nav
-          aria-label="Principal"
-          className="hidden items-center gap-8 md:flex"
-        >
+        <nav aria-label="Principal" className="hidden items-center gap-8 md:flex">
           {LINKS.map((link) => (
             <Link key={link.href} href={link.href} className={linkClass}>
               {link.label}
@@ -55,11 +52,7 @@ export function Navbar() {
           aria-controls="landing-mobile-menu"
           onClick={() => setOpen((value) => !value)}
         >
-          {open ? (
-            <XIcon aria-hidden className="size-5" />
-          ) : (
-            <MenuIcon aria-hidden className="size-5" />
-          )}
+          {open ? <XIcon aria-hidden className="size-5" /> : <MenuIcon aria-hidden className="size-5" />}
         </button>
       </div>
 
@@ -68,33 +61,17 @@ export function Navbar() {
         className={`grid transition-[grid-template-rows] duration-300 md:hidden ${open ? "grid-rows-[1fr]" : "grid-rows-[0fr]"}`}
       >
         <div className="overflow-hidden" inert={!open}>
-          <nav
-            aria-label="Principal (mobile)"
-            className="flex flex-col gap-1 border-t border-white/[0.08] px-6 py-4"
-          >
+          <nav aria-label="Principal (mobile)" className="flex flex-col gap-1 border-t border-white/[0.08] px-6 py-4">
             {LINKS.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                onClick={close}
-                className={`${linkClass} py-2 text-base`}
-              >
+              <Link key={link.href} href={link.href} onClick={close} className={`${linkClass} py-2 text-base`}>
                 {link.label}
               </Link>
             ))}
             <div className="mt-3 flex flex-col gap-3">
-              <Link
-                href="/login"
-                onClick={close}
-                className="py-2 text-base text-zinc-300"
-              >
+              <Link href="/login" onClick={close} className="py-2 text-base text-zinc-300">
                 Entrar
               </Link>
-              <Link
-                href="/cadastro"
-                onClick={close}
-                className={`${primaryButton} py-2.5`}
-              >
+              <Link href="/cadastro" onClick={close} className={`${primaryButton} py-2.5`}>
                 Começar agora
               </Link>
             </div>

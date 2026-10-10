@@ -8,5 +8,4 @@ export const heroButton =
 export const ghostButton =
   "inline-flex h-11 items-center justify-center gap-2 rounded-full border border-white/10 px-6 text-sm font-medium text-zinc-200 transition hover:border-white/20 hover:bg-white/5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-400";
 
-export const glassCard =
-  "rounded-2xl border border-white/10 bg-zinc-900/40 p-6 transition hover:border-white/20";
+export const glassCard = "rounded-2xl border border-white/10 bg-zinc-900/40 p-6 transition hover:border-white/20";

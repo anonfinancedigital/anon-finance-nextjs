@@ -61,8 +61,7 @@ const PROCESSED = [
   "Cores e agrupamento das categorias, para montar a interface",
 ];
 
-const cardClass =
-  "rounded-2xl border border-border bg-card p-5 shadow-xl sm:p-6";
+const cardClass = "rounded-2xl border border-border bg-card p-5 shadow-xl sm:p-6";
 
 /** Public privacy page: static, no session needed (`/privacidade` is public in the proxy). */
 export default function PrivacyPage() {
@@ -77,31 +76,16 @@ export default function PrivacyPage() {
             Seu dinheiro é assunto exclusivamente seu.
           </p>
           <p className="max-w-3xl text-muted-foreground">
-            Arquitetura Zero-Knowledge: seus registros financeiros são cifrados
-            no seu dispositivo antes de trafegar. Nem mesmo a equipe do Vértice
-            tem acesso aos seus números.
+            Arquitetura Zero-Knowledge: seus registros financeiros são cifrados no seu dispositivo antes de trafegar.
+            Nem mesmo a equipe do Vértice tem acesso aos seus números.
           </p>
         </header>
 
         <ul className="grid grid-cols-1 gap-4 md:grid-cols-3">
           {PILLARS.map(({ icon: Icon, title, text, tone, glow }) => (
-            <li
-              key={title}
-              className={cn(cardClass, "relative space-y-3 overflow-hidden")}
-            >
-              <span
-                aria-hidden
-                className={cn(
-                  "absolute -top-8 left-4 size-24 rounded-full blur-2xl",
-                  glow,
-                )}
-              />
-              <span
-                className={cn(
-                  "relative inline-flex size-10 items-center justify-center rounded-xl ring-1",
-                  tone,
-                )}
-              >
+            <li key={title} className={cn(cardClass, "relative space-y-3 overflow-hidden")}>
+              <span aria-hidden className={cn("absolute -top-8 left-4 size-24 rounded-full blur-2xl", glow)} />
+              <span className={cn("relative inline-flex size-10 items-center justify-center rounded-xl ring-1", tone)}>
                 <Icon aria-hidden className="size-5" />
               </span>
               <h2 className="relative font-semibold">{title}</h2>
@@ -115,14 +99,12 @@ export default function PrivacyPage() {
             <section className={cn(cardClass, "space-y-3")}>
               <h2 className="font-semibold">A lógica do cofre</h2>
               <p className="text-sm">
-                Pense no seu dispositivo como um cofre digital. Sua senha gera a
-                chave privada que tranca os dados localmente. Nosso servidor
-                armazena apenas o conteúdo cifrado e ilegível.
+                Pense no seu dispositivo como um cofre digital. Sua senha gera a chave privada que tranca os dados
+                localmente. Nosso servidor armazena apenas o conteúdo cifrado e ilegível.
               </p>
               <p className="rounded-lg border border-border bg-muted/40 p-3 text-xs text-muted-foreground">
-                Especificação: cifragem autenticada AES-GCM de 256 bits, com
-                derivação de chave via Argon2id. Criptografia no cliente antes
-                do envio.
+                Especificação: cifragem autenticada AES-GCM de 256 bits, com derivação de chave via Argon2id.
+                Criptografia no cliente antes do envio.
               </p>
             </section>
 
@@ -131,21 +113,13 @@ export default function PrivacyPage() {
               aria-labelledby="recovery-title"
             >
               <div className="space-y-2 rounded-[calc(1rem-1px)] bg-card p-5 sm:p-6">
-                <h2
-                  id="recovery-title"
-                  className="flex items-start gap-2 font-semibold"
-                >
-                  <AlertTriangleIcon
-                    aria-hidden
-                    className="mt-0.5 size-5 shrink-0 text-amber-400"
-                  />
+                <h2 id="recovery-title" className="flex items-start gap-2 font-semibold">
+                  <AlertTriangleIcon aria-hidden className="mt-0.5 size-5 shrink-0 text-amber-400" />
                   Atenção: guarde sua Chave de Recuperação
                 </h2>
                 <p className="text-sm">
-                  Como nem nós temos a chave do seu cofre, é tecnicamente
-                  impossível recuperar seus dados se você perder a senha e a
-                  Chave de Recuperação. Ao criar a conta, guarde essa chave em
-                  local seguro.
+                  Como nem nós temos a chave do seu cofre, é tecnicamente impossível recuperar seus dados se você perder
+                  a senha e a Chave de Recuperação. Ao criar a conta, guarde essa chave em local seguro.
                 </p>
               </div>
             </section>
@@ -158,17 +132,12 @@ export default function PrivacyPage() {
               <p className="flex items-center gap-2 text-sm font-medium text-emerald-400">
                 <LockIcon aria-hidden className="size-4" />
                 Só você tem a chave
-                <span className="font-normal text-muted-foreground">
-                  · cifrado no dispositivo
-                </span>
+                <span className="font-normal text-muted-foreground">· cifrado no dispositivo</span>
               </p>
               <ul className="space-y-2 text-sm">
                 {ENCRYPTED.map((item) => (
                   <li key={item} className="flex items-start gap-2">
-                    <CheckCircle2Icon
-                      aria-hidden
-                      className="mt-0.5 size-4 shrink-0 text-emerald-400"
-                    />
+                    <CheckCircle2Icon aria-hidden className="mt-0.5 size-4 shrink-0 text-emerald-400" />
                     {item}
                   </li>
                 ))}
@@ -177,19 +146,13 @@ export default function PrivacyPage() {
 
             <div className="space-y-3 border-t border-border pt-6">
               <p className="flex items-center gap-2 text-sm font-medium">
-                <EyeIcon aria-hidden className="size-4 text-muted-foreground" />
-                O que o Vértice processa
-                <span className="font-normal text-muted-foreground">
-                  · metadados técnicos necessários
-                </span>
+                <EyeIcon aria-hidden className="size-4 text-muted-foreground" />O que o Vértice processa
+                <span className="font-normal text-muted-foreground">· metadados técnicos necessários</span>
               </p>
               <ul className="space-y-2 text-sm text-muted-foreground">
                 {PROCESSED.map((item) => (
                   <li key={item} className="flex items-start gap-2">
-                    <span
-                      aria-hidden
-                      className="mt-2 size-1.5 shrink-0 rounded-full bg-muted-foreground/60"
-                    />
+                    <span aria-hidden className="mt-2 size-1.5 shrink-0 rounded-full bg-muted-foreground/60" />
                     {item}
                   </li>
                 ))}
@@ -200,9 +163,7 @@ export default function PrivacyPage() {
 
         <section className={cn(cardClass, "space-y-4")}>
           <h2 className="font-semibold">Seus direitos e autonomia</h2>
-          <p className="text-sm text-muted-foreground">
-            Portabilidade e exclusão definitiva
-          </p>
+          <p className="text-sm text-muted-foreground">Portabilidade e exclusão definitiva</p>
           <ul className="grid grid-cols-1 gap-4 text-sm md:grid-cols-2">
             <li className="space-y-2">
               <p className="flex items-center gap-2 font-medium">
@@ -210,13 +171,9 @@ export default function PrivacyPage() {
                 Exportar dados
               </p>
               <p className="text-muted-foreground">
-                Download imediato de todo o seu histórico em arquivo JSON, um
-                formato aberto e padrão.
+                Download imediato de todo o seu histórico em arquivo JSON, um formato aberto e padrão.
               </p>
-              <Link
-                href="/conta"
-                className="inline-flex text-link hover:underline"
-              >
+              <Link href="/conta" className="inline-flex text-link hover:underline">
                 Ir para Meus dados →
               </Link>
             </li>
@@ -226,13 +183,9 @@ export default function PrivacyPage() {
                 Excluir conta
               </p>
               <p className="text-muted-foreground">
-                Elimina permanentemente transações, categorias, meta, dados de
-                acesso e as chaves do seu cofre.
+                Elimina permanentemente transações, categorias, meta, dados de acesso e as chaves do seu cofre.
               </p>
-              <Link
-                href="/conta"
-                className="inline-flex text-link hover:underline"
-              >
+              <Link href="/conta" className="inline-flex text-link hover:underline">
                 Ir para Excluir conta →
               </Link>
             </li>

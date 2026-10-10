@@ -17,11 +17,7 @@ import Link from "next/link";
 import { Logo } from "@/components/brand/Logo";
 import { GrowthChart } from "@/components/landing/growth-chart";
 import { Navbar } from "@/components/landing/navbar";
-import {
-  ghostButton,
-  glassCard,
-  heroButton,
-} from "@/components/landing/styles";
+import { ghostButton, glassCard, heroButton } from "@/components/landing/styles";
 import { redirectIfSignedIn } from "@/lib/auth-guard";
 
 export const metadata: Metadata = {
@@ -89,23 +85,11 @@ const FOOTER_COLUMNS = [
   },
 ];
 
-function SectionTitle({
-  eyebrow,
-  title,
-  text,
-}: {
-  eyebrow: string;
-  title: string;
-  text?: string;
-}) {
+function SectionTitle({ eyebrow, title, text }: { eyebrow: string; title: string; text?: string }) {
   return (
     <div className="mx-auto max-w-2xl space-y-3 text-center">
-      <p className="text-xs font-semibold tracking-[0.2em] text-emerald-400 uppercase">
-        {eyebrow}
-      </p>
-      <h2 className="font-display text-3xl font-bold tracking-tight sm:text-4xl">
-        {title}
-      </h2>
+      <p className="text-xs font-semibold tracking-[0.2em] text-emerald-400 uppercase">{eyebrow}</p>
+      <h2 className="font-display text-3xl font-bold tracking-tight sm:text-4xl">{title}</h2>
       {text && <p className="text-zinc-400">{text}</p>}
     </div>
   );
@@ -122,9 +106,7 @@ function HeroMockup() {
         <span className="size-2.5 rounded-full bg-white/15" />
         <span className="size-2.5 rounded-full bg-white/15" />
         <span className="size-2.5 rounded-full bg-white/15" />
-        <span className="mx-auto rounded-md bg-white/5 px-4 py-0.5 text-[11px] text-zinc-500">
-          vértice · cockpit
-        </span>
+        <span className="mx-auto rounded-md bg-white/5 px-4 py-0.5 text-[11px] text-zinc-500">vértice · cockpit</span>
       </div>
       <div className="grid gap-3 rounded-xl border border-white/[0.06] bg-zinc-950 p-3 sm:p-4 lg:grid-cols-5">
         <div className="space-y-3 lg:col-span-2">
@@ -138,21 +120,14 @@ function HeroMockup() {
               { label: "Despesas", value: "R$ 7.850", tone: "text-zinc-100" },
               { label: "Saldo", value: "R$ 4.550", tone: "text-purple-300" },
             ].map((item) => (
-              <div
-                key={item.label}
-                className="rounded-lg border border-white/[0.06] bg-white/[0.03] p-3"
-              >
+              <div key={item.label} className="rounded-lg border border-white/[0.06] bg-white/[0.03] p-3">
                 <p className="text-[11px] text-zinc-500">{item.label}</p>
-                <p className={`mt-1 text-sm font-semibold ${item.tone}`}>
-                  {item.value}
-                </p>
+                <p className={`mt-1 text-sm font-semibold ${item.tone}`}>{item.value}</p>
               </div>
             ))}
           </div>
           <div className="space-y-3 rounded-lg border border-white/[0.06] bg-white/[0.03] p-4">
-            <p className="text-xs font-medium text-zinc-300">
-              Distribuição do mês
-            </p>
+            <p className="text-xs font-medium text-zinc-300">Distribuição do mês</p>
             {SPENDING.map((item) => (
               <div key={item.label} className="space-y-1">
                 <div className="flex justify-between text-[11px] text-zinc-400">
@@ -160,10 +135,7 @@ function HeroMockup() {
                   <span>{item.pct}%</span>
                 </div>
                 <div className="h-1.5 rounded-full bg-white/[0.06]">
-                  <div
-                    className={`h-full rounded-full ${item.bar}`}
-                    style={{ width: `${item.pct * 2.5}%` }}
-                  />
+                  <div className={`h-full rounded-full ${item.bar}`} style={{ width: `${item.pct * 2.5}%` }} />
                 </div>
               </div>
             ))}
@@ -172,14 +144,9 @@ function HeroMockup() {
         <div className="rounded-lg border border-white/[0.06] bg-white/[0.03] p-4 lg:col-span-3">
           <div className="flex flex-wrap items-start justify-between gap-2">
             <div>
-              <p className="text-xs font-medium text-zinc-300">
-                Ápice · patrimônio projetado
-              </p>
+              <p className="text-xs font-medium text-zinc-300">Ápice · patrimônio projetado</p>
               <p className="mt-1 font-display text-2xl font-bold">
-                R$ 1,0 mi{" "}
-                <span className="text-sm font-normal text-zinc-500">
-                  em ~14 anos
-                </span>
+                R$ 1,0 mi <span className="text-sm font-normal text-zinc-500">em ~14 anos</span>
               </p>
             </div>
             <span className="rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-0.5 text-[11px] text-emerald-300">
@@ -189,19 +156,15 @@ function HeroMockup() {
           <GrowthChart className="mt-3 h-auto w-full" />
           <div className="mt-2 flex gap-4 text-[11px] text-zinc-500">
             <span className="flex items-center gap-1.5">
-              <span className="h-0.5 w-4 rounded bg-linear-to-r from-purple-500 to-emerald-500" />{" "}
-              Patrimônio
+              <span className="h-0.5 w-4 rounded bg-linear-to-r from-purple-500 to-emerald-500" /> Patrimônio
             </span>
             <span className="flex items-center gap-1.5">
-              <span className="h-0 w-4 border-t border-dashed border-zinc-400" />{" "}
-              Total depositado
+              <span className="h-0 w-4 border-t border-dashed border-zinc-400" /> Total depositado
             </span>
           </div>
         </div>
       </div>
-      <p className="px-3 py-2 text-center text-[11px] text-zinc-600">
-        Ilustração com valores fictícios.
-      </p>
+      <p className="px-3 py-2 text-center text-[11px] text-zinc-600">Ilustração com valores fictícios.</p>
     </div>
   );
 }
@@ -211,10 +174,7 @@ export default async function LandingPage() {
   await redirectIfSignedIn();
 
   return (
-    <div
-      data-landing
-      className="relative flex-1 overflow-x-clip bg-zinc-950 text-zinc-100"
-    >
+    <div data-landing className="relative flex-1 overflow-x-clip bg-zinc-950 text-zinc-100">
       <div
         aria-hidden
         className="pointer-events-none absolute inset-x-0 top-0 h-[640px] bg-[radial-gradient(60%_60%_at_50%_0%,rgba(139,92,246,0.22),transparent),radial-gradient(40%_40%_at_85%_20%,rgba(16,185,129,0.10),transparent)]"
@@ -227,13 +187,9 @@ export default async function LandingPage() {
             href="/privacidade"
             className="inline-flex max-w-full items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-4 py-1.5 text-xs text-zinc-300 backdrop-blur transition hover:border-white/20 sm:text-sm"
           >
-            <ShieldCheckIcon
-              aria-hidden
-              className="size-4 shrink-0 text-emerald-400"
-            />
+            <ShieldCheckIcon aria-hidden className="size-4 shrink-0 text-emerald-400" />
             <span className="truncate sm:whitespace-normal">
-              Arquitetura Zero-Knowledge: seus números chegam ao servidor já
-              cifrados
+              Arquitetura Zero-Knowledge: seus números chegam ao servidor já cifrados
             </span>
             <ArrowRightIcon aria-hidden className="size-4 shrink-0" />
           </Link>
@@ -245,23 +201,16 @@ export default async function LandingPage() {
             </span>
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-base text-balance text-zinc-400 sm:text-lg">
-            Gestão financeira de precisão e projeção matemática da sua
-            independência. Uma plataforma feita para quem quer prever o futuro
-            do patrimônio sem abrir mão do sigilo absoluto.
+            Gestão financeira de precisão e projeção matemática da sua independência. Uma plataforma feita para quem
+            quer prever o futuro do patrimônio sem abrir mão do sigilo absoluto.
           </p>
           <div className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Link href="/cadastro" className={`${heroButton} w-full sm:w-auto`}>
               Criar meu cofre gratuito
               <ArrowRightIcon aria-hidden className="size-4" />
             </Link>
-            <Link
-              href="/privacidade"
-              className={`${ghostButton} w-full sm:w-auto`}
-            >
-              <ShieldCheckIcon
-                aria-hidden
-                className="size-4 text-emerald-400"
-              />
+            <Link href="/privacidade" className={`${ghostButton} w-full sm:w-auto`}>
+              <ShieldCheckIcon aria-hidden className="size-4 text-emerald-400" />
               Conhecer a privacidade
             </Link>
           </div>
@@ -271,33 +220,21 @@ export default async function LandingPage() {
           </div>
         </section>
 
-        <section
-          id="pilares"
-          className="mx-auto max-w-6xl scroll-mt-24 px-6 py-20"
-        >
+        <section id="pilares" className="mx-auto max-w-6xl scroll-mt-24 px-6 py-20">
           <SectionTitle
             eyebrow="Pilares"
             title="Precisão para projetar. Sigilo para confiar."
             text="Tudo o que você precisa para enxergar o caminho até a independência, e nada que exponha o seu dinheiro."
           />
           <div className="mt-12 grid grid-cols-1 gap-4 md:grid-cols-3">
-            <article
-              id="apice"
-              className={`${glassCard} scroll-mt-24 space-y-4 md:col-span-2`}
-            >
+            <article id="apice" className={`${glassCard} scroll-mt-24 space-y-4 md:col-span-2`}>
               <span className="inline-flex size-10 items-center justify-center rounded-xl bg-purple-500/10 ring-1 ring-purple-500/30">
-                <TrendingUpIcon
-                  aria-hidden
-                  className="size-5 text-purple-300"
-                />
+                <TrendingUpIcon aria-hidden className="size-5 text-purple-300" />
               </span>
-              <h3 className="text-xl font-semibold">
-                O Ápice: engenharia de juros compostos
-              </h3>
+              <h3 className="text-xl font-semibold">O Ápice: engenharia de juros compostos</h3>
               <p className="max-w-xl text-sm text-zinc-400">
-                Descubra com exatidão matemática o momento em que seus
-                rendimentos cobrirão seu custo de vida. Simule taxas reais,
-                retiradas seguras e marcos de patrimônio em tempo real.
+                Descubra com exatidão matemática o momento em que seus rendimentos cobrirão seu custo de vida. Simule
+                taxas reais, retiradas seguras e marcos de patrimônio em tempo real.
               </p>
               <GrowthChart className="h-auto w-full max-w-xl" />
             </article>
@@ -308,20 +245,13 @@ export default async function LandingPage() {
               </span>
               <h3 className="text-xl font-semibold">Cockpit em tempo real</h3>
               <p className="text-sm text-zinc-400">
-                Controle o ritmo de gastos do mês e a distribuição percentual
-                sem a neurose de planilhas lentas ou categorizações manuais
-                infinitas.
+                Controle o ritmo de gastos do mês e a distribuição percentual sem a neurose de planilhas lentas ou
+                categorizações manuais infinitas.
               </p>
               <div className="space-y-2 pt-2">
                 {SPENDING.slice(0, 3).map((item) => (
-                  <div
-                    key={item.label}
-                    className="h-1.5 rounded-full bg-white/[0.06]"
-                  >
-                    <div
-                      className={`h-full rounded-full ${item.bar}`}
-                      style={{ width: `${item.pct * 2.5}%` }}
-                    />
+                  <div key={item.label} className="h-1.5 rounded-full bg-white/[0.06]">
+                    <div className={`h-full rounded-full ${item.bar}`} style={{ width: `${item.pct * 2.5}%` }} />
                   </div>
                 ))}
               </div>
@@ -329,32 +259,23 @@ export default async function LandingPage() {
 
             <article className={`${glassCard} space-y-4`}>
               <span className="inline-flex size-10 items-center justify-center rounded-xl bg-emerald-500/10 ring-1 ring-emerald-500/30">
-                <LockKeyholeIcon
-                  aria-hidden
-                  className="size-5 text-emerald-300"
-                />
+                <LockKeyholeIcon aria-hidden className="size-5 text-emerald-300" />
               </span>
-              <h3 className="text-xl font-semibold">
-                Privacidade Zero-Knowledge (AES-256)
-              </h3>
+              <h3 className="text-xl font-semibold">Privacidade Zero-Knowledge (AES-256)</h3>
               <p className="text-sm text-zinc-400">
-                Seus dados financeiros são cifrados localmente antes de
-                trafegar. Nem a equipe do Vértice tem acesso aos seus saldos,
-                investimentos ou compras.
+                Seus dados financeiros são cifrados localmente antes de trafegar. Nem a equipe do Vértice tem acesso aos
+                seus saldos, investimentos ou compras.
               </p>
             </article>
 
             <article className={`${glassCard} space-y-4 md:col-span-2`}>
               <span className="inline-flex size-10 items-center justify-center rounded-xl bg-amber-500/10 ring-1 ring-amber-500/30">
-                <DownloadCloudIcon
-                  aria-hidden
-                  className="size-5 text-amber-300"
-                />
+                <DownloadCloudIcon aria-hidden className="size-5 text-amber-300" />
               </span>
               <h3 className="text-xl font-semibold">Soberania e exportação</h3>
               <p className="max-w-xl text-sm text-zinc-400">
-                Seus dados são uma propriedade sua. Exporte o histórico integral
-                em JSON ou apague tudo definitivamente a qualquer instante.
+                Seus dados são uma propriedade sua. Exporte o histórico integral em JSON ou apague tudo definitivamente
+                a qualquer instante.
               </p>
               <pre
                 aria-hidden
@@ -366,15 +287,8 @@ export default async function LandingPage() {
           </div>
         </section>
 
-        <section
-          id="manifesto"
-          className="mx-auto max-w-6xl scroll-mt-24 px-6 py-20"
-        >
-          <SectionTitle
-            eyebrow="Manifesto"
-            title="Por que o Vértice?"
-            text="Direto ao ponto, sem enrolação."
-          />
+        <section id="manifesto" className="mx-auto max-w-6xl scroll-mt-24 px-6 py-20">
+          <SectionTitle eyebrow="Manifesto" title="Por que o Vértice?" text="Direto ao ponto, sem enrolação." />
           <div className="mt-12 grid grid-cols-1 gap-4 md:grid-cols-3">
             {COMPARISON.map(({ name, icon: Icon, highlight, points }) => (
               <article
@@ -386,10 +300,7 @@ export default async function LandingPage() {
                 }`}
               >
                 <div className="flex items-center gap-3">
-                  <Icon
-                    aria-hidden
-                    className={`size-5 ${highlight ? "text-emerald-400" : "text-zinc-500"}`}
-                  />
+                  <Icon aria-hidden className={`size-5 ${highlight ? "text-emerald-400" : "text-zinc-500"}`} />
                   <h3 className="font-semibold">{name}</h3>
                 </div>
                 <ul className="mt-5 space-y-3 text-sm">
@@ -399,15 +310,9 @@ export default async function LandingPage() {
                       className={`flex items-start gap-2.5 ${highlight ? "text-zinc-200" : "text-zinc-400"}`}
                     >
                       {highlight ? (
-                        <CheckIcon
-                          aria-hidden
-                          className="mt-0.5 size-4 shrink-0 text-emerald-400"
-                        />
+                        <CheckIcon aria-hidden className="mt-0.5 size-4 shrink-0 text-emerald-400" />
                       ) : (
-                        <XIcon
-                          aria-hidden
-                          className="mt-0.5 size-4 shrink-0 text-zinc-600"
-                        />
+                        <XIcon aria-hidden className="mt-0.5 size-4 shrink-0 text-zinc-600" />
                       )}
                       {point}
                     </li>
@@ -421,9 +326,7 @@ export default async function LandingPage() {
         <section className="mx-auto max-w-6xl px-6 py-12">
           <div className="rounded-3xl border border-white/10 bg-linear-to-br from-purple-500/[0.10] via-zinc-900/40 to-emerald-500/[0.08] p-8 backdrop-blur-sm sm:p-12">
             <div className="max-w-2xl space-y-3">
-              <p className="text-xs font-semibold tracking-[0.2em] text-emerald-400 uppercase">
-                Segurança e confiança
-              </p>
+              <p className="text-xs font-semibold tracking-[0.2em] text-emerald-400 uppercase">Segurança e confiança</p>
               <h2 className="font-display text-3xl font-bold tracking-tight">
                 Feito para ser confiável por princípio.
               </h2>
@@ -464,13 +367,9 @@ export default async function LandingPage() {
         </section>
 
         <section className="mx-auto max-w-3xl px-6 py-24 text-center">
-          <SparklesIcon
-            aria-hidden
-            className="mx-auto size-6 text-purple-300"
-          />
+          <SparklesIcon aria-hidden className="mx-auto size-6 text-purple-300" />
           <h2 className="mt-4 font-display text-3xl font-bold tracking-tight text-balance sm:text-4xl">
-            Construa o caminho para a sua independência com clareza matemática e
-            sigilo absoluto.
+            Construa o caminho para a sua independência com clareza matemática e sigilo absoluto.
           </h2>
           <Link href="/cadastro" className={`${heroButton} mt-8`}>
             Começar agora gratuitamente
@@ -483,24 +382,15 @@ export default async function LandingPage() {
         <div className="mx-auto grid max-w-6xl gap-10 px-6 py-12 md:grid-cols-4">
           <div className="space-y-3 md:col-span-2">
             <Logo />
-            <p className="max-w-xs text-sm text-zinc-500">
-              Da renda mensal ao ápice patrimonial.
-            </p>
+            <p className="max-w-xs text-sm text-zinc-500">Da renda mensal ao ápice patrimonial.</p>
           </div>
           {FOOTER_COLUMNS.map((column) => (
-            <nav
-              key={column.title}
-              aria-label={column.title}
-              className="space-y-3"
-            >
+            <nav key={column.title} aria-label={column.title} className="space-y-3">
               <p className="text-sm font-semibold">{column.title}</p>
               <ul className="space-y-2 text-sm">
                 {column.links.map((link) => (
                   <li key={link.label}>
-                    <Link
-                      href={link.href}
-                      className="text-zinc-500 transition hover:text-white"
-                    >
+                    <Link href={link.href} className="text-zinc-500 transition hover:text-white">
                       {link.label}
                     </Link>
                   </li>
