@@ -7,10 +7,10 @@ import { Logo } from "@/components/brand/Logo";
 import { primaryButton } from "./styles";
 
 const LINKS = [
-  { href: "#cockpit", label: "Cockpit" },
-  { href: "#apice", label: "O Ápice" },
+  { href: "/#cockpit", label: "Cockpit" },
+  { href: "/#apice", label: "O Ápice" },
   { href: "/privacidade", label: "Segurança" },
-  { href: "#manifesto", label: "Manifesto" },
+  { href: "/#manifesto", label: "Manifesto" },
 ];
 
 const linkClass = "text-sm text-zinc-400 transition hover:text-white";

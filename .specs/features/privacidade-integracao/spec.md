@@ -108,19 +108,19 @@ A página `/privacidade` é standalone: não tem o header da área pública (Nav
 
 | Requirement ID | Story | Phase | Status |
 | -------------- | ----- | ----- | ------ |
-| PRIV-01 | P1: Visitante navega pelo site | - | Pending |
-| PRIV-02 | P1: Visitante navega pelo site | - | Pending |
-| PRIV-03 | P1: Visitante navega pelo site | - | Pending |
-| PRIV-04 | P1: Visitante navega pelo site | - | Pending |
-| PRIV-05 | P1: Visitante navega pelo site | - | Pending |
-| PRIV-06 | P1: Visitante navega pelo site | - | Pending |
-| PRIV-07 | P1: Usuário logado vê a privacidade dentro do app | - | Pending |
-| PRIV-08 | P1: Usuário logado vê a privacidade dentro do app | - | Pending |
-| PRIV-09 | P1: Usuário logado vê a privacidade dentro do app | - | Pending |
-| PRIV-10 | P1: Usuário logado vê a privacidade dentro do app | - | Pending |
-| PRIV-11 | P1: Usuário logado vê a privacidade dentro do app | - | Pending |
-| PRIV-12 | P1: Usuário logado vê a privacidade dentro do app | - | Pending |
-| PRIV-13 | P2: Conteúdo único e rota interna protegida | - | Pending |
+| PRIV-01 | P1: Visitante navega pelo site | Task 2 | Implementing |
+| PRIV-02 | P1: Visitante navega pelo site | Task 2 | Implementing |
+| PRIV-03 | P1: Visitante navega pelo site | Task 2 | Implementing |
+| PRIV-04 | P1: Visitante navega pelo site | Task 2 | Implementing |
+| PRIV-05 | P1: Visitante navega pelo site | Task 2 | Implementing |
+| PRIV-06 | P1: Visitante navega pelo site | Task 2 | Implementing |
+| PRIV-07 | P1: Usuário logado vê a privacidade dentro do app | Task 2 | Implementing |
+| PRIV-08 | P1: Usuário logado vê a privacidade dentro do app | Task 2 | Implementing |
+| PRIV-09 | P1: Usuário logado vê a privacidade dentro do app | Task 2 | Implementing |
+| PRIV-10 | P1: Usuário logado vê a privacidade dentro do app | Task 2 | Implementing |
+| PRIV-11 | P1: Usuário logado vê a privacidade dentro do app | Task 2 | Implementing |
+| PRIV-12 | P1: Usuário logado vê a privacidade dentro do app | Task 2 | Implementing |
+| PRIV-13 | P2: Conteúdo único e rota interna protegida | Task 2 | Implementing |
 | PRIV-14 | P2: Conteúdo único e rota interna protegida | Task 1 | Implementing |
 | PRIV-15 | P2: Conteúdo único e rota interna protegida | Task 1 | Implementing |
 
