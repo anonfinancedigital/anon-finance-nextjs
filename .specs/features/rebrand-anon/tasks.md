@@ -184,15 +184,18 @@ T9 → T10 → T11 → T12
 
 **Done when**:
 
-- [ ] `aria-label` "ANON"; texto "ANON" e descritor exibidos
-- [ ] Duas variantes SVG com gradientes e superfícies dos SVGs dark e light, alternadas por `dark:`
-- [ ] Ids de gradiente únicos por instância e por variante
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] `aria-label` "ANON"; texto "ANON" e descritor exibidos
+- [x] Duas variantes SVG com gradientes e superfícies dos SVGs dark e light, alternadas por `dark:`
+- [x] Ids de gradiente únicos por instância e por variante
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
 
 **Tests**: none
 **Gate**: build
 
 **Commit**: `feat(brand): redraw the Logo as the ANON monogram`
+
+
+**Status**: ✅ Done
 
 ---
 
