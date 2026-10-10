@@ -58,10 +58,10 @@ Fluxo de um erro de navegador: SDK captura → `beforeSend` (scrub) → POST sam
 - **Purpose**: Concentrar tudo que decide o que sai do app.
 - **Location**: `src/lib/sentry/options.ts`
 - **Interfaces**:
-  - `sentryInitOptions(env: { dsn?: string; nodeEnv?: string }): InitOptions` - `enabled` só com DSN; `dataCollection` com todas as categorias desligadas e `sendDefaultPii: false`; `tracesSampleRate` 0.1 em produção, senão 0; `maxBreadcrumbs: 0`; `beforeBreadcrumb: () => null`; `beforeSend`/`beforeSendTransaction` abaixo.
+  - `sentryInitOptions(env: { dsn?: string; nodeEnv?: string }): InitOptions` - `enabled` só com DSN; `dataCollection` com todas as categorias desligadas (sem `sendDefaultPii`, que não existe no v11); `tracesSampleRate` 0.1 em produção, senão 0; `maxBreadcrumbs: 0`; `beforeBreadcrumb: () => null`; `beforeSend`/`beforeSendTransaction` abaixo.
   - `scrubEvent<T extends ErrorEvent>(event: T): T` - mantém `exception.values[].type` e `stacktrace`, `tags`, `release`, `environment`, `transaction` (rota sem query), `contexts.{runtime,os,browser}`; remove o resto. Nunca lança em evento sem `exception`.
   - `scrubTransaction(event)` - tira query string e fragmento de `transaction`, `request.url` (que então é removido por inteiro) e do nome do span raiz.
-  - `sentryBuildOptions(env: { token?: string; ci?: boolean }): SentryBuildOptions` - `org: "anon-finance"`, `project: "javascript-nextjs"`, `tunnelRoute: "/monitoring"`, `silent: !ci`, `authToken: token`; sem token, desliga o upload.
+  - `sentryBuildOptions(env: { token?: string; ci?: boolean }): SentryBuildOptions` - `org: "anon-finance"`, `project: "javascript-nextjs"`, `tunnelRoute: "/monitoring"`, `silent: !ci`, `authToken: token`, `telemetry: false`, `sourcemaps.deleteSourcemapsAfterUpload: true`; sem token, `sourcemaps.disable: "disable-upload"`.
 - **Dependencies**: só tipos de `@sentry/nextjs` (import de tipo; o módulo roda sem o SDK).
 - **Reuses**: padrão de funções puras com teste de `security-headers.ts`.
 
@@ -141,6 +141,20 @@ N/A - não há dado persistido.
 | Matcher do proxy e `PATHS_OUTSIDE_PROXY` precisam concordar | `src/proxy.ts:40`, `src/lib/security-headers.ts:50` | CSP faltando ou redirect ao login no túnel | Os dois recebem `/monitoring` no mesmo commit; `security-headers.test.ts` cobre a lista |
 | Erros esperados (validação) não devem virar evento | `src/actions/*` | Ruído | Eles retornam `ActionResult`, não lançam; só `logActionError` (falha inesperada) reporta |
 | Pacote ainda não instalado: API só verificada pela documentação web | - | Nomes de opção podem divergir | Task 1 instala e confere os tipos; discrepância vira ajuste no design antes de seguir |
+
+### Fatos confirmados na T1 (`@sentry/nextjs` 11.6.0 instalado, Next 16.3.8)
+
+Verificado nos tipos em `node_modules/@sentry/{core,nextjs}/build/types`.
+
+| Ponto | Confirmado | Divergência do design |
+| --- | --- | --- |
+| Apagar `.map` após upload | `sourcemaps.deleteSourcemapsAfterUpload?: boolean` (`nextjs/.../config/types.d.ts:387`), padrão `true`; `sourcemaps.filesToDeleteAfterUpload` sobrescreve; `sourcemaps.disable: boolean \| 'disable-upload'` | Nenhuma de nome. Como o padrão já é `true`, `sentryBuildOptions` define `deleteSourcemapsAfterUpload: true` explícito |
+| `dataCollection` | Existe (`core/.../options.d.ts:346`). Chaves reais: `userInfo`, `cookies`, `httpHeaders`, `httpBodies` (`[]` desliga), `urlQueryParams`, `graphQL`, `genAI`, `databaseQueryData`, `queues`, `stackFrameVariables`, `frameContextLines` | O design citava só `cookies/httpHeaders`. Valores desligados: `userInfo`, `cookies`, `httpHeaders`, `urlQueryParams`, `databaseQueryData`, `queues`, `stackFrameVariables` em `false`, `httpBodies: []`, `graphQL` e `genAI` com todos os campos `false`. `frameContextLines` fica no padrão (o trecho de código vem do código-fonte, não de dado do usuário) |
+| `sendDefaultPii` | NÃO existe no v11.6.0: ausente dos tipos e do código (`grep` em `core`, `nextjs`, `node`, `browser`). Foi substituído por `dataCollection` | SPEC_DEVIATION em SENTRY-04: `sendDefaultPii: false` não pode ser definido (erro de tipo, sem efeito). O equivalente é `dataCollection.userInfo: false` mais as demais categorias desligadas; o teste afirma isso. O design supunha SDK ≥ 10.57 com as duas formas |
+| `captureRequestError` | `(error: unknown, request: { path: string; method: string; headers: Record<string, string \| string[] \| undefined> }, errorContext: { routerKind: string; routePath: string; routeType: string }): void` (`nextjs/.../common/captureRequestError.d.ts:14`), compatível com `onRequestError` | Nenhuma; atribuir direto como `onRequestError` |
+| `withSentryConfig` | `withSentryConfig<C>(nextConfig?: C, sentryBuildOptions?: SentryBuildOptions): C`; `tunnelRoute?: string \| boolean` (`types.d.ts:231`); `org`, `project`, `authToken`, `silent`, `telemetry`, `sourcemaps` vêm de `BuildTimeOptionsBase` | Nenhuma. A doc do tipo confirma que o túnel passa pelo `proxy.ts` e pede exclusão no `matcher` (já planejado). `telemetry: false` também será definido para o build não enviar telemetria do plugin |
+| Upload com Turbopack | O SDK tem o caminho `after-production-compile-turbopack` e `useRunAfterProductionCompileHook` vale `true` por padrão com Turbopack (`types.d.ts:303`); exige Next >= 15. Suportado em teoria; a prova real (sem token) é na T13 | Nenhuma por ora. Efeito colateral: com Turbopack o SDK não aplica a instrumentação de build-time via webpack (`types.d.ts:75`) |
+| Replay / Feedback | Pacotes `@sentry/replay` e `@sentry/feedback` vêm como dependências, mas só entram no bundle se a integração for importada | Nenhuma; T5 não as importa |
 
 ---
 

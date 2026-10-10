@@ -84,15 +84,17 @@ T8 → T9 → T10 → T11 → T12 → T13 → T14
 
 **Done when**:
 
-- [ ] `@sentry/nextjs` em `dependencies` e `package-lock.json` atualizado
-- [ ] `design.md` Risks registra, a partir dos tipos instalados: nome da opção que apaga `.map` após o upload, existência de `dataCollection`, assinatura de `captureRequestError`, e se o upload funciona com Turbopack
-- [ ] Discrepância com o design vira ajuste no `design.md` antes da T2
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] `@sentry/nextjs` em `dependencies` e `package-lock.json` atualizado
+- [x] `design.md` Risks registra, a partir dos tipos instalados: nome da opção que apaga `.map` após o upload, existência de `dataCollection`, assinatura de `captureRequestError`, e se o upload funciona com Turbopack
+- [x] Discrepância com o design vira ajuste no `design.md` antes da T2
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
 
 **Tests**: none
 **Gate**: build
 
 **Commit**: `chore(sentry): add the Next.js SDK`
+
+**Status**: ✅ Done
 
 ---
 
