@@ -52,6 +52,7 @@ export const STATIC_CSP = "default-src 'none'; frame-ancestors 'none'; object-sr
  */
 export const PATHS_OUTSIDE_PROXY = [
   "/api/auth/:path*",
+  "/monitoring/:path*",
   "/_next/static/:path*",
   "/_next/image",
   "/favicon.ico",

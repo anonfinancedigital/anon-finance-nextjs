@@ -63,6 +63,12 @@ describe("buildCsp", () => {
     expect(directive(csp, "form-action")).toBe("form-action 'self'");
   });
 
+  it("keeps connect-src at 'self' with no external host, since browser events go through /monitoring (SENTRY-08)", () => {
+    const connect = directive(buildCsp("n", false), "connect-src");
+    expect(connect).toBe("connect-src 'self'");
+    expect(buildCsp("n", false)).not.toMatch(/sentry/i);
+  });
+
   it("embeds a different nonce for each call", () => {
     expect(buildCsp("a", false)).toContain("'nonce-a'");
     expect(buildCsp("b", false)).not.toContain("'nonce-a'");
@@ -75,6 +81,7 @@ describe("securityHeaderRules", () => {
       { source: "/:path*", headers: securityHeaders({ NODE_ENV: "production" }) },
       ...[
         "/api/auth/:path*",
+        "/monitoring/:path*",
         "/_next/static/:path*",
         "/_next/image",
         "/favicon.ico",

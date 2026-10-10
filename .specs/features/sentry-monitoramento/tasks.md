@@ -287,14 +287,16 @@ T8 → T9 → T10 → T11 → T12 → T13 → T14
 
 **Done when**:
 
-- [ ] `securityHeaderRules` inclui o CSP estático para `/monitoring/:path*`
-- [ ] Teste afirma que `buildCsp(nonce, false)` ainda contém `connect-src 'self'` e nenhum host externo
-- [ ] Gate check passes: `npm run test:unit`
+- [x] `securityHeaderRules` inclui o CSP estático para `/monitoring/:path*`
+- [x] Teste afirma que `buildCsp(nonce, false)` ainda contém `connect-src 'self'` e nenhum host externo
+- [x] Gate check passes: `npm run test:unit`
 
 **Tests**: unit
 **Gate**: quick
 
 **Commit**: `feat(sentry): serve the tunnel route with the static CSP`
+
+**Status**: ✅ Done
 
 ---
 
