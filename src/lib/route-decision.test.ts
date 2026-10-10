@@ -72,4 +72,11 @@ describe("decideRoute", () => {
       });
     },
   );
+
+  it.each(["/sentry-example-page", "/api/sentry-example-api"])(
+    "lets the Sentry example route %s through without a session or a login redirect (SENTRY-22)",
+    (path) => {
+      expect(decideRoute(path, false)).toEqual({ action: "next", noStore: false });
+    },
+  );
 });

@@ -342,14 +342,16 @@ T8 → T9 → T10 → T11 → T12 → T13 → T14
 
 **Done when**:
 
-- [ ] `decideRoute` sem sessão devolve `next` com `noStore` falso para as duas rotas
-- [ ] Os testes existentes continuam passando
-- [ ] Gate check passes: `npm run test:unit`
+- [x] `decideRoute` sem sessão devolve `next` com `noStore` falso para as duas rotas
+- [x] Os testes existentes continuam passando
+- [x] Gate check passes: `npm run test:unit`
 
 **Tests**: unit
 **Gate**: quick
 
 **Commit**: `feat(sentry): let the example routes skip the login redirect`
+
+**Status**: ✅ Done
 
 ---
 

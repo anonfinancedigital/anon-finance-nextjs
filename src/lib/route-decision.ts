@@ -1,4 +1,13 @@
-const PUBLIC_PATHS = ["/bem-vindo", "/login", "/cadastro", "/esqueci-senha", "/redefinir-senha", "/privacidade"];
+const PUBLIC_PATHS = [
+  "/bem-vindo",
+  "/login",
+  "/cadastro",
+  "/esqueci-senha",
+  "/redefinir-senha",
+  "/privacidade",
+  "/sentry-example-page",
+  "/api/sentry-example-api",
+];
 
 export type RouteDecision =
   { action: "next"; noStore: boolean } | { action: "redirect" | "rewrite"; to: string; noStore: boolean };
