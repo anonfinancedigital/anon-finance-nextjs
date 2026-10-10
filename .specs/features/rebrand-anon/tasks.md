@@ -273,13 +273,15 @@ T9 → T10 → T11 → T12
 
 **Done when**:
 
-- [ ] As quatro páginas exibem "Finanças Privadas" lendo a constante
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] As quatro páginas exibem "Finanças Privadas" lendo a constante
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
 
 **Tests**: none
 **Gate**: build
 
 **Commit**: `feat(brand): show the ANON descriptor on the access pages`
+
+**Status**: ✅ Done
 
 ---
 

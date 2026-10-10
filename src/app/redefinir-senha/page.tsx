@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Logo } from "@/components/brand/Logo";
+import { BRAND_DESCRIPTOR } from "@/lib/brand";
 import { redirectIfSignedIn } from "@/lib/auth-guard";
 import { passwordResetsRepo } from "@/lib/db/repos/password-resets";
 import { INVALID_LINK_MESSAGE } from "@/lib/validation/password-reset";
@@ -26,7 +27,7 @@ export default async function ResetPasswordPage({
           <h1>
             <Logo />
           </h1>
-          <p className="text-sm text-muted-foreground">Gestão Patrimonial Familiar</p>
+          <p className="text-sm text-muted-foreground">{BRAND_DESCRIPTOR}</p>
         </div>
         {valid ? (
           <ResetForm token={value} />

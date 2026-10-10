@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Logo } from "@/components/brand/Logo";
+import { BRAND_DESCRIPTOR } from "@/lib/brand";
 import { redirectIfSignedIn } from "@/lib/auth-guard";
 import { RequestForm } from "./request-form";
 
@@ -24,7 +25,7 @@ export default async function ForgotPasswordPage({
           <h1>
             <Logo />
           </h1>
-          <p className="text-sm text-muted-foreground">Gestão Patrimonial Familiar</p>
+          <p className="text-sm text-muted-foreground">{BRAND_DESCRIPTOR}</p>
         </div>
         <RequestForm defaultEmail={defaultEmail} />
         <p className="text-center text-sm">

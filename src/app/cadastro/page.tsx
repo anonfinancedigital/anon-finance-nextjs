@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Logo } from "@/components/brand/Logo";
+import { BRAND_DESCRIPTOR } from "@/lib/brand";
 import { SignupForm } from "./signup-form";
 
 export const metadata: Metadata = { title: "Cadastrar" };
@@ -13,7 +14,7 @@ export default function SignupPage() {
           <h1>
             <Logo />
           </h1>
-          <p className="text-sm text-muted-foreground">Gestão Patrimonial Familiar</p>
+          <p className="text-sm text-muted-foreground">{BRAND_DESCRIPTOR}</p>
         </div>
         <SignupForm />
         <p className="text-center text-sm">

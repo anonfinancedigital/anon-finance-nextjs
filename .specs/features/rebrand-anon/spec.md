@@ -145,7 +145,7 @@ As marcas "Vértice" (produto) e "Ápice" (nome da meta de independência financ
 | ANON-02 | P1: Identidade visual (AC2, AC3) | 1 | Implementing |
 | ANON-03 | P1: Identidade visual (AC4, AC5) | 1 | Implementing |
 | ANON-04 | P1: Identidade visual (AC6) | 1 | Implementing |
-| ANON-05 | P1: Identidade visual (AC8) | - | Pending |
+| ANON-05 | P1: Identidade visual (AC8) | 2 | Implementing |
 | ANON-06 | P1: Liberdade (AC1, AC2) | 2 | Implementing |
 | ANON-07 | P1: Liberdade (AC3, AC4, AC6) | 2 | Implementing |
 | ANON-08 | P1: Liberdade (AC5) | - | Pending |

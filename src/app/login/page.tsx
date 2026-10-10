@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Logo } from "@/components/brand/Logo";
+import { BRAND_DESCRIPTOR } from "@/lib/brand";
 import { LoginForm } from "./login-form";
 
 export const metadata: Metadata = { title: "Entrar" };
@@ -12,7 +13,7 @@ export default function LoginPage() {
           <h1>
             <Logo />
           </h1>
-          <p className="text-sm text-muted-foreground">Gestão Patrimonial Familiar</p>
+          <p className="text-sm text-muted-foreground">{BRAND_DESCRIPTOR}</p>
         </div>
         <LoginForm />
       </div>
