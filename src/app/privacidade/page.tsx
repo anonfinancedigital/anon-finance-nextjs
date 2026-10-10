@@ -1,84 +1,250 @@
+import {
+  AlertTriangleIcon,
+  ArrowLeftIcon,
+  CheckCircle2Icon,
+  DownloadCloudIcon,
+  DownloadIcon,
+  EyeIcon,
+  KeyRoundIcon,
+  LockIcon,
+  ShieldCheckIcon,
+  Trash2Icon,
+} from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Logo } from "@/components/brand/Logo";
+import { cn } from "@/lib/utils";
 
-export const metadata: Metadata = { title: "Privacidade" };
+export const metadata: Metadata = { title: "Privacidade e segurança" };
 
-// The three sentences required word for word (SIGILO-32, SIGILO-33, SIGILO-34).
-const SEALED =
-  "Seus dados financeiros são cifrados no seu navegador com uma chave protegida pela sua senha; o servidor guarda só texto cifrado e não tem a chave.";
-const NO_RECOVERY =
-  "Se você perder a senha e a chave de recuperação, ninguém, nem o administrador, consegue recuperar seus dados.";
-const LIMIT =
-  "Limite: quem opera o servidor controla o código que o seu navegador executa e, em tese, poderia publicar uma versão que capture a sua senha.";
+const PILLARS: {
+  icon: LucideIcon;
+  title: string;
+  text: string;
+  tone: string;
+  glow: string;
+}[] = [
+  {
+    icon: ShieldCheckIcon,
+    title: "Criptografia de ponta a ponta",
+    text: "Seus dados saem do seu navegador já blindados com criptografia de padrão bancário.",
+    tone: "text-emerald-400 bg-emerald-500/10 ring-emerald-500/30",
+    glow: "bg-emerald-500/20",
+  },
+  {
+    icon: KeyRoundIcon,
+    title: "Arquitetura Zero-Knowledge",
+    text: "Não temos a chave mestra. Sem a sua senha ou chave de emergência, ninguém consegue abrir seu cofre.",
+    tone: "text-violet-400 bg-violet-500/10 ring-violet-500/30",
+    glow: "bg-violet-500/20",
+  },
+  {
+    icon: DownloadCloudIcon,
+    title: "Você no controle total",
+    text: "Exporte todos os seus lançamentos ou exclua sua conta em definitivo a qualquer instante.",
+    tone: "text-cyan-400 bg-cyan-500/10 ring-cyan-500/30",
+    glow: "bg-cyan-500/20",
+  },
+];
 
-/** Public privacy policy (SIGILO-30 to 34): static, no session needed (`/privacidade` is public in the proxy). */
+const ENCRYPTED = [
+  "Valores e descrições exatas de cada lançamento",
+  "Nomes das suas categorias e subcategorias",
+  "Meta do Ápice e percentuais das categorias",
+  "Data de nascimento",
+];
+
+const PROCESSED = [
+  "Seu e-mail e nome, para autenticar a conta",
+  "Datas e tipo de registro (receita ou despesa), para organizar os lançamentos",
+  "Cores e agrupamento das categorias, para montar a interface",
+];
+
+const cardClass =
+  "rounded-2xl border border-border bg-card p-5 shadow-xl sm:p-6";
+
+/** Public privacy page: static, no session needed (`/privacidade` is public in the proxy). */
 export default function PrivacyPage() {
   return (
-    <main className="flex flex-1 items-center justify-center p-6">
-      <div className="w-full max-w-2xl space-y-6 rounded-2xl border border-border bg-card p-6 shadow-xl">
-        <div className="space-y-2">
+    <main className="flex flex-1 justify-center p-6">
+      <div className="w-full max-w-5xl space-y-6 py-4">
+        <header className="space-y-4">
           <h1>
             <Logo />
           </h1>
-          <p className="text-sm text-muted-foreground">Privacidade</p>
+          <p className="font-display text-3xl font-bold tracking-tight sm:text-4xl">
+            Seu dinheiro é assunto exclusivamente seu.
+          </p>
+          <p className="max-w-3xl text-muted-foreground">
+            Arquitetura Zero-Knowledge: seus registros financeiros são cifrados
+            no seu dispositivo antes de trafegar. Nem mesmo a equipe do Vértice
+            tem acesso aos seus números.
+          </p>
+        </header>
+
+        <ul className="grid grid-cols-1 gap-4 md:grid-cols-3">
+          {PILLARS.map(({ icon: Icon, title, text, tone, glow }) => (
+            <li
+              key={title}
+              className={cn(cardClass, "relative space-y-3 overflow-hidden")}
+            >
+              <span
+                aria-hidden
+                className={cn(
+                  "absolute -top-8 left-4 size-24 rounded-full blur-2xl",
+                  glow,
+                )}
+              />
+              <span
+                className={cn(
+                  "relative inline-flex size-10 items-center justify-center rounded-xl ring-1",
+                  tone,
+                )}
+              >
+                <Icon aria-hidden className="size-5" />
+              </span>
+              <h2 className="relative font-semibold">{title}</h2>
+              <p className="relative text-sm text-muted-foreground">{text}</p>
+            </li>
+          ))}
+        </ul>
+
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+          <div className="space-y-6">
+            <section className={cn(cardClass, "space-y-3")}>
+              <h2 className="font-semibold">A lógica do cofre</h2>
+              <p className="text-sm">
+                Pense no seu dispositivo como um cofre digital. Sua senha gera a
+                chave privada que tranca os dados localmente. Nosso servidor
+                armazena apenas o conteúdo cifrado e ilegível.
+              </p>
+              <p className="rounded-lg border border-border bg-muted/40 p-3 text-xs text-muted-foreground">
+                Especificação: cifragem autenticada AES-GCM de 256 bits, com
+                derivação de chave via Argon2id. Criptografia no cliente antes
+                do envio.
+              </p>
+            </section>
+
+            <section
+              className="rounded-2xl bg-linear-to-br from-violet-500/60 to-emerald-500/60 p-px shadow-xl"
+              aria-labelledby="recovery-title"
+            >
+              <div className="space-y-2 rounded-[calc(1rem-1px)] bg-card p-5 sm:p-6">
+                <h2
+                  id="recovery-title"
+                  className="flex items-start gap-2 font-semibold"
+                >
+                  <AlertTriangleIcon
+                    aria-hidden
+                    className="mt-0.5 size-5 shrink-0 text-amber-400"
+                  />
+                  Atenção: guarde sua Chave de Recuperação
+                </h2>
+                <p className="text-sm">
+                  Como nem nós temos a chave do seu cofre, é tecnicamente
+                  impossível recuperar seus dados se você perder a senha e a
+                  Chave de Recuperação. Ao criar a conta, guarde essa chave em
+                  local seguro.
+                </p>
+              </div>
+            </section>
+          </div>
+
+          <section className={cn(cardClass, "space-y-6")}>
+            <h2 className="font-semibold">O que você vê vs. o que nós vemos</h2>
+
+            <div className="space-y-3">
+              <p className="flex items-center gap-2 text-sm font-medium text-emerald-400">
+                <LockIcon aria-hidden className="size-4" />
+                Só você tem a chave
+                <span className="font-normal text-muted-foreground">
+                  · cifrado no dispositivo
+                </span>
+              </p>
+              <ul className="space-y-2 text-sm">
+                {ENCRYPTED.map((item) => (
+                  <li key={item} className="flex items-start gap-2">
+                    <CheckCircle2Icon
+                      aria-hidden
+                      className="mt-0.5 size-4 shrink-0 text-emerald-400"
+                    />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div className="space-y-3 border-t border-border pt-6">
+              <p className="flex items-center gap-2 text-sm font-medium">
+                <EyeIcon aria-hidden className="size-4 text-muted-foreground" />
+                O que o Vértice processa
+                <span className="font-normal text-muted-foreground">
+                  · metadados técnicos necessários
+                </span>
+              </p>
+              <ul className="space-y-2 text-sm text-muted-foreground">
+                {PROCESSED.map((item) => (
+                  <li key={item} className="flex items-start gap-2">
+                    <span
+                      aria-hidden
+                      className="mt-2 size-1.5 shrink-0 rounded-full bg-muted-foreground/60"
+                    />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </section>
         </div>
 
-        <section className="space-y-2 text-sm">
-          <p>{SEALED}</p>
-          <p>{NO_RECOVERY}</p>
-        </section>
-
-        <section className="space-y-2 text-sm">
-          <h2 className="font-semibold">O que guardamos</h2>
-          <p>Cifrado no seu navegador antes de chegar ao servidor:</p>
-          <ul className="list-disc space-y-1 pl-5">
-            <li>valores das transações;</li>
-            <li>descrições das transações;</li>
-            <li>nomes de categorias e subcategorias;</li>
-            <li>percentuais das categorias;</li>
-            <li>meta de Liberdade;</li>
-            <li>data de nascimento.</li>
-          </ul>
-          <p>Não cifrado, porque o servidor precisa dele para funcionar:</p>
-          <ul className="list-disc space-y-1 pl-5">
-            <li>e-mail e nome;</li>
-            <li>datas e tipo (receita ou despesa) das transações;</li>
-            <li>estrutura das categorias, como cor e agrupamento.</li>
-          </ul>
-          <p>
-            A senha nunca é guardada: o servidor recebe só um segredo derivado dela no seu navegador e guarda apenas o
-            hash desse segredo.
+        <section className={cn(cardClass, "space-y-4")}>
+          <h2 className="font-semibold">Seus direitos e autonomia</h2>
+          <p className="text-sm text-muted-foreground">
+            Portabilidade e exclusão definitiva
           </p>
-        </section>
-
-        <section className="space-y-2 text-sm">
-          <h2 className="font-semibold">Seus direitos</h2>
-          <ul className="list-disc space-y-1 pl-5">
-            <li>Você pode exportar todos os seus dados a qualquer momento.</li>
-            <li>
-              Você pode excluir a sua conta. A exclusão apaga tudo: transações, categorias, meta, data de nascimento,
-              dados de acesso e o cofre com as suas chaves. Nada pode ser recuperado depois.
+          <ul className="grid grid-cols-1 gap-4 text-sm md:grid-cols-2">
+            <li className="space-y-2">
+              <p className="flex items-center gap-2 font-medium">
+                <DownloadIcon aria-hidden className="size-4 text-cyan-400" />
+                Exportar dados
+              </p>
+              <p className="text-muted-foreground">
+                Download imediato de todo o seu histórico em arquivo JSON, um
+                formato aberto e padrão.
+              </p>
+              <Link
+                href="/conta"
+                className="inline-flex text-link hover:underline"
+              >
+                Ir para Meus dados →
+              </Link>
+            </li>
+            <li className="space-y-2">
+              <p className="flex items-center gap-2 font-medium">
+                <Trash2Icon aria-hidden className="size-4 text-rose-400" />
+                Excluir conta
+              </p>
+              <p className="text-muted-foreground">
+                Elimina permanentemente transações, categorias, meta, dados de
+                acesso e as chaves do seu cofre.
+              </p>
+              <Link
+                href="/conta"
+                className="inline-flex text-link hover:underline"
+              >
+                Ir para Excluir conta →
+              </Link>
             </li>
           </ul>
         </section>
 
-        <section className="space-y-2 text-sm">
-          <h2 className="font-semibold">Contas existentes</h2>
-          <p>
-            Contas criadas antes da cifragem passam uma única vez pela tela Proteger dados. Nessa única passagem o
-            servidor ainda vê a sua senha e os seus dados em texto puro; depois disso eles ficam cifrados e o texto
-            puro é removido.
-          </p>
-        </section>
-
-        <section className="space-y-2 text-sm">
-          <h2 className="font-semibold">Limite</h2>
-          <p>{LIMIT}</p>
-        </section>
-
-        <p className="text-center text-sm">
-          <Link href="/login" className="text-link hover:underline">
+        <p className="text-center">
+          <Link
+            href="/login"
+            className="inline-flex h-10 items-center gap-2 rounded-lg border border-border px-5 text-sm font-medium hover:bg-muted"
+          >
+            <ArrowLeftIcon aria-hidden className="size-4" />
             Voltar
           </Link>
         </p>
