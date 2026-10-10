@@ -256,17 +256,18 @@ T1 → T2 → T3 → T4 → T5 → T6 → T7 → T8
 
 **Done when**:
 
-- [ ] Arquivo válido mostra "N transações, N categorias, N subcategorias" e habilita "Importar" sem chamar a action (IMPORT-02)
-- [ ] Arquivo grande ou inválido mostra a mensagem exata da spec e mantém o botão desabilitado (IMPORT-08, IMPORT-09)
-- [ ] Durante a ação o botão fica desabilitado com o texto "Importando..." (IMPORT-28)
-- [ ] Sucesso mostra "Importação concluída: N transações, N categorias" e, com `goalSkipped`, "Meta não importada: a idade de aposentadoria é incompatível com a data de nascimento da conta" (IMPORT-22)
-- [ ] Erro da action e falha de cifra mostram a mensagem recebida / "Não foi possível salvar. Tente novamente", sem envio no caso de cifra (IMPORT-26)
-- [ ] `canImport = false` mostra "Disponível apenas em conta sem transações nem categorias" e nenhum seletor (IMPORT-18)
-- [ ] Escolher outro arquivo descarta resumo, erro e resultado anteriores (IMPORT-33)
-- [ ] Evidência de UI registrada por inspeção de código (`file:line`), sem e2e (AD-005)
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
-- [ ] Test count: igual ao anterior (nenhum teste removido)
+- [x] Arquivo válido mostra "N transações, N categorias, N subcategorias" e habilita "Importar" sem chamar a action (IMPORT-02)
+- [x] Arquivo grande ou inválido mostra a mensagem exata da spec e mantém o botão desabilitado (IMPORT-08, IMPORT-09)
+- [x] Durante a ação o botão fica desabilitado com o texto "Importando..." (IMPORT-28)
+- [x] Sucesso mostra "Importação concluída: N transações, N categorias" e, com `goalSkipped`, "Meta não importada: a idade de aposentadoria é incompatível com a data de nascimento da conta" (IMPORT-22)
+- [x] Erro da action e falha de cifra mostram a mensagem recebida / "Não foi possível salvar. Tente novamente", sem envio no caso de cifra (IMPORT-26)
+- [x] `canImport = false` mostra "Disponível apenas em conta sem transações nem categorias" e nenhum seletor (IMPORT-18)
+- [x] Escolher outro arquivo descarta resumo, erro e resultado anteriores (IMPORT-33)
+- [x] Evidência de UI registrada por inspeção de código (`file:line`), sem e2e (AD-005)
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
+- [x] Test count: igual ao anterior (nenhum teste removido)
 
+**Status**: ✅ Done
 **Tests**: none
 **Gate**: build
 **Commit**: `feat(import): add the import card component`
