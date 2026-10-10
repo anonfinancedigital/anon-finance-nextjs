@@ -130,15 +130,16 @@ T1 → T2 → T3 → T4 → T5 → T6 → T7 → T8
 
 **Done when**:
 
-- [ ] Todos os ids do payload são UUIDs diferentes dos do arquivo; `categoryId`, `subcategoryId` e `seriesId` apontam para os equivalentes e os segmentos de uma série compartilham um só `seriesId` novo (IMPORT-06)
-- [ ] Decifrar o payload com `openExport` (usando o `userId` de destino) devolve os mesmos valores do arquivo, exceto ids (IMPORT-05, IMPORT-27)
-- [ ] Nenhum valor, descrição, nome, meta ou nascimento em claro aparece no JSON do payload (IMPORT-25)
-- [ ] Meta em conflito com o nascimento da conta (ou do arquivo, se a conta não tem) sai `null` com `goalSkipped = true` (IMPORT-22); sem conflito segue cifrada
-- [ ] Falha de cifra rejeita a promessa antes de devolver payload (IMPORT-26)
-- [ ] Corpo serializado acima de 7.000.000 de caracteres rejeita com "Arquivo inválido. Use o arquivo exportado pelo Orçamento." (IMPORT-13)
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
-- [ ] Test count: testes novos em `src/lib/vault/import-payload.test.ts`, nenhum removido
+- [x] Todos os ids do payload são UUIDs diferentes dos do arquivo; `categoryId`, `subcategoryId` e `seriesId` apontam para os equivalentes e os segmentos de uma série compartilham um só `seriesId` novo (IMPORT-06)
+- [x] Decifrar o payload com `openExport` (usando o `userId` de destino) devolve os mesmos valores do arquivo, exceto ids (IMPORT-05, IMPORT-27)
+- [x] Nenhum valor, descrição, nome, meta ou nascimento em claro aparece no JSON do payload (IMPORT-25)
+- [x] Meta em conflito com o nascimento da conta (ou do arquivo, se a conta não tem) sai `null` com `goalSkipped = true` (IMPORT-22); sem conflito segue cifrada
+- [x] Falha de cifra rejeita a promessa antes de devolver payload (IMPORT-26)
+- [x] Corpo serializado acima de 7.000.000 de caracteres rejeita com "Arquivo inválido. Use o arquivo exportado pelo Orçamento." (IMPORT-13)
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Test count: testes novos em `src/lib/vault/import-payload.test.ts`, nenhum removido
 
+**Status**: ✅ Done
 **Tests**: unit
 **Gate**: quick
 **Commit**: `feat(import): seal the file for the destination account`
