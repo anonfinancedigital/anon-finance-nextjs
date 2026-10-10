@@ -109,13 +109,14 @@ T7 → T8
 
 **Done when**:
 
-- [ ] `client.ts` não define mais opções literais do pool
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
-- [ ] Test count: suíte existente intacta, nenhum teste removido
+- [x] `client.ts` não define mais opções literais do pool
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
+- [x] Test count: suíte existente intacta, nenhum teste removido
 
 **Tests**: none
 **Gate**: build
 **Commit**: `feat(db): cap pool connections on Vercel`
+**Status**: Done
 
 ---
 

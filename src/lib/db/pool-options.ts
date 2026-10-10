@@ -6,7 +6,7 @@ const MAX_ON_VERCEL = 3;
 const MAX_DEFAULT = 10;
 const IDLE_TIMEOUT_MS = 10_000;
 
-export function poolOptions(env: { VERCEL?: string; DATABASE_URL?: string }): PoolConfig {
+export function poolOptions(env: Record<string, string | undefined>): PoolConfig {
   return {
     connectionString: env.DATABASE_URL,
     max: env.VERCEL ? MAX_ON_VERCEL : MAX_DEFAULT,
