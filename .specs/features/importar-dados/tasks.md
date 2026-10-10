@@ -351,3 +351,25 @@ Execução estritamente sequencial; as 8 tasks cabem em um lote, então rodam in
 | T6: Server Action | Server Actions | integration | integration | ✅ OK |
 | T7: cartão | UI | none | none | ✅ OK |
 | T8: página | UI | none | none | ✅ OK |
+
+---
+
+## Fix Tasks (Verifier iteração 1)
+
+### F1: Concorrência determinística no repositório
+
+**What**: Teste que segura a linha de `user` com `FOR UPDATE` em outra transação e prova que `importSealed` espera e enxerga o que ela gravou (mata o mutante sem `FOR UPDATE`).
+**Where**: `src/lib/db/repos/import.int.test.ts`
+**Requirement**: IMPORT-16, IMPORT-17
+**Status**: ✅ Done
+**Tests**: integration
+**Gate**: full
+
+### F2: Resumo mensal origem × importado
+
+**What**: Teste unitário que compara o resumo mensal (ganhos, gastos, metas e detalhamento por categoria, por nome) da origem e do payload reaberto em quatro meses com vigências, categoria excluída e série recorrente.
+**Where**: `src/lib/vault/import-payload.test.ts`
+**Requirement**: IMPORT-07
+**Status**: ✅ Done
+**Tests**: unit
+**Gate**: quick

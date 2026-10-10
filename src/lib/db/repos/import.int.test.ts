@@ -3,6 +3,7 @@ import { count, eq } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
 import type { ImportPayload, VaultMaterial } from "@/lib/vault/types";
 import { insertTestUser, setupTestDb } from "@/test/db";
+import { user } from "../auth-schema";
 import { db } from "../client";
 import { category, categoryPercent, financialGoal, subcategory, transaction } from "../schema";
 import { exportRowsSealed } from "./export";
@@ -194,6 +195,25 @@ describe("account must be empty (IMPORT-15, 16, 17)", () => {
     expect(results.filter((r) => r.ok)).toHaveLength(1);
     expect(results.filter((r) => !r.ok)).toEqual([{ ok: false, reason: "not_empty" }]);
     expect(await counts(userId)).toEqual({ transactions: 4, categories: 2, subcategories: 2 });
+  });
+
+  it("waits for a transaction that holds the user row and then sees what it wrote (the lock, not timing)", async () => {
+    const userId = await insertTestUser();
+    let importing: ReturnType<typeof importRepo.importSealed> | undefined;
+    let settledEarly = false;
+
+    await db.transaction(async (tx) => {
+      await tx.select({ id: user.id }).from(user).where(eq(user.id, userId)).for("update");
+      importing = importRepo.importSealed(userId, samplePayload("a"));
+      importing.then(() => (settledEarly = true), () => (settledEarly = true));
+      await new Promise((resolve) => setTimeout(resolve, 300));
+      // Still inside the holder: a lock-free import would have counted zero rows and finished by now.
+      await tx.insert(transaction).values({ id: randomUUID(), userId, kind: "income", date: "2026-01-01", amountCt: "v1:held" });
+    });
+
+    expect(settledEarly).toBe(false);
+    expect(await importing).toEqual({ ok: false, reason: "not_empty" });
+    expect(await counts(userId)).toEqual({ transactions: 1, categories: 0, subcategories: 0 });
   });
 
   it("isEmpty is true for a new account and false with a transaction or a category", async () => {

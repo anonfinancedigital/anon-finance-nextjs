@@ -1,6 +1,10 @@
 import { describe, expect, it } from "vitest";
 import { DecryptError } from "@/lib/crypto/aead";
+import { buildMonthlySummary, type Category } from "@/lib/domain/budget";
+import { monthStartOf } from "@/lib/domain/percent-history";
+import { appliesInMonth } from "@/lib/domain/recurrence";
 import { type OpenedExport, openExport } from "./export";
+import { computeMonthTotals } from "./month-totals";
 import { buildImportPayload, ImportTooLargeError } from "./import-payload";
 import { IMPORT_INVALID } from "./import-file";
 import { openBirthDate } from "./open";
@@ -249,5 +253,66 @@ describe("size cap (IMPORT-13)", () => {
   it("defaults the cap to 7.000.000 characters", async () => {
     const { MAX_IMPORT_BODY_CHARS } = await import("./import-payload");
     expect(MAX_IMPORT_BODY_CHARS).toBe(7_000_000);
+  });
+});
+
+/** Monthly summary of an opened export, with every id replaced by the name it points to. */
+function summaryByName(data: OpenedExport, key: string) {
+  const start = `${key}-01`;
+  const [year, month] = key.split("-").map(Number);
+  const active = data.categories.filter((c) => c.deletedFrom === null || c.deletedFrom > start);
+  const categories: Category[] = active.map((c) => {
+    const version = c.percentVersions.filter((v) => v.fromMonth <= monthStartOf({ year, month })).at(-1);
+    return {
+      id: c.id,
+      name: c.name,
+      color: c.color,
+      isInvestment: c.isInvestment,
+      percentMicro: version?.percentMicro ?? 0,
+      hasPercent: version !== undefined,
+      subcategories: c.subcategories,
+    };
+  });
+  const occurrences = data.transactions.filter((t) =>
+    appliesInMonth({ id: t.id, seriesId: t.seriesId, date: t.date, recurringDay: t.recurrenceDay, endMonth: t.recurrenceEnd?.slice(0, 7) ?? null }, key),
+  );
+  const totals = computeMonthTotals(occurrences);
+  const summary = buildMonthlySummary({ categories, incomeCents: totals.incomeCents, spentByCategory: totals.spentByCategory, spentBySubcategory: totals.spentBySubcategory });
+  return {
+    incomeCents: summary.incomeCents,
+    spentCents: summary.spentCents,
+    balanceCents: summary.balanceCents,
+    rows: summary.rows.map((r) => ({
+      name: r.name,
+      targetCents: r.targetCents,
+      spentCents: r.spentCents,
+      remainingCents: r.remainingCents,
+      overspent: r.overspent,
+      exceeded: r.exceeded,
+      breakdown: r.breakdown.map((b) => ({ name: b.name, spentCents: b.spentCents, shareBp: b.shareBp })),
+    })),
+  };
+}
+
+describe("monthly summary of the imported account (IMPORT-07)", () => {
+  it.each(["2026-08", "2026-09", "2026-10", "2027-01"])("matches the origin in %s: income, spending, targets and breakdown", async (key) => {
+    const data = fullExport();
+    const { dek, payload } = await build(data);
+    const imported = await reopen(dek, payload);
+
+    const expected = summaryByName(data, key);
+    expect(summaryByName(imported, key)).toEqual(expected);
+  });
+
+  it("is not a vacuous comparison: the months differ in percent, deleted category and recurring income", () => {
+    const data = fullExport();
+    expect(summaryByName(data, "2026-08").incomeCents).toBe(500000);
+    expect(summaryByName(data, "2026-09").rows.map((r) => r.name)).toEqual(["Moradia", "Lazer"]);
+    expect(summaryByName(data, "2026-09").rows[1].spentCents).toBe(9900);
+    expect(summaryByName(data, "2026-10").rows.map((r) => r.name)).toEqual(["Moradia"]);
+    expect(summaryByName(data, "2026-10").rows[0].spentCents).toBe(15000);
+    expect(summaryByName(data, "2027-01").incomeCents).toBe(600000);
+    expect(summaryByName(data, "2026-08").rows[0].targetCents).toBe(150000);
+    expect(summaryByName(data, "2026-09").rows[0].targetCents).toBe(175000);
   });
 });
