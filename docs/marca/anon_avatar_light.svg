@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="100%" height="100%" fill="none">
+  <defs>
+    <linearGradient id="avGradLight" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#6D28D9" />
+      <stop offset="45%" stop-color="#4338CA" />
+      <stop offset="100%" stop-color="#047857" />
+    </linearGradient>
+    <linearGradient id="avAccentLight" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#4338CA" />
+      <stop offset="100%" stop-color="#059669" />
+    </linearGradient>
+    <filter id="avShadowLight" x="-10%" y="-10%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="4" stdDeviation="12" flood-color="#0F172A" flood-opacity="0.08" />
+    </filter>
+  </defs>
+  <rect width="256" height="256" rx="60" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1.5" />
+  <rect x="36" y="36" width="184" height="184" rx="44" fill="#F8FAFC" stroke="#E2E8F0" stroke-width="2" filter="url(#avShadowLight)" />
+  <g transform="translate(128, 128) scale(2.2) translate(-40, -40)">
+    <path d="M40 18 L19 62 H32 L40 45 L48 62 H61 Z" fill="url(#avGradLight)" />
+    <!-- Tranca calibrada discreta -->
+    <circle cx="40" cy="36" r="1.8" fill="#F8FAFC" />
+    <path d="M39.1 37.2 L38.4 42 H41.6 L40.9 37.2 Z" fill="#F8FAFC" />
+    <path d="M40 18 L61 62" stroke="url(#avAccentLight)" stroke-width="2.2" stroke-linecap="round" />
+  </g>
+</svg>

@@ -124,15 +124,18 @@ T9 → T10 → T11 → T12
 
 **Done when**:
 
-- [ ] `public/favicon.svg` igual ao favicon escuro e `public/favicon-light.svg` igual ao claro
-- [ ] `docs/vertice_logo.svg`, `docs/vertice_favicon.svg` e `src/app/icon.svg` não existem mais
-- [ ] `docs/marca/` com os 8 SVGs e o PNG está no commit
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] `public/favicon.svg` igual ao favicon escuro e `public/favicon-light.svg` igual ao claro
+- [x] `docs/vertice_logo.svg`, `docs/vertice_favicon.svg` e `src/app/icon.svg` não existem mais
+- [x] `docs/marca/` com os 8 SVGs e o PNG está no commit
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
 
 **Tests**: none
 **Gate**: build
 
 **Commit**: `feat(brand): add the ANON favicons and brand assets`
+
+
+**Status**: ✅ Done
 
 ---
 

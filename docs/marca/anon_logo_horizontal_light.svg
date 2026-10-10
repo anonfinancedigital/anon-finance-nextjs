@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 56" width="100%" height="100%" fill="none">
+  <defs>
+    <linearGradient id="hzGradLight" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#6D28D9" />
+      <stop offset="45%" stop-color="#4338CA" />
+      <stop offset="100%" stop-color="#047857" />
+    </linearGradient>
+    <linearGradient id="hzAccentLight" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#4338CA" />
+      <stop offset="100%" stop-color="#059669" />
+    </linearGradient>
+  </defs>
+  <!-- Símbolo Monograma Compacto (40x40) -->
+  <g transform="translate(4, 8)">
+    <rect width="40" height="40" rx="11" fill="#F8FAFC" stroke="#E2E8F0" stroke-width="1.2" />
+    <g transform="translate(20, 20) scale(0.52) translate(-40, -40)">
+      <path d="M40 18 L19 62 H32 L40 45 L48 62 H61 Z" fill="url(#hzGradLight)" />
+      <circle cx="40" cy="36" r="1.8" fill="#F8FAFC" />
+      <path d="M39.1 37.2 L38.4 42 H41.6 L40.9 37.2 Z" fill="#F8FAFC" />
+      <path d="M40 18 L61 62" stroke="url(#hzAccentLight)" stroke-width="2.4" stroke-linecap="round" />
+    </g>
+  </g>
+  <!-- Tipografia Horizontal Alinhada -->
+  <text x="56" y="36" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', 'Sora', sans-serif" font-size="24" font-weight="800" letter-spacing="0.14em" fill="#0F172A">ANON</text>
+  <!-- Divisor Vertical Sutil -->
+  <line x1="152" y1="20" x2="152" y2="36" stroke="#CBD5E1" stroke-width="1.2" />
+  <!-- Descritor Linear -->
+  <text x="166" y="34" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', sans-serif" font-size="11" font-weight="700" letter-spacing="0.22em" fill="#047857">FINANÇAS PRIVADAS</text>
+</svg>

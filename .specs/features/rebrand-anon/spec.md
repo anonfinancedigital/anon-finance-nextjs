@@ -144,7 +144,7 @@ As marcas "Vértice" (produto) e "Ápice" (nome da meta de independência financ
 | ANON-01 | P1: Identidade visual (AC1, AC7) | - | Pending |
 | ANON-02 | P1: Identidade visual (AC2, AC3) | - | Pending |
 | ANON-03 | P1: Identidade visual (AC4, AC5) | 1 | Implementing |
-| ANON-04 | P1: Identidade visual (AC6) | - | Pending |
+| ANON-04 | P1: Identidade visual (AC6) | 1 | Implementing |
 | ANON-05 | P1: Identidade visual (AC8) | - | Pending |
 | ANON-06 | P1: Liberdade (AC1, AC2) | - | Pending |
 | ANON-07 | P1: Liberdade (AC3, AC4, AC6) | - | Pending |
@@ -153,7 +153,7 @@ As marcas "Vértice" (produto) e "Ápice" (nome da meta de independência financ
 | ANON-10 | P1: Landing (AC2, AC5, AC6) | - | Pending |
 | ANON-11 | P1: Landing (AC3) | - | Pending |
 | ANON-12 | P2: Arquivos (AC1) | 1 | Implementing |
-| ANON-13 | P2: Arquivos (AC2, AC4) | - | Pending |
+| ANON-13 | P2: Arquivos (AC2, AC4) | 1 | Implementing |
 | ANON-14 | P2: Arquivos (AC3) | - | Pending |
 
 **Coverage:** 14 total, 0 mapped to tasks, 14 unmapped ⚠️
