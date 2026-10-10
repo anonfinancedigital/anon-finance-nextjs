@@ -10,7 +10,7 @@ Implement these tasks with the `tlc-spec-driven` skill: **activate it by name an
 
 **Design**: inline (seção "Decisões de design" abaixo; sem `design.md`)
 **Spec**: `.specs/features/rebrand-anon/spec.md`
-**Status**: In Progress
+**Status**: Done
 
 **Ordem:** primeiro a fonte única dos textos da marca e os ativos (fase 1), depois cópia de domínio e telas do app (fase 2), por fim landing, arquivos e o teste-guarda que impede a volta dos nomes antigos (fase 3). Cada commit compila e passa o gate. Nenhuma task toca banco, rotas, criptografia ou cálculos.
 

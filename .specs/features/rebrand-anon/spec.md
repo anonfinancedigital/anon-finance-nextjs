@@ -141,22 +141,22 @@ As marcas "Vértice" (produto) e "Ápice" (nome da meta de independência financ
 
 | Requirement ID | Story | Phase | Status |
 | -------------- | ----- | ----- | ------ |
-| ANON-01 | P1: Identidade visual (AC1, AC7) | 1 | Implementing |
-| ANON-02 | P1: Identidade visual (AC2, AC3) | 1 | Implementing |
-| ANON-03 | P1: Identidade visual (AC4, AC5) | 1 | Implementing |
-| ANON-04 | P1: Identidade visual (AC6) | 1 | Implementing |
-| ANON-05 | P1: Identidade visual (AC8) | 2 | Implementing |
-| ANON-06 | P1: Liberdade (AC1, AC2) | 2 | Implementing |
-| ANON-07 | P1: Liberdade (AC3, AC4, AC6) | 2 | Implementing |
-| ANON-08 | P1: Liberdade (AC5) | 2 | Implementing |
-| ANON-09 | P1: Landing (AC1, AC4) | 1 | Implementing |
-| ANON-10 | P1: Landing (AC2, AC5, AC6) | 2 | Implementing |
-| ANON-11 | P1: Landing (AC3) | 3 | Implementing |
-| ANON-12 | P2: Arquivos (AC1) | 1 | Implementing |
-| ANON-13 | P2: Arquivos (AC2, AC4) | 1 | Implementing |
-| ANON-14 | P2: Arquivos (AC3) | 3 | Implementing |
+| ANON-01 | P1: Identidade visual (AC1, AC7) | 1 | Verified |
+| ANON-02 | P1: Identidade visual (AC2, AC3) | 1 | Verified |
+| ANON-03 | P1: Identidade visual (AC4, AC5) | 1 | Verified |
+| ANON-04 | P1: Identidade visual (AC6) | 1 | Verified |
+| ANON-05 | P1: Identidade visual (AC8) | 2 | Verified |
+| ANON-06 | P1: Liberdade (AC1, AC2) | 2 | Verified |
+| ANON-07 | P1: Liberdade (AC3, AC4, AC6) | 2 | Verified |
+| ANON-08 | P1: Liberdade (AC5) | 2 | Verified |
+| ANON-09 | P1: Landing (AC1, AC4) | 1 | Verified |
+| ANON-10 | P1: Landing (AC2, AC5, AC6) | 2 | Verified |
+| ANON-11 | P1: Landing (AC3) | 3 | Verified |
+| ANON-12 | P2: Arquivos (AC1) | 1 | Verified |
+| ANON-13 | P2: Arquivos (AC2, AC4) | 1 | Verified |
+| ANON-14 | P2: Arquivos (AC3) | 3 | Verified |
 
-**Coverage:** 14 total, 0 mapped to tasks, 14 unmapped ⚠️
+**Coverage:** 14 total, 14 mapped to tasks, 0 unmapped
 
 ---
 
