@@ -155,45 +155,45 @@ A página `/conta` exporta os dados do usuário em `orcamento-dados-AAAA-MM-DD.j
 
 | Requirement ID | Story | Phase | Status |
 | -------------- | ----- | ----- | ------ |
-| IMPORT-01 | P1: Importar em conta vazia | - | Pending |
-| IMPORT-02 | P1: Importar em conta vazia | - | Pending |
-| IMPORT-03 | P1: Importar em conta vazia | - | Pending |
-| IMPORT-04 | P1: Importar em conta vazia | - | Pending |
-| IMPORT-05 | P1: Importar em conta vazia | - | Pending |
-| IMPORT-06 | P1: Importar em conta vazia | - | Pending |
-| IMPORT-07 | P1: Importar em conta vazia | - | Pending |
-| IMPORT-08 | P1: Recusar arquivo inválido | - | Pending |
-| IMPORT-09 | P1: Recusar arquivo inválido | - | Pending |
-| IMPORT-10 | P1: Recusar arquivo inválido | - | Pending |
-| IMPORT-11 | P1: Recusar arquivo inválido | - | Pending |
-| IMPORT-12 | P1: Recusar arquivo inválido | - | Pending |
-| IMPORT-13 | P1: Recusar arquivo inválido | - | Pending |
-| IMPORT-14 | P1: Recusar arquivo inválido | - | Pending |
-| IMPORT-15 | P1: Só importar em conta vazia | - | Pending |
-| IMPORT-16 | P1: Só importar em conta vazia | - | Pending |
-| IMPORT-17 | P1: Só importar em conta vazia | - | Pending |
-| IMPORT-18 | P1: Só importar em conta vazia | - | Pending |
-| IMPORT-19 | P1: Só importar em conta vazia | - | Pending |
-| IMPORT-20 | P2: Meta e data de nascimento | - | Pending |
-| IMPORT-21 | P2: Meta e data de nascimento | - | Pending |
-| IMPORT-22 | P2: Meta e data de nascimento | - | Pending |
-| IMPORT-23 | P2: Meta e data de nascimento | - | Pending |
-| IMPORT-24 | P2: Meta e data de nascimento | - | Pending |
-| IMPORT-25 | P2: Sem vazamento e round-trip | - | Pending |
-| IMPORT-26 | P2: Sem vazamento e round-trip | - | Pending |
-| IMPORT-27 | P2: Sem vazamento e round-trip | - | Pending |
-| IMPORT-28 | P2: Sem vazamento e round-trip | - | Pending |
-| IMPORT-29 | Edge cases | - | Pending |
-| IMPORT-30 | Edge cases | - | Pending |
-| IMPORT-31 | Edge cases | - | Pending |
-| IMPORT-32 | Edge cases | - | Pending |
-| IMPORT-33 | Edge cases | - | Pending |
+| IMPORT-01 | P1: Importar em conta vazia | - | Verified |
+| IMPORT-02 | P1: Importar em conta vazia | - | Verified |
+| IMPORT-03 | P1: Importar em conta vazia | - | Verified |
+| IMPORT-04 | P1: Importar em conta vazia | - | Verified |
+| IMPORT-05 | P1: Importar em conta vazia | - | Verified |
+| IMPORT-06 | P1: Importar em conta vazia | - | Verified |
+| IMPORT-07 | P1: Importar em conta vazia | - | Verified |
+| IMPORT-08 | P1: Recusar arquivo inválido | - | Verified |
+| IMPORT-09 | P1: Recusar arquivo inválido | - | Verified |
+| IMPORT-10 | P1: Recusar arquivo inválido | - | Verified |
+| IMPORT-11 | P1: Recusar arquivo inválido | - | Verified |
+| IMPORT-12 | P1: Recusar arquivo inválido | - | Verified |
+| IMPORT-13 | P1: Recusar arquivo inválido | - | Verified |
+| IMPORT-14 | P1: Recusar arquivo inválido | - | Verified |
+| IMPORT-15 | P1: Só importar em conta vazia | - | Verified |
+| IMPORT-16 | P1: Só importar em conta vazia | - | Verified |
+| IMPORT-17 | P1: Só importar em conta vazia | - | Verified |
+| IMPORT-18 | P1: Só importar em conta vazia | - | Verified |
+| IMPORT-19 | P1: Só importar em conta vazia | - | Verified |
+| IMPORT-20 | P2: Meta e data de nascimento | - | Verified |
+| IMPORT-21 | P2: Meta e data de nascimento | - | Verified |
+| IMPORT-22 | P2: Meta e data de nascimento | - | Verified |
+| IMPORT-23 | P2: Meta e data de nascimento | - | Verified |
+| IMPORT-24 | P2: Meta e data de nascimento | - | Verified |
+| IMPORT-25 | P2: Sem vazamento e round-trip | - | Verified |
+| IMPORT-26 | P2: Sem vazamento e round-trip | - | Verified |
+| IMPORT-27 | P2: Sem vazamento e round-trip | - | Verified |
+| IMPORT-28 | P2: Sem vazamento e round-trip | - | Verified |
+| IMPORT-29 | Edge cases | - | Verified |
+| IMPORT-30 | Edge cases | - | Verified |
+| IMPORT-31 | Edge cases | - | Verified |
+| IMPORT-32 | Edge cases | - | Verified |
+| IMPORT-33 | Edge cases | - | Verified |
 
 **ID format:** `IMPORT-NN`
 
 **Status values:** Pending → In Design → In Tasks → Implementing → Verified
 
-**Coverage:** 33 total, 0 mapped to tasks, 33 unmapped ⚠️
+**Coverage:** 33 total, 33 mapped to tasks, 33 verified (validation.md, iteração 2)
 
 ---
 
