@@ -169,12 +169,46 @@ describe("account must be empty (IMPORT-15, 16, 17)", () => {
     expect(await counts(userId)).toEqual({ transactions: 1, categories: 0, subcategories: 0 });
   });
 
-  it("refuses an account whose only row is a deleted category", async () => {
+  it("refuses an account with an active category and no transactions", async () => {
     const userId = await insertTestUser();
-    await db.insert(category).values({ userId, nameCt: "v1:old", color: 1, deletedFrom: "2026-01-01" });
+    await db.insert(category).values({ userId, nameCt: "v1:active", color: 1 });
 
     expect(await importRepo.importSealed(userId, samplePayload("a"))).toEqual({ ok: false, reason: "not_empty" });
     expect(await counts(userId)).toEqual({ transactions: 0, categories: 1, subcategories: 0 });
+  });
+
+  it("imports into an account emptied by the user: soft-deleted categories are removed with their versions and subcategories (IMPORT-34)", async () => {
+    const userId = await insertTestUser();
+    const [old] = await db.insert(category).values({ userId, nameCt: "v1:old", color: 1, deletedFrom: "2026-01-01" }).returning();
+    await db.insert(categoryPercent).values({ categoryId: old.id, fromMonth: "0001-01-01", percentCt: "v1:old-pct" });
+    await db.insert(subcategory).values({ userId, categoryId: old.id, nameCt: "v1:old-sub" });
+
+    expect(await importRepo.importSealed(userId, samplePayload("a"))).toEqual({ ok: true, transactions: 4, categories: 2 });
+
+    const rows = await db.select().from(category).where(eq(category.userId, userId));
+    expect(rows.map((c) => c.nameCt).sort()).toEqual(["v1:a-catA", "v1:a-catB"]);
+    expect(rows.some((c) => c.id === old.id)).toBe(false);
+    expect((await db.select().from(categoryPercent)).map((v) => v.percentCt)).not.toContain("v1:old-pct");
+    expect((await db.select().from(subcategory).where(eq(subcategory.userId, userId))).map((s) => s.nameCt)).not.toContain("v1:old-sub");
+  });
+
+  it("keeps the soft-deleted categories when the import fails (the cleanup is in the same transaction)", async () => {
+    const userId = await insertTestUser();
+    await db.insert(category).values({ userId, nameCt: "v1:old", color: 1, deletedFrom: "2026-01-01" });
+    const bad = samplePayload("a");
+    bad.transactions[0].categoryId = randomUUID();
+
+    await expect(importRepo.importSealed(userId, bad)).rejects.toThrow();
+    expect((await db.select().from(category).where(eq(category.userId, userId))).map((c) => c.nameCt)).toEqual(["v1:old"]);
+  });
+
+  it("does not remove the soft-deleted categories of another user", async () => {
+    const a = await insertTestUser();
+    const b = await insertTestUser();
+    await db.insert(category).values({ userId: b, nameCt: "v1:b-old", color: 1, deletedFrom: "2026-01-01" });
+
+    await importRepo.importSealed(a, samplePayload("a"));
+    expect((await db.select().from(category).where(eq(category.userId, b))).map((c) => c.nameCt)).toEqual(["v1:b-old"]);
   });
 
   it("an import that conflicts with an earlier one changes nothing: a second import is refused", async () => {
@@ -216,7 +250,7 @@ describe("account must be empty (IMPORT-15, 16, 17)", () => {
     expect(await counts(userId)).toEqual({ transactions: 1, categories: 0, subcategories: 0 });
   });
 
-  it("isEmpty is true for a new account and false with a transaction or a category", async () => {
+  it("isEmpty is true for a new account or one with only deleted categories, false with a transaction or an active category", async () => {
     const fresh = await insertTestUser();
     expect(await importRepo.isEmpty(fresh)).toBe(true);
 
@@ -227,6 +261,10 @@ describe("account must be empty (IMPORT-15, 16, 17)", () => {
     const withCat = await insertTestUser();
     await db.insert(category).values({ userId: withCat, nameCt: "v1:c", color: 1 });
     expect(await importRepo.isEmpty(withCat)).toBe(false);
+
+    const onlyDeleted = await insertTestUser();
+    await db.insert(category).values({ userId: onlyDeleted, nameCt: "v1:d", color: 1, deletedFrom: "2026-01-01" });
+    expect(await importRepo.isEmpty(onlyDeleted)).toBe(true);
   });
 
   it("isEmpty ignores the goal and the birth date", async () => {

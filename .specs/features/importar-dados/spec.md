@@ -28,7 +28,7 @@ A página `/conta` exporta os dados do usuário em `orcamento-dados-AAAA-MM-DD.j
 
 | Assumption / decision | Chosen default | Rationale | Confirmed? |
 | --------------------- | -------------- | --------- | ---------- |
-| Conta "vazia" | Zero linhas em `transaction` e zero em `category` (inclusive categorias excluídas logicamente); meta e data de nascimento não contam | Subcategorias e percentuais dependem de categoria; conta nova não tem categorias semeadas | y |
+| Conta "vazia" | Zero linhas em `transaction` e zero categorias ativas (`deleted_from` nulo); categorias excluídas logicamente sem transações não contam, e a importação as apaga; meta e data de nascimento não contam | Excluir categoria só marca `deleted_from` (AD-007), então uma conta esvaziada pelo usuário ainda tem essas linhas e seria barrada sem motivo; sem transações elas só apareceriam como fantasmas nos meses antigos. Subcategorias e percentuais dependem de categoria; conta nova não tem categorias semeadas | y |
 | Meta e data de nascimento do arquivo | Meta entra só se a conta não tem meta; data de nascimento entra só se a conta não tem | Decisão do usuário: manter os da conta | y |
 | Ids do arquivo | Todos os ids (transação, categoria, subcategoria, série) são trocados por UUIDs novos gerados no navegador, com as referências remapeadas | O AAD da cifra liga cada campo ao `userId` e ao id da linha, e reusar o id colidiria com a chave primária se a conta de origem ainda existir | n |
 | Meta incompatível com a data de nascimento da conta de destino | A meta não é importada e o resultado informa; o restante é importado | A regra `birthDateGoalConflict` é por conta; um conflito não deve barrar transações válidas | n |
@@ -96,7 +96,7 @@ A página `/conta` exporta os dados do usuário em `orcamento-dados-AAAA-MM-DD.j
 
 **Acceptance Criteria**:
 
-1. IF a conta tem ao menos uma transação ou uma categoria (ativa ou excluída) THEN o servidor SHALL recusar a importação com "Só é possível importar em uma conta sem transações nem categorias" e SHALL NOT gravar nada. <!-- IMPORT-15, unwanted-behavior -->
+1. IF a conta tem ao menos uma transação ou uma categoria ativa THEN o servidor SHALL recusar a importação com "Só é possível importar em uma conta sem transações nem categorias" e SHALL NOT gravar nada. <!-- IMPORT-15, unwanted-behavior -->
 2. The servidor SHALL conferir que a conta está vazia dentro da mesma transação de banco que grava a importação. <!-- IMPORT-16, ubiquitous -->
 3. WHEN duas importações da mesma conta chegam ao mesmo tempo THEN o servidor SHALL gravar no máximo uma e SHALL recusar a outra com a mensagem do IMPORT-15. <!-- IMPORT-17, event-driven -->
 4. WHEN a página `/conta` carrega para uma conta com dados THEN o cartão "Importar dados" SHALL exibir "Disponível apenas em conta sem transações nem categorias" e SHALL NOT oferecer o seletor de arquivo. <!-- IMPORT-18, event-driven -->
@@ -147,6 +147,7 @@ A página `/conta` exporta os dados do usuário em `orcamento-dados-AAAA-MM-DD.j
 - WHEN o arquivo tem categoria excluída (`deletedFrom` preenchido) com transações antigas THEN o sistema SHALL importá-la excluída, com as mesmas transações e vigências. <!-- IMPORT-30 -->
 - WHEN o arquivo tem duas categorias de mesmo nome, uma excluída e uma ativa THEN o sistema SHALL aceitá-las. <!-- IMPORT-31 -->
 - WHEN uma série recorrente tem vários segmentos no arquivo THEN o sistema SHALL importar todos com o mesmo `seriesId` novo e as datas, `recurrenceDay` e `recurrenceEnd` originais. <!-- IMPORT-32 -->
+- WHEN a conta não tem transações nem categorias ativas mas tem categorias excluídas logicamente THEN o servidor SHALL apagar essas categorias, com suas vigências e subcategorias, e gravar a importação na mesma transação de banco. <!-- IMPORT-34 -->
 - IF o usuário escolhe um segundo arquivo antes de importar THEN o sistema SHALL descartar o primeiro e refazer a validação e o resumo. <!-- IMPORT-33 -->
 
 ---
@@ -188,12 +189,13 @@ A página `/conta` exporta os dados do usuário em `orcamento-dados-AAAA-MM-DD.j
 | IMPORT-31 | Edge cases | - | Verified |
 | IMPORT-32 | Edge cases | - | Verified |
 | IMPORT-33 | Edge cases | - | Verified |
+| IMPORT-34 | Edge cases | - | Implementing |
 
 **ID format:** `IMPORT-NN`
 
 **Status values:** Pending → In Design → In Tasks → Implementing → Verified
 
-**Coverage:** 33 total, 33 mapped to tasks, 33 verified (validation.md, iteração 2)
+**Coverage:** 34 total, 34 mapped to tasks, 33 verified (validation.md, iteração 2); IMPORT-34 pendente de verificação
 
 ---
 
