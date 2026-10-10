@@ -427,15 +427,17 @@ T8 → T9 → T10 → T11 → T12 → T13 → T14
 
 **Done when**:
 
-- [ ] `next build` termina com sucesso sem `SENTRY_AUTH_TOKEN`
-- [ ] Opção que apaga `.map` após upload usa o nome confirmado na T1
-- [ ] `headers()` de segurança continua exportado igual
-- [ ] Gate check passes: `npm run build && npm run typecheck && npm run lint && npm run test:unit`
+- [x] `next build` termina com sucesso sem `SENTRY_AUTH_TOKEN`
+- [x] Opção que apaga `.map` após upload usa o nome confirmado na T1
+- [x] `headers()` de segurança continua exportado igual
+- [x] Gate check passes: `npm run build && npm run typecheck && npm run lint && npm run test:unit`
 
 **Tests**: none
 **Gate**: build
 
 **Commit**: `feat(sentry): upload source maps and tunnel browser events`
+
+**Status**: ✅ Done
 
 ---
 
