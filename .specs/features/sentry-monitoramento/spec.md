@@ -58,7 +58,7 @@ Hoje um erro em produção só aparece como `console.error(action, code)` (`src/
 1. WHEN `SENTRY_DSN` is set and a Server Component, route handler or Server Action throws an unhandled error THEN the system SHALL send one event to Sentry with the exception type and stack trace.
 2. WHEN the Next.js request error hook runs (`onRequestError`) THEN the system SHALL forward the error to Sentry.
 3. IF `SENTRY_DSN` is empty or unset THEN the system SHALL initialize no Sentry client and send no network request to Sentry.
-4. The system SHALL set `sendDefaultPii` to false on the server and browser runtimes. The proxy runs on Node in Next 16 and the app has no `runtime = "edge"` route, so no Edge config is created.
+4. The system SHALL disable all automatic user-data collection on the server and browser runtimes (`dataCollection.userInfo` false and every other category off; `sendDefaultPii` does not exist in @sentry/nextjs 11.6.0). The proxy runs on Node in Next 16 and the app has no `runtime = "edge"` route, so no Edge config is created.
 5. WHEN an event is about to be sent THEN the system SHALL remove `message`, every `exception.values[].value`, `breadcrumbs`, `request`, `user` and `extra`, and keep only exception type, stack trace, route without query string, release, environment and `tags`.
 6. IF a failed Server Action is logged by `logActionError` THEN the system SHALL also report an event whose only error content is the action name and the error `code`, with no message or other property of the error; both travel as event `tags` (`action`, `code`).
 
