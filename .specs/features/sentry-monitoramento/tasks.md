@@ -399,14 +399,16 @@ T8 → T9 → T10 → T11 → T12 → T13 → T14
 
 **Done when**:
 
-- [ ] Em produção chama `notFound()`; fora dela mostra os dois botões
-- [ ] Textos em pt-BR
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Em produção chama `notFound()`; fora dela mostra os dois botões
+- [x] Textos em pt-BR
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
 
 **Tests**: none
 **Gate**: build
 
 **Commit**: `feat(sentry): add the example page`
+
+**Status**: ✅ Done
 
 ---
 
