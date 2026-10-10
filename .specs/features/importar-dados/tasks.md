@@ -96,18 +96,19 @@ T1 → T2 → T3 → T4 → T5 → T6 → T7 → T8
 
 **Done when**:
 
-- [ ] Arquivo acima de 20 MB devolve "Arquivo muito grande (máximo 20 MB)" (IMPORT-08), no limite exato de 20 MB passa
-- [ ] JSON inválido, chave ausente ou de tipo errado devolve "Arquivo inválido. Use o arquivo exportado pelo Orçamento." (IMPORT-09)
-- [ ] Rejeita valor 0, valor acima de 99.999.999.999, descrição acima de 120, nome acima de 40, cor fora de 1..8, percentual fora de 1..100.000.000, data inexistente e meta fora dos limites (IMPORT-10); aceita cada valor de fronteira
-- [ ] Rejeita gasto com categoria/subcategoria ausente, subcategoria de outra categoria e ganho com categoria (IMPORT-11)
-- [ ] Rejeita categorias ativas de mesmo nome sem diferenciar maiúsculas e subcategorias repetidas na categoria; aceita ativa e excluída com o mesmo nome (IMPORT-12, IMPORT-31)
-- [ ] Rejeita 15.001 transações, 1.001 categorias, 101 vigências e 31 subcategorias; aceita o limite exato (IMPORT-13)
-- [ ] Soma de percentuais diferente de 100% não rejeita
-- [ ] Arquivo com listas vazias passa com resumo 0/0/0 (IMPORT-29); categoria excluída e série com vários segmentos passam intactas (IMPORT-30, IMPORT-32)
-- [ ] Round-trip: `parseImportFile(buildExport(x))` devolve `x` para um conjunto com todos os recursos
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
-- [ ] Test count: testes novos em `src/lib/vault/import-file.test.ts`, nenhum removido
+- [x] Arquivo acima de 20 MB devolve "Arquivo muito grande (máximo 20 MB)" (IMPORT-08), no limite exato de 20 MB passa
+- [x] JSON inválido, chave ausente ou de tipo errado devolve "Arquivo inválido. Use o arquivo exportado pelo Orçamento." (IMPORT-09)
+- [x] Rejeita valor 0, valor acima de 99.999.999.999, descrição acima de 120, nome acima de 40, cor fora de 1..8, percentual fora de 1..100.000.000, data inexistente e meta fora dos limites (IMPORT-10); aceita cada valor de fronteira
+- [x] Rejeita gasto com categoria/subcategoria ausente, subcategoria de outra categoria e ganho com categoria (IMPORT-11)
+- [x] Rejeita categorias ativas de mesmo nome sem diferenciar maiúsculas e subcategorias repetidas na categoria; aceita ativa e excluída com o mesmo nome (IMPORT-12, IMPORT-31)
+- [x] Rejeita 15.001 transações, 1.001 categorias, 101 vigências e 31 subcategorias; aceita o limite exato (IMPORT-13)
+- [x] Soma de percentuais diferente de 100% não rejeita
+- [x] Arquivo com listas vazias passa com resumo 0/0/0 (IMPORT-29); categoria excluída e série com vários segmentos passam intactas (IMPORT-30, IMPORT-32)
+- [x] Round-trip: `parseImportFile(buildExport(x))` devolve `x` para um conjunto com todos os recursos
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Test count: testes novos em `src/lib/vault/import-file.test.ts`, nenhum removido
 
+**Status**: ✅ Done
 **Tests**: unit
 **Gate**: quick
 **Commit**: `feat(import): validate the exported file in the browser`
