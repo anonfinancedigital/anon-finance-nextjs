@@ -413,15 +413,17 @@ T9 → T10 → T11 → T12
 
 **Done when**:
 
-- [ ] O teste passa no estado atual e falha ao reinserir "Vértice" em um componente (conferido por mutação manual)
-- [ ] A lista de exceções está escrita no próprio teste, com o motivo
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
-- [ ] Test count: 1 teste novo passa, nenhum removido
+- [x] O teste passa no estado atual e falha ao reinserir "Vértice" em um componente (conferido por mutação manual)
+- [x] A lista de exceções está escrita no próprio teste, com o motivo
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Test count: 1 teste novo passa, nenhum removido
 
 **Tests**: unit
 **Gate**: build
 
 **Commit**: `test(brand): guard against the old brand names in the app`
+
+**Status**: ✅ Done
 
 ---
 
