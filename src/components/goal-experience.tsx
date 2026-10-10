@@ -85,7 +85,7 @@ export function GoalExperience({
           open && "lg:pr-96",
         )}
       >
-        <PageHeader title="Ápice" subtitle={SUBTITLE}>
+        <PageHeader title="Liberdade" subtitle={SUBTITLE}>
           {saved && (
             <SheetTrigger asChild>
               <Button type="button" variant="outline">

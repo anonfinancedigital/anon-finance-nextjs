@@ -12,7 +12,7 @@ type Props = {
 
 const LINK_ACTIONS: Record<Exclude<StepId, "transaction">, { href: string; label: string }> = {
   categories: { href: "/categorias", label: "Definir categorias" },
-  goal: { href: "/liberdade", label: "Definir Ápice" },
+  goal: { href: "/liberdade", label: "Definir meta" },
 };
 
 /** "Comece por aqui": the three setup steps, progress, and one filled button on the current step. */

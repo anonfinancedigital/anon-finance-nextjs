@@ -244,15 +244,17 @@ T9 → T10 → T11 → T12
 
 **Done when**:
 
-- [ ] Menu "Liberdade"; `metadata.title` e `PageHeader` "Liberdade"
-- [ ] Card de primeiros passos com "Definir meta"
-- [ ] Nenhum texto visível da página usa "Ápice"/"ápice"
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Menu "Liberdade"; `metadata.title` e `PageHeader` "Liberdade"
+- [x] Card de primeiros passos com "Definir meta"
+- [x] Nenhum texto visível da página usa "Ápice"/"ápice"
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
 
 **Tests**: none
 **Gate**: build
 
 **Commit**: `feat(brand): rename the Ápice screen to Liberdade`
+
+**Status**: ✅ Done
 
 ---
 

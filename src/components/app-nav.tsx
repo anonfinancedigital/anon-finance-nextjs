@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 const items = [
   { href: "/", label: "Visão Geral", icon: LayoutGridIcon },
   { href: "/categorias", label: "Alocação", icon: TagsIcon },
-  { href: "/liberdade", label: "Ápice", icon: TargetIcon },
+  { href: "/liberdade", label: "Liberdade", icon: TargetIcon },
   { href: "/conta", label: "Conta", icon: UserIcon },
   { href: "/privacidade", label: "Privacidade", icon: ShieldIcon },
 ] as const;

@@ -4,7 +4,7 @@ import { requireSessionForPage } from "@/lib/auth-guard";
 import { goalsRepo } from "@/lib/db/repos/goals";
 import { vaultRepo } from "@/lib/db/repos/vault";
 
-export const metadata: Metadata = { title: "Ápice" };
+export const metadata: Metadata = { title: "Liberdade" };
 
 export default async function FreedomPage() {
   const { userId } = await requireSessionForPage();
