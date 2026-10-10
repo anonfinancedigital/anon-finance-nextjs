@@ -103,6 +103,10 @@ describe("sentryInitOptions", () => {
     expect(sentryInitOptions({}).tracesSampleRate).toBe(0);
   });
 
+  it("uses the static trace lifecycle so beforeSendTransaction runs", () => {
+    expect(sentryInitOptions({}).traceLifecycle).toBe("static");
+  });
+
   it("wires the scrubbers", () => {
     const opts = sentryInitOptions({});
     expect(opts.beforeSend).toBe(scrubEvent);
@@ -209,6 +213,30 @@ describe("scrubTransaction", () => {
     ];
     const out = scrubTransaction(event);
     expect(JSON.stringify(out)).not.toContain("mes=2026-10");
+  });
+
+  it("removes span and trace data, which carry url.full with the query string", () => {
+    const event = tx();
+    (event as unknown as { spans: unknown[] }).spans = [
+      { span_id: "s", data: { "url.full": "https://app.test/api/x?mes=2026-10" } },
+    ];
+    (event as unknown as { contexts: unknown }).contexts = {
+      trace: { trace_id: "t", data: { "url.full": "https://app.test/?mes=2026-10" } },
+    };
+    const out = scrubTransaction(event);
+    expect(JSON.stringify(out)).not.toContain("mes=2026-10");
+    expect(out?.contexts?.trace?.trace_id).toBe("t");
+  });
+
+  it("drops the transaction when scrubbing fails", () => {
+    const event = tx();
+    Object.defineProperty(event, "spans", {
+      get() {
+        throw new Error("boom");
+      },
+      enumerable: true,
+    });
+    expect(scrubTransaction(event)).toBeNull();
   });
 });
 

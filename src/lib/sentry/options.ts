@@ -74,9 +74,17 @@ export function scrubTransaction(event: TransactionEvent): TransactionEvent | nu
     delete out.extra;
     if (out.transaction) out.transaction = stripQuery(out.transaction);
     if (out.spans) {
-      out.spans = out.spans.map((span) =>
-        span.description ? { ...span, description: stripQuery(span.description) } : span,
-      );
+      out.spans = out.spans.map((span) => {
+        // `data` leva atributos como `url.full`, que podem trazer query string.
+        const copy = { ...span, data: {} };
+        if (copy.description) copy.description = stripQuery(copy.description);
+        return copy;
+      });
+    }
+    if (out.contexts?.trace) {
+      const trace = { ...out.contexts.trace };
+      delete trace.data;
+      out.contexts = { ...out.contexts, trace };
     }
     return out;
   } catch {
@@ -103,6 +111,8 @@ export function sentryInitOptions(env: { dsn?: string; nodeEnv?: string }): Node
     },
     maxBreadcrumbs: 0,
     beforeBreadcrumb: () => null,
+    // No SDK 11 o padrão é `stream`, que ignora `beforeSendTransaction`; sem isto o scrubTransaction não roda.
+    traceLifecycle: "static",
     tracesSampleRate: env.nodeEnv === "production" ? 0.1 : 0,
     beforeSend: scrubEvent,
     beforeSendTransaction: scrubTransaction,
