@@ -154,15 +154,18 @@ T9 → T10 → T11 → T12
 
 **Done when**:
 
-- [ ] `title` com `default` "ANON" e `template` "ANON • %s"
-- [ ] `description` "ANON – Finanças Privadas"
-- [ ] `icons` declara o favicon escuro e o claro com `media`, o escuro como fallback
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] `title` com `default` "ANON" e `template` "ANON • %s"
+- [x] `description` "ANON – Finanças Privadas"
+- [x] `icons` declara o favicon escuro e o claro com `media`, o escuro como fallback
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
 
 **Tests**: none
 **Gate**: build
 
 **Commit**: `feat(brand): switch the app metadata and icons to ANON`
+
+
+**Status**: ✅ Done
 
 ---
 

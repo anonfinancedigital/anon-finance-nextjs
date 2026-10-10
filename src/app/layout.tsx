@@ -3,6 +3,7 @@ import { headers } from "next/headers";
 import { Geist_Mono, Manrope, Sora } from "next/font/google";
 import "./globals.css";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { BRAND_DESCRIPTION, BRAND_NAME, BRAND_TITLE_TEMPLATE } from "@/lib/brand";
 
 /** Applies the saved theme before first paint (dark when none is saved) to avoid a flash of the wrong one. */
 const themeScript = `try{if(localStorage.getItem("theme")!=="light")document.documentElement.classList.add("dark")}catch(e){document.documentElement.classList.add("dark")}`;
@@ -23,8 +24,15 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: { default: "Vértice", template: "Vértice • %s" },
-  description: "Vértice – Gestão Patrimonial Familiar",
+  title: { default: BRAND_NAME, template: BRAND_TITLE_TEMPLATE },
+  description: BRAND_DESCRIPTION,
+  // Dark favicon is the default (and the fallback when `media` is unsupported); the light one wins on a light system theme.
+  icons: {
+    icon: [
+      { url: "/favicon.svg", type: "image/svg+xml" },
+      { url: "/favicon-light.svg", type: "image/svg+xml", media: "(prefers-color-scheme: light)" },
+    ],
+  },
 };
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {
