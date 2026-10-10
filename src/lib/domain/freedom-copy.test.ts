@@ -178,14 +178,14 @@ describe("summarySentence", () => {
     expect(sentence).not.toContain("Isso exige guardar");
   });
 
-  it("meta já alcançada: usa \"Você já atingiu seu Ápice.\" no lugar da cláusula", () => {
+  it("meta já alcançada: usa \"Você já atingiu sua meta.\" no lugar da cláusula", () => {
     const reached = summarize(
       { monthlyIncomeCents: 2_000_000, savedCents: 500_000_000, birthDate: "1993-05-10", retirementAge: 48, annualRateBp: 800, withdrawalRateBp: 500 },
       now,
     );
     expect(reached.monthlyCents).toBe(0);
     const sentence = normalize(summarySentence(reached));
-    expect(sentence).toBe("Para ter R$ 20 mil/mês aos 48 anos, você precisa de R$ 4,8 mi. Você já atingiu seu Ápice.");
+    expect(sentence).toBe("Para ter R$ 20 mil/mês aos 48 anos, você precisa de R$ 4,8 mi. Você já atingiu sua meta.");
     expect(sentence).not.toContain("Isso exige guardar");
   });
 
@@ -200,17 +200,17 @@ describe("summarySentence", () => {
     expect(sentence).toBe(
       "Para ter R$ 5 mil/mês aos 48 anos, você precisa de R$ 1,2 mi. Seu patrimônio atual, rendendo, chega lá aos 43, sem novos aportes.",
     );
-    expect(sentence).not.toContain("Você já atingiu seu Ápice");
+    expect(sentence).not.toContain("Você já atingiu sua meta");
   });
 
-  it("guardado exatamente igual ao alvo: Você já atingiu seu Ápice", () => {
+  it("guardado exatamente igual ao alvo: Você já atingiu sua meta", () => {
     const exact = summarize(
       { monthlyIncomeCents: 500_000, savedCents: 120_000_000, birthDate: "1993-05-10", retirementAge: 48, annualRateBp: 800, withdrawalRateBp: 500 },
       now,
     );
     expect(exact.savedCents).toBe(exact.targetCents);
     expect(normalize(summarySentence(exact))).toBe(
-      "Para ter R$ 5 mil/mês aos 48 anos, você precisa de R$ 1,2 mi. Você já atingiu seu Ápice.",
+      "Para ter R$ 5 mil/mês aos 48 anos, você precisa de R$ 1,2 mi. Você já atingiu sua meta.",
     );
   });
 });

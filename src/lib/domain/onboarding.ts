@@ -20,7 +20,7 @@ export function deriveSetup(input: {
   const steps: SetupStep[] = [
     { id: "categories", label: "Definir sua receita e categorias", done: input.categories >= 1 },
     { id: "transaction", label: "Registrar sua primeira transação", done: input.transactions >= 1 },
-    { id: "goal", label: "Definir seu Ápice", done: input.hasGoal },
+    { id: "goal", label: "Definir sua meta", done: input.hasGoal },
   ];
   const doneCount = steps.filter((s) => s.done).length;
   return {

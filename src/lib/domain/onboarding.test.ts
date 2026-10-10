@@ -44,7 +44,7 @@ describe("deriveSetup", () => {
     expect(s.steps.map((x) => [x.id, x.label])).toEqual([
       ["categories", "Definir sua receita e categorias"],
       ["transaction", "Registrar sua primeira transação"],
-      ["goal", "Definir seu Ápice"],
+      ["goal", "Definir sua meta"],
     ]);
   });
 });

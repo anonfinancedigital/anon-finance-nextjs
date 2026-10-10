@@ -46,11 +46,11 @@ export function incomeHeadline(summary: GoalSummary): string {
 /**
  * Frase-resumo: renda, idade e patrimônio necessário e, quando há aporte, quanto guardar e por quanto
  * tempo. Prazo encerrado (aporte nulo) omite a cláusula; guardado já no alvo a troca por "Você já atingiu
- * seu Ápice."; aporte 0 com guardado abaixo do alvo diz a idade em que o patrimônio atual chega lá.
+ * sua meta."; aporte 0 com guardado abaixo do alvo diz a idade em que o patrimônio atual chega lá.
  */
 export function summarySentence(summary: GoalSummary): string {
   const base = `Para ter ${incomeHeadline(summary)}, você precisa de ${formatCompactBRL(summary.targetCents)}.`;
-  if (summary.remainingCents === 0) return `${base} Você já atingiu seu Ápice.`;
+  if (summary.remainingCents === 0) return `${base} Você já atingiu sua meta.`;
   if (summary.monthlyCents === null) return base;
   if (summary.reach) {
     return `${base} Seu patrimônio atual, rendendo, chega lá aos ${summary.reach.ageYears}, sem novos aportes.`;

@@ -214,16 +214,18 @@ T9 → T10 → T11 → T12
 
 **Done when**:
 
-- [ ] Frase termina com "Você já atingiu sua meta." quando o restante é zero
-- [ ] Item do checklist "Definir sua meta"
-- [ ] Testes existentes atualizados para os textos da spec, sem remover casos
-- [ ] Gate check passes: `npm run test:unit`
-- [ ] Test count: igual ao anterior ao começar a task, todos passam
+- [x] Frase termina com "Você já atingiu sua meta." quando o restante é zero
+- [x] Item do checklist "Definir sua meta"
+- [x] Testes existentes atualizados para os textos da spec, sem remover casos
+- [x] Gate check passes: `npm run test:unit`
+- [x] Test count: igual ao anterior ao começar a task, todos passam
 
 **Tests**: unit
 **Gate**: quick
 
 **Commit**: `feat(brand): rename the goal wording in domain copy`
+
+**Status**: ✅ Done
 
 ---
 
