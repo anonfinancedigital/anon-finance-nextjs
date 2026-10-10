@@ -191,18 +191,19 @@ T1 → T2 → T3 → T4 → T5 → T6 → T7 → T8
 
 **Done when**:
 
-- [ ] Em conta vazia grava todas as linhas, com colunas em claro `NULL`, e devolve as contagens (IMPORT-04)
-- [ ] `exportRowsSealed` da conta de destino traz as mesmas listas e `kind`, datas, recorrência, cor, `isInvestment`, `deletedFrom` e `fromMonth` do payload (IMPORT-27, IMPORT-30, IMPORT-32)
-- [ ] Conta com uma transação, ou com só uma categoria excluída, devolve `not_empty` e não grava nada (IMPORT-15, IMPORT-16)
-- [ ] Duas chamadas simultâneas na mesma conta gravam no máximo uma; a outra devolve `not_empty` (IMPORT-17)
-- [ ] Erro no meio da inserção (ex.: violação de FK forçada) deixa zero linhas novas (IMPORT-14)
-- [ ] Linhas de outro usuário não são lidas nem alteradas; toda linha nova tem o `userId` passado (IMPORT-19)
-- [ ] Meta entra só sem meta prévia; a existente fica intacta (IMPORT-20, IMPORT-21)
-- [ ] Nascimento entra só se `user_vault.birth_date_ct` é `NULL`; o existente fica intacto (IMPORT-23, IMPORT-24)
-- [ ] `isEmpty` é verdadeiro para conta nova e falso com transação ou categoria
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
-- [ ] Test count: testes novos em `src/lib/db/repos/import.int.test.ts`, nenhum removido
+- [x] Em conta vazia grava todas as linhas, com colunas em claro `NULL`, e devolve as contagens (IMPORT-04)
+- [x] `exportRowsSealed` da conta de destino traz as mesmas listas e `kind`, datas, recorrência, cor, `isInvestment`, `deletedFrom` e `fromMonth` do payload (IMPORT-27, IMPORT-30, IMPORT-32)
+- [x] Conta com uma transação, ou com só uma categoria excluída, devolve `not_empty` e não grava nada (IMPORT-15, IMPORT-16)
+- [x] Duas chamadas simultâneas na mesma conta gravam no máximo uma; a outra devolve `not_empty` (IMPORT-17)
+- [x] Erro no meio da inserção (ex.: violação de FK forçada) deixa zero linhas novas (IMPORT-14)
+- [x] Linhas de outro usuário não são lidas nem alteradas; toda linha nova tem o `userId` passado (IMPORT-19)
+- [x] Meta entra só sem meta prévia; a existente fica intacta (IMPORT-20, IMPORT-21)
+- [x] Nascimento entra só se `user_vault.birth_date_ct` é `NULL`; o existente fica intacto (IMPORT-23, IMPORT-24)
+- [x] `isEmpty` é verdadeiro para conta nova e falso com transação ou categoria
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
+- [x] Test count: testes novos em `src/lib/db/repos/import.int.test.ts`, nenhum removido
 
+**Status**: ✅ Done
 **Tests**: integration
 **Gate**: full
 **Commit**: `feat(import): write the sealed import atomically`
