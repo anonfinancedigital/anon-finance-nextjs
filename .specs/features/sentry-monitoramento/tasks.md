@@ -200,14 +200,16 @@ T8 → T9 → T10 → T11 → T12 → T13 → T14
 
 **Done when**:
 
-- [ ] Usa `NEXT_PUBLIC_SENTRY_DSN` e `sentryInitOptions`
-- [ ] Nenhuma integração de Replay ou Feedback importada
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Usa `NEXT_PUBLIC_SENTRY_DSN` e `sentryInitOptions`
+- [x] Nenhuma integração de Replay ou Feedback importada
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
 
 **Tests**: none
 **Gate**: build
 
 **Commit**: `feat(sentry): initialize Sentry in the browser`
+
+**Status**: ✅ Done
 
 ---
 
