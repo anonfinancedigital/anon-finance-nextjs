@@ -343,10 +343,10 @@ T15 → T16 → T17
 
 **Done when**:
 
-- [ ] Valida com `createVaultFormSchema` antes de derivar chaves; erro bloqueia o envio (evidência `file:line`)
-- [ ] O `authSecret` devolvido por `createVaultMaterial` não é enviado (evidência `file:line`)
-- [ ] Falha da action mantém o usuário no formulário com o erro; a chave de recuperação só aparece após `ok`
-- [ ] Gate check passes: `npm run typecheck && npm run lint`
+- [x] Valida com `createVaultFormSchema` antes de derivar chaves; erro bloqueia o envio (evidência: `create-vault-form.tsx:42` safeParse, `:47-50` retorna antes do import/derivação)
+- [x] O `authSecret` devolvido por `createVaultMaterial` não é enviado (evidência: `create-vault-form.tsx:66-69` envia só `vault` e `birthDateCt`)
+- [x] Falha da action mantém o usuário no formulário com o erro; a chave de recuperação só aparece após `ok` (evidência: `:70-71` `setCreated` só se `result.ok`; `:151` diálogo só com `created`)
+- [x] Gate check passes: `npm run typecheck && npm run lint`
 
 **Tests**: none
 **Gate**: build
