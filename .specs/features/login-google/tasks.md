@@ -479,10 +479,10 @@ T15 → T16 → T17
 
 **Done when**:
 
-- [ ] Botão só renderiza com Google configurado (evidência `file:line`)
-- [ ] O aviso aparece com `role="alert"` quando `loginNotice` não é nulo
-- [ ] A página continua pública (`/login` em `PUBLIC_PATHS`)
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Botão só renderiza com Google configurado (evidência: `login/page.tsx:41` `isGoogleEnabled() &&`)
+- [x] O aviso aparece com `role="alert"` quando `loginNotice` não é nulo (evidência: `login/page.tsx:25` calcula, `:36-40` renderiza)
+- [x] A página continua pública (`/login` em `PUBLIC_PATHS`) (evidência: `route-decision.ts:3`)
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
 
 **Tests**: none
 **Gate**: build
@@ -490,6 +490,8 @@ T15 → T16 → T17
 **Commit**: `feat(auth): show the Google button and sign-in notice on /login`
 
 ---
+
+**Nota de implementação**: o cookie `anon_login_block` só vale junto com `?error=` (`login/page.tsx:24`). Verificado em `callback.mjs:195-197` e por teste descartável: usuário bloqueado redireciona a `/login?error=unable_to_create_session`. Assim o aviso não se repete ao recarregar `/login` limpo, mesmo com o cookie de 60 s (inclusive o gravado por recusa no login por senha). `loginNotice` não mudou.
 
 ### T16: Variáveis de ambiente no exemplo
 
