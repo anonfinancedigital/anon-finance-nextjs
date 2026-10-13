@@ -248,16 +248,17 @@ T7 → T8
 
 **Done when**:
 
-- [ ] Teste lê o arquivo e confere: cron, `workflow_dispatch`, `set -euo pipefail`, `pg_dump --format=custom --no-owner`, `age -r`, `retention-days: 30`, nome `orcamento-<UTC>.dump.age`
-- [ ] Teste confere verificação de arquivo vazio (`-s`) antes do upload
-- [ ] Teste confere que a versão do cliente vem de uma variável única no topo (`PG_VERSION: 18`)
-- [ ] Teste confere que nenhum `echo`/`cat` imprime segredo e que nenhum arquivo em claro é gravado ou enviado
-- [ ] Gate check passes: `npm run test:unit`
-- [ ] Test count: 7 testes novos passam, nenhum removido
+- [x] Teste lê o arquivo e confere: cron, `workflow_dispatch`, `set -euo pipefail`, `pg_dump --format=custom --no-owner`, `age -r`, `retention-days: 30`, nome `orcamento-<UTC>.dump.age`
+- [x] Teste confere verificação de arquivo vazio (`-s`) antes do upload
+- [x] Teste confere que a versão do cliente vem de uma variável única no topo (`PG_VERSION: 18`)
+- [x] Teste confere que nenhum `echo`/`cat` imprime segredo e que nenhum arquivo em claro é gravado ou enviado
+- [x] Gate check passes: `npm run test:unit`
+- [x] Test count: 7 testes novos passam, nenhum removido
 
 **Tests**: unit
 **Gate**: quick
 **Commit**: `feat(backup): add a daily encrypted pg_dump workflow`
+**Status**: Done
 
 ---
 

@@ -1,0 +1,51 @@
+name: backup
+
+# Versão major do cliente pg_dump: igual ou maior que a do Postgres do Neon.
+env:
+  PG_VERSION: 18
+
+on:
+  schedule:
+    - cron: "0 5 * * *" # diário, 05:00 UTC
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  dump:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Install clients
+        run: |
+          set -euo pipefail
+          sudo install -d /usr/share/postgresql-common/pgdg
+          sudo curl -fsSL -o /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc https://www.postgresql.org/media/keys/ACCC4CF8.asc
+          . /etc/os-release
+          echo "deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.asc] https://apt.postgresql.org/pub/repos/apt ${VERSION_CODENAME}-pgdg main" | sudo tee /etc/apt/sources.list.d/pgdg.list > /dev/null
+          sudo apt-get update
+          sudo apt-get install -y "postgresql-client-${PG_VERSION}" age
+
+      - name: Dump and encrypt
+        id: dump
+        env:
+          NEON_DIRECT_URL: ${{ secrets.NEON_DIRECT_URL }}
+          AGE_PUB: ${{ secrets.BACKUP_AGE_PUBLIC_KEY }}
+        run: |
+          set -euo pipefail
+          f="orcamento-$(date -u +%Y%m%dT%H%M%SZ).dump.age"
+          pg_dump --format=custom --no-owner "$NEON_DIRECT_URL" | age -r "$AGE_PUB" > "$f"
+          if [ ! -s "$f" ]; then
+            echo "Encrypted backup is empty" >&2
+            exit 1
+          fi
+          echo "file=$f" >> "$GITHUB_OUTPUT"
+
+      - name: Upload encrypted backup
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.dump.outputs.file }}
+          path: ${{ steps.dump.outputs.file }}
+          retention-days: 30
+          if-no-files-found: error

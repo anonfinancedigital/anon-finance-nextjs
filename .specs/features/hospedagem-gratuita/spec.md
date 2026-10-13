@@ -151,13 +151,13 @@ O plano `docs/hospedagem-gratuita.md` coloca o app no ar a custo zero (Vercel Ho
 | HOSTING-12 | P1: URL — inválida ainda devolve `ok: true` | - | Implementing |
 | HOSTING-13 | P1: URL — válida envia o e-mail | - | Implementing |
 | HOSTING-14 | P1: URL — fora de produção aceita `http:` | - | Implementing |
-| HOSTING-15 | P2: backup — gatilhos | - | Pending |
-| HOSTING-16 | P2: backup — dump criptografado em fluxo | - | Pending |
-| HOSTING-17 | P2: backup — artifact com retenção de 30 dias | - | Pending |
-| HOSTING-18 | P2: backup — falha derruba o job | - | Pending |
-| HOSTING-19 | P2: backup — arquivo vazio derruba o job | - | Pending |
-| HOSTING-20 | P2: backup — versão do cliente | - | Pending |
-| HOSTING-21 | P2: backup — sem vazamento de segredo | - | Pending |
+| HOSTING-15 | P2: backup — gatilhos | - | Implementing |
+| HOSTING-16 | P2: backup — dump criptografado em fluxo | - | Implementing |
+| HOSTING-17 | P2: backup — artifact com retenção de 30 dias | - | Implementing |
+| HOSTING-18 | P2: backup — falha derruba o job | - | Implementing |
+| HOSTING-19 | P2: backup — arquivo vazio derruba o job | - | Implementing |
+| HOSTING-20 | P2: backup — versão do cliente | - | Implementing |
+| HOSTING-21 | P2: backup — sem vazamento de segredo | - | Implementing |
 
 **Coverage:** 21 total, 0 mapped to tasks, 21 unmapped ⚠️
 
