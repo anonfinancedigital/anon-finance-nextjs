@@ -1,10 +1,13 @@
+import { randomUUID } from "node:crypto";
+import { and, eq } from "drizzle-orm";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { db } from "@/lib/db/client";
 import { vaultRepo } from "@/lib/db/repos/vault";
+import { account } from "@/lib/db/auth-schema";
 import { userVault } from "@/lib/db/schema";
 import { createSignedInUser, insertCredentialUser } from "@/test/auth";
 import { setupTestDb } from "@/test/db";
-import { getKdfParamsAction, getVaultAction } from "./vault";
+import { createVaultAction, getKdfParamsAction, getVaultAction } from "./vault";
 
 const request = vi.hoisted(() => ({ headers: new Headers() }));
 
@@ -135,5 +138,89 @@ describe("getVaultAction", () => {
       ok: false,
       error: "Não foi possível salvar. Tente novamente",
     });
+  });
+});
+
+describe("createVaultAction", () => {
+  const payload = {
+    vault: {
+      kdfVersion: 1 as const,
+      salt: "AAAAAAAAAAAAAAAAAAAAAA",
+      memKib: 19456,
+      iterations: 2,
+      parallelism: 1,
+      dekWrappedPw: "v1:pw",
+      dekWrappedRecovery: "v1:recovery",
+    },
+    birthDateCt: "v1:birth",
+  };
+  const rows = (userId: string) => db.select().from(userVault).where(eq(userVault.userId, userId));
+
+  /** A signed-in approved user that entered only through Google: no password account, no vault. */
+  async function googleOnlyUser() {
+    const me = await createSignedInUser();
+    await db.delete(account).where(and(eq(account.userId, me.userId), eq(account.providerId, "credential")));
+    await db
+      .insert(account)
+      .values({ id: randomUUID(), userId: me.userId, accountId: randomUUID(), providerId: "google" });
+    request.headers = new Headers({ cookie: me.cookie });
+    return me;
+  }
+
+  it("answers UNAUTHORIZED without a session and writes nothing", async () => {
+    const spy = vi.spyOn(vaultRepo, "createForSession");
+
+    expect(await createVaultAction(payload)).toEqual({ ok: false, error: "UNAUTHORIZED" });
+    expect(spy).not.toHaveBeenCalled();
+  });
+
+  it("rejects an invalid payload and writes nothing", async () => {
+    const me = await googleOnlyUser();
+
+    const result = await createVaultAction({ ...payload, birthDateCt: "texto puro" });
+
+    expect(result).toMatchObject({ ok: false, error: "Texto cifrado inválido" });
+    expect(await rows(me.userId)).toHaveLength(0);
+  });
+
+  it("creates the vault with the sealed birth date for a user that needs one", async () => {
+    const me = await googleOnlyUser();
+
+    expect(await createVaultAction(payload)).toEqual({ ok: true });
+
+    const [row] = await rows(me.userId);
+    expect(row).toMatchObject({
+      dekWrappedPw: "v1:pw",
+      dekWrappedRecovery: "v1:recovery",
+      birthDateCt: "v1:birth",
+    });
+  });
+
+  it("refuses a user that already has a vault and keeps the row", async () => {
+    const me = await googleOnlyUser();
+    await createVaultAction(payload);
+
+    const other = { vault: { ...payload.vault, dekWrappedPw: "v1:novo" }, birthDateCt: "v1:novo" };
+    const result = await createVaultAction(other);
+
+    expect(result.ok).toBe(false);
+    const [row] = await rows(me.userId);
+    expect(row).toMatchObject({ dekWrappedPw: "v1:pw", birthDateCt: "v1:birth" });
+  });
+
+  it("returns SAVE_FAILED and leaves no partial vault when the write fails midway", async () => {
+    const me = await googleOnlyUser();
+    const create = vaultRepo.create.bind(vaultRepo);
+    vi.spyOn(vaultRepo, "create").mockImplementationOnce(async (tx, userId, material) => {
+      await create(tx, userId, material);
+      throw new Error("falha no meio");
+    });
+    vi.spyOn(console, "error").mockImplementation(() => {});
+
+    expect(await createVaultAction(payload)).toEqual({
+      ok: false,
+      error: "Não foi possível salvar. Tente novamente",
+    });
+    expect(await rows(me.userId)).toHaveLength(0);
   });
 });

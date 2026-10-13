@@ -1,9 +1,10 @@
 "use server";
 
-import { type ActionResult, SAVE_FAILED } from "@/lib/action-result";
+import { type ActionResult, invalidInput, SAVE_FAILED } from "@/lib/action-result";
 import { requireSessionForAction } from "@/lib/auth-guard";
 import { type KdfParamsResult, vaultRepo } from "@/lib/db/repos/vault";
 import { logActionError } from "@/lib/log";
+import { createVaultPayloadSchema } from "@/lib/validation/create-vault";
 import { requestResetSchema } from "@/lib/validation/password-reset";
 import type { VaultMaterial } from "@/lib/vault/types";
 
@@ -41,6 +42,28 @@ export async function getVaultAction(): Promise<
     return { ok: true, vault };
   } catch (error) {
     logActionError("getVaultAction", error);
+    return { ok: false, error: SAVE_FAILED };
+  }
+}
+
+const VAULT_EXISTS = "Esta conta já tem um cofre";
+
+/**
+ * Creates the vault of the session user that needs one (Google-only account). Receives only wrapped
+ * keys and the sealed birth date; all or nothing. A user that already has a vault is refused.
+ */
+export async function createVaultAction(payload: unknown): Promise<ActionResult> {
+  const session = await requireSessionForAction();
+  if (!session.ok) return session;
+
+  const parsed = createVaultPayloadSchema.safeParse(payload);
+  if (!parsed.success) return invalidInput(parsed.error);
+
+  try {
+    const outcome = await vaultRepo.createForSession(session.userId, parsed.data.vault, parsed.data.birthDateCt);
+    return outcome === "ok" ? { ok: true } : { ok: false, error: VAULT_EXISTS };
+  } catch (error) {
+    logActionError("createVaultAction", error);
     return { ok: false, error: SAVE_FAILED };
   }
 }

@@ -314,12 +314,12 @@ T15 → T16 → T17
 
 **Done when**:
 
-- [ ] Sem sessão -> `UNAUTHORIZED` e nada gravado; payload inválido -> `invalidInput` e nada gravado
-- [ ] Usuário `needsVault` com payload válido -> `{ ok: true }` e `user_vault` com `birth_date_ct`
-- [ ] Usuário que já tem vault -> `{ ok: false }` sem alterar a linha (GOOGLE-06.5)
-- [ ] Falha do repo -> `SAVE_FAILED` ("Não foi possível salvar. Tente novamente", texto conferido em `action-result.ts`) e nenhuma linha parcial
-- [ ] Gate check passes: `npm run test:unit && npm run test:int`
-- [ ] Test count: 5 novos testes em `src/actions/vault.int.test.ts` pass, nenhum removido
+- [x] Sem sessão -> `UNAUTHORIZED` e nada gravado; payload inválido -> `invalidInput` e nada gravado
+- [x] Usuário `needsVault` com payload válido -> `{ ok: true }` e `user_vault` com `birth_date_ct`
+- [x] Usuário que já tem vault -> `{ ok: false }` sem alterar a linha (GOOGLE-06.5)
+- [x] Falha do repo -> `SAVE_FAILED` ("Não foi possível salvar. Tente novamente", texto conferido em `action-result.ts`) e nenhuma linha parcial
+- [x] Gate check passes: `npm run test:unit && npm run test:int`
+- [x] Test count: 5 novos testes em `src/actions/vault.int.test.ts` pass, nenhum removido
 
 **Tests**: integration
 **Gate**: full
