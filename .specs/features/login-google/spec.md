@@ -132,7 +132,7 @@ Hoje só se entra com e-mail e senha. A senha também deriva a chave que abre o 
 
 | Requirement ID | Story | Phase | Status |
 | -------------- | ----- | ----- | ------ |
-| GOOGLE-01 | P1: Entrar com Google (botão condicionado à configuração) | Design | Pending |
+| GOOGLE-01 | P1: Entrar com Google (botão condicionado à configuração) | Execute | In Progress |
 | GOOGLE-02 | P1: Entrar com Google (sessão em conta aprovada) | Design | Pending |
 | GOOGLE-03 | P1: Entrar com Google (cofre bloqueado até a senha) | Design | Pending |
 | GOOGLE-04 | P1: Entrar com Google (e-mail não verificado e falha OAuth) | Design | Pending |
