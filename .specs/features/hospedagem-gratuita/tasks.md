@@ -163,15 +163,16 @@ T7 → T8
 
 **Done when**:
 
-- [ ] Guia de route handlers em `node_modules/next/dist/docs/` lido antes de escrever
-- [ ] `GET` devolve status 200, corpo `{"status":"ok"}`, `Content-Type` JSON e `Cache-Control: no-store`
-- [ ] Teste prova que `@/lib/db/client` não é carregado (mock que falha se importado) e que query string não muda a resposta
-- [ ] Gate check passes: `npm run test:unit`
-- [ ] Test count: 3 testes novos passam, nenhum removido
+- [x] Guia de route handlers em `node_modules/next/dist/docs/` lido antes de escrever
+- [x] `GET` devolve status 200, corpo `{"status":"ok"}`, `Content-Type` JSON e `Cache-Control: no-store`
+- [x] Teste prova que `@/lib/db/client` não é carregado (mock que falha se importado) e que query string não muda a resposta
+- [x] Gate check passes: `npm run test:unit`
+- [x] Test count: 3 testes novos passam, nenhum removido
 
 **Tests**: unit
 **Gate**: quick
 **Commit**: `feat(health): add a public health endpoint that skips the database`
+**Status**: Done
 
 ---
 
