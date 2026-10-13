@@ -124,7 +124,7 @@ T15 → T16 → T17
 - [x] `emailVerified: false` -> recusa; `true` -> `{ data: { status: "pending" } }`, mesmo se o objeto trouxer outro `status`
 - [x] `blockCookieStatus` devolve `pending`, `rejected`, `revoked` e `null` para `approved`
 - [x] Gate check passes: `npm run test:unit`
-- [x] Test count: 6 tests pass
+- [x] Test count: 6 tests pass (9 execuções com `it.each`)
 
 **Tests**: unit
 **Gate**: quick
@@ -396,11 +396,11 @@ T15 → T16 → T17
 
 **Done when**:
 
-- [ ] `pending` -> "Sua conta está aguardando aprovação do administrador"; `rejected` -> "Seu cadastro não foi aprovado"; `revoked` -> "Seu acesso foi revogado"
-- [ ] `error` sem status -> "Não foi possível entrar com o Google"; sem ambos -> `null`
-- [ ] Valor de cookie desconhecido (ex.: `approved`, texto livre) é ignorado e cai no ramo de `error`
-- [ ] Gate check passes: `npm run test:unit`
-- [ ] Test count: 6 tests pass
+- [x] `pending` -> "Sua conta está aguardando aprovação do administrador"; `rejected` -> "Seu cadastro não foi aprovado"; `revoked` -> "Seu acesso foi revogado"
+- [x] `error` sem status -> "Não foi possível entrar com o Google"; sem ambos -> `null`
+- [x] Valor de cookie desconhecido (ex.: `approved`, texto livre) é ignorado e cai no ramo de `error`
+- [x] Gate check passes: `npm run test:unit`
+- [x] Test count: 6 tests pass (9 execuções com `it.each`)
 
 **Tests**: unit
 **Gate**: quick
