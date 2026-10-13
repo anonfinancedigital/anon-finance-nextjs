@@ -83,14 +83,22 @@ function idToken(profile: { sub: string; email: string; email_verified: boolean 
   return `${part({ alg: "RS256", typ: "JWT" })}.${part({ ...profile, name: "Ana" })}.sig`;
 }
 
-async function googleCallback(profile: { email: string; email_verified: boolean; sub?: string }) {
+async function googleCallback(
+  profile: { email: string; email_verified: boolean; sub?: string },
+  options: { query?: (state: string | null) => string; exchangeFails?: boolean } = {},
+) {
   const google = ctx.socialProviders.find((p) => p.id === "google");
   if (!google) throw new Error("google provider is not configured");
   const sub = profile.sub ?? randomUUID();
-  vi.spyOn(google, "validateAuthorizationCode").mockResolvedValueOnce({
-    accessToken: "access",
-    idToken: idToken({ sub, email: profile.email, email_verified: profile.email_verified }),
-  });
+  const exchange = vi.spyOn(google, "validateAuthorizationCode");
+  if (options.exchangeFails) {
+    exchange.mockRejectedValueOnce(new Error("invalid_grant"));
+  } else {
+    exchange.mockResolvedValueOnce({
+      accessToken: "access",
+      idToken: idToken({ sub, email: profile.email, email_verified: profile.email_verified }),
+    });
+  }
 
   const started = await auth.api.signInSocial({
     body: { provider: "google", callbackURL: "/", errorCallbackURL: "/login" },
@@ -101,9 +109,10 @@ async function googleCallback(profile: { email: string; email_verified: boolean;
     .getSetCookie()
     .map((c) => c.split(";")[0])
     .join("; ");
+  const query = options.query ? options.query(state) : `code=code&state=${state}`;
 
   const response = await auth.handler(
-    new Request(`${ctx.baseURL}/callback/google?code=code&state=${state}`, {
+    new Request(`${ctx.baseURL}/callback/google?${query}`, {
       headers: { cookie },
     }),
   );
@@ -139,7 +148,9 @@ describe("Google callback", () => {
     expect(row.status).toBe("pending");
     expect(await googleAccountsOf(row.id)).toBe(1);
     expect(await sessionsOf(row.id)).toBe(0);
-    expect(new URL(result.location, ctx.baseURL).pathname).toBe("/login");
+    const target = new URL(result.location, ctx.baseURL);
+    expect(target.pathname).toBe("/login");
+    expect(target.searchParams.get("error")).toBeTruthy();
     expect(blockCookie(result.setCookies)).toMatch(
       /^anon_login_block=pending; Max-Age=60; Path=\/login; HttpOnly; SameSite=Lax$/i,
     );
@@ -198,10 +209,54 @@ describe("Google callback", () => {
       expect(row.status).toBe(status);
       expect(await googleAccountsOf(userId)).toBe(1);
       expect(await sessionsOf(userId)).toBe(0);
-      expect(new URL(result.location, ctx.baseURL).pathname).toBe("/login");
+      const target = new URL(result.location, ctx.baseURL);
+      expect(target.pathname).toBe("/login");
+      expect(target.searchParams.get("error")).toBeTruthy();
       expect(blockCookie(result.setCookies)).toMatch(new RegExp(`^anon_login_block=${status};`));
     },
   );
+
+  it("signs the same user in when the linked Google account later reports another e-mail", async () => {
+    const sub = randomUUID();
+    const userId = await insertCredentialUser(EMAIL);
+    await googleCallback({ email: EMAIL, email_verified: true, sub });
+    expect(await googleAccountsOf(userId)).toBe(1);
+    expect(await sessionsOf(userId)).toBe(1);
+
+    const result = await googleCallback({ email: "outro@x.com", email_verified: true, sub });
+
+    expect(new URL(result.location, ctx.baseURL).pathname).toBe("/");
+    expect(await sessionsOf(userId)).toBe(2);
+    expect(await usersWith("outro@x.com")).toHaveLength(0);
+    expect(await db.$count(user)).toBe(1);
+    expect(await googleAccountsOf(userId)).toBe(1);
+  });
+
+  it("goes back to /login with an error and no session when the user cancels at Google", async () => {
+    const result = await googleCallback(
+      { email: EMAIL, email_verified: true },
+      { query: (state) => `error=access_denied&state=${state}` },
+    );
+
+    const target = new URL(result.location, ctx.baseURL);
+    expect(target.pathname).toBe("/login");
+    expect(target.searchParams.get("error")).toBeTruthy();
+    expect(await db.$count(session)).toBe(0);
+    expect(await db.$count(user)).toBe(0);
+  });
+
+  it("goes back to /login with an error and no session when the code exchange is rejected", async () => {
+    const result = await googleCallback(
+      { email: EMAIL, email_verified: true },
+      { exchangeFails: true },
+    );
+
+    const target = new URL(result.location, ctx.baseURL);
+    expect(target.pathname).toBe("/login");
+    expect(target.searchParams.get("error")).toBeTruthy();
+    expect(await db.$count(session)).toBe(0);
+    expect(await db.$count(user)).toBe(0);
+  });
 
   it("creates exactly one user for two concurrent callbacks of the same new e-mail", async () => {
     const sub = randomUUID();

@@ -677,10 +677,10 @@ Origem: `validation.md` (FAIL por lacunas de teste; código sem defeito, 18/18 m
 
 **Done when**:
 
-- [ ] Vínculo com `sub=S` e e-mail A; novo callback com `sub=S` e e-mail B entra no mesmo `user.id`, cria sessão e não cria usuário com B
-- [ ] Callback com `?error=access_denied` e outro com a troca de código rejeitada: redirect para `/login` com `error` presente e `session` com 0 linhas
-- [ ] Nos testes de bloqueio existentes (`pending`, `rejected`, `revoked`), assertar também que `searchParams.get("error")` é verdadeiro
-- [ ] Gate check passes: `npm run test:unit && npm run test:int`
+- [x] Vínculo com `sub=S` e e-mail A; novo callback com `sub=S` e e-mail B entra no mesmo `user.id`, cria sessão e não cria usuário com B
+- [x] Callback com `?error=access_denied` e outro com a troca de código rejeitada: redirect para `/login` com `error` presente e `session` com 0 linhas
+- [x] Nos testes de bloqueio existentes (`pending`, `rejected`, `revoked`), assertar também que `searchParams.get("error")` é verdadeiro
+- [x] Gate check passes: `npm run test:unit && npm run test:int`
 
 **Tests**: integration
 **Gate**: full
