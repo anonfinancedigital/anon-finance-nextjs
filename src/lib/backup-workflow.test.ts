@@ -33,6 +33,7 @@ describe(".github/workflows/backup.yml", () => {
     expect(workflow).toContain("if-no-files-found: error");
     expect(workflow).not.toContain("continue-on-error");
     expect(workflow).not.toMatch(/\|\|\s*true/);
+    expect(workflow).not.toMatch(/set\s+\+[eo]/);
   });
 
   it("fails before the upload when the encrypted file is empty (HOSTING-19)", () => {
