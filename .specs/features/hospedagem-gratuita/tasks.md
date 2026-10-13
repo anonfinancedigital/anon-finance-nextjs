@@ -191,15 +191,16 @@ T7 → T8
 
 **Done when**:
 
-- [ ] Produção: `https://app.vercel.app` válida; `http://app.vercel.app`, `""`, `undefined` e `app` devolvem `null`
-- [ ] Produção: `https://app.vercel.app/` devolve `https://app.vercel.app` (sem barra dupla ao montar o link)
-- [ ] Fora de produção: `http://localhost:3000` válida
-- [ ] Gate check passes: `npm run test:unit`
-- [ ] Test count: 8 testes novos passam, nenhum removido
+- [x] Produção: `https://app.vercel.app` válida; `http://app.vercel.app`, `""`, `undefined` e `app` devolvem `null`
+- [x] Produção: `https://app.vercel.app/` devolve `https://app.vercel.app` (sem barra dupla ao montar o link)
+- [x] Fora de produção: `http://localhost:3000` válida
+- [x] Gate check passes: `npm run test:unit`
+- [x] Test count: 8 testes novos passam, nenhum removido
 
 **Tests**: unit
 **Gate**: quick
 **Commit**: `feat(auth): validate the public base URL for reset links`
+**Status**: Done
 
 ---
 

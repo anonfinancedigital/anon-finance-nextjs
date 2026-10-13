@@ -146,11 +146,11 @@ O plano `docs/hospedagem-gratuita.md` coloca o app no ar a custo zero (Vercel Ho
 | HOSTING-07 | P1: health — sem conexão ao banco | - | Implementing |
 | HOSTING-08 | P1: health — `Cache-Control: no-store` | - | Implementing |
 | HOSTING-09 | P1: health — demais rotas continuam protegidas | - | Implementing |
-| HOSTING-10 | P1: URL — inválida não envia e-mail | - | Pending |
+| HOSTING-10 | P1: URL — inválida não envia e-mail | - | Implementing |
 | HOSTING-11 | P1: URL — inválida registra o erro | - | Pending |
 | HOSTING-12 | P1: URL — inválida ainda devolve `ok: true` | - | Pending |
-| HOSTING-13 | P1: URL — válida envia o e-mail | - | Pending |
-| HOSTING-14 | P1: URL — fora de produção aceita `http:` | - | Pending |
+| HOSTING-13 | P1: URL — válida envia o e-mail | - | Implementing |
+| HOSTING-14 | P1: URL — fora de produção aceita `http:` | - | Implementing |
 | HOSTING-15 | P2: backup — gatilhos | - | Pending |
 | HOSTING-16 | P2: backup — dump criptografado em fluxo | - | Pending |
 | HOSTING-17 | P2: backup — artifact com retenção de 30 dias | - | Pending |
