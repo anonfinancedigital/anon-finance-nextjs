@@ -72,7 +72,7 @@
 - **Trade-off**: Quem cria usuário ou sessão fora do fluxo padrão precisa informar o status; `auth-schema.ts` (gerado pelo Better Auth) ganha coluna manual que uma regeneração apagaria.
 - **Scope**: `user` (schema), `auth.ts`, `auth-guard.ts`, `seed-user.ts`, helpers de teste e telas de cadastro e administração
 - **Date**: 2026-10-06
-- **Status**: active
+- **Status**: superseded by AD-015 (só quanto à origem do status: o cadastro nasce `approved`; a exigência de `approved` para ter acesso, revogar e excluir continuam valendo)
 
 ### AD-010
 - **Decision**: A redefinição de senha não usa o fluxo nativo do Better Auth (`sendResetPassword`, `/reset-password`); fica em `password-resets` (repo) com token aleatório guardado só como hash SHA-256 na tabela `verification` (identificador `password-reset:<hash>`), e a troca de senha, o consumo do token e o fim das sessões acontecem em uma transação. Sem `sendResetPassword` configurado, o endpoint nativo de pedido fica desligado.
@@ -111,6 +111,14 @@
 - **Reason**: Pedido do usuário: login com Google sem quebrar AD-009 (aprovação) nem AD-011 (cofre só no navegador).
 - **Trade-off**: O Google participa do login e passa a saber que o e-mail usa o app, sem receber dado financeiro; vínculo sem e-mail local verificado deixa risco residual de pré-sequestro, mitigado só pela aprovação manual; o usuário Google digita uma senha de cofre a cada novo dispositivo.
 - **Scope**: `auth.ts`, `legacyRepo.isLegacy`, `vaultRepo`, layout `(app)`, `/criar-cofre`, `/login`, texto de privacidade
+- **Date**: 2026-10-13
+- **Status**: superseded by AD-015 (só quanto ao status `pending` na criação e ao vínculo com conta existente; o Google só autentica, o cofre próprio e o conceito de "precisa de cofre" continuam valendo)
+
+### AD-015
+- **Decision**: Não há aprovação manual de cadastro. O cadastro por senha e o login com Google criam o usuário `approved`; o acesso continua exigindo `approved` (guard e hook de sessão) e o admin só revoga, reativa (`revoked` → `approved`) e exclui. `pending` e `rejected` ficam só como estados legados, sem ação de saída além de Excluir. O Google nunca vincula uma conta que já tem login por senha (`accountLinking.enabled = false`). O cadastro por formulário é limitado a 5 contas por IP em 60 minutos, com o IP guardado só como HMAC-SHA-256 (`signup_attempt`).
+- **Reason**: Pedido do usuário: remover a aprovação manual. Sem o filtro humano, o limite por IP guarda a porta e a recusa de vínculo fecha o pré-sequestro por e-mail alheio.
+- **Trade-off**: Qualquer pessoa cria conta; o limite depende de `x-forwarded-for`, que só é confiável atrás da borda da Vercel, e não é atômico; quem tem senha não usa Google; usuários `pending` antigos ficam travados até o admin excluir.
+- **Scope**: `user-status.ts`, `usersRepo`, `admin-users`, `signup`, `google-hooks`, `auth.ts`, `login-notice`, `signup_attempt`
 - **Date**: 2026-10-13
 - **Status**: active
 
