@@ -370,9 +370,9 @@ T15 → T16 → T17
 
 **Done when**:
 
-- [ ] `requireSessionForPage` primeiro; `!needsVault` -> `redirect("/")` (evidência `file:line`)
-- [ ] A rota é protegida pelo proxy sem entrar em `PUBLIC_PATHS` (evidência `file:line`)
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] `requireSessionForPage` primeiro; `!needsVault` -> `redirect("/")` (evidência: `criar-cofre/page.tsx:16-17`)
+- [x] A rota é protegida pelo proxy sem entrar em `PUBLIC_PATHS` (evidência: `route-decision.ts:1-11` não lista `/criar-cofre`; `:28-29` redireciona visitante a `/login`)
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
 
 **Tests**: none
 **Gate**: build
