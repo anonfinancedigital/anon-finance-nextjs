@@ -207,13 +207,13 @@ T15 → T16 → T17
 
 **Done when**:
 
-- [ ] `needsVault`: `true` só para usuário sem vault e sem `credential`; `false` para legada, para quem tem vault e para inexistente
-- [ ] `createForSession` grava vault e `birth_date_ct` juntos e devolve `ok`; segunda chamada devolve `exists` e não altera a linha
-- [ ] Duas chamadas concorrentes gravam uma só linha
-- [ ] Se a gravação falha no meio, nenhuma linha de `user_vault` permanece
-- [ ] Conta legada nunca recebe cofre por aqui (`exists`)
-- [ ] Gate check passes: `npm run test:unit && npm run test:int`
-- [ ] Test count: 6 novos testes pass, nenhum removido
+- [x] `needsVault`: `true` só para usuário sem vault e sem `credential`; `false` para legada, para quem tem vault e para inexistente
+- [x] `createForSession` grava vault e `birth_date_ct` juntos e devolve `ok`; segunda chamada devolve `exists` e não altera a linha
+- [x] Duas chamadas concorrentes gravam uma só linha
+- [x] Se a gravação falha no meio, nenhuma linha de `user_vault` permanece
+- [x] Conta legada nunca recebe cofre por aqui (`exists`)
+- [x] Gate check passes: `npm run test:unit && npm run test:int`
+- [x] Test count: 6 novos testes pass, nenhum removido
 
 **Tests**: integration
 **Gate**: full

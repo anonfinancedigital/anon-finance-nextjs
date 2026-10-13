@@ -1,9 +1,10 @@
 import { randomUUID } from "node:crypto";
 import { eq } from "drizzle-orm";
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import { insertCredentialUser } from "@/test/auth";
 import { insertTestUser, setupTestDb } from "@/test/db";
 import type { VaultMaterial } from "@/lib/vault/types";
-import { user } from "../auth-schema";
+import { account, user } from "../auth-schema";
 import { db } from "../client";
 import {
   category,
@@ -320,5 +321,99 @@ describe("vaultRepo birth date (sealed)", () => {
     await vaultRepo.setBirthDateSealed(userId, "v1:second");
 
     expect(await vaultRepo.getBirthDateSealed(userId)).toBe("v1:second");
+  });
+});
+
+/** A user signed up through Google only: no credential account, no vault. */
+async function insertGoogleUser() {
+  const userId = await insertTestUser();
+  await db
+    .insert(account)
+    .values({ id: randomUUID(), userId, accountId: randomUUID(), providerId: "google" });
+  return userId;
+}
+
+const vaultRows = (userId: string) => db.select().from(userVault).where(eq(userVault.userId, userId));
+
+describe("vaultRepo.needsVault", () => {
+  it("is true for a user without a vault and without a password account", async () => {
+    expect(await vaultRepo.needsVault(await insertGoogleUser())).toBe(true);
+  });
+
+  it("is false for a legacy account (password account, no vault)", async () => {
+    expect(await vaultRepo.needsVault(await insertCredentialUser("a@x.com"))).toBe(false);
+  });
+
+  it("is false once the user has a vault", async () => {
+    const userId = await insertGoogleUser();
+    await createVault(userId);
+    expect(await vaultRepo.needsVault(userId)).toBe(false);
+  });
+
+  it("is false for an unknown user", async () => {
+    expect(await vaultRepo.needsVault(randomUUID())).toBe(false);
+  });
+});
+
+describe("vaultRepo.createForSession", () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it("stores the vault and the sealed birth date together and returns ok", async () => {
+    const userId = await insertGoogleUser();
+
+    expect(await vaultRepo.createForSession(userId, MATERIAL, "v1:birth")).toBe("ok");
+
+    expect(await vaultRepo.get(userId)).toEqual(MATERIAL);
+    expect(await vaultRepo.getBirthDateSealed(userId)).toBe("v1:birth");
+  });
+
+  it("returns exists on a second call and leaves the row unchanged", async () => {
+    const userId = await insertGoogleUser();
+    await vaultRepo.createForSession(userId, MATERIAL, "v1:birth");
+    const [before] = await vaultRows(userId);
+
+    const second = await vaultRepo.createForSession(
+      userId,
+      { ...MATERIAL, dekWrappedPw: "v1:other" },
+      "v1:other-birth",
+    );
+
+    expect(second).toBe("exists");
+    expect(await vaultRows(userId)).toEqual([before]);
+  });
+
+  it("writes a single row for two concurrent calls", async () => {
+    const userId = await insertGoogleUser();
+
+    const results = await Promise.all([
+      vaultRepo.createForSession(userId, MATERIAL, "v1:a"),
+      vaultRepo.createForSession(userId, { ...MATERIAL, dekWrappedPw: "v1:other" }, "v1:b"),
+    ]);
+
+    expect(results.sort()).toEqual(["exists", "ok"]);
+    expect(await vaultRows(userId)).toHaveLength(1);
+  });
+
+  it("leaves no user_vault row when the write fails midway", async () => {
+    const userId = await insertGoogleUser();
+    const create = vaultRepo.create;
+    vi.spyOn(vaultRepo, "create").mockImplementation(async (tx, id, material) => {
+      await create(tx, id, material);
+      throw new Error("failed after the vault insert");
+    });
+
+    await expect(vaultRepo.createForSession(userId, MATERIAL, "v1:birth")).rejects.toThrow();
+
+    expect(await vaultRows(userId)).toHaveLength(0);
+  });
+
+  it("never gives a vault to a legacy account", async () => {
+    const userId = await insertCredentialUser("a@x.com");
+
+    expect(await vaultRepo.createForSession(userId, MATERIAL, "v1:birth")).toBe("exists");
+
+    expect(await vaultRows(userId)).toHaveLength(0);
   });
 });

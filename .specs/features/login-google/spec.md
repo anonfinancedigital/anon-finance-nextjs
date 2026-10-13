@@ -138,7 +138,7 @@ Hoje só se entra com e-mail e senha. A senha também deriva a chave que abre o 
 | GOOGLE-04 | P1: Entrar com Google (e-mail não verificado e falha OAuth) | Execute | In Progress |
 | GOOGLE-05 | P1: Aprovação (criação `pending`, vínculo, bloqueio por status, invariantes) | Execute | In Progress |
 | GOOGLE-06 | P1: Criar o cofre (redirecionamento, criação no navegador, recusas) | Execute | In Progress |
-| GOOGLE-07 | P1: Criar o cofre (nada em claro no servidor, tudo ou nada) | Design | Pending |
+| GOOGLE-07 | P1: Criar o cofre (nada em claro no servidor, tudo ou nada) | Execute | In Progress |
 | GOOGLE-08 | P2: Vincular a conta com senha | Design | Pending |
 | GOOGLE-09 | Edge cases (concorrência, e-mail alterado, exclusão, logs, lock) | Execute | In Progress |
 

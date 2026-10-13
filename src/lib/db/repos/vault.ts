@@ -1,6 +1,7 @@
 import { createHmac } from "node:crypto";
-import { eq, sql } from "drizzle-orm";
+import { and, eq, isNull, sql } from "drizzle-orm";
 import type { VaultMaterial } from "@/lib/vault/types";
+import { account, user } from "../auth-schema";
 import { db } from "../client";
 import { category, financialGoal, transaction, userVault } from "../schema";
 import { usersRepo } from "./users";
@@ -14,6 +15,21 @@ export type KdfParamValues = Pick<VaultMaterial, "memKib" | "iterations" | "para
 export type KdfParamsResult =
   | { mode: "v1"; salt: string; m: number; t: number; p: number }
   | { mode: "legacy" };
+
+export type CreateForSessionResult = "ok" | "exists";
+
+const UNIQUE_VIOLATION = "23505";
+
+/** No vault and no password account: a Google-only user who still has to create a vault. */
+async function needsVaultIn(q: typeof db | Tx, userId: string): Promise<boolean> {
+  const [row] = await q
+    .select({ id: user.id })
+    .from(user)
+    .leftJoin(userVault, eq(userVault.userId, user.id))
+    .leftJoin(account, and(eq(account.userId, user.id), eq(account.providerId, "credential")))
+    .where(and(eq(user.id, userId), isNull(userVault.userId), isNull(account.id)));
+  return row !== undefined;
+}
 
 /** Default Argon2id parameters, also the ones shown for e-mails without an account. */
 const DECOY_PARAMS = { m: 65536, t: 3, p: 1 } as const;
@@ -62,6 +78,35 @@ export const vaultRepo = {
       dekWrappedPw: material.dekWrappedPw,
       dekWrappedRecovery: material.dekWrappedRecovery,
     });
+  },
+
+  /** True for a user without a vault and without a password account (Google-only, new). */
+  needsVault(userId: string): Promise<boolean> {
+    return needsVaultIn(db, userId);
+  },
+
+  /**
+   * Creates the vault and the sealed birth date of a user that needs one, in one transaction.
+   * `exists` when the user does not need a vault (already has one, is legacy or unknown), also for
+   * the loser of two concurrent calls (primary key).
+   */
+  async createForSession(
+    userId: string,
+    material: VaultMaterial,
+    birthDateCt: string,
+  ): Promise<CreateForSessionResult> {
+    try {
+      return await db.transaction(async (tx) => {
+        if (!(await needsVaultIn(tx, userId))) return "exists";
+        await vaultRepo.create(tx, userId, material);
+        await tx.update(userVault).set({ birthDateCt }).where(eq(userVault.userId, userId));
+        return "ok";
+      });
+    } catch (error) {
+      const code = (error as { cause?: { code?: unknown } }).cause?.code;
+      if (code === UNIQUE_VIOLATION) return "exists";
+      throw error;
+    }
   },
 
   /** Replaces salt, KDF parameters and the password-wrapped DEK; the recovery-wrapped DEK is kept. */
