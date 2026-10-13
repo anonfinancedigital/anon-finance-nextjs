@@ -10,7 +10,7 @@ Implement these tasks with the `tlc-spec-driven` skill: **activate it by name an
 
 **Spec**: `.specs/features/login-google/spec.md`
 **Design**: `.specs/features/login-google/design.md`
-**Status**: In Progress (fix tasks)
+**Status**: Done
 
 Antes de escrever código de rota, Server Action ou página, ler o guia relevante em `node_modules/next/dist/docs/` (regra do AGENTS.md). Para o Better Auth, ler o código em `node_modules/better-auth/dist/` citado no design.
 
@@ -698,8 +698,8 @@ Origem: `validation.md` (FAIL por lacunas de teste; código sem defeito, 18/18 m
 
 **Done when**:
 
-- [ ] O teste do usuário que já tem vault asserta `error` igual a "Esta conta já tem um cofre" e a linha de `user_vault` inalterada
-- [ ] Gate check passes: `npm run test:unit && npm run test:int`
+- [x] O teste do usuário que já tem vault asserta `error` igual a "Esta conta já tem um cofre" e a linha de `user_vault` inalterada
+- [x] Gate check passes: `npm run test:unit && npm run test:int`
 
 **Tests**: integration
 **Gate**: full

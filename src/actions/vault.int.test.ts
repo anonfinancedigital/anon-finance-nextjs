@@ -199,12 +199,14 @@ describe("createVaultAction", () => {
   it("refuses a user that already has a vault and keeps the row", async () => {
     const me = await googleOnlyUser();
     await createVaultAction(payload);
+    const [before] = await rows(me.userId);
 
     const other = { vault: { ...payload.vault, dekWrappedPw: "v1:novo" }, birthDateCt: "v1:novo" };
     const result = await createVaultAction(other);
 
-    expect(result.ok).toBe(false);
+    expect(result).toEqual({ ok: false, error: "Esta conta já tem um cofre" });
     const [row] = await rows(me.userId);
+    expect(row).toEqual(before);
     expect(row).toMatchObject({ dekWrappedPw: "v1:pw", birthDateCt: "v1:birth" });
   });
 
