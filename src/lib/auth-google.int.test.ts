@@ -4,6 +4,8 @@ import { and, eq } from "drizzle-orm";
 import { afterAll, afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { account, session, user } from "@/lib/db/auth-schema";
 import { db } from "@/lib/db/client";
+import { vaultRepo } from "@/lib/db/repos/vault";
+import { userVault } from "@/lib/db/schema";
 import type { UserStatus } from "@/lib/domain/user-status";
 import { insertCredentialUser } from "@/test/auth";
 import { setupTestDb } from "@/test/db";
@@ -42,14 +44,24 @@ describe("user creation through the adapter (Google sign-up)", () => {
     expect(await db.$count(user)).toBe(0);
   });
 
-  it("stores a verified user as pending even when the data asks for approved", async () => {
-    await ctx.internalAdapter.createUser(
-      { name: "Ana", email: EMAIL, emailVerified: true, status: "approved" },
-      GOOGLE_SOURCE,
-    );
+  it.each([["pending"], ["rejected"], ["revoked"]])(
+    "stores a verified user as approved even when the data asks for %s",
+    async (status) => {
+      await ctx.internalAdapter.createUser(
+        { name: "Ana", email: EMAIL, emailVerified: true, status },
+        GOOGLE_SOURCE,
+      );
+
+      const [row] = await usersWith(EMAIL);
+      expect(row.status).toBe("approved");
+    },
+  );
+
+  it("stores a plain verified user as approved", async () => {
+    await ctx.internalAdapter.createUser({ name: "Ana", email: EMAIL, emailVerified: true }, GOOGLE_SOURCE);
 
     const [row] = await usersWith(EMAIL);
-    expect(row.status).toBe("pending");
+    expect(row.status).toBe("approved");
   });
 });
 
@@ -141,28 +153,26 @@ describe("Google callback", () => {
     vi.restoreAllMocks();
   });
 
-  it("creates a new verified user as pending, links Google, opens no session and sets the block cookie", async () => {
+  it("creates a new verified user as approved, links Google, opens a session and leaves the vault to /criar-cofre", async () => {
     const result = await googleCallback({ email: EMAIL, email_verified: true });
 
     const [row] = await usersWith(EMAIL);
-    expect(row.status).toBe("pending");
+    expect(row.status).toBe("approved");
     expect(await googleAccountsOf(row.id)).toBe(1);
-    expect(await sessionsOf(row.id)).toBe(0);
-    const target = new URL(result.location, ctx.baseURL);
-    expect(target.pathname).toBe("/login");
-    expect(target.searchParams.get("error")).toBeTruthy();
-    expect(blockCookie(result.setCookies)).toMatch(
-      /^anon_login_block=pending; Max-Age=60; Path=\/login; HttpOnly; SameSite=Lax$/i,
-    );
+    expect(await sessionsOf(row.id)).toBe(1);
+    expect(await db.$count(userVault, eq(userVault.userId, row.id))).toBe(0);
+    expect(await vaultRepo.needsVault(row.id)).toBe(true);
+    expect(new URL(result.location, ctx.baseURL).pathname).toBe("/");
+    expect(blockCookie(result.setCookies)).toBeUndefined();
   });
 
-  it("creates the ADMIN_EMAIL user as pending too", async () => {
+  it("creates the ADMIN_EMAIL user as approved too", async () => {
     const adminEmail = process.env.ADMIN_EMAIL as string;
 
     await googleCallback({ email: adminEmail, email_verified: true });
 
     const [row] = await usersWith(adminEmail.toLowerCase());
-    expect(row.status).toBe("pending");
+    expect(row.status).toBe("approved");
   });
 
   it("refuses an unverified e-mail: no user, no session, back to /login with an error", async () => {

@@ -6,17 +6,17 @@ describe("googleUserCreateDecision", () => {
     expect(googleUserCreateDecision({ emailVerified: false })).toBe(false);
   });
 
-  it("creates a user with a verified e-mail as pending", () => {
+  it("creates a user with a verified e-mail as approved", () => {
     expect(googleUserCreateDecision({ emailVerified: true })).toEqual({
-      data: { status: "pending" },
+      data: { status: "approved" },
     });
   });
 
-  it.each([["approved"], ["rejected"], ["revoked"]])(
-    "forces pending even when the data asks for %s",
+  it.each([["pending"], ["rejected"], ["revoked"]])(
+    "forces approved even when the data asks for %s",
     (status) => {
       expect(googleUserCreateDecision({ emailVerified: true, status })).toEqual({
-        data: { status: "pending" },
+        data: { status: "approved" },
       });
     },
   );

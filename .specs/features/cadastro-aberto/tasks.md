@@ -416,11 +416,11 @@ T12 → T13 → T14 → T15
 
 **Done when**:
 
-- [ ] `emailVerified: false` → recusa; `true` → `{ data: { status: "approved" } }`, mesmo se o objeto trouxer outro `status`
-- [ ] Callback com e-mail novo: usuário `approved`, conta Google vinculada, sessão criada, destino do usuário sem cofre é `/criar-cofre` (via `needsVault`)
-- [ ] `ADMIN_EMAIL` pelo Google também nasce `approved`; callbacks simultâneos criam um usuário
-- [ ] Gate check passes: `npm run test:unit && npm run test:int`
-- [ ] Test count: `google-hooks.test.ts` e `auth-google.int.test.ts` atualizados, nenhum removido sem substituto
+- [x] `emailVerified: false` → recusa; `true` → `{ data: { status: "approved" } }`, mesmo se o objeto trouxer outro `status`
+- [x] Callback com e-mail novo: usuário `approved`, conta Google vinculada, sessão criada, destino do usuário sem cofre é `/criar-cofre` (via `needsVault`)
+- [x] `ADMIN_EMAIL` pelo Google também nasce `approved`; callbacks simultâneos criam um usuário
+- [x] Gate check passes: `npm run test:unit && npm run test:int`
+- [x] Test count: `google-hooks.test.ts` e `auth-google.int.test.ts` atualizados, nenhum removido sem substituto
 
 **Tests**: unit
 **Gate**: full
