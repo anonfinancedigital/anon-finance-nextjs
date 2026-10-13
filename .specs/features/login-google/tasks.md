@@ -424,12 +424,12 @@ T15 → T16 → T17
 
 **Done when**:
 
-- [ ] Com `GOOGLE_*` definidos, a action lança o redirect para `https://accounts.google.com/...` com `client_id`, `state` e `redirect_uri` terminando em `/api/auth/callback/google`
-- [ ] Sem `GOOGLE_*`, devolve `{ ok: false }` e não redireciona
-- [ ] A action não toca `login_attempt` (GOOGLE-09: sem lock por Google)
-- [ ] Este arquivo é novo: `src/actions/auth.ts` não é modificado
-- [ ] Gate check passes: `npm run test:unit && npm run test:int`
-- [ ] Test count: 3 tests pass
+- [x] Com `GOOGLE_*` definidos, a action lança o redirect para `https://accounts.google.com/...` com `client_id`, `state` e `redirect_uri` terminando em `/api/auth/callback/google`
+- [x] Sem `GOOGLE_*`, devolve `{ ok: false }` e não redireciona
+- [x] A action não toca `login_attempt` (GOOGLE-09: sem lock por Google)
+- [x] Este arquivo é novo: `src/actions/auth.ts` não é modificado
+- [x] Gate check passes: `npm run test:unit && npm run test:int`
+- [x] Test count: 3 tests pass
 
 **Tests**: integration
 **Gate**: full
