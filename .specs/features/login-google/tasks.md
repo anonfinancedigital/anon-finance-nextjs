@@ -10,7 +10,7 @@ Implement these tasks with the `tlc-spec-driven` skill: **activate it by name an
 
 **Spec**: `.specs/features/login-google/spec.md`
 **Design**: `.specs/features/login-google/design.md`
-**Status**: In Progress
+**Status**: Done
 
 Antes de escrever código de rota, Server Action ou página, ler o guia relevante em `node_modules/next/dist/docs/` (regra do AGENTS.md). Para o Better Auth, ler o código em `node_modules/better-auth/dist/` citado no design.
 
@@ -508,8 +508,8 @@ T15 → T16 → T17
 
 **Done when**:
 
-- [ ] As duas variáveis aparecem vazias, com comentário citando `${BETTER_AUTH_URL}/api/auth/callback/google` e que vazias desligam o botão
-- [ ] Gate check passes: `npm run typecheck`
+- [x] As duas variáveis aparecem vazias, com comentário citando `${BETTER_AUTH_URL}/api/auth/callback/google` e que vazias desligam o botão
+- [x] Gate check passes: `npm run typecheck`
 
 **Tests**: none
 **Gate**: build
@@ -533,9 +533,9 @@ T15 → T16 → T17
 
 **Done when**:
 
-- [ ] O texto não contradiz AD-011 nem AD-013 e não promete o que o Google não faz (evidência `file:line`)
-- [ ] `brand-guard.test.ts` e demais testes unitários continuam passando
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
+- [x] O texto não contradiz AD-011 nem AD-013 e não promete o que o Google não faz (evidência `file:line`)
+- [x] `brand-guard.test.ts` e demais testes unitários continuam passando
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
 
 **Tests**: none
 **Gate**: build
