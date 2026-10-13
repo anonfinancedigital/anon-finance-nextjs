@@ -453,9 +453,9 @@ T15 → T16 → T17
 
 **Done when**:
 
-- [ ] Texto exato "Continuar com Google"; desabilitado enquanto pendente; erro da action visível (evidência `file:line`)
-- [ ] A navegação sai por Server Action, não por `<form action>` externo (CSP `form-action 'self'`)
-- [ ] Gate check passes: `npm run typecheck && npm run lint`
+- [x] Texto exato "Continuar com Google"; desabilitado enquanto pendente; erro da action visível (evidência: `google-button.tsx:24` texto, `:23` `disabled={!hydrated || pending}`, `:26-30` erro em `role="alert"`)
+- [x] A navegação sai por Server Action, não por `<form action>` externo (CSP `form-action 'self'`) (evidência: `google-button.tsx:14-17` `useActionState` chama `signInGoogleAction`; `:22` `<form action={formAction}>` recebe função React, sem URL externa)
+- [x] Gate check passes: `npm run typecheck && npm run lint`
 
 **Tests**: none
 **Gate**: build
