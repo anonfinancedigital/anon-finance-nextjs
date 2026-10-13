@@ -262,8 +262,8 @@ T15 → T16 → T17
 
 **Done when**:
 
-- [ ] `needsVault` redireciona antes de qualquer leitura de data (evidência `file:line`)
-- [ ] Gate check passes: `npm run typecheck && npm run lint`
+- [x] `needsVault` redireciona antes de qualquer leitura de data (evidência `file:line`)
+- [x] Gate check passes: `npm run typecheck && npm run lint`
 
 **Tests**: none
 **Gate**: build

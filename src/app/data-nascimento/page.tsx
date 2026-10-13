@@ -15,6 +15,8 @@ export const metadata: Metadata = { title: "Data de nascimento" };
 export default async function BirthDatePage() {
   const { userId } = await requireSessionForPage();
   if (await legacyRepo.isLegacy(userId)) redirect("/proteger-dados");
+  // A Google-only account has no vault to seal the date with: it sets the date in /criar-cofre.
+  if (await vaultRepo.needsVault(userId)) redirect("/criar-cofre");
   // Sealed rows only: whether there is a date decides the texts; the browser opens both.
   const [birthDateCt, goalDto] = await Promise.all([
     vaultRepo.getBirthDateSealed(userId),
