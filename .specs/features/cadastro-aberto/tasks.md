@@ -194,12 +194,12 @@ T12 → T13 → T14 → T15
 
 **Done when**:
 
-- [ ] `SIGNUP_MAX = 5`, `SIGNUP_WINDOW_MS = 3_600_000`
-- [ ] `signupLockMinutes(times, now)`: com menos de 5 instantes → 0
-- [ ] Com 5 → `ceil((times[len-5] + janela - now) / 60_000)`; com mais de 5 (corrida) usa o mais antigo dos 5 mais recentes
-- [ ] Limites exatos: instante saindo da janela no ms exato libera; 1 ms antes ainda bloqueia
-- [ ] Gate check passes: `npm run test:unit`
-- [ ] Test count: no mínimo 6 testes
+- [x] `SIGNUP_MAX = 5`, `SIGNUP_WINDOW_MS = 3_600_000`
+- [x] `signupLockMinutes(times, now)`: com menos de 5 instantes → 0
+- [x] Com 5 → `ceil((times[len-5] + janela - now) / 60_000)`; com mais de 5 (corrida) usa o mais antigo dos 5 mais recentes
+- [x] Limites exatos: instante saindo da janela no ms exato libera; 1 ms antes ainda bloqueia
+- [x] Gate check passes: `npm run test:unit`
+- [x] Test count: no mínimo 6 testes
 
 **Tests**: unit
 **Gate**: quick
