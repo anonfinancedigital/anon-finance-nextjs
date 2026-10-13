@@ -304,13 +304,13 @@ T12 → T13 → T14 → T15
 
 **Done when**:
 
-- [ ] Cria `user` com `status = approved`, conta `credential` e cofre; sem sessão
-- [ ] Com `ipHash`: uma linha em `signup_attempt`; sem `ipHash` (`null`): nenhuma
-- [ ] E-mail duplicado (qualquer caixa) → `duplicate` e nenhuma linha de IP gravada
-- [ ] Falha ao gravar o IP desfaz o usuário (tudo ou nada)
-- [ ] Registro novo apaga os de mais de 60 minutos e preserva os recentes
-- [ ] Gate check passes: `npm run test:unit && npm run test:int`
-- [ ] Test count: `users.sealed.int.test.ts` ganha os casos; os de `createPendingSealed` seguem até T11
+- [x] Cria `user` com `status = approved`, conta `credential` e cofre; sem sessão
+- [x] Com `ipHash`: uma linha em `signup_attempt`; sem `ipHash` (`null`): nenhuma
+- [x] E-mail duplicado (qualquer caixa) → `duplicate` e nenhuma linha de IP gravada
+- [x] Falha ao gravar o IP desfaz o usuário (tudo ou nada)
+- [x] Registro novo apaga os de mais de 60 minutos e preserva os recentes
+- [x] Gate check passes: `npm run test:unit && npm run test:int`
+- [x] Test count: `users.sealed.int.test.ts` ganha os casos; os de `createPendingSealed` seguem até T11
 
 **Tests**: integration
 **Gate**: full

@@ -1,11 +1,12 @@
 import { randomUUID } from "node:crypto";
 import { hashPassword } from "better-auth/crypto";
-import { and, asc, eq, inArray, ne, sql } from "drizzle-orm";
+import { and, asc, eq, inArray, lt, ne, sql } from "drizzle-orm";
 import { isAdminEmail } from "@/lib/admin";
+import { SIGNUP_WINDOW_MS } from "@/lib/domain/signup-limit";
 import { fromStatuses, targetStatus, type UserAction, type UserStatus } from "@/lib/domain/user-status";
 import { account, session, user } from "../auth-schema";
 import { db } from "../client";
-import { loginAttempt, userVault } from "../schema";
+import { loginAttempt, signupAttempt, userVault } from "../schema";
 import type { VaultMaterial } from "@/lib/vault/types";
 import { vaultRepo } from "./vault";
 
@@ -52,6 +53,49 @@ async function createPendingSealed(input: {
     await vaultRepo.create(tx, input.id, input.vault);
     if (input.birthDateCt) {
       await tx.update(userVault).set({ birthDateCt: input.birthDateCt }).where(eq(userVault.userId, input.id));
+    }
+    return { ok: true } as const;
+  });
+}
+
+/**
+ * Creates an approved user for the sealed signup (same layout as `createPendingSealed`, but open
+ * signup: no admin approval). With `ipHash`, the signup is also recorded for the per-IP limit and
+ * records older than the limit window are pruned, all in the same transaction. A repeated e-mail
+ * (any case) is `duplicate` and nothing is written, IP included.
+ */
+async function createSealed(input: {
+  id: string;
+  name: string;
+  email: string;
+  authSecret: string;
+  vault: VaultMaterial;
+  birthDateCt?: string | null;
+  ipHash: string | null;
+}): Promise<{ ok: true } | { ok: false; reason: "duplicate" }> {
+  const hash = await hashPassword(input.authSecret);
+  return db.transaction(async (tx) => {
+    const inserted = await tx
+      .insert(user)
+      .values({ id: input.id, name: input.name, email: normalize(input.email), status: "approved" })
+      .onConflictDoNothing({ target: user.email })
+      .returning({ id: user.id });
+    if (inserted.length === 0) return { ok: false, reason: "duplicate" } as const;
+    await tx.insert(account).values({
+      id: randomUUID(),
+      userId: input.id,
+      accountId: input.id,
+      providerId: "credential",
+      password: hash,
+    });
+    await vaultRepo.create(tx, input.id, input.vault);
+    if (input.birthDateCt) {
+      await tx.update(userVault).set({ birthDateCt: input.birthDateCt }).where(eq(userVault.userId, input.id));
+    }
+    if (input.ipHash) {
+      const now = Date.now();
+      await tx.insert(signupAttempt).values({ ipHash: input.ipHash, attemptedAt: new Date(now) });
+      await tx.delete(signupAttempt).where(lt(signupAttempt.attemptedAt, new Date(now - SIGNUP_WINDOW_MS)));
     }
     return { ok: true } as const;
   });
@@ -140,6 +184,7 @@ async function remove(id: string): Promise<"ok" | "not_found"> {
 
 export const usersRepo = {
   createPendingSealed,
+  createSealed,
   findByEmail,
   findById,
   listForAdmin,
