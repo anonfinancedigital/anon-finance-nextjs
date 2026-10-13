@@ -121,10 +121,10 @@ T15 → T16 → T17
 
 **Done when**:
 
-- [ ] `emailVerified: false` -> recusa; `true` -> `{ data: { status: "pending" } }`, mesmo se o objeto trouxer outro `status`
-- [ ] `blockCookieStatus` devolve `pending`, `rejected`, `revoked` e `null` para `approved`
-- [ ] Gate check passes: `npm run test:unit`
-- [ ] Test count: 6 tests pass
+- [x] `emailVerified: false` -> recusa; `true` -> `{ data: { status: "pending" } }`, mesmo se o objeto trouxer outro `status`
+- [x] `blockCookieStatus` devolve `pending`, `rejected`, `revoked` e `null` para `approved`
+- [x] Gate check passes: `npm run test:unit`
+- [x] Test count: 6 tests pass
 
 **Tests**: unit
 **Gate**: quick
