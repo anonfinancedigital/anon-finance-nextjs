@@ -390,6 +390,48 @@ Seen once or not yet corroborated. Tracked, not trusted.
 - evidence: M25 HOSTING-18 (workflow)
 - last seen: 2026-10-13T14:36:24Z
 
+### L-064 - When a new account type lacks a row that an existing flow updates, add an integration test of that flow for the new account type
+- signal: `ac_gap` · recurrence: 1 feature(s) · scope: `repo-layer` · harmful: 0
+- features: login-google
+- evidence: edge case recuperacao so-Google; src/lib/db/repos/password-resets.ts:221-229 (repo-layer)
+- last seen: 2026-10-13T17:33:19Z
+
+### L-065 - Cover edge cases delegated to a library with an integration test that drives the library through the app configuration
+- signal: `ac_gap` · recurrence: 1 feature(s) · scope: `auth` · harmful: 0
+- features: login-google
+- evidence: edge case e-mail alterado; node_modules/better-auth/dist/oauth2/link-account.mjs:80 (auth)
+- last seen: 2026-10-13T17:33:19Z
+
+### L-066 - Test each failure path an acceptance criterion names, not only the one that is easiest to simulate
+- signal: `ac_gap` · recurrence: 1 feature(s) · scope: `auth` · harmful: 0
+- features: login-google
+- evidence: P1 Entrar com Google AC5; no evidence (auth)
+- last seen: 2026-10-13T17:33:19Z
+
+### L-067 - When the UI acts only if two signals are present, assert both signals in the test of the code that produces them
+- signal: `ac_gap` · recurrence: 1 feature(s) · scope: `auth` · harmful: 0
+- features: login-google
+- evidence: src/lib/auth-google.int.test.ts:142; src/app/login/page.tsx:24 (auth)
+- last seen: 2026-10-13T17:33:19Z
+
+### L-068 - When an acceptance criterion combines a refusal with a redirect, state in the spec which layer redirects and the exact refusal message
+- signal: `spec_precision_gap` · recurrence: 1 feature(s) · scope: `validation` · harmful: 0
+- features: login-google
+- evidence: P1 Criar o cofre AC5; src/actions/vault.ts:64 (validation)
+- last seen: 2026-10-13T17:33:19Z
+
+### L-069 - When the spec names a logging function, state the logging mechanism for each path, including library-internal logs
+- signal: `spec_precision_gap` · recurrence: 1 feature(s) · scope: `logging` · harmful: 0
+- features: login-google
+- evidence: edge case logs; src/lib/auth.ts:62 (logging)
+- last seen: 2026-10-13T17:33:19Z
+
+### L-070 - When a test drives a library flow, start it through the production entry point or a shared constant, not a copy of the production arguments, so redirect targets stay covered
+- signal: `surviving_mutant` · recurrence: 1 feature(s) · scope: `integration/auth` · harmful: 0
+- features: login-google
+- evidence: src/actions/auth-google.ts:23 (M10/M11) (integration/auth)
+- last seen: 2026-10-13T17:53:54Z
+
 ## Quarantined (failed when applied - ignore)
 
 A confirmed lesson that recurred alongside failure. Kept for the maintainer to review.

@@ -132,17 +132,17 @@ Hoje só se entra com e-mail e senha. A senha também deriva a chave que abre o 
 
 | Requirement ID | Story | Phase | Status |
 | -------------- | ----- | ----- | ------ |
-| GOOGLE-01 | P1: Entrar com Google (botão condicionado à configuração) | Execute | In Progress |
-| GOOGLE-02 | P1: Entrar com Google (sessão em conta aprovada) | Execute | In Progress |
-| GOOGLE-03 | P1: Entrar com Google (cofre bloqueado até a senha) | Design | Pending |
-| GOOGLE-04 | P1: Entrar com Google (e-mail não verificado e falha OAuth) | Execute | In Progress |
-| GOOGLE-05 | P1: Aprovação (criação `pending`, vínculo, bloqueio por status, invariantes) | Execute | In Progress |
-| GOOGLE-06 | P1: Criar o cofre (redirecionamento, criação no navegador, recusas) | Execute | In Progress |
-| GOOGLE-07 | P1: Criar o cofre (nada em claro no servidor, tudo ou nada) | Execute | In Progress |
-| GOOGLE-08 | P2: Vincular a conta com senha | Design | Pending |
-| GOOGLE-09 | Edge cases (concorrência, e-mail alterado, exclusão, logs, lock) | Execute | In Progress |
+| GOOGLE-01 | P1: Entrar com Google (botão condicionado à configuração) | Execute | Verified |
+| GOOGLE-02 | P1: Entrar com Google (sessão em conta aprovada) | Execute | Verified |
+| GOOGLE-03 | P1: Entrar com Google (cofre bloqueado até a senha) | Execute | Verified |
+| GOOGLE-04 | P1: Entrar com Google (e-mail não verificado e falha OAuth) | Execute | Verified |
+| GOOGLE-05 | P1: Aprovação (criação `pending`, vínculo, bloqueio por status, invariantes) | Execute | Verified |
+| GOOGLE-06 | P1: Criar o cofre (redirecionamento, criação no navegador, recusas) | Execute | Verified |
+| GOOGLE-07 | P1: Criar o cofre (nada em claro no servidor, tudo ou nada) | Execute | Verified |
+| GOOGLE-08 | P2: Vincular a conta com senha | Execute | Verified |
+| GOOGLE-09 | Edge cases (concorrência, e-mail alterado, exclusão, logs, lock) | Execute | Verified |
 
-**Coverage:** 9 total, 0 mapped to tasks, 9 unmapped ⚠️
+**Coverage:** 9 total, 9 mapped to tasks, 0 unmapped
 
 ---
 

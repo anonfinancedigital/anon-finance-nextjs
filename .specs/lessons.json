@@ -3,7 +3,7 @@
   "promote_threshold": 2,
   "window_days": 45,
   "quarantine_threshold": 2,
-  "next_id": 64,
+  "next_id": 71,
   "lessons": [
     {
       "id": "L-001",
@@ -1141,6 +1141,132 @@
       ],
       "created": "2026-10-13T14:36:24Z",
       "last_seen": "2026-10-13T14:36:24Z"
+    },
+    {
+      "id": "L-064",
+      "key": "ac_gap::when a new account type lacks a row that an existing flow updates add an integration test of that flow for the new account type",
+      "text": "When a new account type lacks a row that an existing flow updates, add an integration test of that flow for the new account type",
+      "signal": "ac_gap",
+      "scope": "repo-layer",
+      "status": "candidate",
+      "features": [
+        "login-google"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "edge case recuperacao so-Google; src/lib/db/repos/password-resets.ts:221-229 (repo-layer)"
+      ],
+      "created": "2026-10-13T17:33:19Z",
+      "last_seen": "2026-10-13T17:33:19Z"
+    },
+    {
+      "id": "L-065",
+      "key": "ac_gap::cover edge cases delegated to a library with an integration test that drives the library through the app configuration",
+      "text": "Cover edge cases delegated to a library with an integration test that drives the library through the app configuration",
+      "signal": "ac_gap",
+      "scope": "auth",
+      "status": "candidate",
+      "features": [
+        "login-google"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "edge case e-mail alterado; node_modules/better-auth/dist/oauth2/link-account.mjs:80 (auth)"
+      ],
+      "created": "2026-10-13T17:33:19Z",
+      "last_seen": "2026-10-13T17:33:19Z"
+    },
+    {
+      "id": "L-066",
+      "key": "ac_gap::test each failure path an acceptance criterion names not only the one that is easiest to simulate",
+      "text": "Test each failure path an acceptance criterion names, not only the one that is easiest to simulate",
+      "signal": "ac_gap",
+      "scope": "auth",
+      "status": "candidate",
+      "features": [
+        "login-google"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "P1 Entrar com Google AC5; no evidence (auth)"
+      ],
+      "created": "2026-10-13T17:33:19Z",
+      "last_seen": "2026-10-13T17:33:19Z"
+    },
+    {
+      "id": "L-067",
+      "key": "ac_gap::when the ui acts only if two signals are present assert both signals in the test of the code that produces them",
+      "text": "When the UI acts only if two signals are present, assert both signals in the test of the code that produces them",
+      "signal": "ac_gap",
+      "scope": "auth",
+      "status": "candidate",
+      "features": [
+        "login-google"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "src/lib/auth-google.int.test.ts:142; src/app/login/page.tsx:24 (auth)"
+      ],
+      "created": "2026-10-13T17:33:19Z",
+      "last_seen": "2026-10-13T17:33:19Z"
+    },
+    {
+      "id": "L-068",
+      "key": "spec_precision_gap::when an acceptance criterion combines a refusal with a redirect state in the spec which layer redirects and the exact refusal message",
+      "text": "When an acceptance criterion combines a refusal with a redirect, state in the spec which layer redirects and the exact refusal message",
+      "signal": "spec_precision_gap",
+      "scope": "validation",
+      "status": "candidate",
+      "features": [
+        "login-google"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "P1 Criar o cofre AC5; src/actions/vault.ts:64 (validation)"
+      ],
+      "created": "2026-10-13T17:33:19Z",
+      "last_seen": "2026-10-13T17:33:19Z"
+    },
+    {
+      "id": "L-069",
+      "key": "spec_precision_gap::when the spec names a logging function state the logging mechanism for each path including library internal logs",
+      "text": "When the spec names a logging function, state the logging mechanism for each path, including library-internal logs",
+      "signal": "spec_precision_gap",
+      "scope": "logging",
+      "status": "candidate",
+      "features": [
+        "login-google"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "edge case logs; src/lib/auth.ts:62 (logging)"
+      ],
+      "created": "2026-10-13T17:33:19Z",
+      "last_seen": "2026-10-13T17:33:19Z"
+    },
+    {
+      "id": "L-070",
+      "key": "surviving_mutant::when a test drives a library flow start it through the production entry point or a shared constant not a copy of the production arguments so redirect targets stay covered",
+      "text": "When a test drives a library flow, start it through the production entry point or a shared constant, not a copy of the production arguments, so redirect targets stay covered",
+      "signal": "surviving_mutant",
+      "scope": "integration/auth",
+      "status": "candidate",
+      "features": [
+        "login-google"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "src/actions/auth-google.ts:23 (M10/M11) (integration/auth)"
+      ],
+      "created": "2026-10-13T17:53:54Z",
+      "last_seen": "2026-10-13T17:53:54Z"
     }
   ]
 }
