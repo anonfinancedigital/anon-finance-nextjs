@@ -148,15 +148,15 @@ T15 → T16 → T17
 
 **Done when**:
 
-- [ ] Teste de integração (`src/lib/auth-google.int.test.ts`) via `auth.$context.internalAdapter`: `createUser` com `emailVerified: false` devolve nulo e nada é gravado; com `true` grava `status = pending`, mesmo se o dado pedir `approved`
-- [ ] `createSession` de usuário `pending`, `rejected` ou `revoked` devolve nulo; de `approved` cria a sessão
-- [ ] Vínculo: usuário existente `approved` (e-mail local não verificado) + conta Google com `email_verified = true` vincula e mantém o `status`; com `email_verified = false` não vincula (GOOGLE-05.3)
-- [ ] Duas criações concorrentes do mesmo e-mail resultam em um só usuário
-- [ ] Spike resolvido e anotado no commit: o cookie `anon_login_block` chega à resposta do callback (testado com `auth.handler` e provedor simulado) **ou** o fallback do design é adotado e a spec é ajustada
-- [ ] Spike resolvido: a opção `logger` existe na 1.7.7 e não imprime e-mail nem perfil; se não existir, registrar em Risks
-- [ ] Sem `GOOGLE_*` no ambiente, `auth.options.socialProviders` não tem `google`
-- [ ] Gate check passes: `npm run test:unit && npm run test:int`
-- [ ] Test count: 7+ tests pass, nenhum teste existente removido
+- [x] Teste de integração (`src/lib/auth-google.int.test.ts`) via `auth.$context.internalAdapter`: `createUser` com `emailVerified: false` devolve nulo e nada é gravado; com `true` grava `status = pending`, mesmo se o dado pedir `approved`
+- [x] `createSession` de usuário `pending`, `rejected` ou `revoked` devolve nulo; de `approved` cria a sessão
+- [x] Vínculo: usuário existente `approved` (e-mail local não verificado) + conta Google com `email_verified = true` vincula e mantém o `status`; com `email_verified = false` não vincula (GOOGLE-05.3)
+- [x] Duas criações concorrentes do mesmo e-mail resultam em um só usuário
+- [x] Spike resolvido e anotado no commit: o cookie `anon_login_block` chega à resposta do callback (testado com `auth.handler` e provedor simulado) **ou** o fallback do design é adotado e a spec é ajustada
+- [x] Spike resolvido: a opção `logger` existe na 1.7.7 e não imprime e-mail nem perfil; se não existir, registrar em Risks
+- [x] Sem `GOOGLE_*` no ambiente, `auth.options.socialProviders` não tem `google`
+- [x] Gate check passes: `npm run test:unit && npm run test:int`
+- [x] Test count: 7+ tests pass, nenhum teste existente removido
 
 **Tests**: integration
 **Gate**: full
