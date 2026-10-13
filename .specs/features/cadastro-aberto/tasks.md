@@ -277,10 +277,10 @@ T12 → T13 → T14 → T15
 
 **Done when**:
 
-- [ ] `recentSince(ipHash, since)` devolve os instantes `>= since` desse hash, em ordem crescente
-- [ ] Linhas de outro hash não entram; linhas anteriores a `since` não entram
-- [ ] Gate check passes: `npm run test:unit && npm run test:int`
-- [ ] Test count: no mínimo 3 testes de integração
+- [x] `recentSince(ipHash, since)` devolve os instantes `>= since` desse hash, em ordem crescente
+- [x] Linhas de outro hash não entram; linhas anteriores a `since` não entram
+- [x] Gate check passes: `npm run test:unit && npm run test:int`
+- [x] Test count: no mínimo 3 testes de integração
 
 **Tests**: integration
 **Gate**: full
