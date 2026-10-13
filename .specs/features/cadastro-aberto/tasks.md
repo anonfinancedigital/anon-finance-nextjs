@@ -444,10 +444,10 @@ T12 → T13 → T14 → T15
 
 **Done when**:
 
-- [ ] `error: "account_not_linked"` → "Este e-mail já tem cadastro com senha. Entre com e-mail e senha"
-- [ ] Qualquer outro `error` → "Não foi possível entrar com o Google"; cookie de bloqueio continua com prioridade (mensagem do status)
-- [ ] Gate check passes: `npm run test:unit`
-- [ ] Test count: no mínimo 4 testes
+- [x] `error: "account_not_linked"` → "Este e-mail já tem cadastro com senha. Entre com e-mail e senha"
+- [x] Qualquer outro `error` → "Não foi possível entrar com o Google"; cookie de bloqueio continua com prioridade (mensagem do status)
+- [x] Gate check passes: `npm run test:unit`
+- [x] Test count: no mínimo 4 testes
 
 **Tests**: unit
 **Gate**: quick

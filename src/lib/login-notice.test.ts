@@ -20,6 +20,18 @@ describe("loginNotice", () => {
     );
   });
 
+  it("explains the refused link when the e-mail already has a password account", () => {
+    expect(loginNotice({ blockStatus: undefined, error: "account_not_linked" })).toBe(
+      "Este e-mail já tem cadastro com senha. Entre com e-mail e senha",
+    );
+  });
+
+  it("keeps the status message ahead of account_not_linked", () => {
+    expect(loginNotice({ blockStatus: "pending", error: "account_not_linked" })).toBe(
+      "Sua conta não está liberada. Fale com o administrador",
+    );
+  });
+
   it("returns null with neither status nor error", () => {
     expect(loginNotice({ blockStatus: undefined, error: undefined })).toBeNull();
   });
