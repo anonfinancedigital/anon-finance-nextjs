@@ -6,7 +6,6 @@ import { auth } from "@/lib/auth";
 import { account, session, user } from "@/lib/db/auth-schema";
 import { db } from "@/lib/db/client";
 import { loginAttemptsRepo } from "@/lib/db/repos/login-attempts";
-import { usersRepo } from "@/lib/db/repos/users";
 import { userVault } from "@/lib/db/schema";
 import { createSignedInUser, insertCredentialUser, TEST_PASSWORD } from "@/test/auth";
 import { setupTestDb } from "@/test/db";

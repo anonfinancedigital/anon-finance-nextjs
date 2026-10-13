@@ -168,9 +168,9 @@ T12 → T13 → T14 → T15
 
 **Done when**:
 
-- [ ] `ACTION_LABEL.reactivate` = "Reativar"; `RUN` sem `approve`/`reject`, com `reactivate: reactivateUser`
-- [ ] Evidência por inspeção de código (`file:line`) das ações por status (AC 1 do admin)
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int` (fecha o tipo compartilhado da Fase 1)
+- [x] `ACTION_LABEL.reactivate` = "Reativar"; `RUN` sem `approve`/`reject`, com `reactivate: reactivateUser`
+- [x] Evidência por inspeção de código (`file:line`) das ações por status (AC 1 do admin)
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int` (fecha o tipo compartilhado da Fase 1)
 
 **Tests**: none
 **Gate**: build

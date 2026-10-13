@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { approveUser, deleteUser, rejectUser, revokeUser } from "@/actions/admin-users";
+import { deleteUser, reactivateUser, revokeUser } from "@/actions/admin-users";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -33,15 +33,13 @@ const STATUS: Record<UserStatus, { label: string; variant: "warning" | "success"
 };
 
 const ACTION_LABEL: Record<UserAction | "delete", string> = {
-  approve: "Aprovar",
-  reject: "Rejeitar",
+  reactivate: "Reativar",
   revoke: "Revogar",
   delete: "Excluir",
 };
 
 const RUN: Record<UserAction, (id: string) => Promise<ActionResult>> = {
-  approve: approveUser,
-  reject: rejectUser,
+  reactivate: reactivateUser,
   revoke: revokeUser,
 };
 
@@ -111,7 +109,7 @@ export function UserAdminList({ users }: { users: AdminUserRow[] }) {
                     ) : (
                       <Button
                         key={action}
-                        variant={action === "approve" ? "default" : "outline"}
+                        variant={action === "reactivate" ? "default" : "outline"}
                         size="sm"
                         disabled={pending}
                         onClick={() => run(() => RUN[action](u.id))}
