@@ -11,7 +11,7 @@ Objetivo: colocar o AnonFinance no ar sem gastar nada, suportando a simulação 
 | App Next.js | Vercel | Hobby | Páginas, Server Actions e rotas de API. Uso não comercial, o que vale enquanto não houver cobrança. |
 | Banco | Neon | Free | PostgreSQL gerenciado. Evitamos o Supabase free porque ele pausa por inatividade. |
 | E-mail | Brevo (ou Gmail SMTP) | Free | Recuperação de senha e avisos, via o `nodemailer` que já existe. |
-| Backup | GitHub Actions + Cloudflare R2 | Free | `pg_dump` diário, criptografado, fora do Neon. |
+| Backup | GitHub Actions (artifact) | Free | `pg_dump` diário, criptografado, fora do Neon. |
 | DNS/WAF | Cloudflare | Free | Só quando houver domínio próprio. |
 | Monitoramento | UptimeRobot + Sentry | Free | Alerta de queda e de erros. |
 
@@ -26,11 +26,13 @@ Já compatível:
 - O cadastro público está desabilitado (`disableSignUp: true`), o que reduz abuso.
 - O dashboard do Better Auth só liga com `BETTER_AUTH_API_KEY`. Em produção gratuita, deixe a variável vazia.
 
-Precisa mudar:
-1. `src/lib/db/client.ts` cria `new Pool({ connectionString })` sem limite de conexões. Em serverless cada instância abre seu pool, então é preciso limitar (passo 5.1).
-2. Não existe endpoint de health check (passo 5.2).
-3. Não existe workflow de backup nem de migration (passo 7).
-4. O repositório não tem `.github/`, então os workflows são novos.
+Já feito no código:
+1. O pool do `pg` tem teto de conexões: 3 na Vercel e 10 fora dela, com `idleTimeoutMillis` de 10 s (`src/lib/db/pool-options.ts`, usado por `src/lib/db/client.ts`; passo 5.1).
+2. Existe o endpoint `GET /api/health`, público e sem consulta ao banco (`src/app/api/health/route.ts`; passo 5.2).
+3. Em produção, a recuperação de senha só envia o e-mail se `BETTER_AUTH_URL` for uma URL `https://` válida (`src/lib/base-url.ts`; passo 5.3).
+4. O workflow de backup diário existe em `.github/workflows/backup.yml` (passo 7.3).
+
+Ainda manual: não há workflow de migration. Rode `npm run db:migrate` na sua máquina contra a conexão direct do Neon.
 
 Antes de escrever qualquer código de deploy, leia o guia de deploy do Next.js em `node_modules/next/dist/docs/` (regra do AGENTS.md: esta versão do Next tem mudanças em relação ao que se conhece).
 
@@ -38,12 +40,12 @@ Antes de escrever qualquer código de deploy, leia o guia de deploy do Next.js e
 
 Para todas: ative **MFA** e use um e-mail dedicado ao projeto. Guarde as credenciais em um gerenciador de senhas.
 
-- [ ] GitHub: repositório **privado** com o projeto.
-- [ ] Neon (neon.tech): projeto em região próxima aos usuários (ex.: `sa-east-1`, se disponível no plano free).
-- [ ] Vercel: importar o repositório do GitHub (plano Hobby). Escolher a região das functions o mais perto possível do Neon.
-- [ ] Brevo: conta, verificar remetente (ver seção 6).
-- [ ] Cloudflare: conta, criar bucket R2 para backups (precisa de um cartão cadastrado para habilitar o R2 em alguns planos. Se isso for um problema, veja a alternativa na seção 7.4).
-- [ ] UptimeRobot e Sentry (opcional no início).
+- [x] GitHub: repositório **privado** com o projeto.
+- [x] Neon (neon.tech): projeto em região próxima aos usuários (ex.: `sa-east-1`, se disponível no plano free).
+- [x] Vercel: importar o repositório do GitHub (plano Hobby). Escolher a região das functions o mais perto possível do Neon.
+- [x] Brevo: conta, verificar remetente (ver seção 6).
+- [x] Cloudflare: conta, criar bucket R2 para backups (precisa de um cartão cadastrado para habilitar o R2 em alguns planos. Se isso for um problema, veja a alternativa na seção 7.4).
+- [x] UptimeRobot e Sentry (opcional no início).
 
 ## 4. Banco de dados no Neon
 
@@ -125,50 +127,28 @@ age-keygen -o backup-key.txt
 
 - `NEON_DIRECT_URL`: connection string direct do Neon (idealmente de um *role* somente leitura).
 - `BACKUP_AGE_PUBLIC_KEY`: chave pública do age.
-- `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET`.
 
 ### 7.3 Workflow `.github/workflows/backup.yml`
 
-Rascunho para ajustar na execução:
+O workflow já está no repositório. Ele roda todo dia às 05:00 UTC (`cron: "0 5 * * *"`) e também sob demanda (`workflow_dispatch`).
 
-```yaml
-name: backup
-on:
-  schedule:
-    - cron: "0 5 * * *" # daily, 05:00 UTC
-  workflow_dispatch: {}
-jobs:
-  dump:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Install clients
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y postgresql-client age
-      - name: Dump, encrypt, upload
-        env:
-          NEON_DIRECT_URL: ${{ secrets.NEON_DIRECT_URL }}
-          AGE_PUB: ${{ secrets.BACKUP_AGE_PUBLIC_KEY }}
-          AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: auto
-        run: |
-          set -euo pipefail
-          f="orcamento-$(date -u +%Y%m%dT%H%M%SZ).dump.age"
-          pg_dump --format=custom --no-owner "$NEON_DIRECT_URL" | age -r "$AGE_PUB" > "$f"
-          aws s3 cp "$f" "s3://${{ secrets.R2_BUCKET }}/$f" \
-            --endpoint-url "https://${{ secrets.R2_ACCOUNT_ID }}.r2.cloudflarestorage.com"
-```
+1. Instala o `postgresql-client-18` do repositório oficial PGDG (o projeto Neon roda Postgres 18) e o `age`. A versão fica na variável `PG_VERSION`, no topo do arquivo.
+2. Roda `pg_dump --format=custom --no-owner` contra `NEON_DIRECT_URL` e envia a saída direto para `age -r`, então nenhum dump em texto claro chega ao disco.
+3. Falha o job se o `pg_dump`, o `age` ou o upload falharem, ou se o arquivo criptografado estiver vazio.
+4. Envia `orcamento-<UTC yyyymmddThhmmssZ>.dump.age` com `actions/upload-artifact@v4` e `retention-days: 30`.
+
+Um teste automático (`src/lib/backup-workflow.test.ts`) confere essas regras lendo o arquivo.
 
 Pontos de atenção:
-- A versão do `pg_dump` precisa ser **igual ou superior** à do servidor Neon. Se a do runner for mais antiga, instale o cliente da versão certa pelo repositório oficial do PostgreSQL.
-- No R2, crie uma regra de ciclo de vida para apagar backups com mais de 30 dias.
+- Se o Neon subir de versão major, aumente `PG_VERSION`: o `pg_dump` precisa ser **igual ou superior** ao servidor.
+- Se o job falhar, o GitHub avisa por e-mail quem criou o workflow.
 - Um workflow agendado do GitHub é pausado depois de 60 dias sem atividade no repositório. Confira de vez em quando se ele ainda roda (ver rotina mensal).
 - Pelo código (`vault`, `dekWrappedPw`), os dados sensíveis parecem ser selados no cliente, o que reduz o dano de um vazamento. Mesmo assim, o dump contém e-mails e metadados, então a criptografia do backup continua obrigatória.
+- A primeira execução real é manual: Actions, `backup`, Run workflow. Baixe o artifact e confirme que `age -d` abre com a chave privada (seção 7.5).
 
-### 7.4 Alternativa sem cartão (R2 pede cadastro de pagamento)
+### 7.4 Destino do backup: artifact do GitHub Actions
 
-Enviar o dump criptografado como artifact do próprio GitHub Actions (`actions/upload-artifact`, retenção de 30 a 90 dias). É menos durável que o R2, mas é grátis e sem cartão.
+O dump criptografado fica como artifact do próprio GitHub Actions, com retenção de 30 dias. É grátis e não pede cartão. Fica menos durável que um bucket externo (R2), e os artifacts contam na cota de armazenamento do GitHub (500 MB no plano gratuito), o que a retenção de 30 dias ajuda a respeitar. Se a cota apertar, reduza `retention-days`.
 
 ### 7.5 Teste de restauração (obrigatório antes de abrir ao público)
 

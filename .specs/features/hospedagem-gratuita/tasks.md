@@ -277,14 +277,15 @@ T7 → T8
 
 **Done when**:
 
-- [ ] Seção 7.3 descreve `upload-artifact` com 30 dias e `postgresql-client-18`; secrets de R2 saem da lista da 7.2
-- [ ] Seção 2 deixa de listar pool, health e workflow de backup como pendentes
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
-- [ ] Test count: suíte intacta, nenhum teste removido
+- [x] Seção 7.3 descreve `upload-artifact` com 30 dias e `postgresql-client-18`; secrets de R2 saem da lista da 7.2
+- [x] Seção 2 deixa de listar pool, health e workflow de backup como pendentes
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
+- [x] Test count: suíte intacta, nenhum teste removido
 
 **Tests**: none
 **Gate**: build
 **Commit**: `docs(hosting): align the hosting plan with the implemented backup and health check`
+**Status**: Done
 
 ---
 
