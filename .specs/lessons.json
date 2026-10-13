@@ -3,7 +3,7 @@
   "promote_threshold": 2,
   "window_days": 45,
   "quarantine_threshold": 2,
-  "next_id": 71,
+  "next_id": 72,
   "lessons": [
     {
       "id": "L-001",
@@ -1267,6 +1267,24 @@
       ],
       "created": "2026-10-13T17:53:54Z",
       "last_seen": "2026-10-13T17:53:54Z"
+    },
+    {
+      "id": "L-071",
+      "key": "surviving_mutant::when a spec fixes a crypto construction hmac sha 256 keyed by a named secret add a known answer test against an independent createhmac call not only stability keyed difference property tests",
+      "text": "When a spec fixes a crypto construction (HMAC-SHA-256 keyed by a named secret), add a known-answer test against an independent createHmac call, not only stability/keyed-difference property tests.",
+      "signal": "surviving_mutant",
+      "scope": "src/lib/**,crypto",
+      "status": "candidate",
+      "features": [
+        "cadastro-aberto"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "M12 src/lib/client-ip.ts hashIp (HMAC key/data swapped survives) (src/lib/**,crypto)"
+      ],
+      "created": "2026-10-13T19:33:23Z",
+      "last_seen": "2026-10-13T19:33:23Z"
     }
   ]
 }

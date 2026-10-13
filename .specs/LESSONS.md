@@ -432,6 +432,12 @@ Seen once or not yet corroborated. Tracked, not trusted.
 - evidence: src/actions/auth-google.ts:23 (M10/M11) (integration/auth)
 - last seen: 2026-10-13T17:53:54Z
 
+### L-071 - When a spec fixes a crypto construction (HMAC-SHA-256 keyed by a named secret), add a known-answer test against an independent createHmac call, not only stability/keyed-difference property tests.
+- signal: `surviving_mutant` · recurrence: 1 feature(s) · scope: `src/lib/**,crypto` · harmful: 0
+- features: cadastro-aberto
+- evidence: M12 src/lib/client-ip.ts hashIp (HMAC key/data swapped survives) (src/lib/**,crypto)
+- last seen: 2026-10-13T19:33:23Z
+
 ## Quarantined (failed when applied - ignore)
 
 A confirmed lesson that recurred alongside failure. Kept for the maintainer to review.

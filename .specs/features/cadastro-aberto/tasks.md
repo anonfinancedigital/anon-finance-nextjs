@@ -10,7 +10,7 @@ Implement these tasks with the `tlc-spec-driven` skill: **activate it by name an
 
 **Spec**: `.specs/features/cadastro-aberto/spec.md`
 **Design**: `.specs/features/cadastro-aberto/design.md`
-**Status**: Draft
+**Status**: Done
 
 Antes de escrever Server Action ou página, ler o guia relevante em `node_modules/next/dist/docs/` (regra do AGENTS.md). Todo commit usa `git add` por caminho, nunca `git add -A` (há arquivos não rastreados do usuário em `docs/`).
 
