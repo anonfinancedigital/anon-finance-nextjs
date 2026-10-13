@@ -471,12 +471,12 @@ T12 → T13 → T14 → T15
 
 **Done when**:
 
-- [ ] E-mail verificado do Google que já tem conta com senha → nenhuma conta Google criada, nenhuma sessão, redirecionamento a `/login?error=account_not_linked`
-- [ ] Usuário que já tem o Google vinculado e é `approved` entra de novo e recebe sessão, mesmo com outro e-mail no Google
-- [ ] Usuário Google `pending`, `rejected` ou `revoked` → sem sessão e a mensagem do status em `/login`
-- [ ] O teste antigo de vínculo automático com e-mail local não verificado é reescrito para o novo comportamento
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
-- [ ] Test count: `auth-google.int.test.ts` sem testes removidos sem substituto
+- [x] E-mail verificado do Google que já tem conta com senha → nenhuma conta Google criada, nenhuma sessão, redirecionamento a `/login?error=account_not_linked`
+- [x] Usuário que já tem o Google vinculado e é `approved` entra de novo e recebe sessão, mesmo com outro e-mail no Google
+- [x] Usuário Google `pending`, `rejected` ou `revoked` → sem sessão e a mensagem do status em `/login`
+- [x] O teste antigo de vínculo automático com e-mail local não verificado é reescrito para o novo comportamento
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
+- [x] Test count: `auth-google.int.test.ts` sem testes removidos sem substituto
 
 **Tests**: integration
 **Gate**: build

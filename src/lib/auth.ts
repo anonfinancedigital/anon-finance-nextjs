@@ -23,9 +23,9 @@ export const auth = betterAuth({
         },
       }
     : {},
-  // Sem trustedProviders: o vínculo por e-mail exige email_verified do Google. O e-mail local
-  // nunca é verificado (cadastro por senha); do lado local, o controle é a aprovação do admin.
-  account: { accountLinking: { enabled: true, requireLocalEmailVerified: false } },
+  // O Google nunca vincula a um usuário que já tem login por senha (sem aprovação do admin, o
+  // e-mail alheio poderia ser cadastrado antes). Quem já tem o Google vinculado entra normalmente.
+  account: { accountLinking: { enabled: false } },
   session: { expiresIn: 30 * DAY_SECONDS, updateAge: DAY_SECONDS },
   // Coluna manual em auth-schema.ts; `input: false` impede que o cliente a defina.
   user: {

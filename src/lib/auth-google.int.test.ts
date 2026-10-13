@@ -186,16 +186,20 @@ describe("Google callback", () => {
     expect(blockCookie(result.setCookies)).toBeUndefined();
   });
 
-  it("links an approved user with an unverified local e-mail, keeps the status and opens a session", async () => {
+  it("refuses to link Google to a user that has a password: no Google account, no session, /login?error=account_not_linked", async () => {
     const userId = await insertCredentialUser(EMAIL);
 
     const result = await googleCallback({ email: EMAIL, email_verified: true });
 
     const [row] = await usersWith(EMAIL);
     expect(row.status).toBe("approved");
-    expect(await googleAccountsOf(userId)).toBe(1);
-    expect(await sessionsOf(userId)).toBe(1);
-    expect(new URL(result.location, ctx.baseURL).pathname).toBe("/");
+    expect(await googleAccountsOf(userId)).toBe(0);
+    expect(await sessionsOf(userId)).toBe(0);
+    expect(await db.$count(user)).toBe(1);
+    const target = new URL(result.location, ctx.baseURL);
+    expect(target.pathname).toBe("/login");
+    expect(target.searchParams.get("error")).toBe("account_not_linked");
+    expect(blockCookie(result.setCookies)).toBeUndefined();
   });
 
   it("does not link an existing user when Google reports email_verified = false", async () => {
@@ -209,16 +213,20 @@ describe("Google callback", () => {
   });
 
   it.each([["pending"], ["rejected"], ["revoked"]] as const)(
-    "links a %s user, keeps the status, opens no session and names the status in the block cookie",
+    "opens no session for a %s user that already has Google linked and names the status in the block cookie",
     async (status: UserStatus) => {
-      const userId = await insertCredentialUser(EMAIL, undefined, status);
+      const sub = randomUUID();
+      await googleCallback({ email: EMAIL, email_verified: true, sub });
+      const [created] = await usersWith(EMAIL);
+      await db.update(user).set({ status }).where(eq(user.id, created.id));
+      const before = await sessionsOf(created.id);
 
-      const result = await googleCallback({ email: EMAIL, email_verified: true });
+      const result = await googleCallback({ email: EMAIL, email_verified: true, sub });
 
       const [row] = await usersWith(EMAIL);
       expect(row.status).toBe(status);
-      expect(await googleAccountsOf(userId)).toBe(1);
-      expect(await sessionsOf(userId)).toBe(0);
+      expect(await googleAccountsOf(created.id)).toBe(1);
+      expect(await sessionsOf(created.id)).toBe(before);
       const target = new URL(result.location, ctx.baseURL);
       expect(target.pathname).toBe("/login");
       expect(target.searchParams.get("error")).toBeTruthy();
@@ -228,8 +236,9 @@ describe("Google callback", () => {
 
   it("signs the same user in when the linked Google account later reports another e-mail", async () => {
     const sub = randomUUID();
-    const userId = await insertCredentialUser(EMAIL);
     await googleCallback({ email: EMAIL, email_verified: true, sub });
+    const [created] = await usersWith(EMAIL);
+    const userId = created.id;
     expect(await googleAccountsOf(userId)).toBe(1);
     expect(await sessionsOf(userId)).toBe(1);
 
@@ -281,8 +290,12 @@ describe("Google callback", () => {
 
   it("logs no e-mail or profile while handling failures", async () => {
     await googleCallback({ email: EMAIL, email_verified: false });
-    await insertCredentialUser("bia@x.com", undefined, "revoked");
-    await googleCallback({ email: "bia@x.com", email_verified: true });
+    const biaSub = randomUUID();
+    await googleCallback({ email: "bia@x.com", email_verified: true, sub: biaSub });
+    await db.update(user).set({ status: "revoked" }).where(eq(user.email, "bia@x.com"));
+    await googleCallback({ email: "bia@x.com", email_verified: true, sub: biaSub });
+    await insertCredentialUser("dora@x.com");
+    await googleCallback({ email: "dora@x.com", email_verified: true });
     // The losing insert fails on the unique e-mail; the database error carries the e-mail.
     const sub = randomUUID();
     await Promise.allSettled([
@@ -291,7 +304,7 @@ describe("Google callback", () => {
     ]);
 
     expect(logged.length).toBeGreaterThan(0);
-    expect(logged.join("\n")).not.toMatch(/ana@x\.com|bia@x\.com|cris@x\.com|\bAna\b/);
+    expect(logged.join("\n")).not.toMatch(/ana@x\.com|bia@x\.com|cris@x\.com|dora@x\.com|\bAna\b/);
   });
 });
 

@@ -1,10 +1,9 @@
 import { randomUUID } from "node:crypto";
 import { afterAll, afterEach, describe, expect, it, vi } from "vitest";
-import { session } from "@/lib/db/auth-schema";
+import { account, session, user } from "@/lib/db/auth-schema";
 import { db } from "@/lib/db/client";
 import { loginAttemptsRepo } from "@/lib/db/repos/login-attempts";
 import { loginAttempt } from "@/lib/db/schema";
-import { insertCredentialUser } from "@/test/auth";
 import { setupTestDb } from "@/test/db";
 
 // The provider list is fixed when auth.ts is evaluated: the credentials must exist before the import.
@@ -81,9 +80,17 @@ describe("signInGoogleAction", () => {
   });
 });
 
+/** An approved user that already has the Google account `sub` linked (and no password). */
+async function insertGoogleUser(sub: string) {
+  const id = randomUUID();
+  await db.insert(user).values({ id, name: "Ana", email: "ana@x.com", status: "approved" });
+  await db.insert(account).values({ id: randomUUID(), userId: id, accountId: sub, providerId: "google" });
+  return id;
+}
+
 describe("signInGoogleAction OAuth destinations", () => {
   /** Starts the flow through the action, then drives the real callback with its state and cookies. */
-  async function callbackAfterAction(query: (state: string | null) => string) {
+  async function callbackAfterAction(query: (state: string | null) => string, sub = randomUUID()) {
     const ctx = await auth.$context;
     const google = ctx.socialProviders.find((p) => p.id === "google");
     if (!google) throw new Error("google provider is not configured");
@@ -91,7 +98,7 @@ describe("signInGoogleAction OAuth destinations", () => {
     vi.spyOn(google, "validateAuthorizationCode").mockResolvedValueOnce({
       accessToken: "access",
       idToken: `${part({ alg: "RS256", typ: "JWT" })}.${part({
-        sub: randomUUID(),
+        sub,
         email: "ana@x.com",
         email_verified: true,
         name: "Ana",
@@ -128,9 +135,10 @@ describe("signInGoogleAction OAuth destinations", () => {
   });
 
   it("sends an approved user to / without error and opens one session", async () => {
-    await insertCredentialUser("ana@x.com");
+    const sub = randomUUID();
+    await insertGoogleUser(sub);
 
-    const target = await callbackAfterAction((state) => `code=code&state=${state}`);
+    const target = await callbackAfterAction((state) => `code=code&state=${state}`, sub);
 
     expect(target.pathname).toBe("/");
     expect(target.searchParams.get("error")).toBeNull();
