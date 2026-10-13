@@ -3,7 +3,7 @@
   "promote_threshold": 2,
   "window_days": 45,
   "quarantine_threshold": 2,
-  "next_id": 62,
+  "next_id": 64,
   "lessons": [
     {
       "id": "L-001",
@@ -1105,6 +1105,42 @@
       ],
       "created": "2026-10-10T13:08:50Z",
       "last_seen": "2026-10-10T13:08:50Z"
+    },
+    {
+      "id": "L-062",
+      "key": "surviving_mutant::when a pure options function is tested but its wiring client ts has tests none add a mocked constructor test so reverting the call site fails",
+      "text": "When a pure options function is tested but its wiring (client.ts) has Tests: none, add a mocked-constructor test so reverting the call site fails",
+      "signal": "surviving_mutant",
+      "scope": "config",
+      "status": "candidate",
+      "features": [
+        "hospedagem-gratuita"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "M16 HOSTING-01..03 (config)"
+      ],
+      "created": "2026-10-13T14:36:24Z",
+      "last_seen": "2026-10-13T14:36:24Z"
+    },
+    {
+      "id": "L-063",
+      "key": "surviving_mutant::when testing a ci workflow for fail fast also forbid shell options that disable it set e set o",
+      "text": "When testing a CI workflow for fail-fast, also forbid shell options that disable it (set +e, set +o)",
+      "signal": "surviving_mutant",
+      "scope": "workflow",
+      "status": "candidate",
+      "features": [
+        "hospedagem-gratuita"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "M25 HOSTING-18 (workflow)"
+      ],
+      "created": "2026-10-13T14:36:24Z",
+      "last_seen": "2026-10-13T14:36:24Z"
     }
   ]
 }

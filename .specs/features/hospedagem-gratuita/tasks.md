@@ -10,7 +10,7 @@ Implement these tasks with the `tlc-spec-driven` skill: **activate it by name an
 
 **Spec**: `.specs/features/hospedagem-gratuita/spec.md`
 **Design**: skipped (mudanças diretas, sem decisão de arquitetura nova)
-**Status**: Draft
+**Status**: Done
 
 Antes de escrever código de rota ou de deploy, ler o guia de route handlers em `node_modules/next/dist/docs/` (regra do AGENTS.md).
 

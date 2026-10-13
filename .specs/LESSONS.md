@@ -378,6 +378,18 @@ Seen once or not yet corroborated. Tracked, not trusted.
 - evidence: IMPORT-07 (validation)
 - last seen: 2026-10-10T13:08:50Z
 
+### L-062 - When a pure options function is tested but its wiring (client.ts) has Tests: none, add a mocked-constructor test so reverting the call site fails
+- signal: `surviving_mutant` · recurrence: 1 feature(s) · scope: `config` · harmful: 0
+- features: hospedagem-gratuita
+- evidence: M16 HOSTING-01..03 (config)
+- last seen: 2026-10-13T14:36:24Z
+
+### L-063 - When testing a CI workflow for fail-fast, also forbid shell options that disable it (set +e, set +o)
+- signal: `surviving_mutant` · recurrence: 1 feature(s) · scope: `workflow` · harmful: 0
+- features: hospedagem-gratuita
+- evidence: M25 HOSTING-18 (workflow)
+- last seen: 2026-10-13T14:36:24Z
+
 ## Quarantined (failed when applied - ignore)
 
 A confirmed lesson that recurred alongside failure. Kept for the maintainer to review.

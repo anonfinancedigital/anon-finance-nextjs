@@ -137,27 +137,27 @@ O plano `docs/hospedagem-gratuita.md` coloca o app no ar a custo zero (Vercel Ho
 
 | Requirement ID | Story | Phase | Status |
 | -------------- | ----- | ----- | ------ |
-| HOSTING-01 | P1: pool — `max` 3 na Vercel | - | Implementing |
-| HOSTING-02 | P1: pool — `max` 10 fora da Vercel | - | Implementing |
-| HOSTING-03 | P1: pool — `idleTimeoutMillis` 10000 | - | Implementing |
-| HOSTING-04 | P1: pool — `connectionString` de `DATABASE_URL` | - | Implementing |
-| HOSTING-05 | P1: health — 200 e corpo | - | Implementing |
-| HOSTING-06 | P1: health — sem redirect ao login | - | Implementing |
-| HOSTING-07 | P1: health — sem conexão ao banco | - | Implementing |
-| HOSTING-08 | P1: health — `Cache-Control: no-store` | - | Implementing |
-| HOSTING-09 | P1: health — demais rotas continuam protegidas | - | Implementing |
-| HOSTING-10 | P1: URL — inválida não envia e-mail | - | Implementing |
-| HOSTING-11 | P1: URL — inválida registra o erro | - | Implementing |
-| HOSTING-12 | P1: URL — inválida ainda devolve `ok: true` | - | Implementing |
-| HOSTING-13 | P1: URL — válida envia o e-mail | - | Implementing |
-| HOSTING-14 | P1: URL — fora de produção aceita `http:` | - | Implementing |
-| HOSTING-15 | P2: backup — gatilhos | - | Implementing |
-| HOSTING-16 | P2: backup — dump criptografado em fluxo | - | Implementing |
-| HOSTING-17 | P2: backup — artifact com retenção de 30 dias | - | Implementing |
-| HOSTING-18 | P2: backup — falha derruba o job | - | Implementing |
-| HOSTING-19 | P2: backup — arquivo vazio derruba o job | - | Implementing |
-| HOSTING-20 | P2: backup — versão do cliente | - | Implementing |
-| HOSTING-21 | P2: backup — sem vazamento de segredo | - | Implementing |
+| HOSTING-01 | P1: pool — `max` 3 na Vercel | - | Verified |
+| HOSTING-02 | P1: pool — `max` 10 fora da Vercel | - | Verified |
+| HOSTING-03 | P1: pool — `idleTimeoutMillis` 10000 | - | Verified |
+| HOSTING-04 | P1: pool — `connectionString` de `DATABASE_URL` | - | Verified |
+| HOSTING-05 | P1: health — 200 e corpo | - | Verified |
+| HOSTING-06 | P1: health — sem redirect ao login | - | Verified |
+| HOSTING-07 | P1: health — sem conexão ao banco | - | Verified |
+| HOSTING-08 | P1: health — `Cache-Control: no-store` | - | Verified |
+| HOSTING-09 | P1: health — demais rotas continuam protegidas | - | Verified |
+| HOSTING-10 | P1: URL — inválida não envia e-mail | - | Verified |
+| HOSTING-11 | P1: URL — inválida registra o erro | - | Verified |
+| HOSTING-12 | P1: URL — inválida ainda devolve `ok: true` | - | Verified |
+| HOSTING-13 | P1: URL — válida envia o e-mail | - | Verified |
+| HOSTING-14 | P1: URL — fora de produção aceita `http:` | - | Verified |
+| HOSTING-15 | P2: backup — gatilhos | - | Verified |
+| HOSTING-16 | P2: backup — dump criptografado em fluxo | - | Verified |
+| HOSTING-17 | P2: backup — artifact com retenção de 30 dias | - | Verified |
+| HOSTING-18 | P2: backup — falha derruba o job | - | Verified |
+| HOSTING-19 | P2: backup — arquivo vazio derruba o job | - | Verified |
+| HOSTING-20 | P2: backup — versão do cliente | - | Verified |
+| HOSTING-21 | P2: backup — sem vazamento de segredo | - | Verified |
 
 **Coverage:** 21 total, 0 mapped to tasks, 21 unmapped ⚠️
 
