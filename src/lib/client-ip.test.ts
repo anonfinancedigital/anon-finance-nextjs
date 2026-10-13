@@ -39,6 +39,11 @@ describe("hashIp", () => {
     expect(hashIp("203.0.113.7")).toBe(hash);
   });
 
+  it("is HMAC-SHA-256 of the IP keyed by BETTER_AUTH_SECRET (known vector)", () => {
+    vi.stubEnv("BETTER_AUTH_SECRET", "secret-a");
+    expect(hashIp("203.0.113.7")).toBe("9b10b2107d57d3448ef2683d760a5571325e17fece6416ab97259ec457edd307");
+  });
+
   it("gives different hashes for different IPs", () => {
     vi.stubEnv("BETTER_AUTH_SECRET", "secret-a");
     expect(hashIp("203.0.113.7")).not.toBe(hashIp("203.0.113.8"));

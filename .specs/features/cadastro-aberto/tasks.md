@@ -63,6 +63,12 @@ T4 → T5 → T6 → T7 → T8 → T9 → T10 → T11 → T12
 T12 → T13 → T14 → T15
 ```
 
+### Phase 4: Correções do Verifier (iteração 1)
+
+```
+T15 → T16
+```
+
 ---
 
 ## Task Breakdown
@@ -485,6 +491,32 @@ T12 → T13 → T14 → T15
 
 ---
 
+### T16: Vetor conhecido do HMAC do IP
+
+**What**: Teste que fixa `hashIp` como HMAC-SHA-256 do IP com chave `BETTER_AUTH_SECRET` (gap G1 do Verifier: a mutação chave/dados trocados sobrevivia).
+**Where**: `src/lib/client-ip.test.ts`
+**Depends on**: T15
+**Reuses**: Casos existentes de `hashIp`
+**Requirement**: OPEN-02
+
+**Tools**:
+
+- MCP: NONE
+- Skill: NONE
+
+**Done when**:
+
+- [x] `hashIp("203.0.113.7")` com segredo `secret-a` é igual ao vetor literal calculado por `openssl dgst -sha256 -hmac`
+- [x] Gate check passes: `npm run test:unit`
+- [x] Test count: +1 teste, nenhum removido
+
+**Tests**: unit
+**Gate**: quick
+
+**Commit**: `test(signup): pin the IP hash to a known HMAC-SHA-256 vector`
+
+---
+
 ## Diagram-Definition Cross-Check
 
 | Task | Depends on (corpo) | Diagrama | Status |
@@ -504,6 +536,7 @@ T12 → T13 → T14 → T15
 | T13 | T12 | T12 → T13 | ✅ |
 | T14 | T13 | T13 → T14 | ✅ |
 | T15 | T14 | T14 → T15 | ✅ |
+| T16 | T15 | T15 → T16 | ✅ |
 
 ## Test Co-location Validation
 
@@ -524,13 +557,14 @@ T12 → T13 → T14 → T15
 | T13 | Domain + config de auth | unit + integration | unit (gate full roda os de integração) | ✅ |
 | T14 | Domain | unit | unit | ✅ |
 | T15 | Config de auth | integration | integration | ✅ |
+| T16 | Domain | unit | unit | ✅ |
 
 ## Requirement Traceability
 
 | Requirement ID | Tasks |
 | -------------- | ----- |
 | OPEN-01 | T9, T10, T11, T12 |
-| OPEN-02 | T5, T6, T7, T8, T9, T10 |
+| OPEN-02 | T5, T6, T7, T8, T9, T10, T16 |
 | OPEN-03 | T1, T2, T3, T4 |
 | OPEN-04 | T1 |
 | OPEN-05 | T13, T14, T15 |
