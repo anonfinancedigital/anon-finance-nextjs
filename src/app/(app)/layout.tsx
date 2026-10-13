@@ -15,8 +15,10 @@ import { vaultRepo } from "@/lib/db/repos/vault";
 export default async function AppLayout({ children }: LayoutProps<"/">) {
   const { userId, isAdmin } = await requireSessionForPage();
   // Legacy first: it has no vault, so no sealed birth date either (SIGILO-22).
-  // /proteger-dados and /data-nascimento live outside this group, so neither redirect can loop.
+  // /proteger-dados, /criar-cofre and /data-nascimento live outside this group, so no redirect loops.
   if (await legacyRepo.isLegacy(userId)) redirect("/proteger-dados");
+  // Google-only account without a vault: it creates the vault (and the sealed birth date) there.
+  if (await vaultRepo.needsVault(userId)) redirect("/criar-cofre");
   if ((await vaultRepo.getBirthDateSealed(userId)) === null) redirect("/data-nascimento");
 
   return (

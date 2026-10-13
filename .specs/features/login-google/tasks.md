@@ -237,8 +237,8 @@ T15 → T16 → T17
 
 **Done when**:
 
-- [ ] Ordem: legada -> `/proteger-dados`; precisa de cofre -> `/criar-cofre`; sem data -> `/data-nascimento` (evidência `file:line`)
-- [ ] Gate check passes: `npm run typecheck && npm run lint`
+- [x] Ordem: legada -> `/proteger-dados`; precisa de cofre -> `/criar-cofre`; sem data -> `/data-nascimento` (evidência `file:line`)
+- [x] Gate check passes: `npm run typecheck && npm run lint`
 
 **Tests**: none
 **Gate**: build
