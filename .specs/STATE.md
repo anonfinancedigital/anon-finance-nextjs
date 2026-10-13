@@ -106,4 +106,12 @@
 - **Date**: 2026-10-10
 - **Status**: active
 
+### AD-014
+- **Decision**: O login com Google só autentica: não deriva KEK e nunca abre o cofre. Conta criada via Google nasce `pending`, sem sessão (hook `user.create.before`), e ao ser aprovada cria uma senha de cofre própria em `/criar-cofre`. "Conta legada" passa a significar sem `user_vault` **e com** conta `credential`; sem `user_vault` e sem `credential` é "precisa de cofre". O vínculo com conta existente usa `requireLocalEmailVerified: false` e exige `email_verified = true` do Google.
+- **Reason**: Pedido do usuário: login com Google sem quebrar AD-009 (aprovação) nem AD-011 (cofre só no navegador).
+- **Trade-off**: O Google participa do login e passa a saber que o e-mail usa o app, sem receber dado financeiro; vínculo sem e-mail local verificado deixa risco residual de pré-sequestro, mitigado só pela aprovação manual; o usuário Google digita uma senha de cofre a cada novo dispositivo.
+- **Scope**: `auth.ts`, `legacyRepo.isLegacy`, `vaultRepo`, layout `(app)`, `/criar-cofre`, `/login`, texto de privacidade
+- **Date**: 2026-10-13
+- **Status**: active
+
 ## Handoff
