@@ -110,12 +110,12 @@ T12 → T13 → T14 → T15
 
 **Done when**:
 
-- [ ] Reativar `revoked` → `approved` e grava `decided_at`
-- [ ] Reativar `approved` → `ok`, status e `decided_at` intactos
-- [ ] Reativar `pending` ou `rejected` → `wrong_state`; usuário inexistente ou o admin → `not_found`
-- [ ] Revogar apaga as sessões na mesma transação; reativar não apaga
-- [ ] Gate check passes: `npm run test:unit && npm run test:int`
-- [ ] Test count: `users.int.test.ts` atualizado (casos de aprovar/rejeitar trocados pelos de reativar)
+- [x] Reativar `revoked` → `approved` e grava `decided_at`
+- [x] Reativar `approved` → `ok`, status e `decided_at` intactos
+- [x] Reativar `pending` ou `rejected` → `wrong_state`; usuário inexistente ou o admin → `not_found`
+- [x] Revogar apaga as sessões na mesma transação; reativar não apaga
+- [x] Gate check passes: `npm run test:unit && npm run test:int`
+- [x] Test count: `users.int.test.ts` atualizado (casos de aprovar/rejeitar trocados pelos de reativar)
 
 **Tests**: integration
 **Gate**: full

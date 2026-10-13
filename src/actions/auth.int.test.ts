@@ -263,7 +263,8 @@ describe("signUpSealedAction", () => {
     expect(await signUpSealedAction(body)).toEqual({ ok: true });
     expect(await usersWith("ana@x.com")).toHaveLength(1);
 
-    expect(await usersRepo.transition(body.userId, "approve")).toBe("ok");
+    // Signup still creates `pending` users until the open signup lands; approve straight in the table.
+    await db.update(user).set({ status: "approved" }).where(eq(user.id, body.userId));
 
     await expect(signIn("ana@x.com", AUTH_SECRET)).rejects.toThrow("NEXT_REDIRECT /");
     expect(await sessionsOf(body.userId)).toBe(1);

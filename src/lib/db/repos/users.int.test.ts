@@ -108,11 +108,8 @@ describe("usersRepo.listForAdmin", () => {
 });
 
 describe("usersRepo.transition", () => {
-  const cases: [UserStatus, "approve" | "reject" | "revoke", UserStatus][] = [
-    ["pending", "approve", "approved"],
-    ["rejected", "approve", "approved"],
-    ["revoked", "approve", "approved"],
-    ["pending", "reject", "rejected"],
+  const cases: [UserStatus, "reactivate" | "revoke", UserStatus][] = [
+    ["revoked", "reactivate", "approved"],
     ["approved", "revoke", "revoked"],
   ];
 
@@ -127,10 +124,9 @@ describe("usersRepo.transition", () => {
     expect(row.decidedAt!.getTime()).toBeGreaterThanOrEqual(before.getTime());
   });
 
-  const invalid: [UserStatus, "reject" | "revoke"][] = [
-    ["approved", "reject"],
-    ["rejected", "reject"],
-    ["revoked", "reject"],
+  const invalid: [UserStatus, "reactivate" | "revoke"][] = [
+    ["pending", "reactivate"],
+    ["rejected", "reactivate"],
     ["pending", "revoke"],
     ["rejected", "revoke"],
     ["revoked", "revoke"],
@@ -144,19 +140,19 @@ describe("usersRepo.transition", () => {
     expect(await userRow(id)).toEqual(before);
   });
 
-  it("returns ok when approving an approved user, keeping decided_at", async () => {
+  it("returns ok when reactivating an approved user, keeping decided_at", async () => {
     const id = await insertUser("approved", new Date());
     const decidedAt = new Date(Date.UTC(2026, 0, 1));
     await db.update(user).set({ decidedAt }).where(eq(user.id, id));
 
-    expect(await usersRepo.transition(id, "approve")).toBe("ok");
+    expect(await usersRepo.transition(id, "reactivate")).toBe("ok");
 
     const row = await userRow(id);
     expect(row.status).toBe("approved");
     expect(row.decidedAt).toEqual(decidedAt);
   });
 
-  it.each([["approve"], ["reject"], ["revoke"]] as const)(
+  it.each([["reactivate"], ["revoke"]] as const)(
     "returns not_found for an unknown id on %s",
     async (action) => {
       await insertUser("pending", new Date());
@@ -192,10 +188,7 @@ async function withFailingDelete<T>(table: string, fn: () => Promise<T>): Promis
 }
 
 describe("usersRepo.transition with revokeSessions", () => {
-  it.each([
-    ["pending", "reject", "rejected"],
-    ["approved", "revoke", "revoked"],
-  ] as const)(
+  it.each([["approved", "revoke", "revoked"]] as const)(
     "moves %s through %s to %s, stamps decided_at and ends only that user's sessions",
     async (status, action, to) => {
       const before = new Date(Date.now() - 1000);
@@ -212,10 +205,7 @@ describe("usersRepo.transition with revokeSessions", () => {
     },
   );
 
-  it.each([
-    ["pending", "reject"],
-    ["approved", "revoke"],
-  ] as const)(
+  it.each([["approved", "revoke"]] as const)(
     "keeps the %s status, decided_at and sessions when ending the sessions fails on %s",
     async (status, action) => {
       const target = await createSignedInUser(undefined, status);
@@ -231,11 +221,11 @@ describe("usersRepo.transition with revokeSessions", () => {
   );
 
   it("keeps the sessions without the option", async () => {
-    const target = await createSignedInUser(undefined, "pending");
+    const target = await createSignedInUser(undefined, "revoked");
 
-    expect(await usersRepo.transition(target.userId, "reject")).toBe("ok");
+    expect(await usersRepo.transition(target.userId, "reactivate")).toBe("ok");
 
-    expect((await userRow(target.userId)).status).toBe("rejected");
+    expect((await userRow(target.userId)).status).toBe("approved");
     expect(await db.$count(session, eq(session.userId, target.userId))).toBe(1);
   });
 });
@@ -353,7 +343,8 @@ describe("isolation of a new approved user (SIGNUP-07)", () => {
     await userWithData("admin-data@x.com");
     await signupAna();
     const found = await usersRepo.findByEmail(ana.email);
-    expect(await usersRepo.transition(found!.id, "approve")).toBe("ok");
+    await db.update(user).set({ status: "revoked" }).where(eq(user.id, found!.id));
+    expect(await usersRepo.transition(found!.id, "reactivate")).toBe("ok");
 
     expect(await categoriesRepo.listForMonthSealed(found!.id, { year: 2026, month: 10 }, new Date("2026-10-15T12:00:00Z"))).toEqual([]);
     expect(await transactionsRepo.listByMonthSealed(found!.id, monthRange({ year: 2026, month: 10 }))).toEqual(

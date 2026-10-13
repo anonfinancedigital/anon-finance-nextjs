@@ -94,7 +94,7 @@ async function listForAdmin(adminEmail: string): Promise<AdminUserRow[]> {
 
 /**
  * Applies the admin decision when the user is in a valid origin status, stamping `decided_at`.
- * The admin is not a target (`not_found`). Approving an approved user is a no-op `ok`.
+ * The admin is not a target (`not_found`). Reactivating an approved user is a no-op `ok`.
  * With `revokeSessions`, the user's sessions end in the same transaction as the status change.
  */
 async function transition(
@@ -119,7 +119,7 @@ async function transition(
   // No row matched: re-read, since the status may have changed since the first read.
   const now = await findById(id);
   if (!now) return "not_found";
-  return action === "approve" && now.status === "approved" ? "ok" : "wrong_state";
+  return action === "reactivate" && now.status === "approved" ? "ok" : "wrong_state";
 }
 
 /** Ends every session of the user. */
