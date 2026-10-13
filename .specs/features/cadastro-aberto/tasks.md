@@ -390,9 +390,9 @@ T12 → T13 → T14 → T15
 
 **Done when**:
 
-- [ ] `SENT_MESSAGE` = "Cadastro concluído. Você já pode entrar"; link "Ir para o login" para `/login`
-- [ ] `rg -i aprova src/app/cadastro src/app/login` sem ocorrências (AC 4); evidência por inspeção de código (`file:line`)
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
+- [x] `SENT_MESSAGE` = "Cadastro concluído. Você já pode entrar"; link "Ir para o login" para `/login`
+- [x] `rg -i aprova src/app/cadastro src/app/login` sem ocorrências (AC 4); evidência por inspeção de código (`file:line`)
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
 
 **Tests**: none
 **Gate**: build

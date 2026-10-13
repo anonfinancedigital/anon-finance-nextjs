@@ -13,7 +13,7 @@ import { type ActionResult, invalidInput, SAVE_FAILED } from "@/lib/action-resul
 import { maskDateInput } from "@/lib/domain/date-br";
 import { PASSWORD_MISMATCH_MESSAGE, signupSchema } from "@/lib/validation/signup";
 
-const SENT_MESSAGE = "Cadastro enviado. Você poderá entrar quando o administrador aprová-lo";
+const SENT_MESSAGE = "Cadastro concluído. Você já pode entrar";
 
 export function SignupForm() {
   const [state, setState] = useState<ActionResult | undefined>(undefined);
@@ -79,9 +79,12 @@ export function SignupForm() {
 
   if (state?.ok && confirmed) {
     return (
-      <p role="status" className="text-sm">
-        {SENT_MESSAGE}
-      </p>
+      <div role="status" className="space-y-2 text-sm">
+        <p>{SENT_MESSAGE}</p>
+        <Link href="/login" className="text-link hover:underline">
+          Ir para o login
+        </Link>
+      </div>
     );
   }
 
