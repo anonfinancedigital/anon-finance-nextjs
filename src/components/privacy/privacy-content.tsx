@@ -52,6 +52,7 @@ const ENCRYPTED = [
 
 const PROCESSED = [
   "Seu e-mail e nome, para autenticar a conta",
+  "Se você entra com Google: o Google sabe que seu e-mail usa o app; nenhum dado financeiro vai para o Google",
   "Datas e tipo de registro (receita ou despesa), para organizar os lançamentos",
   "Cores e agrupamento das categorias, para montar a interface",
 ];
@@ -110,7 +111,7 @@ export function PrivacyContent() {
               </h2>
               <p className="text-sm">
                 Como nem nós temos a chave do seu cofre, é tecnicamente impossível recuperar seus dados se você perder a
-                senha e a Chave de Recuperação. Ao criar a conta, guarde essa chave em local seguro.
+                senha e a Chave de Recuperação. Ao criar a conta, guarde essa chave em local seguro. Quem entra com Google cria uma senha de cofre própria, que nunca sai do navegador.
               </p>
             </div>
           </section>
