@@ -180,10 +180,10 @@ T15 → T16 → T17
 
 **Done when**:
 
-- [ ] Sem vault + com `credential` -> `true`; com vault -> `false`; sem vault + só conta `google` -> `false`; usuário inexistente -> `false`
-- [ ] Testes existentes de `legacy.int.test.ts` e `legacy.commit.int.test.ts` continuam passando
-- [ ] Gate check passes: `npm run test:unit && npm run test:int`
-- [ ] Test count: 3 novos testes pass, nenhum removido
+- [x] Sem vault + com `credential` -> `true`; com vault -> `false`; sem vault + só conta `google` -> `false`; usuário inexistente -> `false`
+- [x] Testes existentes de `legacy.int.test.ts` e `legacy.commit.int.test.ts` continuam passando
+- [x] Gate check passes: `npm run test:unit && npm run test:int`
+- [x] Test count: 3 novos testes pass, nenhum removido
 
 **Tests**: integration
 **Gate**: full

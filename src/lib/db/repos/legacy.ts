@@ -1,5 +1,5 @@
 import { hashPassword, verifyPassword } from "better-auth/crypto";
-import { and, asc, eq } from "drizzle-orm";
+import { and, asc, eq, isNull } from "drizzle-orm";
 import type { LegacyPackage, LegacyPlain, VaultMaterial } from "@/lib/vault/types";
 import { account, user } from "../auth-schema";
 import { db } from "../client";
@@ -16,14 +16,18 @@ export type ReadPlainResult = { ok: true; plain: LegacyPlain } | { ok: false; re
 
 export type CommitMigrationResult = "ok" | "wrong_password" | "not_legacy" | "mismatch";
 
-/** A legacy account is an existing user without a `user_vault` row. */
+/**
+ * A legacy account is an existing user without a `user_vault` row and with a password (`credential`)
+ * account. A Google-only account without a vault is a new account, not a legacy one.
+ */
 async function isLegacy(userId: string): Promise<boolean> {
   const [row] = await db
-    .select({ id: user.id, vault: userVault.userId })
+    .select({ id: user.id })
     .from(user)
     .leftJoin(userVault, eq(userVault.userId, user.id))
-    .where(eq(user.id, userId));
-  return row !== undefined && row.vault === null;
+    .innerJoin(account, and(eq(account.userId, user.id), eq(account.providerId, "credential")))
+    .where(and(eq(user.id, userId), isNull(userVault.userId)));
+  return row !== undefined;
 }
 
 /**

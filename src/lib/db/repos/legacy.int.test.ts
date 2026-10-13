@@ -3,8 +3,9 @@ import { eq } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
 import type { VaultMaterial } from "@/lib/vault/types";
 import { insertCredentialUser } from "@/test/auth";
-import { setupTestDb } from "@/test/db";
+import { insertTestUser, setupTestDb } from "@/test/db";
 import { insertLegacyAccount } from "@/test/legacy";
+import { account } from "../auth-schema";
 import { db } from "../client";
 import { category, transaction } from "../schema";
 import { legacyRepo } from "./legacy";
@@ -34,6 +35,25 @@ describe("legacyRepo.isLegacy", () => {
 
   it("is false for an unknown user", async () => {
     expect(await legacyRepo.isLegacy(randomUUID())).toBe(false);
+  });
+
+  const linkGoogle = (userId: string) =>
+    db.insert(account).values({ id: randomUUID(), userId, accountId: randomUUID(), providerId: "google" });
+
+  it("is false without a vault when the only account is Google (a new Google account)", async () => {
+    const userId = await insertTestUser();
+    await linkGoogle(userId);
+    expect(await legacyRepo.isLegacy(userId)).toBe(false);
+  });
+
+  it("is false without a vault and without any account", async () => {
+    expect(await legacyRepo.isLegacy(await insertTestUser())).toBe(false);
+  });
+
+  it("stays true for a password account without a vault that also linked Google", async () => {
+    const userId = await insertCredentialUser("a@x.com");
+    await linkGoogle(userId);
+    expect(await legacyRepo.isLegacy(userId)).toBe(true);
   });
 });
 
