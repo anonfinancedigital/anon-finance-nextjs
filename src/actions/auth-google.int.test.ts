@@ -1,7 +1,10 @@
+import { randomUUID } from "node:crypto";
 import { afterAll, afterEach, describe, expect, it, vi } from "vitest";
+import { session } from "@/lib/db/auth-schema";
 import { db } from "@/lib/db/client";
 import { loginAttemptsRepo } from "@/lib/db/repos/login-attempts";
 import { loginAttempt } from "@/lib/db/schema";
+import { insertCredentialUser } from "@/test/auth";
 import { setupTestDb } from "@/test/db";
 
 // The provider list is fixed when auth.ts is evaluated: the credentials must exist before the import.
@@ -12,7 +15,11 @@ vi.hoisted(() => {
 
 vi.mock("next/headers", () => ({
   headers: async () => new Headers(),
-  cookies: async () => ({ set: vi.fn(), get: vi.fn(), getAll: () => [] }),
+  cookies: async () => ({
+    set: vi.fn(),
+    get: vi.fn(),
+    getAll: () => [],
+  }),
 }));
 vi.mock("next/navigation", () => ({
   redirect: vi.fn((url: string) => {
@@ -22,11 +29,13 @@ vi.mock("next/navigation", () => ({
 
 const { signInGoogleAction } = await import("./auth-google");
 const { redirect } = await import("next/navigation");
+const { auth } = await import("@/lib/auth");
 
 setupTestDb();
 
 afterEach(() => {
   vi.mocked(redirect).mockClear();
+  vi.restoreAllMocks();
 });
 afterAll(() => {
   vi.unstubAllEnvs();
@@ -69,5 +78,62 @@ describe("signInGoogleAction", () => {
     await redirectUrl();
 
     expect(await db.$count(loginAttempt)).toBe(1);
+  });
+});
+
+describe("signInGoogleAction OAuth destinations", () => {
+  /** Starts the flow through the action, then drives the real callback with its state and cookies. */
+  async function callbackAfterAction(query: (state: string | null) => string) {
+    const ctx = await auth.$context;
+    const google = ctx.socialProviders.find((p) => p.id === "google");
+    if (!google) throw new Error("google provider is not configured");
+    const part = (value: object) => Buffer.from(JSON.stringify(value)).toString("base64url");
+    vi.spyOn(google, "validateAuthorizationCode").mockResolvedValueOnce({
+      accessToken: "access",
+      idToken: `${part({ alg: "RS256", typ: "JWT" })}.${part({
+        sub: randomUUID(),
+        email: "ana@x.com",
+        email_verified: true,
+        name: "Ana",
+      })}.sig`,
+    });
+
+    // nextCookies reaches cookies() through a module vitest cannot mock, so the Set-Cookie headers of
+    // the real call are captured here; the action's own arguments are forwarded untouched.
+    const cookies: string[] = [];
+    const signInSocial = auth.api.signInSocial;
+    type SignInInput = Parameters<typeof signInSocial>[0];
+    vi.spyOn(auth.api, "signInSocial").mockImplementationOnce((async (input: SignInInput) => {
+      const { headers, response } = await signInSocial({ ...input, returnHeaders: true } as SignInInput & {
+        returnHeaders: true;
+      });
+      cookies.push(...headers.getSetCookie());
+      return response;
+    }) as typeof auth.api.signInSocial);
+
+    const state = (await redirectUrl()).searchParams.get("state");
+    const cookie = cookies.map((c) => c.split(";")[0]).join("; ");
+    const response = await auth.handler(
+      new Request(`${ctx.baseURL}/callback/google?${query(state)}`, { headers: { cookie } }),
+    );
+    return new URL(response.headers.get("location") ?? "", ctx.baseURL);
+  }
+
+  it("sends a cancelled consent back to /login with an error and opens no session", async () => {
+    const target = await callbackAfterAction((state) => `error=access_denied&state=${state}`);
+
+    expect(target.pathname).toBe("/login");
+    expect(target.searchParams.get("error")).toBeTruthy();
+    expect(await db.$count(session)).toBe(0);
+  });
+
+  it("sends an approved user to / without error and opens one session", async () => {
+    await insertCredentialUser("ana@x.com");
+
+    const target = await callbackAfterAction((state) => `code=code&state=${state}`);
+
+    expect(target.pathname).toBe("/");
+    expect(target.searchParams.get("error")).toBeNull();
+    expect(await db.$count(session)).toBe(1);
   });
 });

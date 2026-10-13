@@ -79,7 +79,7 @@ T15 → T16 → T17
 ### Phase 6: Correções do Verifier (iteração 1)
 
 ```
-T17 → T18 → T19 → T20
+T17 → T18 → T19 → T20 → T21
 ```
 
 ---
@@ -705,3 +705,24 @@ Origem: `validation.md` (FAIL por lacunas de teste; código sem defeito, 18/18 m
 **Gate**: full
 
 **Commit**: `test(vault): assert the existing-vault refusal message`
+
+---
+
+### T21: Testar os destinos OAuth pela action
+
+**What**: Iniciar o fluxo por `signInGoogleAction` e dirigir o callback real, para que `callbackURL` e `errorCallbackURL` da action sejam exercitados (mata os mutantes M10 e M11).
+**Where**: `src/actions/auth-google.int.test.ts`
+**Depends on**: T20
+**Requirement**: GOOGLE-02, GOOGLE-04, GOOGLE-05
+
+**Done when**:
+
+- [x] Cancelamento (`?error=access_denied&state=<state>` do redirect da action): `location` em `/login` com `error` presente e 0 sessões
+- [x] Sucesso com usuário `approved` existente: `location` em `/` sem `error` e 1 sessão criada
+- [x] Trocar `errorCallbackURL` por `"/"` ou `callbackURL` por `"/login"` em `src/actions/auth-google.ts` faz um dos testes falhar (validado e revertido)
+- [x] Gate check passes: `npm run test:unit && npm run test:int`
+
+**Tests**: integration
+**Gate**: full
+
+**Commit**: `test(auth): cover the OAuth destinations of signInGoogleAction`
