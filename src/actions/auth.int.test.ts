@@ -4,9 +4,10 @@ import { eq } from "drizzle-orm";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { auth } from "@/lib/auth";
 import { account, session, user } from "@/lib/db/auth-schema";
-import { db } from "@/lib/db/client";
+import { db, pool } from "@/lib/db/client";
 import { loginAttemptsRepo } from "@/lib/db/repos/login-attempts";
-import { userVault } from "@/lib/db/schema";
+import { signupAttemptsRepo } from "@/lib/db/repos/signup-attempts";
+import { signupAttempt, userVault } from "@/lib/db/schema";
 import { createSignedInUser, insertCredentialUser, TEST_PASSWORD } from "@/test/auth";
 import { setupTestDb } from "@/test/db";
 import { signInAction, signOutAction, signUpSealedAction } from "./auth";
@@ -242,13 +243,13 @@ describe("signUpSealedAction", () => {
     vi.restoreAllMocks();
   });
 
-  it("stores a pending user, the vault and the sealed birth date, with a hash that verifies the authSecret", async () => {
+  it("stores an approved user, the vault and the sealed birth date, with a hash that verifies the authSecret", async () => {
     const body = payload();
 
     expect(await signUpSealedAction(body)).toEqual({ ok: true });
 
     const [created] = await usersWith("ana@x.com");
-    expect(created).toMatchObject({ id: body.userId, name: "Ana", status: "pending", birthDate: null });
+    expect(created).toMatchObject({ id: body.userId, name: "Ana", status: "approved", birthDate: null });
     expect(await sessionsOf(created.id)).toBe(0);
     const [stored] = await vaults();
     expect(stored).toMatchObject({ userId: body.userId, ...VAULT, birthDateCt: "v1:birth" });
@@ -257,13 +258,10 @@ describe("signUpSealedAction", () => {
     expect(await verifyPassword({ hash: credential.password!, password: AUTH_SECRET })).toBe(true);
   });
 
-  it("normalizes the e-mail and lets the approved user sign in with the authSecret as password", async () => {
+  it("normalizes the e-mail and lets the new user sign in right away with the authSecret as password", async () => {
     const body = payload({ email: "  ANA@x.com " });
     expect(await signUpSealedAction(body)).toEqual({ ok: true });
     expect(await usersWith("ana@x.com")).toHaveLength(1);
-
-    // Signup still creates `pending` users until the open signup lands; approve straight in the table.
-    await db.update(user).set({ status: "approved" }).where(eq(user.id, body.userId));
 
     await expect(signIn("ana@x.com", AUTH_SECRET)).rejects.toThrow("NEXT_REDIRECT /");
     expect(await sessionsOf(body.userId)).toBe(1);
@@ -275,7 +273,7 @@ describe("signUpSealedAction", () => {
     expect(await signUpSealedAction(body)).toEqual({ ok: true });
 
     const [created] = await usersWith("ana@x.com");
-    expect(created).toMatchObject({ id: body.userId, name: "Ana", email: "ana@x.com", status: "pending" });
+    expect(created).toMatchObject({ id: body.userId, name: "Ana", email: "ana@x.com", status: "approved" });
     expect(await sessionsOf(body.userId)).toBe(0);
     expect(redirect).not.toHaveBeenCalled();
   });
@@ -369,5 +367,104 @@ describe("signUpSealedAction", () => {
     expect(log.mock.calls[0]).toHaveLength(2);
     expect(await usersWith("outra@x.com")).toEqual([]);
     expect(await vaults()).toHaveLength(1);
+  });
+  describe("per-IP limit", () => {
+    const LIMIT_MESSAGE = (n: string) => `Muitos cadastros a partir deste endereço. Tente novamente em ${n}`;
+    const fromIp = (ip: string) => {
+      request.headers = new Headers({ "x-forwarded-for": ip });
+    };
+    const signupN = (n: number, email = `u${n}@x.com`) => signUpSealedAction(payload({ email }));
+
+    it("creates approved users for 5 signups of the same IP and refuses the 6th without creating a user", async () => {
+      vi.useFakeTimers({ toFake: ["Date"] });
+      vi.setSystemTime(new Date("2026-10-04T12:00:00Z"));
+      fromIp("203.0.113.7");
+      for (let i = 1; i <= 5; i++) expect(await signupN(i)).toEqual({ ok: true });
+      expect(await db.select().from(user).where(eq(user.status, "approved"))).toHaveLength(6); // + beforeEach user
+
+      expect(await signupN(6)).toEqual({ ok: false, error: LIMIT_MESSAGE("60 minutos") });
+      expect(await usersWith("u6@x.com")).toEqual([]);
+      expect(await db.$count(signupAttempt)).toBe(5);
+    });
+
+    it("tells the minutes until the oldest of the 5 leaves the window, rounded up", async () => {
+      vi.useFakeTimers({ toFake: ["Date"] });
+      const start = Date.parse("2026-10-04T12:00:00Z");
+      fromIp("203.0.113.7");
+      for (let i = 1; i <= 5; i++) {
+        vi.setSystemTime(new Date(start + i * MINUTE));
+        await signupN(i);
+      }
+      vi.setSystemTime(new Date(start + 30 * MINUTE + 30_000));
+      expect(await signupN(6)).toEqual({ ok: false, error: LIMIT_MESSAGE("31 minutos") });
+    });
+
+    it("uses the singular when 1 minute remains and lets the 6th through once the oldest leaves the window", async () => {
+      vi.useFakeTimers({ toFake: ["Date"] });
+      const start = Date.parse("2026-10-04T12:00:00Z");
+      vi.setSystemTime(new Date(start));
+      fromIp("203.0.113.7");
+      for (let i = 1; i <= 5; i++) await signupN(i);
+
+      vi.setSystemTime(new Date(start + 59 * MINUTE + 30_000));
+      expect(await signupN(6)).toEqual({ ok: false, error: LIMIT_MESSAGE("1 minuto") });
+
+      vi.setSystemTime(new Date(start + 60 * MINUTE));
+      expect(await signupN(6)).toEqual({ ok: true });
+    });
+
+    it("counts each IP separately", async () => {
+      fromIp("203.0.113.7");
+      for (let i = 1; i <= 5; i++) await signupN(i);
+      fromIp("203.0.113.8");
+      expect(await signupN(6)).toEqual({ ok: true });
+    });
+
+    it("does not count validation failures or duplicate e-mails", async () => {
+      fromIp("203.0.113.7");
+      expect(await signUpSealedAction(payload({ email: "ana@" }))).toMatchObject({ ok: false });
+      expect(await signUpSealedAction(payload({ email: EMAIL }))).toMatchObject({ ok: false, error: "Este e-mail já está cadastrado" });
+      expect(await db.$count(signupAttempt)).toBe(0);
+
+      for (let i = 1; i <= 4; i++) await signupN(i);
+      expect(await signUpSealedAction(payload({ email: EMAIL }))).toMatchObject({ ok: false, error: "Este e-mail já está cadastrado" });
+      expect(await signupN(5)).toEqual({ ok: true });
+      expect(await signupN(6)).toMatchObject({ ok: false });
+    });
+
+    it("stores only the keyed hash of the IP, never the IP", async () => {
+      fromIp("203.0.113.7");
+      await signupN(1);
+      const [row] = await db.select().from(signupAttempt);
+      expect(row.ipHash).toMatch(/^[0-9a-f]{64}$/);
+      expect(row.ipHash).not.toContain("203.0.113.7");
+    });
+
+    it("creates the user without limit when the headers carry no IP", async () => {
+      for (let i = 1; i <= 7; i++) expect(await signupN(i)).toEqual({ ok: true });
+      expect(await db.$count(signupAttempt)).toBe(0);
+    });
+
+    it("answers the save error and creates no user when reading the limit fails", async () => {
+      vi.spyOn(console, "error").mockImplementation(() => {});
+      vi.spyOn(signupAttemptsRepo, "recentSince").mockRejectedValue(new Error("db down"));
+      fromIp("203.0.113.7");
+      expect(await signupN(1)).toEqual({ ok: false, error: "Não foi possível salvar. Tente novamente" });
+      expect(await usersWith("u1@x.com")).toEqual([]);
+    });
+
+    it("answers the save error and creates no user when recording the IP fails", async () => {
+      vi.spyOn(console, "error").mockImplementation(() => {});
+      vi.spyOn(signupAttemptsRepo, "recentSince").mockResolvedValue([]);
+      await pool.query('ALTER TABLE "signup_attempt" RENAME TO "signup_attempt_off"');
+      try {
+        fromIp("203.0.113.7");
+        expect(await signupN(1)).toEqual({ ok: false, error: "Não foi possível salvar. Tente novamente" });
+      } finally {
+        await pool.query('ALTER TABLE "signup_attempt_off" RENAME TO "signup_attempt"');
+      }
+      expect(await usersWith("u1@x.com")).toEqual([]);
+      expect(await vaults()).toEqual([]);
+    });
   });
 });

@@ -334,13 +334,13 @@ T12 → T13 → T14 → T15
 
 **Done when**:
 
-- [ ] 5 cadastros válidos do mesmo IP criam usuário `approved`; o 6º devolve "Muitos cadastros a partir deste endereço. Tente novamente em {n} minutos" ("minuto" quando n = 1) sem criar usuário
-- [ ] Validação reprovada e e-mail duplicado não contam no limite (próximo cadastro válido passa)
-- [ ] Sem IP nos cabeçalhos: cria sem limite
-- [ ] Falha de banco ao conferir ou gravar → "Não foi possível salvar. Tente novamente" e nenhum usuário
-- [ ] Usuário recém-criado entra no login com e-mail e senha (sessão e redirecionamento a `/`)
-- [ ] Gate check passes: `npm run test:unit && npm run test:int`
-- [ ] Test count: testes de ação de cadastro atualizados, nenhum removido sem substituto
+- [x] 5 cadastros válidos do mesmo IP criam usuário `approved`; o 6º devolve "Muitos cadastros a partir deste endereço. Tente novamente em {n} minutos" ("minuto" quando n = 1) sem criar usuário
+- [x] Validação reprovada e e-mail duplicado não contam no limite (próximo cadastro válido passa)
+- [x] Sem IP nos cabeçalhos: cria sem limite
+- [x] Falha de banco ao conferir ou gravar → "Não foi possível salvar. Tente novamente" e nenhum usuário
+- [x] Usuário recém-criado entra no login com e-mail e senha (sessão e redirecionamento a `/`)
+- [x] Gate check passes: `npm run test:unit && npm run test:int`
+- [x] Test count: testes de ação de cadastro atualizados, nenhum removido sem substituto
 
 **Tests**: integration
 **Gate**: full

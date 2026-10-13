@@ -6,8 +6,11 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { type ActionResult, invalidInput, SAVE_FAILED } from "@/lib/action-result";
 import { auth } from "@/lib/auth";
+import { clientIp, hashIp } from "@/lib/client-ip";
 import { loginAttemptsRepo } from "@/lib/db/repos/login-attempts";
+import { signupAttemptsRepo } from "@/lib/db/repos/signup-attempts";
 import { usersRepo } from "@/lib/db/repos/users";
+import { SIGNUP_WINDOW_MS, signupLockMinutes } from "@/lib/domain/signup-limit";
 import { LOGIN_BLOCK_MESSAGE } from "@/lib/domain/user-status";
 import { logActionError } from "@/lib/log";
 import { lockedMinutes } from "@/lib/login-lock";
@@ -57,15 +60,27 @@ export async function signInAction(
 
 /**
  * Sealed signup: the browser sends the client-chosen id, name, e-mail, the login secret (stored only
- * as Better Auth's hash), the key material and the sealed birth date. Creates a pending user, with no session.
+ * as Better Auth's hash), the key material and the sealed birth date. Creates an approved user, with no
+ * session. At most 5 signups per IP in 60 minutes; without an IP in the headers there is no limit.
  */
 export async function signUpSealedAction(payload: SignUpSealedPayload): Promise<ActionResult> {
   const parsed = signUpSealedSchema.safeParse(payload);
   if (!parsed.success) return invalidInput(parsed.error);
 
   try {
+    const ip = clientIp(await headers());
+    const ipHash = ip ? hashIp(ip) : null;
+    if (ipHash) {
+      const now = Date.now();
+      const minutes = signupLockMinutes(await signupAttemptsRepo.recentSince(ipHash, new Date(now - SIGNUP_WINDOW_MS)), now);
+      if (minutes > 0) {
+        const unit = minutes === 1 ? "minuto" : "minutos";
+        return { ok: false, error: `Muitos cadastros a partir deste endereço. Tente novamente em ${minutes} ${unit}` };
+      }
+    }
+
     const { userId, name, email, authSecret, vault, birthDateCt } = parsed.data;
-    const result = await usersRepo.createPendingSealed({ id: userId, name, email, authSecret, vault, birthDateCt });
+    const result = await usersRepo.createSealed({ id: userId, name, email, authSecret, vault, birthDateCt, ipHash });
     if (!result.ok) return { ok: false, error: DUPLICATE_EMAIL, fieldErrors: { email: DUPLICATE_EMAIL } };
   } catch (error) {
     logActionError("signUpSealedAction", error);
