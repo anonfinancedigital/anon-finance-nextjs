@@ -34,12 +34,13 @@ const VAULT: VaultMaterial = {
 
 /** Sealed signup of `ana`, the auth secret standing in for the password. */
 const signupAna = () =>
-  usersRepo.createPendingSealed({
+  usersRepo.createSealed({
     id: randomUUID(),
     name: ana.name,
     email: ana.email,
     authSecret: ana.password,
     vault: VAULT,
+    ipHash: null,
   });
 
 const userRow = async (id: string) => (await db.select().from(user).where(eq(user.id, id)))[0];
@@ -58,7 +59,7 @@ describe("usersRepo.findByEmail", () => {
 
     const found = await usersRepo.findByEmail(" ANA@x.com ");
 
-    expect(found).toMatchObject({ id: row.id, email: "ana@x.com", status: "pending" });
+    expect(found).toMatchObject({ id: row.id, email: "ana@x.com", status: "approved" });
     expect(await verifyPassword({ hash: found!.passwordHash!, password: PASSWORD })).toBe(true);
   });
 

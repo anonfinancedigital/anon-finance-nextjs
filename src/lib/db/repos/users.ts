@@ -21,48 +21,13 @@ export type AdminUserRow = {
 };
 
 /**
- * Creates a pending user for the sealed signup: the id comes from the client (the AAD of its sealed fields
- * already names it), the credential hash is Better Auth's `hashPassword(authSecret)` (the server
- * never sees the password), and the vault row (key material + sealed birth date) is written in the
- * same transaction. A repeated e-mail (any case) is `duplicate` and nothing is written; a repeated
- * id throws (primary key) and rolls everything back.
- */
-async function createPendingSealed(input: {
-  id: string;
-  name: string;
-  email: string;
-  authSecret: string;
-  vault: VaultMaterial;
-  birthDateCt?: string | null;
-}): Promise<{ ok: true } | { ok: false; reason: "duplicate" }> {
-  const hash = await hashPassword(input.authSecret);
-  return db.transaction(async (tx) => {
-    const inserted = await tx
-      .insert(user)
-      .values({ id: input.id, name: input.name, email: normalize(input.email), status: "pending" })
-      .onConflictDoNothing({ target: user.email })
-      .returning({ id: user.id });
-    if (inserted.length === 0) return { ok: false, reason: "duplicate" } as const;
-    await tx.insert(account).values({
-      id: randomUUID(),
-      userId: input.id,
-      accountId: input.id,
-      providerId: "credential",
-      password: hash,
-    });
-    await vaultRepo.create(tx, input.id, input.vault);
-    if (input.birthDateCt) {
-      await tx.update(userVault).set({ birthDateCt: input.birthDateCt }).where(eq(userVault.userId, input.id));
-    }
-    return { ok: true } as const;
-  });
-}
-
-/**
- * Creates an approved user for the sealed signup (same layout as `createPendingSealed`, but open
- * signup: no admin approval). With `ipHash`, the signup is also recorded for the per-IP limit and
- * records older than the limit window are pruned, all in the same transaction. A repeated e-mail
- * (any case) is `duplicate` and nothing is written, IP included.
+ * Creates an approved user for the open sealed signup: the id comes from the client (the AAD of its
+ * sealed fields already names it), the credential hash is Better Auth's `hashPassword(authSecret)`
+ * (the server never sees the password), and the vault row (key material + sealed birth date) is
+ * written in the same transaction. With `ipHash`, the signup is also recorded for the per-IP limit and
+ * records older than the limit window are pruned, all in that transaction. A repeated e-mail (any
+ * case) is `duplicate` and nothing is written, IP included; a repeated id throws (primary key) and
+ * rolls everything back.
  */
 async function createSealed(input: {
   id: string;
@@ -183,7 +148,6 @@ async function remove(id: string): Promise<"ok" | "not_found"> {
 }
 
 export const usersRepo = {
-  createPendingSealed,
   createSealed,
   findByEmail,
   findById,

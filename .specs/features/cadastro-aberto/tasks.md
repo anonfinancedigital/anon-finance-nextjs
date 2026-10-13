@@ -364,9 +364,9 @@ T12 → T13 → T14 → T15
 
 **Done when**:
 
-- [ ] Nenhuma referência a `createPendingSealed` em `src/` (`grep` vazio)
-- [ ] Os casos dos testes antigos estão cobertos pelos de T9 (cada teste removido tem substituto nomeado no commit)
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
+- [x] Nenhuma referência a `createPendingSealed` em `src/` (`grep` vazio)
+- [x] Os casos dos testes antigos estão cobertos pelos de T9 (cada teste removido tem substituto nomeado no commit)
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
 
 **Tests**: integration
 **Gate**: build
