@@ -94,7 +94,7 @@ Hoje só se entra com e-mail e senha. A senha também deriva a chave que abre o 
 2. WHEN the user submits a vault password of 8 to 128 characters, confirmed identically, THEN the browser SHALL generate the DEK and recovery key, wrap the DEK with both, seal the birth date, and send only wrapped and sealed values to the server.  <!-- event-driven -->
 3. WHEN the vault is created THEN the system SHALL show the recovery key once, require confirmation of its storage, and then redirect to `/`.  <!-- event-driven -->
 4. IF the vault password has fewer than 8 characters THEN the system SHALL show "A senha deve ter pelo menos 8 caracteres" and send nothing to the server.  <!-- unwanted-behavior -->
-5. IF the user already has a `user_vault` THEN the system SHALL reject creating another and redirect to `/`.  <!-- unwanted-behavior -->
+5. IF the user already has a `user_vault` THEN the action SHALL reject creating another with "Esta conta já tem um cofre" and leave the stored vault unchanged, and the `/criar-cofre` page SHALL redirect that user to `/`.  <!-- unwanted-behavior -->
 6. The server SHALL NOT receive or store the vault password, the KEK, the DEK or the recovery key in plaintext.  <!-- ubiquitous -->
 7. IF the request to create the vault fails THEN the system SHALL keep the user on `/criar-cofre`, show "Não foi possível salvar. Tente novamente", and persist no partial vault.  <!-- unwanted-behavior -->
 
@@ -124,7 +124,7 @@ Hoje só se entra com e-mail e senha. A senha também deriva a chave que abre o 
 - IF the Google account's e-mail changes after linking THEN the system SHALL keep resolving by the linked Google account id, not by the new e-mail.
 - IF a non-approved account signs in with Google repeatedly THEN the system SHALL NOT count it as password failures in `login-lock`.
 - WHEN a Google user is deleted by the administrator THEN the system SHALL delete the linked Google account row with the user.
-- The system SHALL log Google sign-in failures through `logActionError` without e-mail, token or profile contents (AD-013).
+- The system SHALL log Google sign-in failures without e-mail, token or profile contents (AD-013): actions through `logActionError`, the OAuth callback through the Better Auth `logger`, configured to keep only level and message.
 
 ---
 

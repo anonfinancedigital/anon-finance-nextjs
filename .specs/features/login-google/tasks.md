@@ -10,7 +10,7 @@ Implement these tasks with the `tlc-spec-driven` skill: **activate it by name an
 
 **Spec**: `.specs/features/login-google/spec.md`
 **Design**: `.specs/features/login-google/design.md`
-**Status**: Done
+**Status**: In Progress (fix tasks)
 
 Antes de escrever código de rota, Server Action ou página, ler o guia relevante em `node_modules/next/dist/docs/` (regra do AGENTS.md). Para o Better Auth, ler o código em `node_modules/better-auth/dist/` citado no design.
 
@@ -74,6 +74,12 @@ T11 → T12 → T13 → T14 → T15
 
 ```
 T15 → T16 → T17
+```
+
+### Phase 6: Correções do Verifier (iteração 1)
+
+```
+T17 → T18 → T19 → T20
 ```
 
 ---
@@ -635,3 +641,67 @@ Batches (≈7 tasks, fases inteiras): **B1** = Fases 1+2 (7 tasks), **B2** = Fas
 | T15: login page | UI / página | none | none | ✅ OK |
 | T16: .env.example | Config / env | none | none | ✅ OK |
 | T17: privacidade | UI / texto | none | none | ✅ OK |
+
+---
+
+## Fix Tasks (Verifier, iteração 1) - Fase 6
+
+Origem: `validation.md` (FAIL por lacunas de teste; código sem defeito, 18/18 mutantes mortos). Só testes; nenhuma mudança de comportamento. Fix 5 e 6 foram resolvidos na spec (AC "Criar o cofre" 5 e último edge case).
+
+### T18: Teste de recuperação para conta só-Google
+
+**What**: Provar que a recuperação da senha de cofre funciona sem conta `credential`.
+**Where**: `src/lib/db/repos/password-resets.sealed.int.test.ts`
+**Depends on**: T17
+**Requirement**: GOOGLE-09
+
+**Done when**:
+
+- [ ] Usuário `approved` com conta `google` e vault, sem `credential`: `consumeSealed` com `rewrap` devolve `"ok"`, `dekWrappedPw` mudou, nenhuma linha `credential` foi criada e as sessões foram apagadas
+- [ ] O mesmo com `wipe` (cofre novo, dados financeiros apagados)
+- [ ] Gate check passes: `npm run test:unit && npm run test:int`
+
+**Tests**: integration
+**Gate**: full
+
+**Commit**: `test(auth): cover vault recovery for Google-only accounts`
+
+---
+
+### T19: Testes do callback do Google (e-mail alterado, cancelamento, falha OAuth, `?error=`)
+
+**What**: Fechar os gaps 2, 3 e 4 do Verifier no teste do callback.
+**Where**: `src/lib/auth-google.int.test.ts`
+**Depends on**: T18
+**Requirement**: GOOGLE-04, GOOGLE-05, GOOGLE-09
+
+**Done when**:
+
+- [ ] Vínculo com `sub=S` e e-mail A; novo callback com `sub=S` e e-mail B entra no mesmo `user.id`, cria sessão e não cria usuário com B
+- [ ] Callback com `?error=access_denied` e outro com a troca de código rejeitada: redirect para `/login` com `error` presente e `session` com 0 linhas
+- [ ] Nos testes de bloqueio existentes (`pending`, `rejected`, `revoked`), assertar também que `searchParams.get("error")` é verdadeiro
+- [ ] Gate check passes: `npm run test:unit && npm run test:int`
+
+**Tests**: integration
+**Gate**: full
+
+**Commit**: `test(auth): cover Google callback edge cases`
+
+---
+
+### T20: Texto da recusa de cofre existente na action
+
+**What**: Asserta o texto exato "Esta conta já tem um cofre" e que a linha de `user_vault` não mudou.
+**Where**: `src/actions/vault.int.test.ts`
+**Depends on**: T19
+**Requirement**: GOOGLE-06
+
+**Done when**:
+
+- [ ] O teste do usuário que já tem vault asserta `error` igual a "Esta conta já tem um cofre" e a linha de `user_vault` inalterada
+- [ ] Gate check passes: `npm run test:unit && npm run test:int`
+
+**Tests**: integration
+**Gate**: full
+
+**Commit**: `test(vault): assert the existing-vault refusal message`
