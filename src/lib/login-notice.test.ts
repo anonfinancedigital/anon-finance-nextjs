@@ -3,7 +3,7 @@ import { loginNotice } from "./login-notice";
 
 describe("loginNotice", () => {
   it.each([
-    ["pending", "Sua conta está aguardando aprovação do administrador"],
+    ["pending", "Sua conta não está liberada. Fale com o administrador"],
     ["rejected", "Seu cadastro não foi aprovado"],
     ["revoked", "Seu acesso foi revogado"],
   ])("shows the message of the blocked status %s", (blockStatus, message) => {

@@ -82,11 +82,11 @@ T12 → T13 → T14 → T15
 
 **Done when**:
 
-- [ ] `fromStatuses("reactivate")` = `["revoked"]`, alvo `approved`; `revoke` inalterado; `reject` e `approve` deixam de existir
-- [ ] `availableActions`: `approved` → revoke, delete; `revoked` → reactivate, delete; `pending` e `rejected` → só delete
-- [ ] `LOGIN_BLOCK_MESSAGE.pending` = "Sua conta não está liberada. Fale com o administrador"; `rejected` e `revoked` iguais aos atuais
-- [ ] Gate check passes: `npm run test:unit`
-- [ ] Test count: `user-status.test.ts` reescrito 1:1 com os ACs (nenhum teste apagado sem substituto)
+- [x] `fromStatuses("reactivate")` = `["revoked"]`, alvo `approved`; `revoke` inalterado; `reject` e `approve` deixam de existir
+- [x] `availableActions`: `approved` → revoke, delete; `revoked` → reactivate, delete; `pending` e `rejected` → só delete
+- [x] `LOGIN_BLOCK_MESSAGE.pending` = "Sua conta não está liberada. Fale com o administrador"; `rejected` e `revoked` iguais aos atuais
+- [x] Gate check passes: `npm run test:unit`
+- [x] Test count: `user-status.test.ts` reescrito 1:1 com os ACs (nenhum teste apagado sem substituto)
 
 **Tests**: unit
 **Gate**: quick

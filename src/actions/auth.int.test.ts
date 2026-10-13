@@ -161,7 +161,7 @@ describe("signInAction for a user who is not approved", () => {
   const ANA = "ana@x.com";
 
   it.each([
-    ["pending", "Sua conta está aguardando aprovação do administrador"],
+    ["pending", "Sua conta não está liberada. Fale com o administrador"],
     ["rejected", "Seu cadastro não foi aprovado"],
     ["revoked", "Seu acesso foi revogado"],
   ] as const)(
