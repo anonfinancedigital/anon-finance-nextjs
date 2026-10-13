@@ -7,9 +7,9 @@ import { goalsRepo } from "@/lib/db/repos/goals";
 import { usersRepo } from "@/lib/db/repos/users";
 import { category, categoryPercent, financialGoal, transaction } from "@/lib/db/schema";
 import type { UserStatus } from "@/lib/domain/user-status";
-import { createSignedInUser, insertCredentialUser, signInCookie } from "@/test/auth";
+import { createSignedInUser, signInCookie } from "@/test/auth";
 import { insertCategory, setupTestDb } from "@/test/db";
-import { approveUser, deleteUser, rejectUser, revokeUser } from "./admin-users";
+import { deleteUser, reactivateUser, revokeUser } from "./admin-users";
 import { signUpSealedAction } from "./auth";
 import { saveGoalSealed } from "./goals-sealed";
 
@@ -61,74 +61,34 @@ afterEach(() => {
   vi.restoreAllMocks();
 });
 
-describe("approveUser", () => {
-  it.each([["pending"], ["rejected"], ["revoked"]] as const)(
-    "approves a %s user, stamps decided_at and lets the user sign in",
-    async (status) => {
-      const { userId, email } = await target(status);
+describe("reactivateUser", () => {
+  it("reactivates a revoked user, stamps decided_at and lets the user sign in", async () => {
+    const { userId, email } = await target("revoked");
 
-      expect(await approveUser(userId)).toEqual({ ok: true });
+    expect(await reactivateUser(userId)).toEqual({ ok: true });
 
-      const row = await userRow(userId);
-      expect(row.status).toBe("approved");
-      expect(row.decidedAt).not.toEqual(DECIDED_AT);
-      expect(row.decidedAt).toBeInstanceOf(Date);
-      await expect(signInCookie(email)).resolves.toMatch(/=/);
-      expect(revalidatePath).toHaveBeenCalledWith("/admin/cadastros");
-    },
-  );
+    const row = await userRow(userId);
+    expect(row.status).toBe("approved");
+    expect(row.decidedAt).not.toEqual(DECIDED_AT);
+    expect(row.decidedAt).toBeInstanceOf(Date);
+    await expect(signInCookie(email)).resolves.toMatch(/=/);
+    expect(revalidatePath).toHaveBeenCalledWith("/admin/cadastros");
+  });
 
   it("keeps an approved user and its decided_at, without an error", async () => {
     const { userId } = await target("approved");
 
-    expect(await approveUser(userId)).toEqual({ ok: true });
+    expect(await reactivateUser(userId)).toEqual({ ok: true });
 
     expect(await userRow(userId)).toMatchObject({ status: "approved", decidedAt: DECIDED_AT });
   });
 
-  it("returns not found for an unknown id and for the admin", async () => {
-    expect(await approveUser(randomUUID())).toEqual(NOT_FOUND);
-    expect(await approveUser(adminId)).toEqual(NOT_FOUND);
-
-    expect(revalidatePath).not.toHaveBeenCalled();
-  });
-
-  it("returns the save error on a database failure and keeps the status", async () => {
-    const { userId } = await target("pending");
-    vi.spyOn(usersRepo, "transition").mockRejectedValueOnce(dbFailure());
-    const log = vi.spyOn(console, "error").mockImplementation(() => {});
-
-    expect(await approveUser(userId)).toEqual(SAVE_FAILED);
-
-    expect(log.mock.calls).toEqual([["approveUser", "08006"]]);
-
-    expect(await userRow(userId)).toMatchObject({ status: "pending", decidedAt: DECIDED_AT });
-    expect(revalidatePath).not.toHaveBeenCalled();
-  });
-});
-
-describe("rejectUser", () => {
-  it("rejects a pending user, stamps decided_at and ends only that user's sessions", async () => {
-    const { userId } = await target("pending");
-    expect(await sessionsOf(userId)).toBe(1);
-
-    expect(await rejectUser(userId)).toEqual({ ok: true });
-
-    const row = await userRow(userId);
-    expect(row.status).toBe("rejected");
-    expect(row.decidedAt).not.toEqual(DECIDED_AT);
-    expect(row.decidedAt).toBeInstanceOf(Date);
-    expect(await sessionsOf(userId)).toBe(0);
-    expect(await sessionsOf(adminId)).toBe(1);
-    expect(revalidatePath).toHaveBeenCalledWith("/admin/cadastros");
-  });
-
-  it.each([["approved"], ["rejected"], ["revoked"]] as const)(
-    "keeps a %s user and answers that the signup is not pending",
+  it.each([["pending"], ["rejected"]] as const)(
+    "keeps a %s user and answers that the user is not revoked",
     async (status) => {
       const { userId } = await target(status);
 
-      expect(await rejectUser(userId)).toEqual({ ok: false, error: "Este cadastro não está pendente" });
+      expect(await reactivateUser(userId)).toEqual({ ok: false, error: "Este usuário não está revogado" });
 
       expect(await userRow(userId)).toMatchObject({ status, decidedAt: DECIDED_AT });
       expect(await sessionsOf(userId)).toBe(1);
@@ -137,23 +97,24 @@ describe("rejectUser", () => {
   );
 
   it("returns not found for an unknown id and for the admin", async () => {
-    expect(await rejectUser(randomUUID())).toEqual(NOT_FOUND);
-    expect(await rejectUser(adminId)).toEqual(NOT_FOUND);
+    expect(await reactivateUser(randomUUID())).toEqual(NOT_FOUND);
+    expect(await reactivateUser(adminId)).toEqual(NOT_FOUND);
 
     expect(await userRow(adminId)).toMatchObject({ status: "approved" });
     expect(await sessionsOf(adminId)).toBe(1);
+    expect(revalidatePath).not.toHaveBeenCalled();
   });
 
   it("returns the save error on a database failure and keeps the status", async () => {
-    const { userId } = await target("pending");
+    const { userId } = await target("revoked");
     vi.spyOn(usersRepo, "transition").mockRejectedValueOnce(dbFailure());
     const log = vi.spyOn(console, "error").mockImplementation(() => {});
 
-    expect(await rejectUser(userId)).toEqual(SAVE_FAILED);
+    expect(await reactivateUser(userId)).toEqual(SAVE_FAILED);
 
-    expect(log.mock.calls).toEqual([["rejectUser", "08006"]]);
+    expect(log.mock.calls).toEqual([["reactivateUser", "08006"]]);
 
-    expect(await userRow(userId)).toMatchObject({ status: "pending", decidedAt: DECIDED_AT });
+    expect(await userRow(userId)).toMatchObject({ status: "revoked", decidedAt: DECIDED_AT });
     expect(revalidatePath).not.toHaveBeenCalled();
   });
 });
@@ -322,11 +283,8 @@ async function withFailingSessionDelete<T>(fn: () => Promise<T>): Promise<T> {
   }
 }
 
-describe("reject and revoke when ending the sessions fails", () => {
-  it.each([
-    ["rejectUser", "pending", rejectUser],
-    ["revokeUser", "approved", revokeUser],
-  ] as const)("%s returns the save error and keeps the %s status", async (name, status, decide) => {
+describe("revoke when ending the sessions fails", () => {
+  it.each([["revokeUser", "approved", revokeUser]] as const)("%s returns the save error and keeps the %s status", async (name, status, decide) => {
     const { userId } = await target(status);
     const log = vi.spyOn(console, "error").mockImplementation(() => {});
 
@@ -357,26 +315,24 @@ describe("revoke and delete without admin rights", () => {
   });
 });
 
-describe("approve and reject without admin rights", () => {
-  it("return UNAUTHORIZED to an approved user who is not the admin, changing nothing", async () => {
-    const pendingId = await insertCredentialUser("ana@x.com", undefined, "pending");
+describe("reactivate without admin rights", () => {
+  it("returns UNAUTHORIZED to an approved user who is not the admin, changing nothing", async () => {
+    const { userId } = await target("revoked");
     const other = await createSignedInUser();
     request.headers = new Headers({ cookie: other.cookie });
 
-    expect(await approveUser(pendingId)).toEqual(UNAUTHORIZED);
-    expect(await rejectUser(pendingId)).toEqual(UNAUTHORIZED);
+    expect(await reactivateUser(userId)).toEqual(UNAUTHORIZED);
 
-    expect(await userRow(pendingId)).toMatchObject({ status: "pending", decidedAt: null });
+    expect(await userRow(userId)).toMatchObject({ status: "revoked", decidedAt: DECIDED_AT });
     expect(revalidatePath).not.toHaveBeenCalled();
   });
 
-  it("return UNAUTHORIZED without a session, changing nothing", async () => {
-    const pendingId = await insertCredentialUser("ana@x.com", undefined, "pending");
+  it("returns UNAUTHORIZED without a session, changing nothing", async () => {
+    const { userId } = await target("revoked");
     request.headers = new Headers();
 
-    expect(await approveUser(pendingId)).toEqual(UNAUTHORIZED);
-    expect(await rejectUser(pendingId)).toEqual(UNAUTHORIZED);
+    expect(await reactivateUser(userId)).toEqual(UNAUTHORIZED);
 
-    expect(await userRow(pendingId)).toMatchObject({ status: "pending", decidedAt: null });
+    expect(await userRow(userId)).toMatchObject({ status: "revoked", decidedAt: DECIDED_AT });
   });
 });

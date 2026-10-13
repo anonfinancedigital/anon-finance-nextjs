@@ -139,12 +139,12 @@ T12 → T13 → T14 → T15
 
 **Done when**:
 
-- [ ] `reactivateUser` por não administrador ou sem sessão → `UNAUTHORIZED` sem alterar dados
-- [ ] `reactivateUser` em `pending`/`rejected` → "Este usuário não está revogado" sem alterar
-- [ ] `approveUser` e `rejectUser` não são mais exportados
-- [ ] `revokeUser` e `deleteUser` mantêm o comportamento (AC 6 do admin), inclusive "Não é possível revogar ou excluir o administrador"
-- [ ] Gate check passes: `npm run test:unit && npm run test:int`
-- [ ] Test count: `admin-users.int.test.ts` atualizado, sem testes de revogar/excluir removidos
+- [x] `reactivateUser` por não administrador ou sem sessão → `UNAUTHORIZED` sem alterar dados
+- [x] `reactivateUser` em `pending`/`rejected` → "Este usuário não está revogado" sem alterar
+- [x] `approveUser` e `rejectUser` não são mais exportados
+- [x] `revokeUser` e `deleteUser` mantêm o comportamento (AC 6 do admin), inclusive "Não é possível revogar ou excluir o administrador"
+- [x] Gate check passes: `npm run test:unit && npm run test:int`
+- [x] Test count: `admin-users.int.test.ts` atualizado, sem testes de revogar/excluir removidos
 
 **Tests**: integration
 **Gate**: full

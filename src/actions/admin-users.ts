@@ -10,7 +10,7 @@ import { logActionError } from "@/lib/log";
 
 const ADMIN_PATH = "/admin/cadastros";
 const NOT_FOUND = "Cadastro não encontrado";
-const NOT_PENDING = "Este cadastro não está pendente";
+const NOT_REVOKED = "Este usuário não está revogado";
 const NOT_APPROVED = "Este usuário não está aprovado";
 const ADMIN_TARGET = "Não é possível revogar ou excluir o administrador";
 
@@ -19,18 +19,18 @@ async function isAdminTarget(id: string): Promise<boolean> {
   return target !== null && isAdminEmail(target.email);
 }
 
-/** Applies the admin decision; rejecting and revoking also end the user's sessions, all or nothing. */
+/** Applies the admin decision; revoking also ends the user's sessions, all or nothing. */
 async function decide(id: string, action: UserAction): Promise<ActionResult> {
   const admin = await requireAdminForAction();
   if (!admin.ok) return admin;
 
   try {
     if (action === "revoke" && (await isAdminTarget(id))) return { ok: false, error: ADMIN_TARGET };
-    const result = await usersRepo.transition(id, action, { revokeSessions: action !== "approve" });
+    const result = await usersRepo.transition(id, action, { revokeSessions: action === "revoke" });
     if (result === "not_found") return { ok: false, error: NOT_FOUND };
-    // Approving an approved user is a no-op `ok`, so only reject and revoke reach the wrong state.
+    // Reactivating an approved user is a no-op `ok`, so only a pending or rejected one reaches the wrong state.
     if (result === "wrong_state") {
-      return { ok: false, error: action === "revoke" ? NOT_APPROVED : NOT_PENDING };
+      return { ok: false, error: action === "revoke" ? NOT_APPROVED : NOT_REVOKED };
     }
   } catch (error) {
     logActionError(`${action}User`, error);
@@ -41,14 +41,9 @@ async function decide(id: string, action: UserAction): Promise<ActionResult> {
   return { ok: true };
 }
 
-/** Approves a pending, rejected or revoked user. */
-export async function approveUser(id: string): Promise<ActionResult> {
-  return decide(id, "approve");
-}
-
-/** Rejects a pending user and ends its sessions. */
-export async function rejectUser(id: string): Promise<ActionResult> {
-  return decide(id, "reject");
+/** Reactivates a revoked user; its data and vault were kept. */
+export async function reactivateUser(id: string): Promise<ActionResult> {
+  return decide(id, "reactivate");
 }
 
 /** Revokes an approved user and ends its sessions, keeping its data. */
