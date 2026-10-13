@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { hashPassword, verifyPassword } from "better-auth/crypto";
-import { eq, inArray } from "drizzle-orm";
+import { and, eq, inArray } from "drizzle-orm";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import type { VaultMaterial } from "@/lib/vault/types";
 import {
@@ -75,6 +75,25 @@ async function sealedAccount(email = "ana@x.com") {
   const issued = await passwordResetsRepo.issue(email);
   return { userId, token: issued!.token };
 }
+
+/** An approved, signed-in account that entered only through Google (no `credential`), with a vault and data. */
+async function googleOnlyAccount(email = "ana@x.com") {
+  const { userId, token } = await sealedAccount(email);
+  await db
+    .delete(account)
+    .where(and(eq(account.userId, userId), eq(account.providerId, "credential")));
+  await db.insert(account).values({
+    id: randomUUID(),
+    userId,
+    accountId: randomUUID(),
+    providerId: "google",
+  });
+  return { userId, token };
+}
+const accountsOf = async (userId: string) =>
+  (await db.select().from(account).where(eq(account.userId, userId))).map(
+    (a) => a.providerId,
+  );
 
 const REWRAP = {
   mode: "rewrap",
@@ -372,5 +391,54 @@ describe("passwordResetsRepo.consume on an account with a vault", () => {
     ).toBe(true);
     expect(await db.select().from(userVault)).toHaveLength(0);
     expect(await passwordResetsRepo.isValid(issued!.token)).toBe(false);
+  });
+});
+
+describe("passwordResetsRepo.consumeSealed on a Google-only account (no credential)", () => {
+  it("rewrap returns ok, swaps dekWrappedPw, creates no credential row, keeps the data and ends the sessions", async () => {
+    const { userId, token } = await googleOnlyAccount();
+    expect(await accountsOf(userId)).toEqual(["google"]);
+    expect(await sessionsOf(userId)).toBe(1);
+
+    expect(await passwordResetsRepo.consumeSealed(token, REWRAP)).toBe("ok");
+
+    expect(await vaultOf(userId)).toMatchObject({
+      salt: NEW_VAULT.salt,
+      dekWrappedPw: "v1:rewrapped-pw",
+      dekWrappedRecovery: "v1:old-recovery",
+      birthDateCt: "v1:birth",
+    });
+    expect(await accountsOf(userId)).toEqual(["google"]);
+    expect(await sessionsOf(userId)).toBe(0);
+    expect(await dataCounts(userId)).toEqual({
+      transactions: 1,
+      categories: 1,
+      goals: 1,
+    });
+    expect(await passwordResetsRepo.isValid(token)).toBe(false);
+  });
+
+  it("wipe returns ok, erases the data, replaces the vault, creates no credential row and ends the sessions", async () => {
+    const { userId, token } = await googleOnlyAccount();
+
+    expect(await passwordResetsRepo.consumeSealed(token, WIPE)).toBe("ok");
+
+    expect(await dataCounts(userId)).toEqual({
+      transactions: 0,
+      categories: 0,
+      goals: 0,
+    });
+    expect(await vaultOf(userId)).toMatchObject({
+      salt: NEW_VAULT.salt,
+      dekWrappedPw: "v1:new-pw",
+      dekWrappedRecovery: "v1:new-recovery",
+      birthDateCt: null,
+    });
+    expect(
+      await db.select().from(userVault).where(eq(userVault.userId, userId)),
+    ).toHaveLength(1);
+    expect(await accountsOf(userId)).toEqual(["google"]);
+    expect(await sessionsOf(userId)).toBe(0);
+    expect(await passwordResetsRepo.isValid(token)).toBe(false);
   });
 });

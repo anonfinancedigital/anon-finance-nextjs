@@ -651,15 +651,15 @@ Origem: `validation.md` (FAIL por lacunas de teste; código sem defeito, 18/18 m
 ### T18: Teste de recuperação para conta só-Google
 
 **What**: Provar que a recuperação da senha de cofre funciona sem conta `credential`.
-**Where**: `src/lib/db/repos/password-resets.sealed.int.test.ts`
+**Where**: `src/lib/db/repos/password-resets.sealed.int.test.ts`, `src/actions/password-reset.int.test.ts`
 **Depends on**: T17
 **Requirement**: GOOGLE-09
 
 **Done when**:
 
-- [ ] Usuário `approved` com conta `google` e vault, sem `credential`: `consumeSealed` com `rewrap` devolve `"ok"`, `dekWrappedPw` mudou, nenhuma linha `credential` foi criada e as sessões foram apagadas
-- [ ] O mesmo com `wipe` (cofre novo, dados financeiros apagados)
-- [ ] Gate check passes: `npm run test:unit && npm run test:int`
+- [x] Usuário `approved` com conta `google` e vault, sem `credential`: `consumeSealed` com `rewrap` devolve `"ok"`, `dekWrappedPw` mudou, nenhuma linha `credential` foi criada e as sessões foram apagadas
+- [x] O mesmo (e o caminho da action `resetPasswordSealedAction` para a mesma conta) com `wipe` (cofre novo, dados financeiros apagados)
+- [x] Gate check passes: `npm run test:unit && npm run test:int`
 
 **Tests**: integration
 **Gate**: full

@@ -641,6 +641,75 @@ describe("sealed reset actions", () => {
     expect(await passwordResetsRepo.isValid(token)).toBe(false);
   });
 
+  describe("on a Google-only account (no credential)", () => {
+    async function googleOnlyAccount() {
+      const sealed = await sealedAccount();
+      await db
+        .delete(account)
+        .where(
+          and(
+            eq(account.userId, sealed.userId),
+            eq(account.providerId, "credential"),
+          ),
+        );
+      await db.insert(account).values({
+        id: randomUUID(),
+        userId: sealed.userId,
+        accountId: randomUUID(),
+        providerId: "google",
+      });
+      return sealed;
+    }
+    const providersOf = async (id: string) =>
+      (await db.select().from(account).where(eq(account.userId, id))).map(
+        (a) => a.providerId,
+      );
+
+    it("rewrap answers ok, swaps the password-wrapped DEK, creates no credential, keeps the data and ends the sessions", async () => {
+      const { userId, token } = await googleOnlyAccount();
+      expect(await sessionsOf(userId)).toBe(1);
+
+      expect(await resetPasswordSealedAction(rewrap(token))).toEqual({
+        ok: true,
+      });
+
+      expect(await vaultOf(userId)).toMatchObject({
+        dekWrappedPw: "v1:rewrapped-pw",
+        dekWrappedRecovery: "v1:old-recovery",
+        birthDateCt: "v1:birth",
+      });
+      expect(await providersOf(userId)).toEqual(["google"]);
+      expect(await counts(userId)).toEqual({
+        transactions: 1,
+        categories: 1,
+        goals: 1,
+      });
+      expect(await sessionsOf(userId)).toBe(0);
+      expect(await passwordResetsRepo.isValid(token)).toBe(false);
+    });
+
+    it("wipe answers ok, erases the data, replaces the vault, creates no credential and ends the sessions", async () => {
+      const { userId, token } = await googleOnlyAccount();
+
+      expect(await resetPasswordSealedAction(wipe(token))).toEqual({
+        ok: true,
+      });
+
+      expect(await counts(userId)).toEqual({
+        transactions: 0,
+        categories: 0,
+        goals: 0,
+      });
+      expect(await vaultOf(userId)).toMatchObject({
+        ...NEW_VAULT,
+        birthDateCt: null,
+      });
+      expect(await providersOf(userId)).toEqual(["google"]);
+      expect(await sessionsOf(userId)).toBe(0);
+      expect(await passwordResetsRepo.isValid(token)).toBe(false);
+    });
+  });
+
   it("lets the user sign in with the new secret after a reset and not with the old password", async () => {
     const { userId, token } = await sealedAccount();
     await resetPasswordSealedAction(rewrap(token));
