@@ -46,6 +46,11 @@ vi.mock("next/navigation", () => ({
   }),
 }));
 vi.mock("@/lib/mailer", () => ({ sendMail: vi.fn(async () => {}) }));
+// Real logging, wrapped so a test can see which failure was reported.
+vi.mock("@/lib/log", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("@/lib/log")>();
+  return { ...actual, logActionError: vi.fn(actual.logActionError) };
+});
 // Real hashing, wrapped so a test can force one call to fail.
 vi.mock("better-auth/crypto", async (importOriginal) => {
   const actual = await importOriginal<typeof import("better-auth/crypto")>();
@@ -54,6 +59,7 @@ vi.mock("better-auth/crypto", async (importOriginal) => {
 
 const { sendMail } = await import("@/lib/mailer");
 const { redirect } = await import("next/navigation");
+const { logActionError } = await import("@/lib/log");
 
 setupTestDb();
 
@@ -93,6 +99,7 @@ beforeEach(() => {
 
 afterEach(() => {
   vi.restoreAllMocks();
+  vi.unstubAllEnvs();
   vi.useRealTimers();
 });
 
@@ -178,6 +185,54 @@ describe("requestPasswordResetAction", () => {
     expect(sendMail).toHaveBeenCalledTimes(2);
     expect(await passwordResetsRepo.isValid(tokenOfMail(0))).toBe(false);
     expect(await passwordResetsRepo.isValid(tokenOfMail(1))).toBe(true);
+  });
+
+  describe("public base URL (BETTER_AUTH_URL)", () => {
+    it.each([
+      ["http://app.vercel.app", "an http URL"],
+      ["", "an empty value"],
+    ])("in production, with %j (%s): no e-mail, error logged, still ok (HOSTING-10, HOSTING-11, HOSTING-12)", async (url) => {
+      await insertCredentialUser(EMAIL);
+      vi.stubEnv("NODE_ENV", "production");
+      vi.stubEnv("BETTER_AUTH_URL", url);
+      vi.mocked(logActionError).mockClear();
+
+      const result = await request(EMAIL);
+
+      expect(result).toEqual({ ok: true });
+      expect(sendMail).not.toHaveBeenCalled();
+      expect(logActionError).toHaveBeenCalledTimes(1);
+      expect(vi.mocked(logActionError).mock.calls[0][0]).toBe(
+        "requestPasswordResetAction: baseUrl",
+      );
+    });
+
+    it("in production, with a valid https URL (trailing slash), sends a link built on it (HOSTING-13)", async () => {
+      await insertCredentialUser(EMAIL);
+      vi.stubEnv("NODE_ENV", "production");
+      vi.stubEnv("BETTER_AUTH_URL", "https://app.vercel.app/");
+      vi.mocked(logActionError).mockClear();
+
+      expect(await request(EMAIL)).toEqual({ ok: true });
+
+      expect(sendMail).toHaveBeenCalledTimes(1);
+      expect(vi.mocked(sendMail).mock.calls[0][0].text).toContain(
+        "https://app.vercel.app/redefinir-senha?token=",
+      );
+      expect(logActionError).not.toHaveBeenCalled();
+    });
+
+    it("outside production, accepts an http URL and sends the e-mail (HOSTING-14)", async () => {
+      await insertCredentialUser(EMAIL);
+      vi.stubEnv("BETTER_AUTH_URL", "http://localhost:3100");
+
+      expect(await request(EMAIL)).toEqual({ ok: true });
+
+      expect(sendMail).toHaveBeenCalledTimes(1);
+      expect(vi.mocked(sendMail).mock.calls[0][0].text).toContain(
+        "http://localhost:3100/redefinir-senha?token=",
+      );
+    });
   });
 });
 

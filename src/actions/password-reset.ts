@@ -7,6 +7,7 @@ import {
   invalidInput,
   SAVE_FAILED,
 } from "@/lib/action-result";
+import { resolveBaseUrl } from "@/lib/base-url";
 import { passwordResetsRepo } from "@/lib/db/repos/password-resets";
 import { buildPasswordResetEmail } from "@/lib/domain/password-reset-email";
 import { logActionError } from "@/lib/log";
@@ -38,10 +39,19 @@ export async function requestPasswordResetAction(
   try {
     const issued = await passwordResetsRepo.issue(parsed.data.email);
     if (issued) {
+      const baseUrl = resolveBaseUrl(
+        process.env.BETTER_AUTH_URL,
+        process.env.NODE_ENV,
+      );
+      if (baseUrl === null) {
+        // Uniform answer (no hint whether the account exists); the failure shows up in the log and Sentry.
+        logActionError("requestPasswordResetAction: baseUrl", null);
+        return { ok: true };
+      }
       const message = buildPasswordResetEmail({
         to: issued.email,
         token: issued.token,
-        baseUrl: process.env.BETTER_AUTH_URL ?? "",
+        baseUrl,
       });
       after(() =>
         sendMail(message).catch((error) =>

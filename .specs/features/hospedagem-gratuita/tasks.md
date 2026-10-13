@@ -219,16 +219,17 @@ T7 → T8
 
 **Done when**:
 
-- [ ] Produção com URL `http://` ou vazia: `sendMail` não é chamado, `logActionError` recebe `requestPasswordResetAction: baseUrl`, retorno é `{ ok: true }`
-- [ ] Produção com `https://` válida: `sendMail` é chamado com link começando nessa URL
-- [ ] Fora de produção com `http://localhost:3100`: `sendMail` é chamado
-- [ ] Testes existentes da ação seguem verdes
-- [ ] Gate check passes: `npm run test:unit && npm run test:int` (banco `*_test` privado)
-- [ ] Test count: 4 testes novos passam, nenhum removido
+- [x] Produção com URL `http://` ou vazia: `sendMail` não é chamado, `logActionError` recebe `requestPasswordResetAction: baseUrl`, retorno é `{ ok: true }`
+- [x] Produção com `https://` válida: `sendMail` é chamado com link começando nessa URL
+- [x] Fora de produção com `http://localhost:3100`: `sendMail` é chamado
+- [x] Testes existentes da ação seguem verdes
+- [x] Gate check passes: `npm run test:unit && npm run test:int` (banco `*_test` privado)
+- [x] Test count: 4 testes novos passam, nenhum removido
 
 **Tests**: integration
 **Gate**: full
 **Commit**: `fix(auth): skip the reset e-mail when the public URL is invalid`
+**Status**: Done
 
 ---
 
