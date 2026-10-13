@@ -287,10 +287,10 @@ T15 → T16 → T17
 
 **Done when**:
 
-- [ ] Senha de 7 caracteres -> "A senha deve ter pelo menos 8 caracteres"; confirmação diferente -> "As senhas não coincidem"; senha de 129 caracteres -> "A senha deve ter no máximo 128 caracteres"; data inválida -> "Informe a data de nascimento" (ou a mensagem de `parseBirthDate`)
-- [ ] O payload recusa campos extras de texto puro (`password`, `kek`, `dek`) e `vault` malformado
-- [ ] Gate check passes: `npm run test:unit`
-- [ ] Test count: 7 tests pass
+- [x] Senha de 7 caracteres -> "A senha deve ter pelo menos 8 caracteres"; confirmação diferente -> "As senhas não coincidem"; senha de 129 caracteres -> "A senha deve ter no máximo 128 caracteres"; data inválida -> "Informe a data de nascimento" (ou a mensagem de `parseBirthDate`)
+- [x] O payload recusa campos extras de texto puro (`password`, `kek`, `dek`) e `vault` malformado
+- [x] Gate check passes: `npm run test:unit`
+- [x] Test count: 7 tests pass (8 casos `it`, 10 execuções com `it.each`)
 
 **Tests**: unit
 **Gate**: quick
