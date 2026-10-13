@@ -223,11 +223,11 @@ T12 → T13 → T14 → T15
 
 **Done when**:
 
-- [ ] `clientIp`: primeiro item de `x-forwarded-for` aparado; sem ele, `x-real-ip`; vazio ou ausente → `null`
-- [ ] `hashIp`: mesmo IP e segredo → mesmo hash de 64 hex; IPs diferentes → hashes diferentes; o IP em claro não aparece no resultado
-- [ ] Sem `BETTER_AUTH_SECRET` definido, `hashIp` lança erro (nunca grava hash sem chave)
-- [ ] Gate check passes: `npm run test:unit`
-- [ ] Test count: no mínimo 7 testes
+- [x] `clientIp`: primeiro item de `x-forwarded-for` aparado; sem ele, `x-real-ip`; vazio ou ausente → `null`
+- [x] `hashIp`: mesmo IP e segredo → mesmo hash de 64 hex; IPs diferentes → hashes diferentes; o IP em claro não aparece no resultado
+- [x] Sem `BETTER_AUTH_SECRET` definido, `hashIp` lança erro (nunca grava hash sem chave)
+- [x] Gate check passes: `npm run test:unit`
+- [x] Test count: no mínimo 7 testes
 
 **Tests**: unit
 **Gate**: quick
