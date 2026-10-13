@@ -259,3 +259,14 @@ export const loginAttempt = pgTable(
   },
   (t) => [index("login_attempt_email_attempted_at_idx").on(t.email, t.attemptedAt)],
 );
+
+/** Signups per client IP (HMAC hash, never the clear IP); rows older than 60 minutes are pruned on insert. */
+export const signupAttempt = pgTable(
+  "signup_attempt",
+  {
+    id: serial("id").primaryKey(),
+    ipHash: text("ip_hash").notNull(),
+    attemptedAt: timestamp("attempted_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [index("signup_attempt_ip_hash_attempted_at_idx").on(t.ipHash, t.attemptedAt)],
+);

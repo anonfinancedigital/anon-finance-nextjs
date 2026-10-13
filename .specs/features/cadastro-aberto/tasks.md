@@ -251,9 +251,9 @@ T12 → T13 → T14 → T15
 
 **Done when**:
 
-- [ ] `signup_attempt(id serial PK, ip_hash text not null, attempted_at timestamptz default now)` com índice em (`ip_hash`, `attempted_at`)
-- [ ] Migração `0016` gerada pelo drizzle-kit, sem alteração em `user.status`
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
+- [x] `signup_attempt(id serial PK, ip_hash text not null, attempted_at timestamptz default now)` com índice em (`ip_hash`, `attempted_at`)
+- [x] Migração `0016` gerada pelo drizzle-kit, sem alteração em `user.status`
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
 
 **Tests**: none
 **Gate**: build
