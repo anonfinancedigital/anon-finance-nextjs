@@ -36,7 +36,7 @@ function SheetContent({
       <DialogPrimitive.Content
         data-slot="sheet-content"
         className={cn(
-          "fixed inset-y-0 right-0 z-50 flex w-full flex-col gap-4 overflow-y-auto border-l border-border bg-popover p-5 text-sm text-popover-foreground shadow-2xl outline-none lg:w-96 data-open:animate-in data-open:slide-in-from-right data-closed:animate-out data-closed:slide-out-to-right duration-200",
+          "fixed inset-y-0 right-0 z-50 flex w-full flex-col gap-4 overflow-y-auto overscroll-contain border-l border-border bg-popover p-5 pb-[calc(1.25rem+env(safe-area-inset-bottom))] text-sm text-popover-foreground shadow-2xl outline-none lg:w-96 data-open:animate-in data-open:slide-in-from-right data-closed:animate-out data-closed:slide-out-to-right duration-200",
           className
         )}
         {...props}
@@ -44,7 +44,7 @@ function SheetContent({
         {children}
         {showCloseButton && (
           <DialogPrimitive.Close data-slot="sheet-close" asChild>
-            <Button variant="ghost" className="absolute top-2 right-2" size="icon-sm">
+            <Button variant="ghost" className="absolute top-2 right-2 pointer-coarse:absolute" size="icon-sm">
               <XIcon />
               <span className="sr-only">Fechar</span>
             </Button>

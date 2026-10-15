@@ -23,7 +23,7 @@ export default async function AppLayout({ children }: LayoutProps<"/">) {
 
   return (
     <div className="flex flex-1 flex-col md:flex-row">
-      <aside className="sticky top-0 z-30 flex items-center gap-3 border-b border-border bg-background/95 px-4 py-3 md:fixed md:inset-y-0 md:left-0 md:w-[218px] md:flex-col md:items-stretch md:gap-6 md:border-r md:border-b-0 md:bg-sidebar md:p-3">
+      <aside className="sticky top-0 z-30 flex items-center gap-3 border-b border-border bg-background/95 px-4 pt-[calc(0.75rem+env(safe-area-inset-top))] pb-3 md:fixed md:inset-y-0 md:left-0 md:w-[218px] md:flex-col md:items-stretch md:gap-6 md:border-r md:border-b-0 md:bg-sidebar md:p-3">
         <Logo className="md:px-1 md:pt-2" />
         <AppNav isAdmin={isAdmin} />
         <div className="ml-auto flex items-center gap-1 md:mt-auto md:ml-0 md:flex-col md:items-stretch">
@@ -31,7 +31,7 @@ export default async function AppLayout({ children }: LayoutProps<"/">) {
           <SignOutButton />
         </div>
       </aside>
-      <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-6 pb-24 sm:px-6 md:ml-[218px] md:max-w-none md:px-8 md:pb-8 lg:px-12">
+      <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-6 pb-[calc(6rem+env(safe-area-inset-bottom))] sm:px-6 md:ml-[218px] md:max-w-none md:px-8 md:pb-8 lg:px-12">
         <div className="mx-auto w-full max-w-5xl">
           <VaultProvider userId={userId}>{children}</VaultProvider>
         </div>

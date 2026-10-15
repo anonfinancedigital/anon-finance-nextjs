@@ -1,12 +1,13 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { headers } from "next/headers";
 import { Geist_Mono, Manrope, Sora } from "next/font/google";
 import "./globals.css";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { THEME_COLOR } from "@/lib/theme-color";
 import { BRAND_DESCRIPTION, BRAND_NAME, BRAND_TITLE_TEMPLATE } from "@/lib/brand";
 
 /** Applies the saved theme before first paint (dark when none is saved) to avoid a flash of the wrong one. */
-const themeScript = `try{if(localStorage.getItem("theme")!=="light")document.documentElement.classList.add("dark")}catch(e){document.documentElement.classList.add("dark")}`;
+const themeScript = `var d=true;try{d=localStorage.getItem("theme")!=="light"}catch(e){}if(d)document.documentElement.classList.add("dark");var m=document.querySelector('meta[name="theme-color"]');if(!m){m=document.createElement("meta");m.name="theme-color";document.head.appendChild(m)}m.content=d?"${THEME_COLOR.dark}":"${THEME_COLOR.light}"`;
 
 const manrope = Manrope({
   variable: "--font-manrope",
@@ -22,6 +23,16 @@ const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
 });
+
+// `viewport-fit=cover` lets the page paint under the notch (the `env(safe-area-inset-*)` paddings pull content back out);
+// `resizes-content` makes the Android keyboard shrink the layout like iOS does. Zoom stays enabled. `theme-color` is set by `themeScript`, as the theme is a class, not the OS setting.
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+  interactiveWidget: "resizes-content",
+  colorScheme: "dark light",
+};
 
 export const metadata: Metadata = {
   title: { default: BRAND_NAME, template: BRAND_TITLE_TEMPLATE },
