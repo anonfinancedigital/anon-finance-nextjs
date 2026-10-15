@@ -3,6 +3,7 @@
 import { MoonIcon, SunIcon } from "lucide-react";
 import { useSyncExternalStore } from "react";
 import { Button } from "@/components/ui/button";
+import { applyThemeColor } from "@/lib/theme-color";
 
 const STORAGE_KEY = "theme";
 
@@ -21,6 +22,7 @@ export function ThemeToggle({ className }: { className?: string }) {
   function toggle() {
     const next = !isDark();
     document.documentElement.classList.toggle("dark", next);
+    applyThemeColor(next);
     try {
       localStorage.setItem(STORAGE_KEY, next ? "dark" : "light");
     } catch {

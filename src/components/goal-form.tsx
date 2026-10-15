@@ -76,7 +76,7 @@ export function GoalForm({
         </p>
       )}
 
-      <div className="sticky bottom-0 z-20 -mx-5 -mb-5 mt-auto flex gap-2 border-t border-border bg-popover px-5 py-3">
+      <div className="sticky bottom-0 z-20 -mx-5 -mb-[calc(1.25rem+env(safe-area-inset-bottom))] mt-auto flex gap-2 border-t border-border bg-popover px-5 pt-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))]">
         <Button type="submit" disabled={pending}>
           Aplicar
         </Button>
