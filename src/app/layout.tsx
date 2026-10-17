@@ -60,7 +60,10 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
       </head>
       <body className="min-h-full flex flex-col">
         <TooltipProvider>{children}</TooltipProvider>
-      </body>
+      {/* impeccable-live-start */}
+<script nonce={nonce} src="http://localhost:8400/live.js?token=20abb03b-5b60-4403-8b32-582c835926f8"></script>
+{/* impeccable-live-end */}
+</body>
     </html>
   );
 }

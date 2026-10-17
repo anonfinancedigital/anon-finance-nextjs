@@ -1,0 +1,107 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-15T00:00:00Z",
+  "title": "Design System: ANON",
+  "extensions": {
+    "colorMeta": {
+      "primary": { "role": "primary", "displayName": "Roxo Cofre", "canonical": "oklch(0.53 0.21 293)", "tonalRamp": ["oklch(0.2 0.09 293)", "oklch(0.3 0.15 293)", "oklch(0.4 0.19 293)", "oklch(0.53 0.21 293)", "oklch(0.62 0.21 293)", "oklch(0.76 0.14 293)", "oklch(0.87 0.07 293)", "oklch(0.95 0.03 293)"] },
+      "vault-night": { "role": "neutral", "displayName": "Noite do Cofre", "canonical": "oklch(0.15 0.015 270)", "tonalRamp": ["oklch(0.15 0.015 270)", "oklch(0.2 0.02 270)", "oklch(0.24 0.02 270)", "oklch(0.3 0.02 270)", "oklch(0.45 0.02 270)", "oklch(0.7 0.02 270)", "oklch(0.9 0.01 270)", "oklch(0.96 0.005 270)"] },
+      "income-green": { "role": "secondary", "displayName": "Verde Receita", "canonical": "oklch(0.82 0.19 155)", "tonalRamp": ["oklch(0.25 0.06 155)", "oklch(0.35 0.09 155)", "oklch(0.5 0.14 155)", "oklch(0.62 0.17 155)", "oklch(0.72 0.19 155)", "oklch(0.82 0.19 155)", "oklch(0.9 0.1 155)", "oklch(0.95 0.05 155)"] },
+      "over-coral": { "role": "tertiary", "displayName": "Coral Estouro", "canonical": "oklch(0.68 0.19 20)", "tonalRamp": ["oklch(0.25 0.08 20)", "oklch(0.35 0.12 20)", "oklch(0.45 0.16 20)", "oklch(0.55 0.2 20)", "oklch(0.68 0.19 20)", "oklch(0.78 0.13 20)", "oklch(0.88 0.07 20)", "oklch(0.95 0.03 20)"] }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "Nome ANON no logotipo." },
+      "headline": { "displayName": "Headline", "purpose": "Títulos de cartão e seção, e valores em R$." },
+      "body": { "displayName": "Body", "purpose": "Interface, tabelas e formulários." },
+      "label": { "displayName": "Label", "purpose": "Descritor da marca e legendas minúsculas." }
+    },
+    "shadows": [
+      { "name": "card", "value": "0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)", "purpose": "Separa cartões e seções do fundo." },
+      { "name": "accent-glow", "value": "0 0 16px oklch(0.53 0.21 293 / 0.35)", "purpose": "Único brilho: botão primário." }
+    ],
+    "motion": [
+      { "name": "flash", "value": "300ms ease-out", "purpose": "Destaque do item recém-alterado (fundo accent → transparente)." },
+      { "name": "transition-default", "value": "200ms all", "purpose": "Estados de botão e campo." }
+    ],
+    "breakpoints": [
+      { "name": "md", "value": "768px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Ação principal; único elemento que emite brilho.",
+      "html": "<button class=\"ds-btn-primary\">Salvar</button>",
+      "css": ".ds-btn-primary { height: 40px; padding: 0 16px; border: 1px solid transparent; border-radius: 11.2px; background: oklch(0.53 0.21 293); color: oklch(0.99 0 0); font-size: 14px; font-weight: 500; box-shadow: 0 0 16px oklch(0.53 0.21 293 / 0.35); transition: all 200ms; cursor: pointer; } .ds-btn-primary:hover { filter: brightness(1.1); } .ds-btn-primary:active { transform: translateY(1px); filter: brightness(0.95); } .ds-btn-primary:focus-visible { outline: none; border-color: oklch(0.62 0.21 293); box-shadow: 0 0 0 3px oklch(0.62 0.21 293 / 0.5); }"
+    },
+    {
+      "name": "Outline Button",
+      "kind": "button",
+      "refersTo": "button-outline",
+      "description": "Ação secundária sobre cartão.",
+      "html": "<button class=\"ds-btn-outline\">Cancelar</button>",
+      "css": ".ds-btn-outline { height: 40px; padding: 0 16px; border: 1px solid oklch(1 0 0 / 12%); border-radius: 11.2px; background: oklch(0.2 0.02 270); color: oklch(0.96 0.005 270); font-size: 14px; font-weight: 500; transition: all 200ms; cursor: pointer; } .ds-btn-outline:hover { background: oklch(1 0 0 / 6%); } .ds-btn-outline:focus-visible { outline: none; border-color: oklch(0.62 0.21 293); box-shadow: 0 0 0 3px oklch(0.62 0.21 293 / 0.5); }"
+    },
+    {
+      "name": "Text Field",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Campo tonal com foco roxo.",
+      "html": "<input class=\"ds-input\" placeholder=\"Descrição\" />",
+      "css": ".ds-input { height: 40px; width: 240px; padding: 0 14px; border: 1px solid oklch(1 0 0 / 12%); border-radius: 11.2px; background: oklch(1 0 0 / 4%); color: oklch(0.96 0.005 270); font-size: 14px; outline: none; transition: all 150ms; } .ds-input::placeholder { color: oklch(0.7 0.02 270); } .ds-input:focus-visible { border-color: oklch(0.53 0.21 293); background: oklch(1 0 0 / 6%); box-shadow: 0 0 0 2px oklch(0.53 0.21 293 / 0.3); }"
+    },
+    {
+      "name": "Content Card",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "Seção titulada sobre cartão com borda translúcida.",
+      "html": "<section class=\"ds-card\"><header><h2>Resumo do mês</h2></header><p>R$ 4.250,00</p></section>",
+      "css": ".ds-card { width: 280px; overflow: hidden; border: 1px solid oklch(1 0 0 / 9%); border-radius: 14.4px; background: oklch(0.2 0.02 270); color: oklch(0.96 0.005 270); box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1); } .ds-card header { padding: 20px 24px; } .ds-card h2 { margin: 0; font-family: Sora, sans-serif; font-size: 16px; font-weight: 600; } .ds-card p { margin: 0; padding: 0 24px 20px; font-family: Sora, sans-serif; font-size: 24px; font-weight: 700; color: oklch(0.82 0.19 155); }"
+    },
+    {
+      "name": "Floating Add Button",
+      "kind": "custom",
+      "refersTo": "fab-add",
+      "description": "Atalho de lançamento, só no celular.",
+      "html": "<button class=\"ds-fab\" aria-label=\"Nova transação\"><svg viewBox=\"0 0 24 24\" width=\"32\" height=\"32\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\"><path d=\"M5 12h14M12 5v14\"/></svg></button>",
+      "css": ".ds-fab { width: 60px; height: 60px; display: inline-flex; align-items: center; justify-content: center; border: 0; border-radius: 9999px; background: oklch(0.53 0.21 293); color: oklch(0.99 0 0); box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.3), 0 0 16px oklch(0.53 0.21 293 / 0.35); cursor: pointer; transition: all 200ms; } .ds-fab:hover { filter: brightness(1.1); } .ds-fab:active { transform: translateY(1px); } .ds-fab:focus-visible { outline: 2px solid oklch(0.62 0.21 293); outline-offset: 2px; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "O Cofre Luminoso",
+    "overview": "A ANON é um cofre que se deixa ver por dentro: um fundo noturno profundo e silencioso, onde só o que importa emite luz. O roxo marca ação e marca; o verde marca dinheiro que entra, investimento e retorno; o coral marca gasto que estourou. Todo o resto é tom sobre tom.",
+    "keyCharacteristics": [
+      "Escuro por padrão, com tema claro equivalente; azul-violeta frio (matiz 270) em todos os neutros.",
+      "Roxo como único acento de ação; verde, coral, âmbar e azul só com significado fixo.",
+      "Números e títulos em Sora; interface e texto corrido em Manrope.",
+      "Profundidade por camadas tonais e dois glows de fundo; brilho de sombra só no botão primário.",
+      "Mobile é cidadão de primeira: barra inferior, botão flutuante, safe areas, alvos de toque ampliados."
+    ],
+    "rules": [
+      { "name": "The Single Meaning Rule", "body": "Cada cor semântica tem um significado só: verde é dinheiro que entra ou rende, coral é estouro, roxo é ação/aporte, azul-petróleo é progresso da meta.", "section": "colors" },
+      { "name": "The Overshoot Is Not a Sin Rule", "body": "Investir acima da meta nunca é coral. Só despesa real que passa do teto é alerta.", "section": "colors" },
+      { "name": "The Legible Purple Rule", "body": "Roxo preenche; roxo-claro escreve. Texto roxo usa o token de link, nunca o primário.", "section": "colors" },
+      { "name": "The Numbers Speak Sora Rule", "body": "Valores de dinheiro e títulos usam a fonte de display; texto explicativo nunca.", "section": "typography" },
+      { "name": "The No-Zoom Field Rule", "body": "Campos têm 16px no celular e 14px a partir de md.", "section": "typography" },
+      { "name": "The One Light Rule", "body": "Só a ação primária brilha. Se tudo emite luz, nada é cofre.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do usar roxo como único acento de ação e reservá-lo para o primário, item ativo e marca.",
+      "Do usar Sora para valores e títulos, Manrope para o resto.",
+      "Do manter neutros no matiz 270 e pares claro/escuro com o mesmo matiz.",
+      "Do garantir AA em texto: usar o token de link para texto roxo.",
+      "Do respeitar safe areas, 100dvh e alvos de toque ≥ 44px (via pointer-coarse).",
+      "Do respeitar prefers-reduced-motion; animações curtas (≈300ms, ease-out)."
+    ],
+    "donts": [
+      "Don't pintar investimento acima da meta de coral; é vitória.",
+      "Don't usar uma cor semântica para dois significados.",
+      "Don't adicionar sombra colorida/brilho a nada além do botão primário.",
+      "Don't usar texto em Roxo Cofre sobre fundo escuro nem cartões com borda lateral colorida.",
+      "Don't enviar fontes ou recursos de terceiros em runtime; fontes entram por next/font.",
+      "Don't deixar o campo com menos de 16px no celular (zoom do iOS)."
+    ]
+  }
+}
