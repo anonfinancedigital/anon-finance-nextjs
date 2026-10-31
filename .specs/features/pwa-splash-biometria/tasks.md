@@ -384,10 +384,10 @@ T24 → T25
 
 **Done when**:
 
-- [ ] `true` só com contexto seguro, `PublicKeyCredential` presente e a verificação de plataforma resolvendo `true`
-- [ ] `false` para contexto inseguro, API ausente, resolução `false` e rejeição
-- [ ] Gate check passes: `npm run test:unit`
-- [ ] Nenhum teste existente removido, pulado ou enfraquecido
+- [x] `true` só com contexto seguro, `PublicKeyCredential` presente e a verificação de plataforma resolvendo `true`
+- [x] `false` para contexto inseguro, API ausente, resolução `false` e rejeição
+- [x] Gate check passes: `npm run test:unit`
+- [x] Nenhum teste existente removido, pulado ou enfraquecido
 
 **Tests**: unit
 **Gate**: quick
