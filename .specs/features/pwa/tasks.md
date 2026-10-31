@@ -691,12 +691,12 @@ T38 → T39 → T40 → T41 → T42 → T43
 
 **Done when**:
 
-- [ ] `src/lib/pwa/sw.test.ts` estendido: `push` com JSON válido chama `showNotification` com título, corpo, `icon` e `badge` `/icon-192.png`
-- [ ] Sem dados, JSON inválido, `title` ou `body` não texto → "ANON" / "Você tem uma nova notificação."
-- [ ] Clique fecha a notificação e foca janela aberta ou abre o destino; `url` só vale se começar com "/" e não com "//"
-- [ ] Os testes de cache da T5 continuam passando
-- [ ] Gate check passes: `npm run test:unit`
-- [ ] Nenhum teste existente removido, pulado ou enfraquecido
+- [x] `src/lib/pwa/sw.test.ts` estendido: `push` com JSON válido chama `showNotification` com título, corpo, `icon` e `badge` `/icon-192.png`
+- [x] Sem dados, JSON inválido, `title` ou `body` não texto → "ANON" / "Você tem uma nova notificação."
+- [x] Clique fecha a notificação e foca janela aberta ou abre o destino; `url` só vale se começar com "/" e não com "//"
+- [x] Os testes de cache da T5 continuam passando
+- [x] Gate check passes: `npm run test:unit`
+- [x] Nenhum teste existente removido, pulado ou enfraquecido
 
 **Tests**: unit
 **Gate**: quick

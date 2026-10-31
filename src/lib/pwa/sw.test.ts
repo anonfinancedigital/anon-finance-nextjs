@@ -7,6 +7,11 @@ const SOURCE = readFileSync(join(process.cwd(), "public", "sw.js"), "utf8");
 const ORIGIN = "https://anon.example";
 
 type Listener = (event: Record<string, unknown>) => void;
+type FakeWindow = {
+  url: string;
+  focus: ReturnType<typeof vi.fn>;
+  navigate: ReturnType<typeof vi.fn>;
+};
 type FakeResponse = { status: number; tag: string; clone: () => FakeResponse };
 
 const response = (status: number, tag = `r${status}`): FakeResponse => {
@@ -15,7 +20,9 @@ const response = (status: number, tag = `r${status}`): FakeResponse => {
 };
 
 /** Loads public/sw.js in a vm with a simulated service worker scope and an in-memory Cache Storage. */
-function loadWorker(options: { fetchImpl?: (req: unknown) => Promise<FakeResponse> } = {}) {
+function loadWorker(
+  options: { fetchImpl?: (req: unknown) => Promise<FakeResponse>; windows?: FakeWindow[] } = {},
+) {
   const listeners: Record<string, Listener> = {};
   const stores = new Map<string, Map<string, FakeResponse>>();
   const addAllCalls: { cache: string; urls: string[] }[] = [];
@@ -40,13 +47,18 @@ function loadWorker(options: { fetchImpl?: (req: unknown) => Promise<FakeRespons
   };
 
   const claim = vi.fn(async () => {});
+  const showNotification = vi.fn<(title: string, options: Record<string, unknown>) => Promise<void>>(async () => {});
+  const windows: FakeWindow[] = options.windows ?? [];
+  const matchAll = vi.fn(async () => windows);
+  const openWindow = vi.fn<(url: string) => Promise<null>>(async () => null);
   const skipWaiting = vi.fn(async () => {});
   const network = vi.fn(options.fetchImpl ?? (async () => response(200, "network")));
   const errorResponse = { tag: "Response.error()" };
 
   const self = {
     location: { origin: ORIGIN },
-    clients: { claim },
+    clients: { claim, matchAll, openWindow },
+    registration: { showNotification },
     skipWaiting,
     addEventListener: (type: string, fn: Listener) => void (listeners[type] = fn),
   };
@@ -80,7 +92,33 @@ function loadWorker(options: { fetchImpl?: (req: unknown) => Promise<FakeRespons
     });
     return { intercepted: responded !== undefined, result: responded ? await responded : undefined };
   };
-  return { stores, cacheHandles, addAllCalls, claim, skipWaiting, network, caches, errorResponse, lifecycle, dispatchFetch, open };
+  /** Fires `push` with `data` standing for PushMessageData (`null` when the push has no data). */
+  const dispatchPush = async (data: { json: () => unknown } | null) => {
+    listeners.push({ data, waitUntil: (p: Promise<unknown>) => waitUntilPromises.push(p) });
+    await Promise.all(waitUntilPromises.splice(0));
+  };
+  const dispatchClick = async (notification: { data?: unknown; close: () => void }) => {
+    listeners.notificationclick({ notification, waitUntil: (p: Promise<unknown>) => waitUntilPromises.push(p) });
+    await Promise.all(waitUntilPromises.splice(0));
+  };
+  return {
+    stores,
+    cacheHandles,
+    addAllCalls,
+    claim,
+    skipWaiting,
+    network,
+    caches,
+    errorResponse,
+    lifecycle,
+    dispatchFetch,
+    open,
+    showNotification,
+    matchAll,
+    openWindow,
+    dispatchPush,
+    dispatchClick,
+  };
 }
 
 describe("service worker install (PWA-07, PWA-14)", () => {
@@ -188,6 +226,137 @@ describe("service worker leaves everything else to the browser (PWA-12)", () => 
     const sw = loadWorker();
     const { intercepted } = await sw.dispatchFetch(req);
     expect(intercepted).toBe(false);
+    expect(sw.network).not.toHaveBeenCalled();
+  });
+});
+
+const GENERIC = { title: "ANON", body: "Você tem uma nova notificação." };
+
+const jsonData = (value: unknown) => ({ json: () => value });
+const badJson = { json: () => JSON.parse("{não é json") };
+
+const fakeWindow = (url: string): FakeWindow => {
+  const w: FakeWindow = { url, focus: vi.fn(), navigate: vi.fn() };
+  w.focus.mockImplementation(async () => w);
+  w.navigate.mockImplementation(async () => w);
+  return w;
+};
+
+/** The single showNotification call as `{ title, options }`. */
+const shown = (sw: ReturnType<typeof loadWorker>) => {
+  expect(sw.showNotification).toHaveBeenCalledTimes(1);
+  const [title, options] = sw.showNotification.mock.calls[0];
+  return { title, options };
+};
+
+describe("service worker push (PUSH-42)", () => {
+  it("shows the payload title and body with the app icon as icon and badge", async () => {
+    const sw = loadWorker();
+    await sw.dispatchPush(jsonData({ title: "ANON", body: "Que tal registrar seus gastos de hoje?", url: "/" }));
+
+    const { title, options } = shown(sw);
+    expect(title).toBe("ANON");
+    expect(options).toMatchObject({
+      body: "Que tal registrar seus gastos de hoje?",
+      icon: "/icon-192.png",
+      badge: "/icon-192.png",
+    });
+  });
+});
+
+describe("service worker push without a usable payload (PUSH-43)", () => {
+  it.each([
+    ["no data", null],
+    ["invalid JSON", badJson],
+    ["a JSON that is not an object", jsonData(7)],
+    ["a non-string title", jsonData({ title: 1, body: "corpo" })],
+    ["a non-string body", jsonData({ title: "Título", body: { valor: 10 } })],
+    ["a missing body", jsonData({ title: "Título" })],
+  ])("shows the generic text for %s", async (_name, data) => {
+    const sw = loadWorker();
+    await sw.dispatchPush(data);
+
+    const { title, options } = shown(sw);
+    expect(title).toBe(GENERIC.title);
+    expect(options).toMatchObject({ body: GENERIC.body, icon: "/icon-192.png", badge: "/icon-192.png" });
+  });
+});
+
+describe("service worker notification click (PUSH-44, PUSH-45)", () => {
+  /** Shows a push with `url` and clicks the notification it produced. */
+  async function clickPushWith(sw: ReturnType<typeof loadWorker>, url: unknown) {
+    await sw.dispatchPush(jsonData({ title: "ANON", body: "corpo", url }));
+    const close = vi.fn();
+    await sw.dispatchClick({ data: shown(sw).options.data, close });
+    return close;
+  }
+
+  it("closes the notification and opens the target when no window is open", async () => {
+    const sw = loadWorker();
+    const close = await clickPushWith(sw, "/conta");
+
+    expect(close).toHaveBeenCalledTimes(1);
+    expect(sw.openWindow).toHaveBeenCalledWith("/conta");
+  });
+
+  it("focuses an open same-origin window navigated to the target instead of opening another", async () => {
+    const win = fakeWindow(`${ORIGIN}/`);
+    const sw = loadWorker({ windows: [win] });
+    const close = await clickPushWith(sw, "/conta");
+
+    expect(close).toHaveBeenCalledTimes(1);
+    expect(win.focus).toHaveBeenCalledTimes(1);
+    expect(win.navigate).toHaveBeenCalledWith("/conta");
+    expect(sw.openWindow).not.toHaveBeenCalled();
+  });
+
+  it("ignores a window of another origin and opens the target", async () => {
+    const other = fakeWindow("https://other.example/");
+    const sw = loadWorker({ windows: [other] });
+    await clickPushWith(sw, "/conta");
+
+    expect(other.focus).not.toHaveBeenCalled();
+    expect(other.navigate).not.toHaveBeenCalled();
+    expect(sw.openWindow).toHaveBeenCalledWith("/conta");
+  });
+
+  it.each([
+    ["a protocol-relative URL", "//evil.example/x"],
+    ["an absolute URL", "https://evil.example/x"],
+    ["a relative path without the leading slash", "conta"],
+    ["a backslash after the slash", "/\\evil.example"],
+    ["a non-string", 42],
+    ["no url", undefined],
+  ])("falls back to / for %s", async (_name, url) => {
+    const sw = loadWorker();
+    await clickPushWith(sw, url);
+
+    expect(sw.openWindow).toHaveBeenCalledWith("/");
+  });
+
+  it("targets / when the notification came from an unusable payload", async () => {
+    const sw = loadWorker();
+    await sw.dispatchPush(null);
+    await sw.dispatchClick({ data: shown(sw).options.data, close: vi.fn() });
+
+    expect(sw.openWindow).toHaveBeenCalledWith("/");
+  });
+
+  it("falls back to / when the notification carries no data", async () => {
+    const sw = loadWorker();
+    await sw.dispatchClick({ close: vi.fn() });
+
+    expect(sw.openWindow).toHaveBeenCalledWith("/");
+  });
+});
+
+describe("service worker push keeps the cache untouched (PUSH-46)", () => {
+  it("stores nothing and touches no cache when a push arrives and is clicked", async () => {
+    const sw = loadWorker();
+    await sw.dispatchPush(jsonData({ title: "ANON", body: "corpo", url: "/conta" }));
+    await sw.dispatchClick({ data: shown(sw).options.data, close: vi.fn() });
+
+    expect(sw.stores.size).toBe(0);
     expect(sw.network).not.toHaveBeenCalled();
   });
 });
