@@ -3,12 +3,14 @@
 import { LogOutIcon } from "lucide-react";
 import { signOutAction } from "@/actions/auth";
 import { Button } from "@/components/ui/button";
+import { lockStore } from "@/lib/biometric/lock-store.client";
 import { deviceKey } from "@/lib/vault/device-store";
 
 /** "Sair": removes the DEK from this device before ending the session (SIGILO-16). */
 export function SignOutButton() {
   async function signOut() {
     await deviceKey.clear();
+    lockStore.clear();
     await signOutAction();
   }
 

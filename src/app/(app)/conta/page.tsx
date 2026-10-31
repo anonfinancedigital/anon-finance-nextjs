@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { BiometricCard } from "@/components/biometric-card";
 import { ContentCard } from "@/components/content-card";
 import { DeleteAccountDialog } from "@/components/delete-account-dialog";
 import { ExportButton } from "@/components/export-button";
@@ -51,6 +52,8 @@ export default async function AccountPage() {
       </ContentCard>
 
       <InstallCard />
+
+      <BiometricCard userId={userId} />
 
       {pushPublicKey && pushSettings && (
         <PushSettingsCard publicKey={pushPublicKey} devices={pushSettings.devices} prefs={pushSettings.prefs} />

@@ -226,6 +226,25 @@ Como testar o push:
 - Ative as notificações em Conta, aceite a permissão do navegador e envie um aviso pelo painel do administrador. Para o disparo horário, chame o endpoint à mão: `curl -X POST -H "Authorization: Bearer <CRON_SECRET>" http://localhost:3000/api/push/dispatch`.
 - No iOS o push só funciona com o app instalado na tela inicial (Compartilhar, Adicionar à Tela de Início), e a permissão é pedida depois da instalação.
 
+### 8.2 Splash do iOS e bloqueio por biometria
+
+**Gerar a splash.** As imagens de abertura do iOS ficam em `public/splash/` (PNG retrato, fundo `#0D111A`, marca centralizada) e são geradas a partir da arte da marca por `npm run pwa:splash`. Rode o comando e versione os PNGs sempre que mudar a lista ou a arte.
+
+**Incluir um iPhone novo.** Adicione uma linha em `SPLASH_DEVICES` em `src/lib/pwa/splash-list.ts` (`width` e `height` em pixels CSS, `ratio` = razão de pixels do aparelho), rode `npm run pwa:splash` e confira que o PNG `<W*R>x<H*R>.png` apareceu em `public/splash/`. Os testes de `src/lib/pwa/` conferem media única, dimensões e cores do PNG.
+
+**Atenção: casamento exato.** O iOS só usa a imagem de abertura cuja `media` casa exatamente com o aparelho (`device-width`, `device-height`, `-webkit-device-pixel-ratio` e retrato). Aparelho fora da lista recebe o comportamento padrão do iOS (tela em branco ou cor de fundo). Um iPhone novo, como o iPhone Air (420×912@3, não confirmado), precisa da linha acima.
+
+**Aviso sobre o bloqueio.** O bloqueio por biometria é uma trava de tela local (AD-017): WebAuthn de plataforma, sem servidor e sem proteção criptográfica da chave de dados. Quem controla o aparelho desbloqueado e as ferramentas do navegador o contorna. O funcionamento do WebAuthn no PWA instalado (iOS e Android) **não foi verificado em aparelho real**; o checklist abaixo é obrigatório.
+
+**Checklist manual em aparelho real** (instalar o app na tela inicial antes):
+
+- [ ] O ícone instalado no Android e no iOS mostra o rótulo "Anon Finance" sem corte.
+- [ ] No iPhone, a abertura mostra a splash da marca sobre `#0D111A`, sem tela branca.
+- [ ] No Android, a abertura mostra o ícone sobre `#0D111A`, seguido da splash do app.
+- [ ] Com o bloqueio ativo (iOS e Android), abrir o app pede a biometria; confirmar abre o app; cancelar mostra "Tentar de novo", "Usar a senha" e "Sair".
+- [ ] Voltar ao app em até 60 s não pede a biometria; depois de mais de 60 s pede.
+- [ ] Na aba Network, nenhuma requisição do bloqueio contém credencial ou resultado biométrico.
+
 ## 9. Cloudflare e domínio (opcional, depois)
 
 - Comece no subdomínio `.vercel.app`. Domínio próprio custa dinheiro, então fica para quando houver verba.

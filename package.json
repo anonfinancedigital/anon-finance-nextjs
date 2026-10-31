@@ -16,7 +16,8 @@
     "db:migrate": "drizzle-kit migrate",
     "db:seed": "tsx scripts/seed-user.ts",
     "db:finalize-vault": "tsx scripts/finalize-vault.ts",
-    "pwa:icons": "tsx scripts/generate-pwa-icons.ts"
+    "pwa:icons": "tsx scripts/generate-pwa-icons.ts",
+    "pwa:splash": "tsx scripts/generate-pwa-splash.ts"
   },
   "dependencies": {
     "@better-auth/infra": "^0.4.14",

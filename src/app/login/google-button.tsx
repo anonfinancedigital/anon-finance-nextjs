@@ -4,6 +4,8 @@ import { useActionState } from "react";
 import { signInGoogleAction } from "@/actions/auth-google";
 import { Button } from "@/components/ui/button";
 import { useHydrated } from "@/components/use-hydrated";
+import { markFreshLogin } from "@/lib/biometric/lock-policy";
+import { freshLoginStorage } from "@/lib/biometric/lock-store.client";
 import type { ActionResult } from "@/lib/action-result";
 
 /** Google "G" in the official brand colors; decorative, so hidden from screen readers. */
@@ -36,7 +38,11 @@ function GoogleLogo() {
  */
 export function GoogleButton() {
   const [state, formAction, pending] = useActionState<ActionResult | undefined>(
-    () => signInGoogleAction(),
+    () => {
+      // The round trip through Google ends in this tab: its first app load skips the biometric lock (LOCK-19).
+      markFreshLogin(freshLoginStorage, Date.now());
+      return signInGoogleAction();
+    },
     undefined,
   );
   const hydrated = useHydrated();

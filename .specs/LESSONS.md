@@ -450,6 +450,18 @@ Seen once or not yet corroborated. Tracked, not trusted.
 - evidence: validation.md G2: src/lib/push/send.ts:31 (PUSH-28, código de log de erro de rede) (logging)
 - last seen: 2026-10-31T22:25:45Z
 
+### L-074 - Test the failure path of a write-then-cleanup function starting from a pre-existing record, not an empty store
+- signal: `surviving_mutant` · recurrence: 1 feature(s) · scope: `biometric` · harmful: 0
+- features: pwa-splash-biometria
+- evidence: M14 src/lib/biometric/lock-store.ts:39 (biometric)
+- last seen: 2026-10-31T23:30:25Z
+
+### L-075 - Specify a tolerance when an acceptance criterion says an element is centered, or the test can only assert presence
+- signal: `spec_precision_gap` · recurrence: 1 feature(s) · scope: `pwa` · harmful: 0
+- features: pwa-splash-biometria
+- evidence: SPLASH-04 src/lib/pwa/splash-images.test.ts:52 (pwa)
+- last seen: 2026-10-31T23:30:25Z
+
 ## Quarantined (failed when applied - ignore)
 
 A confirmed lesson that recurred alongside failure. Kept for the maintainer to review.

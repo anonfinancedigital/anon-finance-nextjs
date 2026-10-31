@@ -1,12 +1,12 @@
 import type { MetadataRoute } from "next";
-import { BRAND_NAME } from "@/lib/brand";
+import { APP_NAME } from "@/lib/brand";
 
 const BRAND_COLOR = "#0D111A";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: BRAND_NAME,
-    short_name: BRAND_NAME,
+    name: APP_NAME,
+    short_name: APP_NAME,
     start_url: "/",
     scope: "/",
     display: "standalone",

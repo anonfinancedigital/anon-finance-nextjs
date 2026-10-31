@@ -2,6 +2,7 @@
 
 import { createContext, type ReactNode, useContext, useEffect, useMemo, useState } from "react";
 import { getVaultAction } from "@/actions/vault";
+import { BrandSplash } from "@/components/brand-splash";
 import { LOAD_ERROR_MESSAGE } from "@/components/load-error";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
@@ -89,7 +90,7 @@ export function VaultProvider({ userId, children }: { userId: string; children: 
   const dek = state.status === "ready" ? state.dek : null;
   const vault = useMemo(() => (dek ? { dek, userId } : null), [dek, userId]);
 
-  if (state.status === "loading") return <VaultSkeleton />;
+  if (state.status === "loading") return <BrandSplash />;
   // Locked: "Desbloquear" replaces the children, none renders without the DEK (SIGILO-17).
   if (state.status === "locked") {
     return <UnlockScreen userId={userId} onUnlocked={(unlocked) => setState({ status: "ready", dek: unlocked })} />;
@@ -112,14 +113,4 @@ export function VaultProvider({ userId, children }: { userId: string; children: 
     );
   }
   return <VaultContext.Provider value={vault}>{children}</VaultContext.Provider>;
-}
-
-function VaultSkeleton() {
-  return (
-    <div aria-busy="true" aria-label="Carregando" className="animate-pulse space-y-4">
-      <div className="h-8 w-48 rounded-lg bg-muted" />
-      <div className="h-24 rounded-2xl bg-muted" />
-      <div className="h-48 rounded-2xl bg-muted" />
-    </div>
-  );
 }
