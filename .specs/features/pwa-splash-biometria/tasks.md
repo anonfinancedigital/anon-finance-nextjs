@@ -225,10 +225,10 @@ T24 → T25
 
 **Done when**:
 
-- [ ] `pwaMetadata.appleWebApp.startupImage` é igual a `startupImages()`
-- [ ] `metadata.test.ts`: cada `url` aponta para um arquivo existente em `public/` (SPLASH-02)
-- [ ] Gate check passes: `npm run test:unit`
-- [ ] Nenhum teste existente removido, pulado ou enfraquecido
+- [x] `pwaMetadata.appleWebApp.startupImage` é igual a `startupImages()`
+- [x] `metadata.test.ts`: cada `url` aponta para um arquivo existente em `public/` (SPLASH-02)
+- [x] Gate check passes: `npm run test:unit`
+- [x] Nenhum teste existente removido, pulado ou enfraquecido
 
 **Tests**: unit
 **Gate**: quick

@@ -187,7 +187,7 @@ Explicitamente excluído. Documentado para evitar crescimento de escopo.
 | Requirement ID | Story | Phase | Status |
 | -------------- | ----- | ----- | ------ |
 | SPLASH-01 | P1: Splash nativa na abertura | - | Done |
-| SPLASH-02 | P1: Splash nativa na abertura | - | Pending |
+| SPLASH-02 | P1: Splash nativa na abertura | - | Done |
 | SPLASH-03 | P1: Splash nativa na abertura | - | Done |
 | SPLASH-04 | P1: Splash nativa na abertura | - | Done |
 | SPLASH-05 | P1: Splash nativa na abertura | - | Done |
