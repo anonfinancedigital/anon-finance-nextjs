@@ -635,12 +635,12 @@ T38 → T39 → T40 → T41 → T42 → T43
 
 **Done when**:
 
-- [ ] `src/lib/db/repos/push.int.test.ts`: primeira inscrição cria preferências com os padrões da spec
-- [ ] Sexta inscrição devolve `limit`; mesma `endpoint` atualiza chaves e dono sem criar linha; duas inscrições concorrentes não passam de 5
-- [ ] `unsubscribe` só apaga a linha do dono; `removeByEndpoint` apaga qualquer dono
-- [ ] `updatePrefs` sem linha devolve `no_prefs`; `securityTargets` vazio com `security` falso ou sem preferências
-- [ ] Gate check passes: `npm run test:unit && npm run test:int`
-- [ ] Nenhum teste existente removido, pulado ou enfraquecido
+- [x] `src/lib/db/repos/push.int.test.ts`: primeira inscrição cria preferências com os padrões da spec
+- [x] Sexta inscrição devolve `limit`; mesma `endpoint` atualiza chaves e dono sem criar linha; duas inscrições concorrentes não passam de 5
+- [x] `unsubscribe` só apaga a linha do dono; `removeByEndpoint` apaga qualquer dono
+- [x] `updatePrefs` sem linha devolve `no_prefs`; `securityTargets` vazio com `security` falso ou sem preferências
+- [x] Gate check passes: `npm run test:unit && npm run test:int`
+- [x] Nenhum teste existente removido, pulado ou enfraquecido
 
 **Tests**: integration
 **Gate**: full

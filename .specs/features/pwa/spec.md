@@ -349,9 +349,9 @@ O ANON roda só no navegador: sem ícone na tela inicial, sem janela própria, s
 | PUSH-04 | P1: ativar — permissão negada | - | Pending |
 | PUSH-05 | P1: ativar — endpoint fora da lista | - | Implementing |
 | PUSH-06 | P1: ativar — chaves inválidas | - | Implementing |
-| PUSH-07 | P1: ativar — limite de 5 | - | Pending |
-| PUSH-08 | P1: ativar — endpoint repetido | - | Pending |
-| PUSH-09 | P1: ativar — desativar | - | Pending |
+| PUSH-07 | P1: ativar — limite de 5 | - | Implementing |
+| PUSH-08 | P1: ativar — endpoint repetido | - | Implementing |
+| PUSH-09 | P1: ativar — desativar | - | Implementing |
 | PUSH-10 | P1: ativar — ação exige sessão | - | Pending |
 | PUSH-11 | P1: ativar — exclusão da conta | - | Implementing |
 | PUSH-12 | P1: ativar — iOS sem instalar | - | Pending |
@@ -360,8 +360,8 @@ O ANON roda só no navegador: sem ícone na tela inicial, sem janela própria, s
 | PUSH-15 | P1: preferências — controles | - | Implementing |
 | PUSH-16 | P1: preferências — salvar | - | Implementing |
 | PUSH-17 | P1: preferências — validação | - | Implementing |
-| PUSH-18 | P1: preferências — sem preferências | - | Pending |
-| PUSH-19 | P1: preferências — só o próprio usuário | - | Pending |
+| PUSH-18 | P1: preferências — sem preferências | - | Implementing |
+| PUSH-19 | P1: preferências — só o próprio usuário | - | Implementing |
 | PUSH-20 | P1: envio — 401 sem segredo | - | Pending |
 | PUSH-21 | P1: envio — 503 sem configuração | - | Implementing |
 | PUSH-22 | P1: envio — rota pública | - | Implementing |
