@@ -438,6 +438,18 @@ Seen once or not yet corroborated. Tracked, not trusted.
 - evidence: M12 src/lib/client-ip.ts hashIp (HMAC key/data swapped survives) (src/lib/**,crypto)
 - last seen: 2026-10-13T19:33:23Z
 
+### L-072 - Fix in the spec the exact user-facing text of every refusal and success outcome of an action or form, including branches the UI normally hides
+- signal: `spec_precision_gap` · recurrence: 1 feature(s) · scope: `actions-ui` · harmful: 0
+- features: pwa
+- evidence: validation.md G1: src/actions/push.ts:14 (PUSH-01, recusa sem VAPID) (actions-ui) (+1 more)
+- last seen: 2026-10-31T22:25:45Z
+
+### L-073 - When the spec requires logging a failure, state the exact log code for each failure class, including errors without a status
+- signal: `spec_precision_gap` · recurrence: 1 feature(s) · scope: `logging` · harmful: 0
+- features: pwa
+- evidence: validation.md G2: src/lib/push/send.ts:31 (PUSH-28, código de log de erro de rede) (logging)
+- last seen: 2026-10-31T22:25:45Z
+
 ## Quarantined (failed when applied - ignore)
 
 A confirmed lesson that recurred alongside failure. Kept for the maintainer to review.

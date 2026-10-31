@@ -3,7 +3,7 @@
   "promote_threshold": 2,
   "window_days": 45,
   "quarantine_threshold": 2,
-  "next_id": 72,
+  "next_id": 74,
   "lessons": [
     {
       "id": "L-001",
@@ -1285,6 +1285,43 @@
       ],
       "created": "2026-10-13T19:33:23Z",
       "last_seen": "2026-10-13T19:33:23Z"
+    },
+    {
+      "id": "L-072",
+      "key": "spec_precision_gap::fix in the spec the exact user facing text of every refusal and success outcome of an action or form including branches the ui normally hides",
+      "text": "Fix in the spec the exact user-facing text of every refusal and success outcome of an action or form, including branches the UI normally hides",
+      "signal": "spec_precision_gap",
+      "scope": "actions-ui",
+      "status": "candidate",
+      "features": [
+        "pwa"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "validation.md G1: src/actions/push.ts:14 (PUSH-01, recusa sem VAPID) (actions-ui)",
+        "validation.md G3: src/components/broadcast-form.tsx:64 (PUSH-37, sucesso da UI) (actions-ui)"
+      ],
+      "created": "2026-10-31T22:25:44Z",
+      "last_seen": "2026-10-31T22:25:45Z"
+    },
+    {
+      "id": "L-073",
+      "key": "spec_precision_gap::when the spec requires logging a failure state the exact log code for each failure class including errors without a status",
+      "text": "When the spec requires logging a failure, state the exact log code for each failure class, including errors without a status",
+      "signal": "spec_precision_gap",
+      "scope": "logging",
+      "status": "candidate",
+      "features": [
+        "pwa"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "validation.md G2: src/lib/push/send.ts:31 (PUSH-28, código de log de erro de rede) (logging)"
+      ],
+      "created": "2026-10-31T22:25:45Z",
+      "last_seen": "2026-10-31T22:25:45Z"
     }
   ]
 }

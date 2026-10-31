@@ -10,7 +10,7 @@ Implement these tasks with the `tlc-spec-driven` skill: **activate it by name an
 
 **Spec**: `.specs/features/pwa/spec.md`
 **Design**: `.specs/features/pwa/design.md`
-**Status**: Draft
+**Status**: Done
 
 Antes de escrever manifest, proxy ou route handler, ler o guia correspondente em `node_modules/next/dist/docs/` (regra do AGENTS.md). Antes de rodar qualquer comando npm: `export PATH=$HOME/.nvm/versions/node/v20.20.2/bin:$PATH`; testes de integração com `DATABASE_URL` de um banco privado `*_test` (sessões paralelas colidem em `orcamento_test`).
 

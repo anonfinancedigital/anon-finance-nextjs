@@ -1,7 +1,7 @@
 # PWA e Push Design
 
 **Spec**: `.specs/features/pwa/spec.md`
-**Status**: Draft
+**Status**: Done
 
 ---
 

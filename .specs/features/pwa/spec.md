@@ -318,85 +318,85 @@ O ANON roda só no navegador: sem ícone na tela inicial, sem janela própria, s
 
 | Requirement ID | Story | Phase | Status |
 | -------------- | ----- | ----- | ------ |
-| PWA-01 | P1: instalável — manifest | - | Implementing |
-| PWA-02 | P1: instalável — ícones | - | Implementing |
-| PWA-03 | P1: instalável — Apple touch icon | - | Implementing |
-| PWA-04 | P1: instalável — theme color | - | Implementing |
-| PWA-05 | P1: instalável — rotas públicas | - | Implementing |
-| PWA-06 | P1: instalável — demais rotas protegidas | - | Implementing |
-| PWA-07 | P1: SW — precache | - | Implementing |
-| PWA-08 | P1: SW — limpeza na ativação | - | Implementing |
-| PWA-09 | P1: SW — `_next/static` cache-first | - | Implementing |
-| PWA-10 | P1: SW — fallback offline | - | Implementing |
-| PWA-11 | P1: SW — navegação não é guardada | - | Implementing |
-| PWA-12 | P1: SW — não intercepta o resto | - | Implementing |
-| PWA-13 | P1: SW — cabeçalhos de `/sw.js` | - | Implementing |
-| PWA-14 | P1: SW — skipWaiting e claim | - | Implementing |
-| PWA-15 | P1: offline — textos | - | Implementing |
-| PWA-16 | P1: offline — sem script nem recurso externo | - | Implementing |
-| PWA-17 | P1: offline — link de nova tentativa | - | Implementing |
-| PWA-18 | P2: registro — em produção | - | Implementing |
-| PWA-19 | P2: registro — fora de produção | - | Implementing |
-| PWA-20 | P2: registro — falha engolida | - | Implementing |
-| PWA-21 | P2: instalar — botão | - | Implementing |
-| PWA-22 | P2: instalar — `prompt()` | - | Implementing |
-| PWA-23 | P2: instalar — instrução iOS | - | Implementing |
-| PWA-24 | P2: instalar — já instalado | - | Implementing |
-| PWA-25 | P2: instalar — sem suporte | - | Implementing |
-| PUSH-01 | P1: ativar — seção visível com VAPID | - | Implementing |
-| PUSH-02 | P1: ativar — inscrever | - | Implementing |
-| PUSH-03 | P1: ativar — armazenar e criar preferências | - | Implementing |
-| PUSH-04 | P1: ativar — permissão negada | - | Implementing |
-| PUSH-05 | P1: ativar — endpoint fora da lista | - | Implementing |
-| PUSH-06 | P1: ativar — chaves inválidas | - | Implementing |
-| PUSH-07 | P1: ativar — limite de 5 | - | Implementing |
-| PUSH-08 | P1: ativar — endpoint repetido | - | Implementing |
-| PUSH-09 | P1: ativar — desativar | - | Implementing |
-| PUSH-10 | P1: ativar — ação exige sessão | - | Implementing |
-| PUSH-11 | P1: ativar — exclusão da conta | - | Implementing |
-| PUSH-12 | P1: ativar — iOS sem instalar | - | Implementing |
-| PUSH-13 | P1: ativar — navegador sem suporte | - | Implementing |
-| PUSH-14 | P1: ativar — aviso de terceiro | - | Implementing |
-| PUSH-15 | P1: preferências — controles | - | Implementing |
-| PUSH-16 | P1: preferências — salvar | - | Implementing |
-| PUSH-17 | P1: preferências — validação | - | Implementing |
-| PUSH-18 | P1: preferências — sem preferências | - | Implementing |
-| PUSH-19 | P1: preferências — só o próprio usuário | - | Implementing |
-| PUSH-20 | P1: envio — 401 sem segredo | - | Implementing |
-| PUSH-21 | P1: envio — 503 sem configuração | - | Implementing |
-| PUSH-22 | P1: envio — rota pública | - | Implementing |
-| PUSH-23 | P1: envio — só aprovados com inscrição | - | Implementing |
-| PUSH-24 | P1: envio — lembrete | - | Implementing |
-| PUSH-25 | P1: envio — vencimento | - | Implementing |
-| PUSH-26 | P1: envio — idempotência | - | Implementing |
-| PUSH-27 | P1: envio — 410/404 remove | - | Implementing |
-| PUSH-28 | P1: envio — outra falha mantém | - | Implementing |
-| PUSH-29 | P1: envio — payload fixo e TTL | - | Implementing |
-| PUSH-30 | P1: envio — limite de envios | - | Implementing |
-| PUSH-31 | P1: envio — limpeza e resposta | - | Implementing |
-| PUSH-32 | P1: envio — demais rotas protegidas | - | Implementing |
-| PUSH-33 | P2: segurança — senha redefinida | - | Implementing |
-| PUSH-34 | P2: segurança — acesso revogado | - | Implementing |
-| PUSH-35 | P2: segurança — falha não bloqueia | - | Implementing |
-| PUSH-36 | P2: segurança — preferência desligada | - | Implementing |
-| PUSH-37 | P2: admin — enfileirar | - | Implementing |
-| PUSH-38 | P2: admin — validar texto | - | Implementing |
-| PUSH-39 | P2: admin — somente admin | - | Implementing |
-| PUSH-40 | P2: admin — entrega única | - | Implementing |
-| PUSH-41 | P2: admin — marcar enviada | - | Implementing |
-| PUSH-42 | P2: SW push — mostrar | - | Implementing |
-| PUSH-43 | P2: SW push — payload inválido | - | Implementing |
-| PUSH-44 | P2: SW push — clique | - | Implementing |
-| PUSH-45 | P2: SW push — URL segura | - | Implementing |
-| PUSH-46 | P2: SW push — cache intacto | - | Implementing |
-| PUSH-47 | P2: disparo e docs — workflow | - | Implementing |
-| PUSH-48 | P2: disparo e docs — chamada do dispatch | - | Implementing |
-| PUSH-49 | P2: disparo e docs — sem vazamento no log | - | Implementing |
-| PUSH-50 | P2: disparo e docs — .env.example | - | Implementing |
-| PUSH-51 | P2: disparo e docs — AD-016 | - | Implementing |
-| PUSH-52 | P2: disparo e docs — texto de privacidade | - | Implementing |
+| PWA-01 | P1: instalável — manifest | - | Verified |
+| PWA-02 | P1: instalável — ícones | - | Verified |
+| PWA-03 | P1: instalável — Apple touch icon | - | Verified |
+| PWA-04 | P1: instalável — theme color | - | Verified |
+| PWA-05 | P1: instalável — rotas públicas | - | Verified |
+| PWA-06 | P1: instalável — demais rotas protegidas | - | Verified |
+| PWA-07 | P1: SW — precache | - | Verified |
+| PWA-08 | P1: SW — limpeza na ativação | - | Verified |
+| PWA-09 | P1: SW — `_next/static` cache-first | - | Verified |
+| PWA-10 | P1: SW — fallback offline | - | Verified |
+| PWA-11 | P1: SW — navegação não é guardada | - | Verified |
+| PWA-12 | P1: SW — não intercepta o resto | - | Verified |
+| PWA-13 | P1: SW — cabeçalhos de `/sw.js` | - | Verified |
+| PWA-14 | P1: SW — skipWaiting e claim | - | Verified |
+| PWA-15 | P1: offline — textos | - | Verified |
+| PWA-16 | P1: offline — sem script nem recurso externo | - | Verified |
+| PWA-17 | P1: offline — link de nova tentativa | - | Verified |
+| PWA-18 | P2: registro — em produção | - | Verified |
+| PWA-19 | P2: registro — fora de produção | - | Verified |
+| PWA-20 | P2: registro — falha engolida | - | Verified |
+| PWA-21 | P2: instalar — botão | - | Verified |
+| PWA-22 | P2: instalar — `prompt()` | - | Verified |
+| PWA-23 | P2: instalar — instrução iOS | - | Verified |
+| PWA-24 | P2: instalar — já instalado | - | Verified |
+| PWA-25 | P2: instalar — sem suporte | - | Verified |
+| PUSH-01 | P1: ativar — seção visível com VAPID | - | Verified |
+| PUSH-02 | P1: ativar — inscrever | - | Verified |
+| PUSH-03 | P1: ativar — armazenar e criar preferências | - | Verified |
+| PUSH-04 | P1: ativar — permissão negada | - | Verified |
+| PUSH-05 | P1: ativar — endpoint fora da lista | - | Verified |
+| PUSH-06 | P1: ativar — chaves inválidas | - | Verified |
+| PUSH-07 | P1: ativar — limite de 5 | - | Verified |
+| PUSH-08 | P1: ativar — endpoint repetido | - | Verified |
+| PUSH-09 | P1: ativar — desativar | - | Verified |
+| PUSH-10 | P1: ativar — ação exige sessão | - | Verified |
+| PUSH-11 | P1: ativar — exclusão da conta | - | Verified |
+| PUSH-12 | P1: ativar — iOS sem instalar | - | Verified |
+| PUSH-13 | P1: ativar — navegador sem suporte | - | Verified |
+| PUSH-14 | P1: ativar — aviso de terceiro | - | Verified |
+| PUSH-15 | P1: preferências — controles | - | Verified |
+| PUSH-16 | P1: preferências — salvar | - | Verified |
+| PUSH-17 | P1: preferências — validação | - | Verified |
+| PUSH-18 | P1: preferências — sem preferências | - | Verified |
+| PUSH-19 | P1: preferências — só o próprio usuário | - | Verified |
+| PUSH-20 | P1: envio — 401 sem segredo | - | Verified |
+| PUSH-21 | P1: envio — 503 sem configuração | - | Verified |
+| PUSH-22 | P1: envio — rota pública | - | Verified |
+| PUSH-23 | P1: envio — só aprovados com inscrição | - | Verified |
+| PUSH-24 | P1: envio — lembrete | - | Verified |
+| PUSH-25 | P1: envio — vencimento | - | Verified |
+| PUSH-26 | P1: envio — idempotência | - | Verified |
+| PUSH-27 | P1: envio — 410/404 remove | - | Verified |
+| PUSH-28 | P1: envio — outra falha mantém | - | Verified |
+| PUSH-29 | P1: envio — payload fixo e TTL | - | Verified |
+| PUSH-30 | P1: envio — limite de envios | - | Verified |
+| PUSH-31 | P1: envio — limpeza e resposta | - | Verified |
+| PUSH-32 | P1: envio — demais rotas protegidas | - | Verified |
+| PUSH-33 | P2: segurança — senha redefinida | - | Verified |
+| PUSH-34 | P2: segurança — acesso revogado | - | Verified |
+| PUSH-35 | P2: segurança — falha não bloqueia | - | Verified |
+| PUSH-36 | P2: segurança — preferência desligada | - | Verified |
+| PUSH-37 | P2: admin — enfileirar | - | Verified |
+| PUSH-38 | P2: admin — validar texto | - | Verified |
+| PUSH-39 | P2: admin — somente admin | - | Verified |
+| PUSH-40 | P2: admin — entrega única | - | Verified |
+| PUSH-41 | P2: admin — marcar enviada | - | Verified |
+| PUSH-42 | P2: SW push — mostrar | - | Verified |
+| PUSH-43 | P2: SW push — payload inválido | - | Verified |
+| PUSH-44 | P2: SW push — clique | - | Verified |
+| PUSH-45 | P2: SW push — URL segura | - | Verified |
+| PUSH-46 | P2: SW push — cache intacto | - | Verified |
+| PUSH-47 | P2: disparo e docs — workflow | - | Verified |
+| PUSH-48 | P2: disparo e docs — chamada do dispatch | - | Verified |
+| PUSH-49 | P2: disparo e docs — sem vazamento no log | - | Verified |
+| PUSH-50 | P2: disparo e docs — .env.example | - | Verified |
+| PUSH-51 | P2: disparo e docs — AD-016 | - | Verified |
+| PUSH-52 | P2: disparo e docs — texto de privacidade | - | Verified |
 
-**Coverage:** 77 total, 0 mapped to tasks, 77 unmapped ⚠️
+**Coverage:** 77 total, 77 mapped to tasks, 0 unmapped
 
 ---
 
