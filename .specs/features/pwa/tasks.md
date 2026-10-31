@@ -294,10 +294,10 @@ T38 → T39 → T40 → T41 → T42 → T43
 
 **Done when**:
 
-- [ ] `src/proxy.test.ts` aplica o matcher às rotas: as três do PWA não casam; `/`, `/conta`, `/api/push/dispatch` e `/sw.json` casam
-- [ ] Os caminhos de `PATHS_OUTSIDE_PROXY` e o matcher concordam (teste de consistência)
-- [ ] Gate check passes: `npm run test:unit`
-- [ ] Nenhum teste existente removido, pulado ou enfraquecido
+- [x] `src/proxy.test.ts` aplica o matcher às rotas: as três do PWA não casam; `/`, `/conta`, `/api/push/dispatch` e `/sw.json` casam
+- [x] Os caminhos de `PATHS_OUTSIDE_PROXY` e o matcher concordam (teste de consistência)
+- [x] Gate check passes: `npm run test:unit`
+- [x] Nenhum teste existente removido, pulado ou enfraquecido
 
 **Tests**: unit
 **Gate**: quick

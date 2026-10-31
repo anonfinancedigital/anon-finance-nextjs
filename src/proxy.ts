@@ -33,7 +33,7 @@ export function proxy(request: NextRequest) {
 
 export const config = {
   matcher: [
-    // Everything except Better Auth routes, the Sentry tunnel, Next assets and public images.
-    "/((?!api/auth|monitoring|_next/static|_next/image|favicon\\.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)",
+    // Everything except Better Auth routes, the Sentry tunnel, Next assets, public images and the PWA files.
+    "/((?!api/auth|monitoring|_next/static|_next/image|favicon\\.ico|manifest\\.webmanifest$|sw\\.js$|offline\\.html$|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)",
   ],
 };
