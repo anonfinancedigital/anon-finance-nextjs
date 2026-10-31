@@ -540,15 +540,17 @@ T24 → T25
 
 **Done when**:
 
-- [ ] Inspeção: suporte detectado por `biometricSupport` num efeito; indisponível mostra o texto de LOCK-02 sem botão
-- [ ] Inspeção: ativar chama `enrollBiometric` e `save`; `false` de qualquer um mostra a mensagem de LOCK-05; sucesso mostra "Bloqueio ativado" e "Desativar"
-- [ ] Inspeção: com o bloqueio desligado mostra a dica de LOCK-22; textos de `LOCK_TEXT`
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
-- [ ] Nenhum teste existente removido, pulado ou enfraquecido
+- [x] Inspeção: suporte detectado por `biometricSupport` num efeito; indisponível mostra o texto de LOCK-02 sem botão
+- [x] Inspeção: ativar chama `enrollBiometric` e `save`; `false` de qualquer um mostra a mensagem de LOCK-05; sucesso mostra "Bloqueio ativado" e "Desativar"
+- [x] Inspeção: com o bloqueio desligado mostra a dica de LOCK-22; textos de `LOCK_TEXT`
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Nenhum teste existente removido, pulado ou enfraquecido
 
 **Tests**: none
 **Gate**: build
 **Commit**: `feat(lock): add the biometric card`
+
+**Evidência**: src/components/biometric-card.tsx:26 (biometricSupport(window) em efeito), :65 (texto LOCK-02 sem botão), :40,:46 (enrollBiometric + lockStore.save; falha de qualquer um -> setFailed, mensagem :84), :76-:78 (Bloqueio ativado / Desativar), :68 (dica LOCK-22), :29 (estado inicial via lockStore.read no efeito, sem storage no SSR).
 
 ---
 
