@@ -369,8 +369,8 @@ O ANON roda só no navegador: sem ícone na tela inicial, sem janela própria, s
 | PUSH-24 | P1: envio — lembrete | - | Implementing |
 | PUSH-25 | P1: envio — vencimento | - | Implementing |
 | PUSH-26 | P1: envio — idempotência | - | Implementing |
-| PUSH-27 | P1: envio — 410/404 remove | - | Pending |
-| PUSH-28 | P1: envio — outra falha mantém | - | Pending |
+| PUSH-27 | P1: envio — 410/404 remove | - | Implementing |
+| PUSH-28 | P1: envio — outra falha mantém | - | Implementing |
 | PUSH-29 | P1: envio — payload fixo e TTL | - | Implementing |
 | PUSH-30 | P1: envio — limite de envios | - | Pending |
 | PUSH-31 | P1: envio — limpeza e resposta | - | Pending |

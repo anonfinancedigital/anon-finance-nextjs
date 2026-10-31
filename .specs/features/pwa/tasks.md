@@ -820,12 +820,12 @@ T38 → T39 → T40 → T41 → T42 → T43
 
 **Done when**:
 
-- [ ] Com `web-push` simulado: 404 e 410 → `gone`; 500, 429 e erro de rede → `failed` e log só com `push_<status>`
-- [ ] Chama `sendNotification` com `TTL` 86400 e o corpo de `pushPayload`
-- [ ] Endpoint fora da lista → `failed` sem chamar `web-push`
-- [ ] Nenhum log contém endpoint ou chaves
-- [ ] Gate check passes: `npm run test:unit`
-- [ ] Nenhum teste existente removido, pulado ou enfraquecido
+- [x] Com `web-push` simulado: 404 e 410 → `gone`; 500, 429 e erro de rede → `failed` e log só com `push_<status>`
+- [x] Chama `sendNotification` com `TTL` 86400 e o corpo de `pushPayload`
+- [x] Endpoint fora da lista → `failed` sem chamar `web-push`
+- [x] Nenhum log contém endpoint ou chaves
+- [x] Gate check passes: `npm run test:unit`
+- [x] Nenhum teste existente removido, pulado ou enfraquecido
 
 **Tests**: unit
 **Gate**: quick
