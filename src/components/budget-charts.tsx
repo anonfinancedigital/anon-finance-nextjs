@@ -17,6 +17,7 @@ import { ContentCard } from "@/components/content-card";
 import { SpendingPaceChart } from "@/components/spending-pace-chart";
 import type { CategorySummary } from "@/lib/domain/budget";
 import { colorVar } from "@/lib/domain/color";
+import { spendingShareSlices } from "@/lib/domain/spending-share";
 import { formatBRL } from "@/lib/domain/money";
 import type { SpendingPace } from "@/lib/domain/spending-pace";
 
@@ -98,11 +99,9 @@ export function SpentVsTarget({ rows }: { rows: Row[] }) {
   );
 }
 
-/** Donut: each category's share of the month's spending, one slice per category in its own color. */
+/** Donut: each category's share of the month's spending, one slice per category in its own color, largest first. */
 function SpendingShare({ rows, spentCents }: { rows: Row[]; spentCents: number }) {
-  const data = rows
-    .map((r) => ({ name: r.name, cents: r.spentCents, color: colorVar(r.color) }))
-    .filter((s) => s.cents > 0);
+  const data = spendingShareSlices(rows).map((r) => ({ name: r.name, cents: r.spentCents, color: colorVar(r.color) }));
 
   return (
     <figure data-testid="pie-chart" className="px-6 pb-6">

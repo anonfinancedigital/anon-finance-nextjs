@@ -13,6 +13,7 @@ import { TransactionList } from "@/components/transaction-list";
 import { LOAD_ERROR_MESSAGE, useOpened } from "@/components/use-opened";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { buildMonthlySummary } from "@/lib/domain/budget";
+import { todayInSaoPaulo } from "@/lib/domain/day";
 import { currentMonth, monthHref, type YearMonth } from "@/lib/domain/month";
 import { deriveMonthState, deriveSetup, monthLongName, previousMonth } from "@/lib/domain/onboarding";
 import { buildSpendingPaceViews } from "@/lib/domain/spending-pace";
@@ -25,10 +26,6 @@ import {
 import { computeMonthTotals } from "@/lib/vault/month-totals";
 import { openMonth } from "@/lib/vault/open";
 import type { MonthPayload } from "@/lib/vault/types";
-
-/** Today as AAAA-MM-DD in America/Sao_Paulo. */
-const todayInSaoPaulo = () =>
-  new Intl.DateTimeFormat("en-CA", { timeZone: "America/Sao_Paulo" }).format(new Date());
 
 type Props = {
   /** Sealed rows of `month`. */
@@ -61,6 +58,8 @@ export function OverviewClient({ payload, activeCategories, month, nowIso, param
       return { ...monthData, currentCategories: current ? current.categories : monthData.categories };
     },
     [payload, activeCategories, month.year, month.month, nowIso],
+    // A refresh after saving keeps the page (and its scroll) while the new rows open; another month does not.
+    [month.year, month.month],
   );
 
   return (
@@ -94,6 +93,13 @@ type BodyProps = Pick<Props, "month" | "params" | "currentParams" | "hasGoal"> &
     currentCategories: Awaited<ReturnType<typeof openMonth>>["categories"];
     totalTransactions: number;
   };
+
+/** Jump links to the long page's sections, below md only; the sections carry a matching `id`. */
+const SECTIONS = [
+  { id: "resumo", label: "Resumo" },
+  { id: "categorias", label: "Categorias" },
+  { id: "transacoes", label: "Transações" },
+] as const;
 
 /** The former body of `(app)/page.tsx`, over the opened rows. */
 function OverviewBody({
@@ -139,16 +145,32 @@ function OverviewBody({
 
   return (
     <>
+      <nav aria-label="Seções da página" className="flex gap-2 md:hidden">
+        {SECTIONS.map(({ id, label }) => (
+          <a
+            key={id}
+            href={`#${id}`}
+            className="rounded-full border border-border bg-card px-3.5 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
+          >
+            {label}
+          </a>
+        ))}
+      </nav>
+
       <GettingStartedCard setup={setup} categories={activeCategories} defaultDate={today} />
 
-      <SummaryCards
-        incomeCents={summary.incomeCents}
-        spentCents={summary.spentCents}
-        balanceCents={summary.balanceCents}
-        empty={monthIsEmpty}
-      />
+      <div id="resumo" className="scroll-mt-24">
+        <SummaryCards
+          incomeCents={summary.incomeCents}
+          spentCents={summary.spentCents}
+          balanceCents={summary.balanceCents}
+          empty={monthIsEmpty}
+        />
+      </div>
 
-      <CategoryOverview rows={summary.rows} hideCta={!setup.complete} />
+      <div id="categorias" className="scroll-mt-24">
+        <CategoryOverview rows={summary.rows} hideCta={!setup.complete} />
+      </div>
 
       {/* Keyed by month so the "Incluir investimentos" choice resets when the month changes. */}
       <BudgetCharts
@@ -158,42 +180,47 @@ function OverviewBody({
         paces={paces}
       />
 
-      <ContentCard
-        title="Transações do mês"
-        note={shown.length > 0 ? `${shown.length} lançamentos` : undefined}
-        action={
-          <NewTransactionButton
-            variant="header"
-            emphasis={emphasis}
-            categories={activeCategories}
-            defaultDate={today}
-          />
-        }
-        bodyClassName="space-y-4"
-      >
-        {showFilters && (
-          <div className="px-6">
-            <TransactionFilter categories={categories} filter={filter} search={search} />
-          </div>
-        )}
-        <TransactionList
-          transactions={shown}
-          categories={activeCategories}
-          filtered={filter.categoryId !== null}
-          searching={search !== ""}
-          emptyState={monthState}
-          monthName={monthLongName(month)}
-          previousHref={monthHref(
-            new URLSearchParams(currentParams),
-            `${previous.year}-${String(previous.month).padStart(2, "0")}`,
+      <div id="transacoes" className="scroll-mt-24">
+        <ContentCard
+          // Clip instead of hide: a scroll container would stop the day headings from sticking to the page.
+          className="overflow-clip"
+          title="Transações do mês"
+          note={shown.length > 0 ? `${shown.length} lançamentos` : undefined}
+          action={
+            <NewTransactionButton
+              variant="header"
+              emphasis={emphasis}
+              categories={activeCategories}
+              defaultDate={today}
+            />
+          }
+          bodyClassName="space-y-4"
+        >
+          {showFilters && (
+            <div className="px-6">
+              <TransactionFilter categories={categories} filter={filter} search={search} />
+            </div>
           )}
-          previousMonthName={monthLongName(previous)}
-          defaultDate={today}
-          emphasis="secondary"
-        />
-      </ContentCard>
+          <TransactionList
+            // Starts the "Ver mais" count over when the filters change.
+            key={`${filter.categoryId}|${filter.subcategoryId}|${search}`}
+            transactions={shown}
+            categories={activeCategories}
+            filtered={filter.categoryId !== null}
+            searching={search !== ""}
+            emptyState={monthState}
+            monthName={monthLongName(month)}
+            previousHref={monthHref(
+              new URLSearchParams(currentParams),
+              `${previous.year}-${String(previous.month).padStart(2, "0")}`,
+            )}
+            previousMonthName={monthLongName(previous)}
+            defaultDate={today}
+            emphasis="secondary"
+          />
+        </ContentCard>
+      </div>
 
-      <NewTransactionButton emphasis={emphasis} categories={activeCategories} defaultDate={today} />
     </>
   );
 }
