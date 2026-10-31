@@ -365,7 +365,7 @@ O ANON roda só no navegador: sem ícone na tela inicial, sem janela própria, s
 | PUSH-20 | P1: envio — 401 sem segredo | - | Pending |
 | PUSH-21 | P1: envio — 503 sem configuração | - | Implementing |
 | PUSH-22 | P1: envio — rota pública | - | Implementing |
-| PUSH-23 | P1: envio — só aprovados com inscrição | - | Pending |
+| PUSH-23 | P1: envio — só aprovados com inscrição | - | Implementing |
 | PUSH-24 | P1: envio — lembrete | - | Implementing |
 | PUSH-25 | P1: envio — vencimento | - | Implementing |
 | PUSH-26 | P1: envio — idempotência | - | Implementing |
@@ -373,16 +373,16 @@ O ANON roda só no navegador: sem ícone na tela inicial, sem janela própria, s
 | PUSH-28 | P1: envio — outra falha mantém | - | Implementing |
 | PUSH-29 | P1: envio — payload fixo e TTL | - | Implementing |
 | PUSH-30 | P1: envio — limite de envios | - | Pending |
-| PUSH-31 | P1: envio — limpeza e resposta | - | Pending |
+| PUSH-31 | P1: envio — limpeza e resposta | - | Implementing |
 | PUSH-32 | P1: envio — demais rotas protegidas | - | Implementing |
 | PUSH-33 | P2: segurança — senha redefinida | - | Implementing |
 | PUSH-34 | P2: segurança — acesso revogado | - | Implementing |
 | PUSH-35 | P2: segurança — falha não bloqueia | - | Pending |
 | PUSH-36 | P2: segurança — preferência desligada | - | Pending |
-| PUSH-37 | P2: admin — enfileirar | - | Pending |
+| PUSH-37 | P2: admin — enfileirar | - | Implementing |
 | PUSH-38 | P2: admin — validar texto | - | Implementing |
 | PUSH-39 | P2: admin — somente admin | - | Pending |
-| PUSH-40 | P2: admin — entrega única | - | Pending |
+| PUSH-40 | P2: admin — entrega única | - | Implementing |
 | PUSH-41 | P2: admin — marcar enviada | - | Pending |
 | PUSH-42 | P2: SW push — mostrar | - | Implementing |
 | PUSH-43 | P2: SW push — payload inválido | - | Implementing |

@@ -848,13 +848,13 @@ T38 → T39 → T40 → T41 → T42 → T43
 
 **Done when**:
 
-- [ ] `src/lib/db/repos/push-dispatch.int.test.ts`: só `approved` com inscrição; `revoked` e sem inscrição ficam de fora
-- [ ] Lembrete: hora < preferida fora, = e > dentro; já reivindicado fora
-- [ ] Vencimento: série ativa hoje dentro; encerrada, futura e outro dia fora; duas séries no mesmo dia viram um candidato
-- [ ] `claim` devolve `true` uma vez e `false` depois, mesmo em chamadas concorrentes
-- [ ] Broadcast só para `admin = true`; `prune` apaga só linhas com mais de 7 dias
-- [ ] Gate check passes: `npm run test:unit && npm run test:int`
-- [ ] Nenhum teste existente removido, pulado ou enfraquecido
+- [x] `src/lib/db/repos/push-dispatch.int.test.ts`: só `approved` com inscrição; `revoked` e sem inscrição ficam de fora
+- [x] Lembrete: hora < preferida fora, = e > dentro; já reivindicado fora
+- [x] Vencimento: série ativa hoje dentro; encerrada, futura e outro dia fora; duas séries no mesmo dia viram um candidato
+- [x] `claim` devolve `true` uma vez e `false` depois, mesmo em chamadas concorrentes
+- [x] Broadcast só para `admin = true`; `prune` apaga só linhas com mais de 7 dias
+- [x] Gate check passes: `npm run test:unit && npm run test:int`
+- [x] Nenhum teste existente removido, pulado ou enfraquecido
 
 **Tests**: integration
 **Gate**: full
