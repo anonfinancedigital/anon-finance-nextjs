@@ -171,11 +171,11 @@ T24 → T25
 
 **Done when**:
 
-- [ ] `splashMedia` devolve exatamente `(device-width: Wpx) and (device-height: Hpx) and (-webkit-device-pixel-ratio: R) and (orientation: portrait)`
-- [ ] `splashFile` devolve `/splash/${W*R}x${H*R}.png`
-- [ ] Teste: nenhuma `media` repetida (SPLASH-05) e `startupImages()` tem uma entrada por dispositivo com `url` sob `/splash/` (SPLASH-02)
-- [ ] Gate check passes: `npm run test:unit`
-- [ ] Nenhum teste existente removido, pulado ou enfraquecido
+- [x] `splashMedia` devolve exatamente `(device-width: Wpx) and (device-height: Hpx) and (-webkit-device-pixel-ratio: R) and (orientation: portrait)`
+- [x] `splashFile` devolve `/splash/${W*R}x${H*R}.png`
+- [x] Teste: nenhuma `media` repetida (SPLASH-05) e `startupImages()` tem uma entrada por dispositivo com `url` sob `/splash/` (SPLASH-02)
+- [x] Gate check passes: `npm run test:unit`
+- [x] Nenhum teste existente removido, pulado ou enfraquecido
 
 **Tests**: unit
 **Gate**: quick
