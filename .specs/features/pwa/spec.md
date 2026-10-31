@@ -389,9 +389,9 @@ O ANON roda só no navegador: sem ícone na tela inicial, sem janela própria, s
 | PUSH-44 | P2: SW push — clique | - | Implementing |
 | PUSH-45 | P2: SW push — URL segura | - | Implementing |
 | PUSH-46 | P2: SW push — cache intacto | - | Implementing |
-| PUSH-47 | P2: disparo e docs — workflow | - | Pending |
-| PUSH-48 | P2: disparo e docs — chamada do dispatch | - | Pending |
-| PUSH-49 | P2: disparo e docs — sem vazamento no log | - | Pending |
+| PUSH-47 | P2: disparo e docs — workflow | - | Implementing |
+| PUSH-48 | P2: disparo e docs — chamada do dispatch | - | Implementing |
+| PUSH-49 | P2: disparo e docs — sem vazamento no log | - | Implementing |
 | PUSH-50 | P2: disparo e docs — .env.example | - | Pending |
 | PUSH-51 | P2: disparo e docs — AD-016 | - | Pending |
 | PUSH-52 | P2: disparo e docs — texto de privacidade | - | Pending |

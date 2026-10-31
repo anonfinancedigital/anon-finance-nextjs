@@ -1091,11 +1091,11 @@ T38 → T39 → T40 → T41 → T42 → T43
 
 **Done when**:
 
-- [ ] `src/lib/push-dispatch-workflow.test.ts`: cron `7 * * * *` e `workflow_dispatch`
-- [ ] `curl --fail --silent --show-error -X POST` em `${{ secrets.APP_URL }}/api/push/dispatch` com `Authorization: Bearer` vindo de `secrets.CRON_SECRET` via `env`
-- [ ] Sem `echo` do segredo ou da resposta; sem `continue-on-error` nem `|| true`; `permissions: contents: read`
-- [ ] Gate check passes: `npm run test:unit`
-- [ ] Nenhum teste existente removido, pulado ou enfraquecido
+- [x] `src/lib/push-dispatch-workflow.test.ts`: cron `7 * * * *` e `workflow_dispatch`
+- [x] `curl --fail --silent --show-error -X POST` em `${{ secrets.APP_URL }}/api/push/dispatch` com `Authorization: Bearer` vindo de `secrets.CRON_SECRET` via `env`
+- [x] Sem `echo` do segredo ou da resposta; sem `continue-on-error` nem `|| true`; `permissions: contents: read`
+- [x] Gate check passes: `npm run test:unit`
+- [x] Nenhum teste existente removido, pulado ou enfraquecido
 
 **Tests**: unit
 **Gate**: quick
