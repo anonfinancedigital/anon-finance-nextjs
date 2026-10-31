@@ -331,10 +331,10 @@ T24 → T25
 
 **Done when**:
 
-- [ ] `lockStore` usa a chave `anon-biometric-lock` em `localStorage`; o módulo importa em Node sem erro
-- [ ] Teste unit importa o módulo em Node e confere que nenhum storage é acessado no import
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
-- [ ] Nenhum teste existente removido, pulado ou enfraquecido
+- [x] `lockStore` usa a chave `anon-biometric-lock` em `localStorage`; o módulo importa em Node sem erro
+- [x] Teste unit importa o módulo em Node e confere que nenhum storage é acessado no import
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Nenhum teste existente removido, pulado ou enfraquecido
 
 **Tests**: unit
 **Gate**: build
