@@ -320,11 +320,11 @@ T38 → T39 → T40 → T41 → T42 → T43
 
 **Done when**:
 
-- [ ] Produção + suporte chama `register` com as opções exatas
-- [ ] Fora de produção ou sem `serviceWorker` não chama
-- [ ] Rejeição do `register` não propaga
-- [ ] Gate check passes: `npm run test:unit`
-- [ ] Nenhum teste existente removido, pulado ou enfraquecido
+- [x] Produção + suporte chama `register` com as opções exatas
+- [x] Fora de produção ou sem `serviceWorker` não chama
+- [x] Rejeição do `register` não propaga
+- [x] Gate check passes: `npm run test:unit`
+- [x] Nenhum teste existente removido, pulado ou enfraquecido
 
 **Tests**: unit
 **Gate**: quick

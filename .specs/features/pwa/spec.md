@@ -335,9 +335,9 @@ O ANON roda só no navegador: sem ícone na tela inicial, sem janela própria, s
 | PWA-15 | P1: offline — textos | - | Implementing |
 | PWA-16 | P1: offline — sem script nem recurso externo | - | Implementing |
 | PWA-17 | P1: offline — link de nova tentativa | - | Implementing |
-| PWA-18 | P2: registro — em produção | - | Pending |
-| PWA-19 | P2: registro — fora de produção | - | Pending |
-| PWA-20 | P2: registro — falha engolida | - | Pending |
+| PWA-18 | P2: registro — em produção | - | Implementing |
+| PWA-19 | P2: registro — fora de produção | - | Implementing |
+| PWA-20 | P2: registro — falha engolida | - | Implementing |
 | PWA-21 | P2: instalar — botão | - | Pending |
 | PWA-22 | P2: instalar — `prompt()` | - | Pending |
 | PWA-23 | P2: instalar — instrução iOS | - | Pending |
