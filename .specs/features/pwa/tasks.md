@@ -581,11 +581,11 @@ T38 → T39 → T40 → T41 → T42 → T43
 
 **Done when**:
 
-- [ ] `localClock` converte 02:30 UTC de 2026-11-01 para 2026-10-31 23:30 em São Paulo e 12:00 UTC para 09:00 do mesmo dia
-- [ ] `hasOccurrenceOn`: série encerrada, dia 31 em fevereiro e abril, série futura, duas séries no mesmo dia
-- [ ] `isDueHour` com igual, maior e menor
-- [ ] Gate check passes: `npm run test:unit`
-- [ ] Nenhum teste existente removido, pulado ou enfraquecido
+- [x] `localClock` converte 02:30 UTC de 2026-11-01 para 2026-10-31 23:30 em São Paulo e 12:00 UTC para 09:00 do mesmo dia
+- [x] `hasOccurrenceOn`: série encerrada, dia 31 em fevereiro e abril, série futura, duas séries no mesmo dia
+- [x] `isDueHour` com igual, maior e menor
+- [x] Gate check passes: `npm run test:unit`
+- [x] Nenhum teste existente removido, pulado ou enfraquecido
 
 **Tests**: unit
 **Gate**: quick
