@@ -488,11 +488,11 @@ T24 → T25
 
 **Done when**:
 
-- [ ] Inspeção: sem registro do usuário, renderiza `children` direto e não chama `navigator.credentials` (LOCK-20)
-- [ ] Inspeção: com registro e sem marca de login, abre bloqueado e não monta `children` (LOCK-10); com marca válida, abre desbloqueado (LOCK-19)
-- [ ] Inspeção: `hidden` guarda `Date.now()`; `visible` re-bloqueia só se `shouldRelock` e há registro (LOCK-17, LOCK-18)
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
-- [ ] Nenhum teste existente removido, pulado ou enfraquecido
+- [x] Inspeção: sem registro do usuário, renderiza `children` direto e não chama `navigator.credentials` (LOCK-20) — `src/components/biometric-gate.tsx:23,26` (registro nulo -> decisão `null`), `:65` renderiza `children`; o gate não referencia `navigator.credentials` (só o `LockScreen`, :55-63)
+- [x] Inspeção: com registro e sem marca de login, abre bloqueado e não monta `children` (LOCK-10); com marca válida, abre desbloqueado (LOCK-19) — `biometric-gate.tsx:35` (inicializador lazy uma vez, cache em variável de módulo :13/:22), `:23-26` (registro sem marca válida -> bloqueado; marca válida -> `null`), `:55-64` com bloqueio nenhum `children` monta
+- [x] Inspeção: `hidden` guarda `Date.now()`; `visible` re-bloqueia só se `shouldRelock` e há registro (LOCK-17, LOCK-18) — `biometric-gate.tsx:40-41` (`hidden` guarda `Date.now()`), `:46` (`shouldRelock`), `:48-49` (relê o registro a cada evento e só então bloqueia), listener :51
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Nenhum teste existente removido, pulado ou enfraquecido
 
 **Tests**: none
 **Gate**: build
