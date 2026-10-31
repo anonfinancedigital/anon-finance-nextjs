@@ -397,10 +397,10 @@ T38 → T39 → T40 → T41 → T42 → T43
 
 **Done when**:
 
-- [ ] iOS fora de standalone → `ios`; com prompt guardado → `button`; standalone → `none` mesmo em iOS ou com prompt; Android/desktop sem prompt → `none`
-- [ ] Cobre iPhone, iPad e iPod
-- [ ] Gate check passes: `npm run test:unit`
-- [ ] Nenhum teste existente removido, pulado ou enfraquecido
+- [x] iOS fora de standalone → `ios`; com prompt guardado → `button`; standalone → `none` mesmo em iOS ou com prompt; Android/desktop sem prompt → `none`
+- [x] Cobre iPhone, iPad e iPod
+- [x] Gate check passes: `npm run test:unit`
+- [x] Nenhum teste existente removido, pulado ou enfraquecido
 
 **Tests**: unit
 **Gate**: quick

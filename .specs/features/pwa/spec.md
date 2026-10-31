@@ -340,9 +340,9 @@ O ANON roda só no navegador: sem ícone na tela inicial, sem janela própria, s
 | PWA-20 | P2: registro — falha engolida | - | Implementing |
 | PWA-21 | P2: instalar — botão | - | Pending |
 | PWA-22 | P2: instalar — `prompt()` | - | Pending |
-| PWA-23 | P2: instalar — instrução iOS | - | Pending |
-| PWA-24 | P2: instalar — já instalado | - | Pending |
-| PWA-25 | P2: instalar — sem suporte | - | Pending |
+| PWA-23 | P2: instalar — instrução iOS | - | Implementing |
+| PWA-24 | P2: instalar — já instalado | - | Implementing |
+| PWA-25 | P2: instalar — sem suporte | - | Implementing |
 | PUSH-01 | P1: ativar — seção visível com VAPID | - | Pending |
 | PUSH-02 | P1: ativar — inscrever | - | Pending |
 | PUSH-03 | P1: ativar — armazenar e criar preferências | - | Pending |
