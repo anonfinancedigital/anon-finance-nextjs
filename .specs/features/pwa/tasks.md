@@ -608,11 +608,11 @@ T38 → T39 → T40 → T41 → T42 → T43
 
 **Done when**:
 
-- [ ] `drizzle/0017_*.sql` gerado e coerente com o schema, sem tocar em `auth-schema.ts`
-- [ ] `src/lib/db/push-schema.int.test.ts`: `hour` fora de 0..23 e texto de broadcast fora de 1..140 violam `check`; `endpoint` duplicado viola unique; PK (user, kind, ref) impede a segunda linha; apagar o usuário apaga inscrições, preferências e registros de envio
-- [ ] Migração aplica em banco privado vazio
-- [ ] Gate check passes: `npm run test:unit && npm run test:int`
-- [ ] Nenhum teste existente removido, pulado ou enfraquecido
+- [x] `drizzle/0017_*.sql` gerado e coerente com o schema, sem tocar em `auth-schema.ts`
+- [x] `src/lib/db/push-schema.int.test.ts`: `hour` fora de 0..23 e texto de broadcast fora de 1..140 violam `check`; `endpoint` duplicado viola unique; PK (user, kind, ref) impede a segunda linha; apagar o usuário apaga inscrições, preferências e registros de envio
+- [x] Migração aplica em banco privado vazio
+- [x] Gate check passes: `npm run test:unit && npm run test:int`
+- [x] Nenhum teste existente removido, pulado ou enfraquecido
 
 **Tests**: integration
 **Gate**: full

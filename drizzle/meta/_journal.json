@@ -120,6 +120,13 @@
       "when": 1791917467795,
       "tag": "0016_signup_attempt",
       "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "7",
+      "when": 1793481227819,
+      "tag": "0017_groovy_diamondback",
+      "breakpoints": true
     }
   ]
 }

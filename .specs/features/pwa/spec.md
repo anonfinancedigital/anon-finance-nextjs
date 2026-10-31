@@ -345,7 +345,7 @@ O ANON roda só no navegador: sem ícone na tela inicial, sem janela própria, s
 | PWA-25 | P2: instalar — sem suporte | - | Implementing |
 | PUSH-01 | P1: ativar — seção visível com VAPID | - | Implementing |
 | PUSH-02 | P1: ativar — inscrever | - | Pending |
-| PUSH-03 | P1: ativar — armazenar e criar preferências | - | Pending |
+| PUSH-03 | P1: ativar — armazenar e criar preferências | - | Implementing |
 | PUSH-04 | P1: ativar — permissão negada | - | Pending |
 | PUSH-05 | P1: ativar — endpoint fora da lista | - | Implementing |
 | PUSH-06 | P1: ativar — chaves inválidas | - | Implementing |
@@ -353,11 +353,11 @@ O ANON roda só no navegador: sem ícone na tela inicial, sem janela própria, s
 | PUSH-08 | P1: ativar — endpoint repetido | - | Pending |
 | PUSH-09 | P1: ativar — desativar | - | Pending |
 | PUSH-10 | P1: ativar — ação exige sessão | - | Pending |
-| PUSH-11 | P1: ativar — exclusão da conta | - | Pending |
+| PUSH-11 | P1: ativar — exclusão da conta | - | Implementing |
 | PUSH-12 | P1: ativar — iOS sem instalar | - | Pending |
 | PUSH-13 | P1: ativar — navegador sem suporte | - | Pending |
 | PUSH-14 | P1: ativar — aviso de terceiro | - | Pending |
-| PUSH-15 | P1: preferências — controles | - | Pending |
+| PUSH-15 | P1: preferências — controles | - | Implementing |
 | PUSH-16 | P1: preferências — salvar | - | Implementing |
 | PUSH-17 | P1: preferências — validação | - | Implementing |
 | PUSH-18 | P1: preferências — sem preferências | - | Pending |
@@ -368,7 +368,7 @@ O ANON roda só no navegador: sem ícone na tela inicial, sem janela própria, s
 | PUSH-23 | P1: envio — só aprovados com inscrição | - | Pending |
 | PUSH-24 | P1: envio — lembrete | - | Implementing |
 | PUSH-25 | P1: envio — vencimento | - | Implementing |
-| PUSH-26 | P1: envio — idempotência | - | Pending |
+| PUSH-26 | P1: envio — idempotência | - | Implementing |
 | PUSH-27 | P1: envio — 410/404 remove | - | Pending |
 | PUSH-28 | P1: envio — outra falha mantém | - | Pending |
 | PUSH-29 | P1: envio — payload fixo e TTL | - | Implementing |
