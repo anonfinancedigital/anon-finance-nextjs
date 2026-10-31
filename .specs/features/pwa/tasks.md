@@ -423,9 +423,9 @@ T38 → T39 → T40 → T41 → T42 → T43
 
 **Done when**:
 
-- [ ] Typecheck e lint passam
-- [ ] Inspeção `file:line`: texto iOS exato, `prompt()` chamado no clique, seção nula em `none`
-- [ ] Gate check passes: `npm run test:unit`
+- [x] Typecheck e lint passam
+- [x] Inspeção `file:line`: texto iOS exato, `prompt()` chamado no clique, seção nula em `none`
+- [x] Gate check passes: `npm run test:unit`
 
 **Tests**: none (UI sem teste (AD-005))
 **Gate**: quick
