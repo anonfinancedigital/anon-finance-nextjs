@@ -769,9 +769,9 @@ T38 → T39 → T40 → T41 → T42 → T43
 
 **Done when**:
 
-- [ ] Gate de build passa
-- [ ] Inspeção: sem VAPID a seção não é renderizada; a chave pública vai por prop
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
+- [x] Gate de build passa
+- [x] Inspeção: sem VAPID a seção não é renderizada; a chave pública vai por prop
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
 
 **Tests**: none (Wiring)
 **Gate**: build
