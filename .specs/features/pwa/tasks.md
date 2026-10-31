@@ -372,9 +372,9 @@ T38 → T39 → T40 → T41 → T42 → T43
 
 **Done when**:
 
-- [ ] `npm run build` conclui e o HTML de `/bem-vindo` contém `apple-touch-icon` e `theme-color`
-- [ ] Gate de build passa
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
+- [x] `npm run build` conclui e o HTML de `/bem-vindo` contém `apple-touch-icon` e `theme-color`
+- [x] Gate de build passa
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
 
 **Tests**: none (Wiring)
 **Gate**: build
