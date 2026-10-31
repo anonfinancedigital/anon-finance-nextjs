@@ -130,4 +130,12 @@
 - **Date**: 2026-10-31
 - **Status**: active
 
+### AD-017
+- **Decision**: O bloqueio do app por biometria é uma trava de tela local: WebAuthn de plataforma (`userVerification: "required"`) chamado no navegador, sem servidor, sem verificação de assertion e sem relação com a DEK (sem PRF). O registro `{ userId, credentialId }` fica em `localStorage` do aparelho e some ao sair, excluir a conta ou desativar. O app pede a biometria a cada carga de documento e ao voltar do segundo plano após mais de 60 000 ms; "Usar a senha" reaproveita o `UnlockScreen`.
+- **Reason**: Pedido do usuário: proteger dados financeiros contra quem pega o celular desbloqueado, sem coluna nova nem dado biométrico no servidor (AD-011, AD-013).
+- **Trade-off**: Quem controla o navegador desbloqueado contorna a trava (devtools, limpar dados do site); não protege a chave de dados. Cadeado criptográfico (WebAuthn PRF) fica para uma spec futura.
+- **Scope**: `src/lib/biometric`, `BiometricGate`, `LockScreen`, `BiometricCard`, login, sair e excluir conta
+- **Date**: 2026-10-31
+- **Status**: active
+
 ## Handoff
