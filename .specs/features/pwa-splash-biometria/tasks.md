@@ -93,10 +93,10 @@ T24 → T25
 
 **Done when**:
 
-- [ ] `APP_NAME` exportado com o valor "Anon Finance"
-- [ ] `src/lib/brand.test.ts` confere `APP_NAME === "Anon Finance"` e `BRAND_NAME === "ANON"` (APPNAME-03)
-- [ ] Gate check passes: `npm run test:unit`
-- [ ] Nenhum teste existente removido, pulado ou enfraquecido
+- [x] `APP_NAME` exportado com o valor "Anon Finance"
+- [x] `src/lib/brand.test.ts` confere `APP_NAME === "Anon Finance"` e `BRAND_NAME === "ANON"` (APPNAME-03)
+- [x] Gate check passes: `npm run test:unit`
+- [x] Nenhum teste existente removido, pulado ou enfraquecido
 
 **Tests**: unit
 **Gate**: quick

@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  APP_NAME,
   BRAND_DESCRIPTION,
   BRAND_DESCRIPTOR,
   BRAND_NAME,
@@ -10,6 +11,11 @@ import {
 
 describe("brand constants (rebrand-anon spec)", () => {
   it("names the product ANON in caps (Logo aria-label, ANON-01)", () => {
+    expect(BRAND_NAME).toBe("ANON");
+  });
+
+  it("names the installed app Anon Finance, keeping BRAND_NAME ANON (APPNAME-03)", () => {
+    expect(APP_NAME).toBe("Anon Finance");
     expect(BRAND_NAME).toBe("ANON");
   });
 

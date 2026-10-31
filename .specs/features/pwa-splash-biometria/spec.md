@@ -193,7 +193,7 @@ Explicitamente excluído. Documentado para evitar crescimento de escopo.
 | SPLASH-05 | P1: Splash nativa na abertura | - | Pending |
 | APPNAME-01 | P1: Nome do app instalado | - | Pending |
 | APPNAME-02 | P1: Nome do app instalado | - | Pending |
-| APPNAME-03 | P1: Nome do app instalado | - | Pending |
+| APPNAME-03 | P1: Nome do app instalado | - | Done |
 | LOCK-01 | P1: Ativar e desativar | - | Pending |
 | LOCK-02 | P1: Ativar e desativar | - | Pending |
 | LOCK-03 | P1: Ativar e desativar | - | Pending |
