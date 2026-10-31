@@ -362,7 +362,7 @@ O ANON roda só no navegador: sem ícone na tela inicial, sem janela própria, s
 | PUSH-17 | P1: preferências — validação | - | Implementing |
 | PUSH-18 | P1: preferências — sem preferências | - | Implementing |
 | PUSH-19 | P1: preferências — só o próprio usuário | - | Implementing |
-| PUSH-20 | P1: envio — 401 sem segredo | - | Pending |
+| PUSH-20 | P1: envio — 401 sem segredo | - | Implementing |
 | PUSH-21 | P1: envio — 503 sem configuração | - | Implementing |
 | PUSH-22 | P1: envio — rota pública | - | Implementing |
 | PUSH-23 | P1: envio — só aprovados com inscrição | - | Implementing |

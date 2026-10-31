@@ -907,12 +907,12 @@ T38 → T39 → T40 → T41 → T42 → T43
 
 **Done when**:
 
-- [ ] `route.test.ts`: sem `CRON_SECRET` ou VAPID → 503 sem chamar o runner; sem cabeçalho, com segredo errado e com comprimento diferente → 401 corpo vazio
-- [ ] Segredo certo → 200 com `{sent, removed, failed}` e nada mais
-- [ ] `GET` não exporta handler
-- [ ] A comparação usa `timingSafeEqual`
-- [ ] Gate check passes: `npm run test:unit`
-- [ ] Nenhum teste existente removido, pulado ou enfraquecido
+- [x] `route.test.ts`: sem `CRON_SECRET` ou VAPID → 503 sem chamar o runner; sem cabeçalho, com segredo errado e com comprimento diferente → 401 corpo vazio
+- [x] Segredo certo → 200 com `{sent, removed, failed}` e nada mais
+- [x] `GET` não exporta handler
+- [x] A comparação usa `timingSafeEqual`
+- [x] Gate check passes: `npm run test:unit`
+- [x] Nenhum teste existente removido, pulado ou enfraquecido
 
 **Tests**: unit
 **Gate**: quick
