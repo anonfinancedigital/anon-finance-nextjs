@@ -554,11 +554,11 @@ T38 → T39 → T40 → T41 → T42 → T43
 
 **Done when**:
 
-- [ ] Endpoints: aceita FCM, Mozilla, `web.push.apple.com`, `wns2.notify.windows.com`; recusa `http:`, `localhost`, IP, porta, usuário/senha e `x.push.apple.com.evil.net`
-- [ ] Chaves: `p256dh` com 65 bytes e prefixo 0x04, `auth` com 16 bytes; recusas com "Inscrição inválida"
-- [ ] Hora −1, 0, 23, 24, 9.5 e switches não booleanos; texto 0, 1, 140, 141 caracteres e só espaços com "A mensagem deve ter de 1 a 140 caracteres"
-- [ ] Gate check passes: `npm run test:unit`
-- [ ] Nenhum teste existente removido, pulado ou enfraquecido
+- [x] Endpoints: aceita FCM, Mozilla, `web.push.apple.com`, `wns2.notify.windows.com`; recusa `http:`, `localhost`, IP, porta, usuário/senha e `x.push.apple.com.evil.net`
+- [x] Chaves: `p256dh` com 65 bytes e prefixo 0x04, `auth` com 16 bytes; recusas com "Inscrição inválida"
+- [x] Hora −1, 0, 23, 24, 9.5 e switches não booleanos; texto 0, 1, 140, 141 caracteres e só espaços com "A mensagem deve ter de 1 a 140 caracteres"
+- [x] Gate check passes: `npm run test:unit`
+- [x] Nenhum teste existente removido, pulado ou enfraquecido
 
 **Tests**: unit
 **Gate**: quick

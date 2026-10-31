@@ -347,8 +347,8 @@ O ANON roda só no navegador: sem ícone na tela inicial, sem janela própria, s
 | PUSH-02 | P1: ativar — inscrever | - | Pending |
 | PUSH-03 | P1: ativar — armazenar e criar preferências | - | Pending |
 | PUSH-04 | P1: ativar — permissão negada | - | Pending |
-| PUSH-05 | P1: ativar — endpoint fora da lista | - | Pending |
-| PUSH-06 | P1: ativar — chaves inválidas | - | Pending |
+| PUSH-05 | P1: ativar — endpoint fora da lista | - | Implementing |
+| PUSH-06 | P1: ativar — chaves inválidas | - | Implementing |
 | PUSH-07 | P1: ativar — limite de 5 | - | Pending |
 | PUSH-08 | P1: ativar — endpoint repetido | - | Pending |
 | PUSH-09 | P1: ativar — desativar | - | Pending |
@@ -358,8 +358,8 @@ O ANON roda só no navegador: sem ícone na tela inicial, sem janela própria, s
 | PUSH-13 | P1: ativar — navegador sem suporte | - | Pending |
 | PUSH-14 | P1: ativar — aviso de terceiro | - | Pending |
 | PUSH-15 | P1: preferências — controles | - | Pending |
-| PUSH-16 | P1: preferências — salvar | - | Pending |
-| PUSH-17 | P1: preferências — validação | - | Pending |
+| PUSH-16 | P1: preferências — salvar | - | Implementing |
+| PUSH-17 | P1: preferências — validação | - | Implementing |
 | PUSH-18 | P1: preferências — sem preferências | - | Pending |
 | PUSH-19 | P1: preferências — só o próprio usuário | - | Pending |
 | PUSH-20 | P1: envio — 401 sem segredo | - | Pending |
@@ -380,7 +380,7 @@ O ANON roda só no navegador: sem ícone na tela inicial, sem janela própria, s
 | PUSH-35 | P2: segurança — falha não bloqueia | - | Pending |
 | PUSH-36 | P2: segurança — preferência desligada | - | Pending |
 | PUSH-37 | P2: admin — enfileirar | - | Pending |
-| PUSH-38 | P2: admin — validar texto | - | Pending |
+| PUSH-38 | P2: admin — validar texto | - | Implementing |
 | PUSH-39 | P2: admin — somente admin | - | Pending |
 | PUSH-40 | P2: admin — entrega única | - | Pending |
 | PUSH-41 | P2: admin — marcar enviada | - | Pending |
