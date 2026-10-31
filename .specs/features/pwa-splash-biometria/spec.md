@@ -216,9 +216,9 @@ Explicitamente excluído. Documentado para evitar crescimento de escopo.
 | LOCK-20 | P1: Bloquear e desbloquear | - | Pending |
 | SPLASH-06 | P2: Splash dentro do app | - | Pending |
 | SPLASH-07 | P2: Splash dentro do app | - | Pending |
-| SPLASH-08 | P2: Splash dentro do app | - | Pending |
-| SPLASH-09 | P2: Splash dentro do app | - | Pending |
-| SPLASH-10 | P2: Splash dentro do app | - | Pending |
+| SPLASH-08 | P2: Splash dentro do app | - | Done |
+| SPLASH-09 | P2: Splash dentro do app | - | Done |
+| SPLASH-10 | P2: Splash dentro do app | - | Done |
 | LOCK-21 | P2: Transparência | - | Done |
 | LOCK-22 | P2: Transparência | - | Done |
 

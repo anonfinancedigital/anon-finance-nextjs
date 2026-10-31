@@ -410,10 +410,10 @@ T24 → T25
 
 **Done when**:
 
-- [ ] Inspeção: `fixed inset-0`, fundo `#0D111A`, marca centralizada (`file:line` no relatório)
-- [ ] Inspeção: animação sob `motion-safe:` (sem movimento com `prefers-reduced-motion: reduce`) e nenhum dado de usuário no componente
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
-- [ ] Nenhum teste existente removido, pulado ou enfraquecido
+- [x] Inspeção: `fixed inset-0`, fundo `#0D111A`, marca centralizada (`file:line` no relatório) — `src/components/brand-splash.tsx:11` (fixed inset-0, bg-[#0D111A], flex centralizado), SVG inline :14-:50
+- [x] Inspeção: animação sob `motion-safe:` (sem movimento com `prefers-reduced-motion: reduce`) e nenhum dado de usuário no componente — `src/components/brand-splash.tsx:17` (motion-safe:animate-pulse); sem props/dados de usuário (`brand-splash.tsx:6`, sem props)
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Nenhum teste existente removido, pulado ou enfraquecido
 
 **Tests**: none
 **Gate**: build
