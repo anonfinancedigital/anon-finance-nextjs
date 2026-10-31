@@ -2,8 +2,8 @@ import { describe, expect, it } from "vitest";
 import { pwaMetadata, pwaViewport } from "./metadata";
 
 describe("pwaMetadata (PWA-03)", () => {
-  it("makes the iOS home-screen app capable, titled ANON", () => {
-    expect(pwaMetadata.appleWebApp).toMatchObject({ capable: true, title: "ANON" });
+  it("makes the iOS home-screen app capable, titled Anon Finance (APPNAME-02)", () => {
+    expect(pwaMetadata.appleWebApp).toMatchObject({ capable: true, title: "Anon Finance" });
   });
 
   it("declares the 180x180 Apple touch icon", () => {

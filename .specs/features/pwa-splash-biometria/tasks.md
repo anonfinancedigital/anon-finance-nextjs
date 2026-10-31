@@ -145,10 +145,10 @@ T24 → T25
 
 **Done when**:
 
-- [ ] `pwaMetadata.appleWebApp.title` é "Anon Finance" e `capable` segue `true`
-- [ ] `metadata.test.ts` atualizado (hoje espera "ANON")
-- [ ] Gate check passes: `npm run test:unit`
-- [ ] Nenhum teste existente removido, pulado ou enfraquecido
+- [x] `pwaMetadata.appleWebApp.title` é "Anon Finance" e `capable` segue `true`
+- [x] `metadata.test.ts` atualizado (hoje espera "ANON")
+- [x] Gate check passes: `npm run test:unit`
+- [x] Nenhum teste existente removido, pulado ou enfraquecido
 
 **Tests**: unit
 **Gate**: quick
