@@ -366,8 +366,8 @@ O ANON roda só no navegador: sem ícone na tela inicial, sem janela própria, s
 | PUSH-21 | P1: envio — 503 sem configuração | - | Implementing |
 | PUSH-22 | P1: envio — rota pública | - | Implementing |
 | PUSH-23 | P1: envio — só aprovados com inscrição | - | Pending |
-| PUSH-24 | P1: envio — lembrete | - | Pending |
-| PUSH-25 | P1: envio — vencimento | - | Pending |
+| PUSH-24 | P1: envio — lembrete | - | Implementing |
+| PUSH-25 | P1: envio — vencimento | - | Implementing |
 | PUSH-26 | P1: envio — idempotência | - | Pending |
 | PUSH-27 | P1: envio — 410/404 remove | - | Pending |
 | PUSH-28 | P1: envio — outra falha mantém | - | Pending |
@@ -375,8 +375,8 @@ O ANON roda só no navegador: sem ícone na tela inicial, sem janela própria, s
 | PUSH-30 | P1: envio — limite de envios | - | Pending |
 | PUSH-31 | P1: envio — limpeza e resposta | - | Pending |
 | PUSH-32 | P1: envio — demais rotas protegidas | - | Implementing |
-| PUSH-33 | P2: segurança — senha redefinida | - | Pending |
-| PUSH-34 | P2: segurança — acesso revogado | - | Pending |
+| PUSH-33 | P2: segurança — senha redefinida | - | Implementing |
+| PUSH-34 | P2: segurança — acesso revogado | - | Implementing |
 | PUSH-35 | P2: segurança — falha não bloqueia | - | Pending |
 | PUSH-36 | P2: segurança — preferência desligada | - | Pending |
 | PUSH-37 | P2: admin — enfileirar | - | Pending |
@@ -385,7 +385,7 @@ O ANON roda só no navegador: sem ícone na tela inicial, sem janela própria, s
 | PUSH-40 | P2: admin — entrega única | - | Pending |
 | PUSH-41 | P2: admin — marcar enviada | - | Pending |
 | PUSH-42 | P2: SW push — mostrar | - | Pending |
-| PUSH-43 | P2: SW push — payload inválido | - | Pending |
+| PUSH-43 | P2: SW push — payload inválido | - | Implementing |
 | PUSH-44 | P2: SW push — clique | - | Pending |
 | PUSH-45 | P2: SW push — URL segura | - | Pending |
 | PUSH-46 | P2: SW push — cache intacto | - | Pending |

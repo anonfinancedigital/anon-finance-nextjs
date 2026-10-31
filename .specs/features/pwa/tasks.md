@@ -527,11 +527,11 @@ T38 → T39 → T40 → T41 → T42 → T43
 
 **Done when**:
 
-- [ ] Os cinco textos fixos e o genérico batem caractere a caractere com a spec
-- [ ] `pushPayload("x")` é `{"title":"ANON","body":"x","url":"/"}`
-- [ ] `PUSH_TTL` é 86400
-- [ ] Gate check passes: `npm run test:unit`
-- [ ] Nenhum teste existente removido, pulado ou enfraquecido
+- [x] Os cinco textos fixos e o genérico batem caractere a caractere com a spec
+- [x] `pushPayload("x")` é `{"title":"ANON","body":"x","url":"/"}`
+- [x] `PUSH_TTL` é 86400
+- [x] Gate check passes: `npm run test:unit`
+- [x] Nenhum teste existente removido, pulado ou enfraquecido
 
 **Tests**: unit
 **Gate**: quick
