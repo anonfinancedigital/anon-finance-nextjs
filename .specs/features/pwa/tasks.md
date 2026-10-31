@@ -448,9 +448,9 @@ T38 → T39 → T40 → T41 → T42 → T43
 
 **Done when**:
 
-- [ ] Gate de build passa
-- [ ] Inspeção: o cartão aparece entre "Seus dados" e "Exportar"
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
+- [x] Gate de build passa
+- [x] Inspeção: o cartão aparece entre "Seus dados" e "Exportar"
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
 
 **Tests**: none (Wiring)
 **Gate**: build

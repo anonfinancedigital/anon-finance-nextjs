@@ -3,6 +3,7 @@ import Link from "next/link";
 import { ContentCard } from "@/components/content-card";
 import { DeleteAccountDialog } from "@/components/delete-account-dialog";
 import { ExportButton } from "@/components/export-button";
+import { InstallCard } from "@/components/install-card";
 import { ImportCard } from "@/components/import-card";
 import { PageHeader } from "@/components/page-header";
 import { requireSessionForPage } from "@/lib/auth-guard";
@@ -37,6 +38,8 @@ export default async function AccountPage() {
           </Link>
         </p>
       </ContentCard>
+
+      <InstallCard />
 
       <ContentCard
         title="Exportar meus dados"
