@@ -5,8 +5,8 @@ describe("manifest (PWA-01, PWA-02)", () => {
   const m = manifest();
 
   it("identifies the app", () => {
-    expect(m.name).toBe("ANON");
-    expect(m.short_name).toBe("ANON");
+    expect(m.name).toBe("Anon Finance");
+    expect(m.short_name).toBe("Anon Finance");
     expect(m.lang).toBe("pt-BR");
   });
 
@@ -19,6 +19,12 @@ describe("manifest (PWA-01, PWA-02)", () => {
   it("uses the brand dark color for background and theme", () => {
     expect(m.background_color).toBe("#0D111A");
     expect(m.theme_color).toBe("#0D111A");
+  });
+
+  it("declares the 512x512 PNG icon with purpose any that Android uses for its splash (SPLASH-01)", () => {
+    const icon = m.icons?.find((i) => i.src === "/icon-512.png");
+    expect(icon).toMatchObject({ sizes: "512x512", type: "image/png" });
+    expect([undefined, "any"]).toContain(icon?.purpose);
   });
 
   it("lists exactly the three PNG icons, the last one maskable", () => {

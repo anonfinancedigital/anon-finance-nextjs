@@ -119,10 +119,10 @@ T24 → T25
 
 **Done when**:
 
-- [ ] Manifest serve `name` e `short_name` "Anon Finance"
-- [ ] `manifest.test.ts` confere também `background_color` "#0D111A" e o ícone `/icon-512.png` 512x512 `image/png` com `purpose` `any` ou ausente (SPLASH-01); se o manifest não declarar esse ícone com `purpose` `any`, ajustar o manifest
-- [ ] Gate check passes: `npm run test:unit`
-- [ ] Nenhum teste existente removido, pulado ou enfraquecido
+- [x] Manifest serve `name` e `short_name` "Anon Finance"
+- [x] `manifest.test.ts` confere também `background_color` "#0D111A" e o ícone `/icon-512.png` 512x512 `image/png` com `purpose` `any` ou ausente (SPLASH-01); se o manifest não declarar esse ícone com `purpose` `any`, ajustar o manifest
+- [x] Gate check passes: `npm run test:unit`
+- [x] Nenhum teste existente removido, pulado ou enfraquecido
 
 **Tests**: unit
 **Gate**: quick
