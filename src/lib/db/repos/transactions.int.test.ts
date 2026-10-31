@@ -6,7 +6,7 @@ import { insertCategory, insertTestUser, setupTestDb } from "@/test/db";
 import { db } from "../client";
 import { transaction } from "../schema";
 import { categoriesRepo } from "./categories";
-import { transactionsRepo } from "./transactions";
+import { applicableInMonth, transactionsRepo } from "./transactions";
 
 setupTestDb();
 
@@ -350,5 +350,22 @@ describe("transactionsRepo.countAll", () => {
 
     expect(await transactionsRepo.countAll(userId)).toBe(1);
     expect(await transactionsRepo.countAll(otherId)).toBe(2);
+  });
+});
+
+describe("applicableInMonth (exported for the push dispatch, PUSH-25)", () => {
+  const idsIn = async (key: string) =>
+    (await db.select({ id: transaction.id }).from(transaction).where(applicableInMonth(userId, month(key))))
+      .map((r) => r.id)
+      .sort();
+
+  it("includes an active series and excludes one that ended before the month", async () => {
+    const active: TransactionDto = { ...expense("2026-08-15"), recurrence: "indefinite" };
+    const ended: TransactionDto = { ...expense("2026-06-15"), recurrence: "until", recurrenceEndMonth: "2026-09" };
+    await transactionsRepo.createSealed(userId, active);
+    await transactionsRepo.createSealed(userId, ended);
+
+    expect(await idsIn("2026-10")).toEqual([active.id]);
+    expect(await idsIn("2026-09")).toEqual([active.id, ended.id].sort());
   });
 });

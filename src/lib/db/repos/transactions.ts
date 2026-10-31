@@ -64,7 +64,7 @@ const ownedBy = (userId: string, id: string) =>
  * Rows with an occurrence in the month: single rows dated in it, and recurring segments that
  * started by the month's end and have not ended before its start (AD-004).
  */
-const applicableInMonth = (userId: string, range: MonthRange) =>
+export const applicableInMonth = (userId: string, range: MonthRange) =>
   and(
     eq(transaction.userId, userId),
     or(

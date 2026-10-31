@@ -794,10 +794,10 @@ T38 → T39 → T40 → T41 → T42 → T43
 
 **Done when**:
 
-- [ ] Nenhum comportamento muda: `transactions.int.test.ts` passa inteiro
-- [ ] Teste novo confirma que o filtro exportado inclui série ativa e exclui encerrada
-- [ ] Gate check passes: `npm run test:unit && npm run test:int`
-- [ ] Nenhum teste existente removido, pulado ou enfraquecido
+- [x] Nenhum comportamento muda: `transactions.int.test.ts` passa inteiro
+- [x] Teste novo confirma que o filtro exportado inclui série ativa e exclui encerrada
+- [x] Gate check passes: `npm run test:unit && npm run test:int`
+- [x] Nenhum teste existente removido, pulado ou enfraquecido
 
 **Tests**: integration
 **Gate**: full
