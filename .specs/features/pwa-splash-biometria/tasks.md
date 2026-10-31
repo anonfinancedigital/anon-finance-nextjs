@@ -436,10 +436,10 @@ T24 → T25
 
 **Done when**:
 
-- [ ] Estado `loading` renderiza `BrandSplash`; qualquer outro estado a remove no mesmo render, sem tempo mínimo (inspeção `file:line`)
-- [ ] `VaultSkeleton` removido se não houver outro uso
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
-- [ ] Nenhum teste existente removido, pulado ou enfraquecido
+- [x] Estado `loading` renderiza `BrandSplash`; qualquer outro estado a remove no mesmo render, sem tempo mínimo (inspeção `file:line`) — `src/components/vault-provider.tsx:93` (loading -> BrandSplash; locked :95-97, error :98 e ready :115 retornam sem BrandSplash, no mesmo render, sem timer)
+- [x] `VaultSkeleton` removido se não houver outro uso — removido (grep sem usos em src)
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Nenhum teste existente removido, pulado ou enfraquecido
 
 **Tests**: none
 **Gate**: build
