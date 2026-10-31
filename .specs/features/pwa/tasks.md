@@ -500,11 +500,11 @@ T38 → T39 → T40 → T41 → T42 → T43
 
 **Done when**:
 
-- [ ] Retorna `null` se faltar qualquer variável VAPID ou se `VAPID_SUBJECT` não começar por `mailto:` ou `https:`
-- [ ] Vazio conta como ausente
-- [ ] `resolveCronSecret` devolve `null` para vazio
-- [ ] Gate check passes: `npm run test:unit`
-- [ ] Nenhum teste existente removido, pulado ou enfraquecido
+- [x] Retorna `null` se faltar qualquer variável VAPID ou se `VAPID_SUBJECT` não começar por `mailto:` ou `https:`
+- [x] Vazio conta como ausente
+- [x] `resolveCronSecret` devolve `null` para vazio
+- [x] Gate check passes: `npm run test:unit`
+- [x] Nenhum teste existente removido, pulado ou enfraquecido
 
 **Tests**: unit
 **Gate**: quick

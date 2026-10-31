@@ -343,7 +343,7 @@ O ANON roda só no navegador: sem ícone na tela inicial, sem janela própria, s
 | PWA-23 | P2: instalar — instrução iOS | - | Implementing |
 | PWA-24 | P2: instalar — já instalado | - | Implementing |
 | PWA-25 | P2: instalar — sem suporte | - | Implementing |
-| PUSH-01 | P1: ativar — seção visível com VAPID | - | Pending |
+| PUSH-01 | P1: ativar — seção visível com VAPID | - | Implementing |
 | PUSH-02 | P1: ativar — inscrever | - | Pending |
 | PUSH-03 | P1: ativar — armazenar e criar preferências | - | Pending |
 | PUSH-04 | P1: ativar — permissão negada | - | Pending |
@@ -363,7 +363,7 @@ O ANON roda só no navegador: sem ícone na tela inicial, sem janela própria, s
 | PUSH-18 | P1: preferências — sem preferências | - | Pending |
 | PUSH-19 | P1: preferências — só o próprio usuário | - | Pending |
 | PUSH-20 | P1: envio — 401 sem segredo | - | Pending |
-| PUSH-21 | P1: envio — 503 sem configuração | - | Pending |
+| PUSH-21 | P1: envio — 503 sem configuração | - | Implementing |
 | PUSH-22 | P1: envio — rota pública | - | Implementing |
 | PUSH-23 | P1: envio — só aprovados com inscrição | - | Pending |
 | PUSH-24 | P1: envio — lembrete | - | Pending |
