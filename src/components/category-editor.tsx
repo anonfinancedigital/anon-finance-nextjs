@@ -4,11 +4,9 @@ import { AlertCircleIcon, Trash2Icon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useId, useState, useTransition } from "react";
 import { saveCategoriesSealed } from "@/actions/categories-sealed";
-import { AdjustSumBar } from "@/components/adjust-sum-bar";
 import { AllocationProgress } from "@/components/allocation-progress";
 import { CategorySquare } from "@/components/category-card";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import {
   Dialog,
   DialogContent,
@@ -19,9 +17,10 @@ import {
 } from "@/components/ui/dialog";
 import { InputAffix } from "@/components/input-affix";
 import { Input } from "@/components/ui/input";
+import { Switch } from "@/components/ui/switch";
 import { ReferenceIncomeCard } from "@/components/reference-income-card";
 import { SubcategoryEditor, type SubcategoryRow } from "@/components/subcategory-editor";
-import { SumWarning } from "@/components/sum-warning";
+import { SumStatusBar } from "@/components/sum-status-bar";
 import { useVault } from "@/components/vault-provider";
 import { type ActionResult, invalidInput, SAVE_FAILED } from "@/lib/action-result";
 import { allocationView } from "@/lib/domain/allocation-view";
@@ -33,9 +32,11 @@ import { currentMonth } from "@/lib/domain/month";
 import {
   adjustToTotal,
   formatPercent,
+  MICRO_PER_PERCENT,
   microFromCents,
   parsePercent,
   percentFieldText,
+  resolveAdjustKey,
   sumLabel,
   TOTAL_MICRO,
 } from "@/lib/domain/percent";
@@ -56,11 +57,13 @@ type Row = {
 };
 
 /** Column widths shared by the header row and the category rows so they line up. */
-const COL_PERCENT = "w-28";
-const COL_AMOUNT = "w-36";
-const COL_INVESTMENT = "w-24";
+const COL_PERCENT = "sm:w-28";
+const COL_AMOUNT = "sm:w-36";
+const COL_INVESTMENT = "sm:w-24";
 /** Same width as the subcategory toggle in `CategoryCard` (w-32). */
 const COL_COUNT = "w-32";
+/** Visible only below sm, where the column header row is hidden. */
+const MOBILE_LABEL = "mb-1 block text-xs text-muted-foreground sm:hidden";
 /** The trash button is `size-8`, the same width. */
 const COL_ACTION = "w-8";
 
@@ -115,7 +118,7 @@ function ColorPicker({
         title={current?.name}
         aria-describedby={errorId}
         onClick={() => setOpen(true)}
-        className="cursor-pointer rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        className="cursor-pointer rounded-lg outline-none transition-shadow hover:ring-2 hover:ring-foreground/30 focus-visible:ring-2 focus-visible:ring-ring"
       >
         <CategorySquare name={name} color={value} />
       </button>
@@ -183,6 +186,8 @@ export function CategoryEditor({
   // Kept apart from the rows so it survives the reset after a save.
   const [income, setIncome] = useState(initialIncome);
   const [adjustError, setAdjustError] = useState<string | null>(null);
+  // Row the user picked to absorb the gap in the status bar; the default is resolved from the rows.
+  const [adjustChoice, setAdjustChoice] = useState<string | null>(null);
   // Row whose percent field has focus: it shows the full text, the others show 2 decimals.
   const [focusedRow, setFocusedRow] = useState<number | null>(null);
   // Row waiting for the removal confirmation dialog.
@@ -199,7 +204,25 @@ export function CategoryEditor({
 
   const parsed = rows.map((r) => (r.percent.trim() === "" ? null : parsePercent(r.percent)));
   const sumMicro = parsed.reduce((sum, p) => sum + (p?.ok ? p.value : 0), 0);
-  const view = allocationView(rows.length, sumMicro, categories.length);
+  const comparable = (list: Row[]) =>
+    JSON.stringify(
+      list.map(({ id, name, percent, color, isInvestment, subcategories }) => [
+        id,
+        name,
+        percent,
+        color,
+        isInvestment,
+        subcategories.map((sub) => [sub.id, sub.name]),
+      ]),
+    );
+  const dirty = comparable(rows) !== comparable(categories.map(toRow));
+  const view = allocationView(rows.length, sumMicro, categories.length, dirty);
+  const adjustOptions = rows.map((r, i) => ({
+    key: r.key,
+    label: r.name.trim() || `Categoria ${i + 1}`,
+    micro: parsed[i]?.ok ? parsed[i].value : null,
+  }));
+  const adjustTarget = view.showAdjust ? resolveAdjustKey(adjustChoice, adjustOptions) : null;
   const parsedIncome = income.trim() === "" ? null : parseBRL(income);
   const incomeCents = parsedIncome?.ok ? parsedIncome.value : null;
   const amounts = parsed.map((p) =>
@@ -207,6 +230,7 @@ export function CategoryEditor({
   );
   const amountSum = amounts.reduce<number>((sum, cents) => sum + (cents ?? 0), 0);
   const removingRow = removing === null ? null : rows[removing];
+  const complete = !view.empty && sumMicro === TOTAL_MICRO;
   const fieldErrors = result && !result.ok ? (result.fieldErrors ?? {}) : {};
 
   function update(index: number, patch: Partial<Row>) {
@@ -260,6 +284,12 @@ export function CategoryEditor({
     setAdjustError(null);
   }
 
+  function discard() {
+    setRows(categories.map(toRow));
+    setResult(null);
+    setAdjustError(null);
+  }
+
   function save() {
     // Validated in the browser before sealing, with the messages the server used to give (SIGILO-09).
     const parsedSet = categorySetSchema.safeParse(
@@ -305,7 +335,7 @@ export function CategoryEditor({
       }}
     >
       <ReferenceIncomeCard value={income} initialValue={initialIncome} onChange={setIncome} />
-      <AllocationProgress value={view.progressValue} text={view.progressText} />
+      <AllocationProgress value={view.progressValue} text={view.progressText} tone={view.progressTone} />
 
       {view.empty ? (
         <EmptyAllocation onAdd={add} />
@@ -319,9 +349,9 @@ export function CategoryEditor({
             <span className="min-w-40 flex-1">CATEGORIA</span>
             <span className={COL_PERCENT}>ALOCAÇÃO (%)</span>
             <span className={COL_AMOUNT}>VALOR PREVISTO (R$)</span>
-            <span className={COL_INVESTMENT}>É INVESTIMENTO?</span>
+            <span className={`${COL_INVESTMENT} text-center`}>INVESTIMENTO</span>
             <span className={COL_COUNT}>SUBCATEGORIAS</span>
-            <span className={`${COL_ACTION} shrink-0 whitespace-nowrap text-center`}>AÇÕES</span>
+            <span className={`${COL_ACTION} shrink-0`} />
           </div>
           {rows.map((row, i) => {
             const nameError = fieldErrors[`${i}.name`];
@@ -333,6 +363,16 @@ export function CategoryEditor({
             const percentError = fieldErrors[`${i}.percent`] ?? (live && !live.ok ? live.error : undefined);
             return (
               <div key={row.key} className="group/row py-2">
+                {/* Share of the month this category takes, in its own color. */}
+                <div aria-hidden className="mb-2 h-1 overflow-hidden rounded-full bg-subtle">
+                  <div
+                    className="h-full rounded-full transition-[width]"
+                    style={{
+                      width: `${live?.ok ? Math.min(100, Math.max(0, live.value / MICRO_PER_PERCENT)) : 0}%`,
+                      backgroundColor: colorVar(row.color),
+                    }}
+                  />
+                </div>
                 <SubcategoryEditor
                   index={i}
                   name={row.name}
@@ -342,86 +382,100 @@ export function CategoryEditor({
                   onChange={(subcategories) => update(i, { subcategories })}
                   controls={
                     <>
-                      <div>
-                        <ColorPicker
-                          label={`Cor da categoria ${i + 1}`}
-                          name={row.name}
-                          groupName={`color-${row.key}`}
-                          value={row.color}
-                          errorId={colorError ? `color-error-${row.key}` : undefined}
-                          onChange={(color) => update(i, { color })}
-                        />
-                        {colorError && (
-                          <p id={`color-error-${row.key}`} className="mt-1 text-sm text-destructive">
-                            {colorError}
-                          </p>
-                        )}
-                      </div>
-                      <div className="min-w-40 flex-1">
-                        <Input
-                          aria-label={`Nome da categoria ${i + 1}`}
-                          value={row.name}
-                          maxLength={60}
-                          aria-invalid={!!nameError}
-                          onChange={(e) => update(i, { name: e.target.value })}
-                        />
-                        {nameError && <p className="mt-1 text-sm text-destructive">{nameError}</p>}
-                      </div>
-                      <div className={COL_PERCENT}>
-                        <InputAffix suffix="%">
-                          <Input
-                            aria-label={`Percentual da categoria ${i + 1}`}
-                            inputMode="decimal"
-                            value={percentFieldText(row.percent, focusedRow === i)}
-                            aria-invalid={!!percentError}
-                            onFocus={() => setFocusedRow(i)}
-                            onBlur={() => setFocusedRow((current) => (current === i ? null : current))}
-                            onChange={(e) => update(i, { percent: e.target.value, amountText: undefined })}
+                      {/* Below sm: line 1 (color, name, trash); from sm up the groups dissolve into one row. */}
+                      <div className="col-span-2 flex items-center gap-3 sm:contents">
+                        <div>
+                          <ColorPicker
+                            label={`Cor da categoria ${i + 1}`}
+                            name={row.name}
+                            groupName={`color-${row.key}`}
+                            value={row.color}
+                            errorId={colorError ? `color-error-${row.key}` : undefined}
+                            onChange={(color) => update(i, { color })}
                           />
-                        </InputAffix>
-                        {percentError && <p className="mt-1 text-sm text-destructive">{percentError}</p>}
-                      </div>
-                      <div className={COL_AMOUNT}>
-                        <InputAffix prefix="R$">
+                          {colorError && (
+                            <p id={`color-error-${row.key}`} className="mt-1 text-sm text-destructive">
+                              {colorError}
+                            </p>
+                          )}
+                        </div>
+                        <div className="min-w-0 flex-1 sm:min-w-40">
                           <Input
-                            aria-label={`Valor da categoria ${i + 1}`}
-                            data-testid={`category-amount-${i + 1}`}
-                            inputMode="decimal"
-                            disabled={incomeCents === null}
-                            title={incomeCents === null ? "Informe a receita de referência" : undefined}
-                            value={row.amountText ?? (amounts[i] === null ? "" : amountField(amounts[i]))}
-                            aria-invalid={!!amountError}
-                            onChange={(e) => changeAmount(i, e.target.value)}
-                            onBlur={() => update(i, { amountText: undefined })}
+                            aria-label={`Nome da categoria ${i + 1}`}
+                            value={row.name}
+                            maxLength={60}
+                            aria-invalid={!!nameError}
+                            onChange={(e) => update(i, { name: e.target.value })}
                           />
-                        </InputAffix>
-                        {amountError && <p className="mt-1 text-sm text-destructive">{amountError}</p>}
+                          {nameError && <p className="mt-1 text-sm text-destructive">{nameError}</p>}
+                        </div>
+                        {/* After the subcategory toggle on desktop (order), next to the name on mobile. */}
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon-sm"
+                          aria-label={`Remover categoria ${i + 1}`}
+                          onClick={() => (row.subcategories.length > 0 ? setRemoving(i) : remove(i))}
+                          className="size-8 shrink-0 opacity-40 hover:text-destructive group-hover/row:text-destructive group-hover/row:opacity-100 group-focus-within/row:text-destructive group-focus-within/row:opacity-100 sm:order-last sm:mt-1"
+                        >
+                          <Trash2Icon aria-hidden className="size-4" />
+                        </Button>
                       </div>
+                      {/* Line 2 below sm: percent and amount side by side, labeled. */}
+                      <div className="col-span-2 grid grid-cols-2 gap-3 sm:contents">
+                        <div className={COL_PERCENT}>
+                          <span aria-hidden className={MOBILE_LABEL}>
+                            Alocação (%)
+                          </span>
+                          <InputAffix suffix="%">
+                            <Input
+                              aria-label={`Percentual da categoria ${i + 1}`}
+                              className={`text-right tabular-nums ${
+                                adjustTarget === row.key ? "ring-2 ring-primary/50" : ""
+                              }`}
+                              inputMode="decimal"
+                              value={percentFieldText(row.percent, focusedRow === i)}
+                              aria-invalid={!!percentError}
+                              onFocus={() => setFocusedRow(i)}
+                              onBlur={() => setFocusedRow((current) => (current === i ? null : current))}
+                              onChange={(e) => update(i, { percent: e.target.value, amountText: undefined })}
+                            />
+                          </InputAffix>
+                          {percentError && <p className="mt-1 text-sm text-destructive">{percentError}</p>}
+                        </div>
+                        <div className={COL_AMOUNT}>
+                          <span aria-hidden className={MOBILE_LABEL}>
+                            Valor previsto (R$)
+                          </span>
+                          <InputAffix prefix="R$">
+                            <Input
+                              aria-label={`Valor da categoria ${i + 1}`}
+                              data-testid={`category-amount-${i + 1}`}
+                              className="text-right tabular-nums"
+                              inputMode="decimal"
+                              disabled={incomeCents === null}
+                              title={incomeCents === null ? "Informe a receita de referência" : undefined}
+                              value={row.amountText ?? (amounts[i] === null ? "" : amountField(amounts[i]))}
+                              aria-invalid={!!amountError}
+                              onChange={(e) => changeAmount(i, e.target.value)}
+                              onBlur={() => update(i, { amountText: undefined })}
+                            />
+                          </InputAffix>
+                          {amountError && <p className="mt-1 text-sm text-destructive">{amountError}</p>}
+                        </div>
+                      </div>
+                      {/* Line 3 below sm: this checkbox on the left, the subcategory toggle on the right. */}
                       <label
-                        className={`${COL_INVESTMENT} flex items-center gap-2 text-sm`}
+                        className={`${COL_INVESTMENT} flex h-8 items-center gap-2 text-sm sm:h-10 sm:justify-center`}
                         title="Passar da meta de um investimento não é estouro"
                       >
-                        <Checkbox
+                        <Switch
                           aria-label={`Investimento / aporte da categoria ${i + 1}`}
                           checked={row.isInvestment}
-                          onCheckedChange={(checked) => update(i, { isInvestment: checked === true })}
+                          onCheckedChange={(checked) => update(i, { isInvestment: checked })}
                         />
                         <span className="sm:hidden">Investimento</span>
                       </label>
-                    </>
-                  }
-                  trailing={
-                    <>
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="icon-sm"
-                        aria-label={`Remover categoria ${i + 1}`}
-                        onClick={() => (row.subcategories.length > 0 ? setRemoving(i) : remove(i))}
-                        className={`size-8 opacity-40 hover:text-destructive group-hover/row:text-destructive group-hover/row:opacity-100 group-focus-within/row:text-destructive group-focus-within/row:opacity-100`}
-                      >
-                        <Trash2Icon aria-hidden className="size-4" />
-                      </Button>
                     </>
                   }
                 />
@@ -433,9 +487,13 @@ export function CategoryEditor({
               Adicionar categoria
             </Button>
           </div>
-          <div className="flex flex-wrap items-center gap-x-3 py-2 text-sm font-medium">
-            <span className="w-9 shrink-0" />
-            <span className="min-w-40 flex-1">Soma</span>
+          <div
+            className={`flex flex-wrap items-center gap-x-3 py-2 text-sm font-medium ${
+              complete ? "text-success" : "text-destructive"
+            }`}
+          >
+            <span className="hidden w-9 shrink-0 sm:block" />
+            <span className="min-w-0 flex-1 sm:min-w-40">Soma</span>
             <span className={COL_PERCENT} data-testid="category-sum">
               {sumLabel(sumMicro)}
             </span>
@@ -443,28 +501,18 @@ export function CategoryEditor({
               {incomeCents === null ? "—" : formatBRL(amountSum)}
             </span>
             {/* Empty cells for the remaining columns, so the sums sit under their own columns. */}
-            <span className={COL_INVESTMENT} />
-            <span className={COL_COUNT} />
-            <span className={`${COL_ACTION} shrink-0`} />
+            <span className={`hidden sm:block ${COL_INVESTMENT}`} />
+            <span className={`hidden ${COL_COUNT} sm:block`} />
+            <span className={`hidden ${COL_ACTION} shrink-0 sm:block`} />
           </div>
         </div>
       )}
-
-      {view.showSumWarning && <SumWarning sumMicro={sumMicro} incomeCents={incomeCents} />}
-      {view.showAdjust && (
-        <AdjustSumBar
-          sumMicro={sumMicro}
-          incomeCents={incomeCents}
-          options={rows.map((r, i) => ({
-            key: r.key,
-            label: r.name.trim() || `Categoria ${i + 1}`,
-            micro: parsed[i]?.ok ? parsed[i].value : null,
-          }))}
-          onApply={adjust}
-          error={adjustError}
-          showWarning={false}
-        />
+      {!view.empty && (
+        <p className="text-xs text-muted-foreground">
+          Alterar o percentual ou o valor atualiza o outro, com base na receita de referência.
+        </p>
       )}
+
       {result && !result.ok && (
         <p role="alert" className="flex items-center gap-2 text-sm text-destructive">
           <AlertCircleIcon aria-hidden="true" className="size-4 shrink-0" />
@@ -477,23 +525,24 @@ export function CategoryEditor({
         </p>
       )}
 
-      {view.showSave && (
-        <div className="flex gap-2">
-          <Button
-            type="submit"
-            disabled={view.saveDisabled || pending}
-            title={view.saveHint ?? undefined}
-            aria-describedby={view.saveHint ? saveHintId : undefined}
-            className="disabled:pointer-events-auto disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            Salvar
-          </Button>
-          {view.saveHint && (
-            <span id={saveHintId} className="sr-only">
-              {view.saveHint}
-            </span>
-          )}
-        </div>
+      {view.showBar && (
+        <SumStatusBar
+          sumMicro={sumMicro}
+          incomeCents={incomeCents}
+          hasRows={!view.empty}
+          dirty={dirty}
+          showAdjust={view.showAdjust}
+          options={adjustOptions}
+          target={adjustTarget}
+          onTargetChange={setAdjustChoice}
+          onApply={adjust}
+          adjustError={adjustError}
+          onDiscard={discard}
+          pending={pending}
+          saveDisabled={view.saveDisabled}
+          saveHint={view.saveHint}
+          saveHintId={saveHintId}
+        />
       )}
       <Dialog open={removing !== null} onOpenChange={(open) => !open && setRemoving(null)}>
         <DialogContent className="sm:max-w-sm">

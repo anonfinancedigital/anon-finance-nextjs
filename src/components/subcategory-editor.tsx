@@ -58,7 +58,13 @@ export function SubcategoryEditor({
       color={color}
       count={items.length}
       open={open}
-      onToggle={() => setExpanded(!open)}
+      onToggle={() => {
+        // "Adicionar" on an empty category opens it with a first field ready to type.
+        if (items.length === 0 && !open) {
+          setExpanded(true);
+          add();
+        } else setExpanded(!open);
+      }}
       controls={controls}
       trailing={trailing}
     >
