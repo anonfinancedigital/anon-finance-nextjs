@@ -515,9 +515,9 @@ T24 → T25
 
 **Done when**:
 
-- [ ] `BiometricGate` recebe `userId` e envolve o conteúdo e `GlobalNewTransaction`; a barra lateral fica fora (inspeção `file:line`)
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
-- [ ] Nenhum teste existente removido, pulado ou enfraquecido
+- [x] `BiometricGate` recebe `userId` e envolve o conteúdo e `GlobalNewTransaction`; a barra lateral fica fora (inspeção `file:line`) — `src/app/(app)/layout.tsx:44-47` (`BiometricGate userId` dentro do `VaultProvider` :43, envolve `children` e `GlobalNewTransaction`); `<aside>` :33-40 fica fora
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Nenhum teste existente removido, pulado ou enfraquecido
 
 **Tests**: none
 **Gate**: build

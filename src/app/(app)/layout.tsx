@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { AppNav } from "@/components/app-nav";
+import { BiometricGate } from "@/components/biometric-gate";
 import { GlobalNewTransaction } from "@/components/global-new-transaction";
 import { Logo } from "@/components/brand/Logo";
 import { SignOutButton } from "@/components/sign-out-button";
@@ -40,8 +41,10 @@ export default async function AppLayout({ children }: LayoutProps<"/">) {
       <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-6 pb-[calc(6rem+env(safe-area-inset-bottom))] sm:px-6 md:ml-[218px] md:max-w-none md:px-8 md:pb-8 lg:px-12">
         <div className="mx-auto w-full max-w-5xl">
           <VaultProvider userId={userId}>
-            {children}
-            <GlobalNewTransaction categories={categories} nowIso={now.toISOString()} />
+            <BiometricGate userId={userId}>
+              {children}
+              <GlobalNewTransaction categories={categories} nowIso={now.toISOString()} />
+            </BiometricGate>
           </VaultProvider>
         </div>
       </main>
