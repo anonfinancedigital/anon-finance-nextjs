@@ -1015,10 +1015,10 @@ T38 → T39 → T40 → T41 → T42 → T43
 
 **Done when**:
 
-- [ ] `push-admin.int.test.ts`: admin com texto válido grava uma linha; texto vazio e de 141 caracteres devolvem "A mensagem deve ter de 1 a 140 caracteres" sem gravar
-- [ ] Usuário comum e anônimo → `UNAUTHORIZED` sem gravar
-- [ ] Gate check passes: `npm run test:unit && npm run test:int`
-- [ ] Nenhum teste existente removido, pulado ou enfraquecido
+- [x] `push-admin.int.test.ts`: admin com texto válido grava uma linha; texto vazio e de 141 caracteres devolvem "A mensagem deve ter de 1 a 140 caracteres" sem gravar
+- [x] Usuário comum e anônimo → `UNAUTHORIZED` sem gravar
+- [x] Gate check passes: `npm run test:unit && npm run test:int`
+- [x] Nenhum teste existente removido, pulado ou enfraquecido
 
 **Tests**: integration
 **Gate**: full
