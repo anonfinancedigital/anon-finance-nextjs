@@ -85,6 +85,7 @@ describe("securityHeaderRules", () => {
         "/_next/static/:path*",
         "/_next/image",
         "/favicon.ico",
+        "/manifest.webmanifest",
         "/:path(.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico))",
       ].map((source) => ({
         source,
@@ -95,6 +96,23 @@ describe("securityHeaderRules", () => {
           },
         ],
       })),
+      {
+        source: "/sw.js",
+        headers: [
+          { key: "Content-Security-Policy", value: "default-src 'self'; script-src 'self'" },
+          { key: "Cache-Control", value: "no-cache, no-store, must-revalidate" },
+          { key: "Content-Type", value: "application/javascript; charset=utf-8" },
+        ],
+      },
+      {
+        source: "/offline.html",
+        headers: [
+          {
+            key: "Content-Security-Policy",
+            value: "default-src 'none'; style-src 'unsafe-inline'; frame-ancestors 'none'; base-uri 'self'",
+          },
+        ],
+      },
     ]);
   });
 
@@ -147,5 +165,41 @@ describe("securityHeaderRules", () => {
       "object-src 'none'",
       "base-uri 'self'",
     ]);
+  });
+
+  const headersFor = (path: string) =>
+    securityHeaderRules({ NODE_ENV: "production" })
+      .filter(({ source }) => getPathMatch(source, { strict: true, removeUnnamedParams: true })(path) !== false)
+      .flatMap((rule) => rule.headers);
+  const valuesOf = (path: string, key: string) =>
+    headersFor(path)
+      .filter((h) => h.key === key)
+      .map((h) => h.value);
+
+  describe("PWA files (PWA-13)", () => {
+    it("serves /sw.js with its own CSP, no caching and the JavaScript content type, and no static CSP", () => {
+      expect(valuesOf("/sw.js", "Content-Security-Policy")).toEqual(["default-src 'self'; script-src 'self'"]);
+      expect(valuesOf("/sw.js", "Cache-Control")).toEqual(["no-cache, no-store, must-revalidate"]);
+      expect(valuesOf("/sw.js", "Content-Type")).toEqual(["application/javascript; charset=utf-8"]);
+    });
+
+    it("serves /offline.html with a CSP that allows inline style and not the static CSP", () => {
+      const csp = valuesOf("/offline.html", "Content-Security-Policy");
+      expect(csp).toEqual([
+        "default-src 'none'; style-src 'unsafe-inline'; frame-ancestors 'none'; base-uri 'self'",
+      ]);
+      expect(csp).not.toContain(STATIC_CSP);
+    });
+
+    it("serves /manifest.webmanifest with the static CSP, outside the proxy", () => {
+      expect(PATHS_OUTSIDE_PROXY).toContain("/manifest.webmanifest");
+      expect(valuesOf("/manifest.webmanifest", "Content-Security-Policy")).toEqual([STATIC_CSP]);
+    });
+
+    it.each(["/sw.js", "/offline.html", "/manifest.webmanifest"])("keeps the general static headers on %s", (path) => {
+      expect(valuesOf(path, "X-Content-Type-Options")).toEqual(["nosniff"]);
+      expect(valuesOf(path, "X-Frame-Options")).toEqual(["DENY"]);
+      expect(valuesOf(path, "Strict-Transport-Security")).toEqual(["max-age=63072000; includeSubDomains"]);
+    });
   });
 });

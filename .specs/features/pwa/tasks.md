@@ -267,11 +267,11 @@ T38 → T39 → T40 → T41 → T42 → T43
 
 **Done when**:
 
-- [ ] `/sw.js` recebe `Content-Security-Policy: default-src 'self'; script-src 'self'`, `Cache-Control: no-cache, no-store, must-revalidate` e `Content-Type: application/javascript; charset=utf-8`
-- [ ] `/offline.html` recebe CSP com `style-src 'unsafe-inline'` e sem `STATIC_CSP`
-- [ ] `/manifest.webmanifest` recebe `STATIC_CSP`; os cabeçalhos estáticos gerais continuam
-- [ ] Gate check passes: `npm run test:unit`
-- [ ] Nenhum teste existente removido, pulado ou enfraquecido
+- [x] `/sw.js` recebe `Content-Security-Policy: default-src 'self'; script-src 'self'`, `Cache-Control: no-cache, no-store, must-revalidate` e `Content-Type: application/javascript; charset=utf-8`
+- [x] `/offline.html` recebe CSP com `style-src 'unsafe-inline'` e sem `STATIC_CSP`
+- [x] `/manifest.webmanifest` recebe `STATIC_CSP`; os cabeçalhos estáticos gerais continuam
+- [x] Gate check passes: `npm run test:unit`
+- [x] Nenhum teste existente removido, pulado ou enfraquecido
 
 **Tests**: unit
 **Gate**: quick

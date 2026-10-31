@@ -58,12 +58,40 @@ export const PATHS_OUTSIDE_PROXY = [
   "/_next/static/:path*",
   "/_next/image",
   "/favicon.ico",
+  "/manifest.webmanifest",
   "/:path(.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico))",
 ];
 
 export type HeaderRule = { source: string; headers: Header[] };
 
-/** Rules for `next.config` `headers()`: the static headers everywhere, the static CSP off-proxy. */
+/**
+ * Headers of the service worker script, which must always be revalidated and may load nothing but itself.
+ * The worker is not a page and sits outside the proxy (PWA-13).
+ */
+const SERVICE_WORKER_RULE: HeaderRule = {
+  source: "/sw.js",
+  headers: [
+    { key: "Content-Security-Policy", value: "default-src 'self'; script-src 'self'" },
+    { key: "Cache-Control", value: "no-cache, no-store, must-revalidate" },
+    { key: "Content-Type", value: "application/javascript; charset=utf-8" },
+  ],
+};
+
+/** The offline page has an inline `<style>`, which `STATIC_CSP` (`default-src 'none'`) would block. */
+const OFFLINE_PAGE_RULE: HeaderRule = {
+  source: "/offline.html",
+  headers: [
+    {
+      key: "Content-Security-Policy",
+      value: "default-src 'none'; style-src 'unsafe-inline'; frame-ancestors 'none'; base-uri 'self'",
+    },
+  ],
+};
+
+/**
+ * Rules for `next.config` `headers()`: the static headers everywhere, the static CSP off-proxy, and
+ * the own rules of the PWA files the proxy skips (`/sw.js`, `/offline.html`).
+ */
 export function securityHeaderRules(env: { NODE_ENV?: string }): HeaderRule[] {
   return [
     { source: "/:path*", headers: securityHeaders(env) },
@@ -71,5 +99,7 @@ export function securityHeaderRules(env: { NODE_ENV?: string }): HeaderRule[] {
       source,
       headers: [{ key: "Content-Security-Policy", value: STATIC_CSP }],
     })),
+    SERVICE_WORKER_RULE,
+    OFFLINE_PAGE_RULE,
   ];
 }

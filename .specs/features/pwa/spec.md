@@ -330,7 +330,7 @@ O ANON roda só no navegador: sem ícone na tela inicial, sem janela própria, s
 | PWA-10 | P1: SW — fallback offline | - | Implementing |
 | PWA-11 | P1: SW — navegação não é guardada | - | Implementing |
 | PWA-12 | P1: SW — não intercepta o resto | - | Implementing |
-| PWA-13 | P1: SW — cabeçalhos de `/sw.js` | - | Pending |
+| PWA-13 | P1: SW — cabeçalhos de `/sw.js` | - | Implementing |
 | PWA-14 | P1: SW — skipWaiting e claim | - | Implementing |
 | PWA-15 | P1: offline — textos | - | Implementing |
 | PWA-16 | P1: offline — sem script nem recurso externo | - | Implementing |
