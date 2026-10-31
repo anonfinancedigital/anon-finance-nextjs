@@ -596,13 +596,15 @@ T24 → T25
 
 **Done when**:
 
-- [ ] `signOut` limpa o registro antes de `signOutAction` (inspeção `file:line`)
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
-- [ ] Nenhum teste existente removido, pulado ou enfraquecido
+- [x] `signOut` limpa o registro antes de `signOutAction` (inspeção `file:line`)
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Nenhum teste existente removido, pulado ou enfraquecido
 
 **Tests**: none
 **Gate**: build
 **Commit**: `feat(lock): clear the lock record on sign-out`
+
+**Evidência**: src/components/sign-out-button.tsx:13 lockStore.clear() logo após deviceKey.clear() (:12) e antes de signOutAction() (:14).
 
 ---
 
