@@ -364,7 +364,7 @@ O ANON roda só no navegador: sem ícone na tela inicial, sem janela própria, s
 | PUSH-19 | P1: preferências — só o próprio usuário | - | Pending |
 | PUSH-20 | P1: envio — 401 sem segredo | - | Pending |
 | PUSH-21 | P1: envio — 503 sem configuração | - | Pending |
-| PUSH-22 | P1: envio — rota pública | - | Pending |
+| PUSH-22 | P1: envio — rota pública | - | Implementing |
 | PUSH-23 | P1: envio — só aprovados com inscrição | - | Pending |
 | PUSH-24 | P1: envio — lembrete | - | Pending |
 | PUSH-25 | P1: envio — vencimento | - | Pending |
@@ -374,7 +374,7 @@ O ANON roda só no navegador: sem ícone na tela inicial, sem janela própria, s
 | PUSH-29 | P1: envio — payload fixo e TTL | - | Pending |
 | PUSH-30 | P1: envio — limite de envios | - | Pending |
 | PUSH-31 | P1: envio — limpeza e resposta | - | Pending |
-| PUSH-32 | P1: envio — demais rotas protegidas | - | Pending |
+| PUSH-32 | P1: envio — demais rotas protegidas | - | Implementing |
 | PUSH-33 | P2: segurança — senha redefinida | - | Pending |
 | PUSH-34 | P2: segurança — acesso revogado | - | Pending |
 | PUSH-35 | P2: segurança — falha não bloqueia | - | Pending |

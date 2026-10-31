@@ -8,6 +8,7 @@ const PUBLIC_PATHS = [
   "/sentry-example-page",
   "/api/sentry-example-api",
   "/api/health",
+  "/api/push/dispatch",
 ];
 
 export type RouteDecision =

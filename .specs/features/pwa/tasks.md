@@ -241,10 +241,10 @@ T38 → T39 → T40 → T41 → T42 → T43
 
 **Done when**:
 
-- [ ] `decideRoute("/api/push/dispatch", false)` devolve `next`
-- [ ] `/api/push/dispatch-x`, `/api/push` e `/api/healthz` continuam redirecionando anônimo para `/login`
-- [ ] Gate check passes: `npm run test:unit`
-- [ ] Nenhum teste existente removido, pulado ou enfraquecido
+- [x] `decideRoute("/api/push/dispatch", false)` devolve `next`
+- [x] `/api/push/dispatch-x`, `/api/push` e `/api/healthz` continuam redirecionando anônimo para `/login`
+- [x] Gate check passes: `npm run test:unit`
+- [x] Nenhum teste existente removido, pulado ou enfraquecido
 
 **Tests**: unit
 **Gate**: quick
