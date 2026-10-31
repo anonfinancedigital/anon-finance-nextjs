@@ -194,11 +194,11 @@ Explicitamente excluído. Documentado para evitar crescimento de escopo.
 | APPNAME-01 | P1: Nome do app instalado | - | Done |
 | APPNAME-02 | P1: Nome do app instalado | - | Done |
 | APPNAME-03 | P1: Nome do app instalado | - | Done |
-| LOCK-01 | P1: Ativar e desativar | - | Pending |
-| LOCK-02 | P1: Ativar e desativar | - | Pending |
+| LOCK-01 | P1: Ativar e desativar | - | Done |
+| LOCK-02 | P1: Ativar e desativar | - | Done |
 | LOCK-03 | P1: Ativar e desativar | - | Pending |
 | LOCK-04 | P1: Ativar e desativar | - | Pending |
-| LOCK-05 | P1: Ativar e desativar | - | Pending |
+| LOCK-05 | P1: Ativar e desativar | - | Done |
 | LOCK-06 | P1: Ativar e desativar | - | Pending |
 | LOCK-07 | P1: Ativar e desativar | - | Pending |
 | LOCK-08 | P1: Ativar e desativar | - | Pending |
@@ -206,7 +206,7 @@ Explicitamente excluído. Documentado para evitar crescimento de escopo.
 | LOCK-10 | P1: Bloquear e desbloquear | - | Pending |
 | LOCK-11 | P1: Bloquear e desbloquear | - | Pending |
 | LOCK-12 | P1: Bloquear e desbloquear | - | Pending |
-| LOCK-13 | P1: Bloquear e desbloquear | - | Pending |
+| LOCK-13 | P1: Bloquear e desbloquear | - | Done |
 | LOCK-14 | P1: Bloquear e desbloquear | - | Pending |
 | LOCK-15 | P1: Bloquear e desbloquear | - | Pending |
 | LOCK-16 | P1: Bloquear e desbloquear | - | Pending |
@@ -219,8 +219,8 @@ Explicitamente excluído. Documentado para evitar crescimento de escopo.
 | SPLASH-08 | P2: Splash dentro do app | - | Pending |
 | SPLASH-09 | P2: Splash dentro do app | - | Pending |
 | SPLASH-10 | P2: Splash dentro do app | - | Pending |
-| LOCK-21 | P2: Transparência | - | Pending |
-| LOCK-22 | P2: Transparência | - | Pending |
+| LOCK-21 | P2: Transparência | - | Done |
+| LOCK-22 | P2: Transparência | - | Done |
 
 **ID format:** `[CATEGORY]-[NUMBER]`. Os números seguem a ordem das AC em cada história: SPLASH-01..05 (splash nativa), APPNAME-01..03 (nome), LOCK-01..09 (ativar e desativar), LOCK-10..20 (bloquear e desbloquear), SPLASH-06..10 (splash no app), LOCK-21..22 (transparência).
 

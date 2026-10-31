@@ -251,9 +251,9 @@ T24 → T25
 
 **Done when**:
 
-- [ ] `text.test.ts` confere por igualdade cada texto exato da spec (L-002): título "Bloqueio por biometria", descrição do card, "Este aparelho ou navegador não oferece biometria para o app.", "Não foi possível ativar a biometria. Tente novamente.", "ANON bloqueado", "Não foi possível confirmar sua identidade.", "Tentar de novo", "Usar a senha", "Sair", "Bloqueio ativado", "Ativar", "Desativar", a dica "Digital, rosto ou o PIN do aparelho, conforme o que o seu aparelho oferecer." e a frase da política de privacidade
-- [ ] Gate check passes: `npm run test:unit`
-- [ ] Nenhum teste existente removido, pulado ou enfraquecido
+- [x] `text.test.ts` confere por igualdade cada texto exato da spec (L-002): título "Bloqueio por biometria", descrição do card, "Este aparelho ou navegador não oferece biometria para o app.", "Não foi possível ativar a biometria. Tente novamente.", "ANON bloqueado", "Não foi possível confirmar sua identidade.", "Tentar de novo", "Usar a senha", "Sair", "Bloqueio ativado", "Ativar", "Desativar", a dica "Digital, rosto ou o PIN do aparelho, conforme o que o seu aparelho oferecer." e a frase da política de privacidade
+- [x] Gate check passes: `npm run test:unit`
+- [x] Nenhum teste existente removido, pulado ou enfraquecido
 
 **Tests**: unit
 **Gate**: quick
