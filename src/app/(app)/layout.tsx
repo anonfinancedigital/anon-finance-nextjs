@@ -1,12 +1,15 @@
 import { redirect } from "next/navigation";
 import { AppNav } from "@/components/app-nav";
+import { GlobalNewTransaction } from "@/components/global-new-transaction";
 import { Logo } from "@/components/brand/Logo";
 import { SignOutButton } from "@/components/sign-out-button";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { VaultProvider } from "@/components/vault-provider";
 import { requireSessionForPage } from "@/lib/auth-guard";
+import { categoriesRepo } from "@/lib/db/repos/categories";
 import { legacyRepo } from "@/lib/db/repos/legacy";
 import { vaultRepo } from "@/lib/db/repos/vault";
+import { currentMonth } from "@/lib/domain/month";
 
 /**
  * Shell of the signed-in area: sidebar (top bar on mobile) with navigation and sign-out. Pages render
@@ -20,6 +23,9 @@ export default async function AppLayout({ children }: LayoutProps<"/">) {
   // Google-only account without a vault: it creates the vault (and the sealed birth date) there.
   if (await vaultRepo.needsVault(userId)) redirect("/criar-cofre");
   if ((await vaultRepo.getBirthDateSealed(userId)) === null) redirect("/data-nascimento");
+  // The categories the "Nova transação" button of the bottom bar offers, sealed like on every page.
+  const now = new Date();
+  const categories = await categoriesRepo.listForMonthSealed(userId, currentMonth(now));
 
   return (
     <div className="flex flex-1 flex-col md:flex-row">
@@ -33,7 +39,10 @@ export default async function AppLayout({ children }: LayoutProps<"/">) {
       </aside>
       <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-6 pb-24 sm:px-6 md:ml-[218px] md:max-w-none md:px-8 md:pb-8 lg:px-12">
         <div className="mx-auto w-full max-w-5xl">
-          <VaultProvider userId={userId}>{children}</VaultProvider>
+          <VaultProvider userId={userId}>
+            {children}
+            <GlobalNewTransaction categories={categories} nowIso={now.toISOString()} />
+          </VaultProvider>
         </div>
       </main>
     </div>

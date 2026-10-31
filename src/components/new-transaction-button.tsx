@@ -21,12 +21,14 @@ type Props = {
   }[];
   /** Date preselected in the form (today in America/Sao_Paulo). */
   defaultDate: string;
-  /** "floating": round "+" fixed on the viewport, below md; "header": labeled button for a card header, from md up; "inline": labeled button at any width. */
+  /** "floating": round "+" centered over the bottom navigation bar, below md; "header": labeled button for a card header, from md up; "inline": labeled button at any width. */
   variant?: "floating" | "header" | "inline";
   /** "secondary" renders the button as `outline`, so another action can be the single filled one. */
   emphasis?: "primary" | "secondary";
   /** Text of the "inline" variant (default "Registrar transação"). */
   label?: string;
+  /** Runs after a transaction is saved and the dialog has closed. */
+  onSaved?: () => void;
 };
 
 /** Button that opens the new-transaction form in a dialog and closes it on save. */
@@ -36,6 +38,7 @@ export function NewTransactionButton({
   variant = "floating",
   emphasis = "primary",
   label = "Registrar transação",
+  onSaved,
 }: Props) {
   const [open, setOpen] = useState(false);
   const buttonVariant = emphasis === "secondary" ? "outline" : "default";
@@ -58,20 +61,23 @@ export function NewTransactionButton({
             variant={buttonVariant}
             size="icon-lg"
             aria-label="Nova transação"
-            className="fixed right-4 bottom-20 z-40 size-[60px] rounded-full shadow-lg md:hidden"
+            className="fixed bottom-3 left-1/2 z-50 size-14 -translate-x-1/2 rounded-full shadow-lg ring-4 ring-background md:hidden"
           >
-            <PlusIcon className="size-8 md:size-10" />
+            <PlusIcon className="size-7" />
           </Button>
         )}
       </DialogTrigger>
-      <DialogContent className="flex max-h-[calc(100dvh-2rem)] flex-col sm:max-w-md">
+      <DialogContent className="flex max-h-[calc(100dvh-2rem)] flex-col gap-3 p-4 sm:max-w-md sm:gap-4 sm:p-5">
         <DialogHeader>
-          <DialogTitle>Registrar Lançamento</DialogTitle>
+          <DialogTitle>Nova transação</DialogTitle>
         </DialogHeader>
         <TransactionForm
           categories={categories}
           defaultDate={defaultDate}
-          onSaved={() => setOpen(false)}
+          onSaved={() => {
+            setOpen(false);
+            onSaved?.();
+          }}
           onCancel={() => setOpen(false)}
         />
       </DialogContent>
