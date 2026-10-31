@@ -276,11 +276,11 @@ T24 → T25
 
 **Done when**:
 
-- [ ] `shouldRelock`: `false` em 59 999 e 60 000 ms, `true` em 60 001 ms, `false` com `hiddenAt` nulo
-- [ ] `consumeFreshLogin`: `false` sem marca; `true` dentro de 300 000 ms; `false` acima; sempre apaga a marca
-- [ ] `markFreshLogin` grava o instante e não lança se o storage lançar
-- [ ] Gate check passes: `npm run test:unit`
-- [ ] Nenhum teste existente removido, pulado ou enfraquecido
+- [x] `shouldRelock`: `false` em 59 999 e 60 000 ms, `true` em 60 001 ms, `false` com `hiddenAt` nulo
+- [x] `consumeFreshLogin`: `false` sem marca; `true` dentro de 300 000 ms; `false` acima; sempre apaga a marca
+- [x] `markFreshLogin` grava o instante e não lança se o storage lançar
+- [x] Gate check passes: `npm run test:unit`
+- [x] Nenhum teste existente removido, pulado ou enfraquecido
 
 **Tests**: unit
 **Gate**: quick

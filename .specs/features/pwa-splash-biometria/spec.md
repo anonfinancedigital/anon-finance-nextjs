@@ -210,9 +210,9 @@ Explicitamente excluído. Documentado para evitar crescimento de escopo.
 | LOCK-14 | P1: Bloquear e desbloquear | - | Pending |
 | LOCK-15 | P1: Bloquear e desbloquear | - | Pending |
 | LOCK-16 | P1: Bloquear e desbloquear | - | Pending |
-| LOCK-17 | P1: Bloquear e desbloquear | - | Pending |
-| LOCK-18 | P1: Bloquear e desbloquear | - | Pending |
-| LOCK-19 | P1: Bloquear e desbloquear | - | Pending |
+| LOCK-17 | P1: Bloquear e desbloquear | - | Done |
+| LOCK-18 | P1: Bloquear e desbloquear | - | Done |
+| LOCK-19 | P1: Bloquear e desbloquear | - | Done |
 | LOCK-20 | P1: Bloquear e desbloquear | - | Pending |
 | SPLASH-06 | P2: Splash dentro do app | - | Pending |
 | SPLASH-07 | P2: Splash dentro do app | - | Pending |
