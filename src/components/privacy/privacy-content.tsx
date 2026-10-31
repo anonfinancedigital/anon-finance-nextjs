@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import Link from "next/link";
+import { LOCK_TEXT } from "@/lib/biometric/text";
 import { cn } from "@/lib/utils";
 
 const PILLARS: {
@@ -57,6 +58,7 @@ const PROCESSED = [
   "Cores e agrupamento das categorias, para montar a interface",
   "Se você ativa as notificações: o endereço da inscrição do seu navegador e suas preferências de notificação, sem cifra",
   "Notificações push passam pelo serviço do fabricante do navegador (Google, Apple ou Mozilla), que recebe o endereço da inscrição; o texto é genérico e nunca leva valores ou nomes",
+  LOCK_TEXT.privacy,
 ];
 
 const cardClass = "rounded-2xl border border-border bg-card p-5 shadow-xl sm:p-6";

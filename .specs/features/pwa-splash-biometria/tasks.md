@@ -704,13 +704,15 @@ T24 → T25
 
 **Done when**:
 
-- [ ] A política mostra "A biometria é conferida pelo sistema do seu aparelho. O ANON só recebe a confirmação e guarda no aparelho o identificador da credencial; nada disso vai para o servidor." (inspeção `file:line`, texto vindo de `LOCK_TEXT`)
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
-- [ ] Nenhum teste existente removido, pulado ou enfraquecido
+- [x] A política mostra "A biometria é conferida pelo sistema do seu aparelho. O ANON só recebe a confirmação e guarda no aparelho o identificador da credencial; nada disso vai para o servidor." (inspeção `file:line`, texto vindo de `LOCK_TEXT`)
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Nenhum teste existente removido, pulado ou enfraquecido
 
 **Tests**: none
 **Gate**: build
 **Commit**: `docs(lock): disclose the biometric lock in the privacy policy`
+
+**Evidência**: src/components/privacy/privacy-content.tsx:61 LOCK_TEXT.privacy como item de PROCESSED (renderizado na seção "O que a ANON processa"); import em :14; texto em src/lib/biometric/text.ts.
 
 ---
 
