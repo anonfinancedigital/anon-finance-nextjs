@@ -623,13 +623,15 @@ T24 → T25
 
 **Done when**:
 
-- [ ] A exclusão bem-sucedida limpa o registro (inspeção `file:line`)
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
-- [ ] Nenhum teste existente removido, pulado ou enfraquecido
+- [x] A exclusão bem-sucedida limpa o registro (inspeção `file:line`)
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Nenhum teste existente removido, pulado ou enfraquecido
 
 **Tests**: none
 **Gate**: build
 **Commit**: `feat(lock): clear the lock record on account deletion`
+
+**Evidência**: src/components/delete-account-dialog.tsx:57 lockStore.clear() após deleteAccountAction bem-sucedido (:51, falha retorna antes) e junto de deviceKey.clear() (:56).
 
 ---
 
