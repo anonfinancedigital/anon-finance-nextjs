@@ -569,13 +569,15 @@ T24 → T25
 
 **Done when**:
 
-- [ ] Card renderizado com `userId` da sessão (inspeção `file:line`)
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
-- [ ] Nenhum teste existente removido, pulado ou enfraquecido
+- [x] Card renderizado com `userId` da sessão (inspeção `file:line`)
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Nenhum teste existente removido, pulado ou enfraquecido
 
 **Tests**: none
 **Gate**: build
 **Commit**: `feat(lock): show the biometric card on the account page`
+
+**Evidência**: src/app/(app)/conta/page.tsx:56 renderiza <BiometricCard userId={userId} /> logo após <InstallCard /> (:54); userId vem da sessão em :21.
 
 ---
 
