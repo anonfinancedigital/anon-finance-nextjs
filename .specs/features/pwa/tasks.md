@@ -988,11 +988,11 @@ T38 → T39 → T40 → T41 → T42 → T43
 
 **Done when**:
 
-- [ ] `password-reset.int.test.ts` estendido: reset bem-sucedido (clássico e selado) chama `notifySecurity` com o dono do token
-- [ ] Token inválido não chama; falha do aviso não impede o reset nem o redirect
-- [ ] Os testes existentes de reset continuam passando
-- [ ] Gate check passes: `npm run test:unit && npm run test:int`
-- [ ] Nenhum teste existente removido, pulado ou enfraquecido
+- [x] `password-reset.int.test.ts` estendido: reset bem-sucedido (clássico e selado) chama `notifySecurity` com o dono do token
+- [x] Token inválido não chama; falha do aviso não impede o reset nem o redirect
+- [x] Os testes existentes de reset continuam passando
+- [x] Gate check passes: `npm run test:unit && npm run test:int`
+- [x] Nenhum teste existente removido, pulado ou enfraquecido
 
 **Tests**: integration
 **Gate**: full

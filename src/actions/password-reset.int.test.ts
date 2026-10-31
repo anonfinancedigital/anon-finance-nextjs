@@ -46,6 +46,7 @@ vi.mock("next/navigation", () => ({
   }),
 }));
 vi.mock("@/lib/mailer", () => ({ sendMail: vi.fn(async () => {}) }));
+vi.mock("@/lib/push/security", () => ({ notifySecurity: vi.fn(async () => {}) }));
 // Real logging, wrapped so a test can see which failure was reported.
 vi.mock("@/lib/log", async (importOriginal) => {
   const actual = await importOriginal<typeof import("@/lib/log")>();
@@ -60,6 +61,7 @@ vi.mock("better-auth/crypto", async (importOriginal) => {
 const { sendMail } = await import("@/lib/mailer");
 const { redirect } = await import("next/navigation");
 const { logActionError } = await import("@/lib/log");
+const { notifySecurity } = await import("@/lib/push/security");
 
 setupTestDb();
 
@@ -94,6 +96,7 @@ let consoleError: ReturnType<typeof vi.spyOn>;
 beforeEach(() => {
   scheduled.tasks = [];
   vi.mocked(sendMail).mockReset().mockResolvedValue(undefined);
+  vi.mocked(notifySecurity).mockReset().mockResolvedValue(undefined);
   consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
 });
 
@@ -894,5 +897,118 @@ describe("sealed reset actions", () => {
       goals: 1,
     });
     expect(await passwordResetsRepo.isValid(token)).toBe(true);
+  });
+});
+
+describe("security notice on password reset (PUSH-33, PUSH-35)", () => {
+  const NEW_PASSWORD = "nova-senha-456";
+  const SECRET = "N".repeat(43);
+  const VAULT = {
+    kdfVersion: 1,
+    salt: "AAAAAAAAAAAAAAAAAAAAAA",
+    memKib: 65536,
+    iterations: 3,
+    parallelism: 1,
+    dekWrappedPw: "v1:old-pw",
+    dekWrappedRecovery: "v1:old-recovery",
+  } as const;
+
+  function reset(token: string) {
+    const data = new FormData();
+    data.set("token", token);
+    data.set("password", NEW_PASSWORD);
+    data.set("confirmPassword", NEW_PASSWORD);
+    return resetPasswordAction(undefined, data);
+  }
+  const rewrap = (token: string) =>
+    ({
+      mode: "rewrap",
+      token,
+      authSecret: SECRET,
+      salt: VAULT.salt,
+      params: { memKib: 32768, iterations: 2, parallelism: 2 },
+      dekWrappedPw: "v1:rewrapped-pw",
+    }) as Parameters<typeof resetPasswordSealedAction>[0];
+
+  async function classicToken() {
+    const userId = await insertCredentialUser(EMAIL);
+    return { userId, token: (await passwordResetsRepo.issue(EMAIL))!.token };
+  }
+  async function sealedToken() {
+    const { userId } = await createSignedInUser(EMAIL);
+    await db.transaction((tx) => vaultRepo.create(tx, userId, VAULT));
+    return { userId, token: (await passwordResetsRepo.issue(EMAIL))!.token };
+  }
+  const passwordOf = async (id: string) =>
+    (await db.select().from(account).where(eq(account.userId, id)))[0].password!;
+
+  beforeEach(() => {
+    vi.mocked(redirect).mockClear();
+  });
+
+  it("a classic reset notifies the token owner, then redirects", async () => {
+    const { userId, token } = await classicToken();
+    const other = await insertCredentialUser("bia@x.com");
+    vi.mocked(redirect).mockImplementationOnce((url: string) => {
+      expect(vi.mocked(notifySecurity).mock.calls).toEqual([[userId, "password_reset"]]);
+      throw new Error(`NEXT_REDIRECT ${url}`);
+    });
+
+    await expect(reset(token)).rejects.toThrow("NEXT_REDIRECT /login");
+
+    expect(vi.mocked(notifySecurity).mock.calls).toEqual([[userId, "password_reset"]]);
+    expect(vi.mocked(notifySecurity).mock.calls.flat()).not.toContain(other);
+  });
+
+  it("a sealed reset notifies the token owner", async () => {
+    const { userId, token } = await sealedToken();
+
+    expect(await resetPasswordSealedAction(rewrap(token))).toEqual({ ok: true });
+
+    expect(vi.mocked(notifySecurity).mock.calls).toEqual([[userId, "password_reset"]]);
+  });
+
+  it("an invalid token does not notify (classic and sealed)", async () => {
+    await classicToken();
+
+    expect(await reset("nao-existe")).toEqual({ ok: false, error: "Link inválido ou expirado" });
+    expect(await resetPasswordSealedAction(rewrap("nao-existe"))).toEqual({
+      ok: false,
+      error: "Link inválido ou expirado",
+    });
+
+    expect(notifySecurity).not.toHaveBeenCalled();
+  });
+
+  it("a used token does not notify again", async () => {
+    const { token } = await sealedToken();
+    await resetPasswordSealedAction(rewrap(token));
+    vi.mocked(notifySecurity).mockClear();
+
+    expect(await resetPasswordSealedAction(rewrap(token))).toEqual({ ok: false, error: "Link inválido ou expirado" });
+
+    expect(notifySecurity).not.toHaveBeenCalled();
+  });
+
+  it("a failing notice keeps the classic reset and its redirect", async () => {
+    const { userId, token } = await classicToken();
+    const before = await passwordOf(userId);
+    vi.mocked(notifySecurity).mockRejectedValueOnce(new Error("push service down"));
+
+    await expect(reset(token)).rejects.toThrow("NEXT_REDIRECT /login");
+
+    expect(redirect).toHaveBeenCalledWith("/login");
+    expect(await passwordOf(userId)).not.toBe(before);
+    expect(await passwordResetsRepo.isValid(token)).toBe(false);
+  });
+
+  it("a failing notice keeps the sealed reset ok", async () => {
+    const { userId, token } = await sealedToken();
+    vi.mocked(notifySecurity).mockRejectedValueOnce(new Error("push service down"));
+
+    expect(await resetPasswordSealedAction(rewrap(token))).toEqual({ ok: true });
+
+    expect(await verifyPassword({ hash: await passwordOf(userId), password: SECRET })).toBe(true);
+    expect(await passwordResetsRepo.isValid(token)).toBe(false);
   });
 });
