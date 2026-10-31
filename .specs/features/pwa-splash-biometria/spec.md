@@ -196,7 +196,7 @@ Explicitamente excluído. Documentado para evitar crescimento de escopo.
 | APPNAME-03 | P1: Nome do app instalado | - | Done |
 | LOCK-01 | P1: Ativar e desativar | - | Done |
 | LOCK-02 | P1: Ativar e desativar | - | Done |
-| LOCK-03 | P1: Ativar e desativar | - | Pending |
+| LOCK-03 | P1: Ativar e desativar | - | Done |
 | LOCK-04 | P1: Ativar e desativar | - | Done |
 | LOCK-05 | P1: Ativar e desativar | - | Done |
 | LOCK-06 | P1: Ativar e desativar | - | Done |
@@ -204,7 +204,7 @@ Explicitamente excluído. Documentado para evitar crescimento de escopo.
 | LOCK-08 | P1: Ativar e desativar | - | Done |
 | LOCK-09 | P1: Ativar e desativar | - | Done |
 | LOCK-10 | P1: Bloquear e desbloquear | - | Pending |
-| LOCK-11 | P1: Bloquear e desbloquear | - | Pending |
+| LOCK-11 | P1: Bloquear e desbloquear | - | Done |
 | LOCK-12 | P1: Bloquear e desbloquear | - | Pending |
 | LOCK-13 | P1: Bloquear e desbloquear | - | Done |
 | LOCK-14 | P1: Bloquear e desbloquear | - | Pending |

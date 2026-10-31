@@ -357,11 +357,11 @@ T24 → T25
 
 **Done when**:
 
-- [ ] `create` recebe exatamente: `authenticatorAttachment` "platform", `userVerification` "required", `residentKey` "discouraged", challenge de 32 bytes, `rp.id` = hostname, `user.name` e `user.displayName` "ANON", `timeout` 60000 (LOCK-03)
-- [ ] `get` recebe `allowCredentials` com o id salvo, `userVerification` "required", challenge de 32 bytes, `timeout` 60000 (LOCK-11)
-- [ ] Credencial nula, rejeição e `NotAllowedError` devolvem `{ ok: false }` / `false` sem lançar (LOCK-05, LOCK-13)
-- [ ] Gate check passes: `npm run test:unit`
-- [ ] Nenhum teste existente removido, pulado ou enfraquecido
+- [x] `create` recebe exatamente: `authenticatorAttachment` "platform", `userVerification` "required", `residentKey` "discouraged", challenge de 32 bytes, `rp.id` = hostname, `user.name` e `user.displayName` "ANON", `timeout` 60000 (LOCK-03)
+- [x] `get` recebe `allowCredentials` com o id salvo, `userVerification` "required", challenge de 32 bytes, `timeout` 60000 (LOCK-11)
+- [x] Credencial nula, rejeição e `NotAllowedError` devolvem `{ ok: false }` / `false` sem lançar (LOCK-05, LOCK-13)
+- [x] Gate check passes: `npm run test:unit`
+- [x] Nenhum teste existente removido, pulado ou enfraquecido
 
 **Tests**: unit
 **Gate**: quick
