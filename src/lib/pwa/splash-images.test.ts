@@ -63,4 +63,25 @@ describe.each(SPLASH_DEVICES)("iOS splash $width x $height @$ratio (SPLASH-03, S
     }
     expect(differs).toBe(true);
   });
+
+  it("centers the mark: its bounding box center is within 1% of the image center (SPLASH-04)", async () => {
+    const { width, height, pixel } = await decode(path);
+    let minX = width;
+    let maxX = -1;
+    let minY = height;
+    let maxY = -1;
+    for (let y = 0; y < height; y++) {
+      for (let x = 0; x < width; x++) {
+        if (pixel(x, y).some((v, i) => v !== BACKGROUND[i])) {
+          if (x < minX) minX = x;
+          if (x > maxX) maxX = x;
+          if (y < minY) minY = y;
+          if (y > maxY) maxY = y;
+        }
+      }
+    }
+    expect(maxX).toBeGreaterThanOrEqual(0);
+    expect(Math.abs((minX + maxX) / 2 - (width - 1) / 2)).toBeLessThanOrEqual(width * 0.01);
+    expect(Math.abs((minY + maxY) / 2 - (height - 1) / 2)).toBeLessThanOrEqual(width * 0.01);
+  });
 });

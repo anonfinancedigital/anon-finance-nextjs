@@ -40,6 +40,17 @@ describe("createLockStore", () => {
     expect(storage.data.has(LOCK_KEY)).toBe(false);
   });
 
+  it("save removes the previous record when the rewrite fails (LOCK-05)", () => {
+    const storage = memoryStorage();
+    createLockStore(storage).save("user-1", "old");
+    storage.setItem = () => {
+      throw new Error("quota");
+    };
+    const store = createLockStore(storage);
+    expect(store.save("user-1", "new")).toBe(false);
+    expect(store.read("user-1")).toBeNull();
+  });
+
   it("read returns the credentialId of the same user", () => {
     const store = createLockStore(memoryStorage());
     store.save("user-1", "cred-abc");
