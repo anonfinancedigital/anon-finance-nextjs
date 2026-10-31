@@ -321,7 +321,7 @@ O ANON roda só no navegador: sem ícone na tela inicial, sem janela própria, s
 | PWA-01 | P1: instalável — manifest | - | Implementing |
 | PWA-02 | P1: instalável — ícones | - | Implementing |
 | PWA-03 | P1: instalável — Apple touch icon | - | Implementing |
-| PWA-04 | P1: instalável — theme color | - | Pending |
+| PWA-04 | P1: instalável — theme color | - | Implementing |
 | PWA-05 | P1: instalável — rotas públicas | - | Pending |
 | PWA-06 | P1: instalável — demais rotas protegidas | - | Pending |
 | PWA-07 | P1: SW — precache | - | Pending |

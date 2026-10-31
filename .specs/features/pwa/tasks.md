@@ -163,9 +163,9 @@ T38 → T39 → T40 → T41 → T42 → T43
 
 **Done when**:
 
-- [ ] Testes conferem `appleWebApp.capable` true, título "ANON", o ícone Apple e `themeColor` "#0D111A"
-- [ ] Gate check passes: `npm run test:unit`
-- [ ] Nenhum teste existente removido, pulado ou enfraquecido
+- [x] Testes conferem `appleWebApp.capable` true, título "ANON", o ícone Apple e `themeColor` "#0D111A"
+- [x] Gate check passes: `npm run test:unit`
+- [x] Nenhum teste existente removido, pulado ou enfraquecido
 
 **Tests**: unit
 **Gate**: quick
