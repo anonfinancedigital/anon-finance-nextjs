@@ -473,11 +473,11 @@ T38 → T39 → T40 → T41 → T42 → T43
 
 **Done when**:
 
-- [ ] `src/lib/push/web-push-contract.test.ts`: `generateRequestDetails` com um par de chaves gerado em teste devolve cabeçalho `TTL` "86400", `Authorization` começando por `vapid` e `Content-Encoding` `aes128gcm`
-- [ ] `WebPushError` expõe `statusCode` (404/410) como o design assume
-- [ ] Se algo divergir, registrar em `design.md` e ajustar antes de seguir
-- [ ] Gate check passes: `npm run test:unit`
-- [ ] Nenhum teste existente removido, pulado ou enfraquecido
+- [x] `src/lib/push/web-push-contract.test.ts`: `generateRequestDetails` com um par de chaves gerado em teste devolve cabeçalho `TTL` "86400", `Authorization` começando por `vapid` e `Content-Encoding` `aes128gcm`
+- [x] `WebPushError` expõe `statusCode` (404/410) como o design assume
+- [x] Se algo divergir, registrar em `design.md` e ajustar antes de seguir
+- [x] Gate check passes: `npm run test:unit`
+- [x] Nenhum teste existente removido, pulado ou enfraquecido
 
 **Tests**: unit
 **Gate**: quick

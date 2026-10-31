@@ -137,7 +137,7 @@ graph TD
 ### `sendPush`
 - **Location**: `src/lib/push/send.ts`
 - **Interfaces**: `sendPush(config, sub, body: string): Promise<"sent" | "gone" | "failed">`. Chama `webpush.sendNotification({ endpoint, keys: { p256dh, auth } }, pushPayload(body), { TTL, vapidDetails })`; `statusCode` 404/410 → `gone`; qualquer outro erro → `failed` (logado com `logActionError("sendPush", { code: "push_" + status })`). Revalida `isAllowedPushEndpoint` antes de enviar (defesa em profundidade; linha antiga ou adulterada nunca vira SSRF).
-- **Dependencies**: `web-push` (+ `@types/web-push`). **A confirmar na primeira task** com um teste de contrato: forma de `sendNotification` e do erro (`WebPushError.statusCode`), por não estar nos docs do Next.
+- **Dependencies**: `web-push` (+ `@types/web-push`). **Confirmado na T15** (`web-push-contract.test.ts`): `generateRequestDetails` devolve `headers.TTL` como número 86400 (vira "86400" no HTTP), `Authorization` `vapid t=..., k=...`, `Content-Encoding` `aes128gcm`; `WebPushError.statusCode` existe. Nenhuma divergência além do tipo numérico do `TTL`.
 
 ### `runDispatch`
 - **Location**: `src/lib/push/dispatch.ts`
