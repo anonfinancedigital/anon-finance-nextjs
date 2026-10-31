@@ -731,11 +731,12 @@ T24 → T25
 
 **Done when**:
 
-- [ ] Seção descreve gerar a splash, adicionar uma linha em `splash-list.ts` e o checklist manual dos Success Criteria
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
-- [ ] Nenhum teste existente removido, pulado ou enfraquecido
+- [x] Seção descreve gerar a splash, adicionar uma linha em `splash-list.ts` e o checklist manual dos Success Criteria
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Nenhum teste existente removido, pulado ou enfraquecido
 
 **Tests**: none
 **Gate**: build
 **Commit**: `docs(pwa): add the splash and biometric lock runbook`
 
+**Evidência**: docs/hospedagem-gratuita.md:229 (seção 8.2), :231 npm run pwa:splash, :233 nova linha em splash-list.ts, :235 casamento exato da media no iOS, :237 aviso AD-017 e WebAuthn não verificado, :240-:246 checklist manual (Success Criteria). Gate da T25: typecheck + test:unit.
