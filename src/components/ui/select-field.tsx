@@ -23,6 +23,7 @@ type Option = { value: string; label: string }
  */
 function SelectField({
   id,
+  ariaLabel,
   value,
   onValueChange,
   options,
@@ -32,6 +33,8 @@ function SelectField({
   className,
 }: {
   id?: string
+  /** Accessible name when there is no visible label tied to `id`. */
+  ariaLabel?: string
   value?: string
   onValueChange?: (value: string) => void
   options: Option[]
@@ -50,6 +53,7 @@ function SelectField({
     >
       <SelectTrigger
         id={id}
+        aria-label={ariaLabel}
         aria-invalid={invalid || undefined}
         className={cn("w-full", className)}
       >

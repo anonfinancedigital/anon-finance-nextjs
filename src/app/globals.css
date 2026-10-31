@@ -248,3 +248,19 @@
     scroll-behavior: smooth;
   }
 }
+
+/*
+ * Soft shadows at the top and bottom edge of a scroll area, shown only while there is more content in that
+ * direction, so a cut-off last field reads as "scroll for more". Pure CSS: the covers scroll with the content
+ * (`local`) and hide the fixed shadows (`scroll`) once the edge is reached. The covers use `--popover`.
+ */
+.scroll-shadows {
+  background:
+    linear-gradient(var(--popover) 30%, transparent) center top,
+    linear-gradient(transparent, var(--popover) 70%) center bottom,
+    radial-gradient(farthest-side at 50% 0, color-mix(in oklab, var(--foreground) 22%, transparent), transparent) center top,
+    radial-gradient(farthest-side at 50% 100%, color-mix(in oklab, var(--foreground) 22%, transparent), transparent) center bottom;
+  background-repeat: no-repeat;
+  background-size: 100% 36px, 100% 36px, 100% 14px, 100% 14px;
+  background-attachment: local, local, scroll, scroll;
+}
