@@ -1,7 +1,7 @@
 # PWA Splash e Bloqueio por Biometria Design
 
 **Spec**: `.specs/features/pwa-splash-biometria/spec.md`
-**Status**: Draft
+**Status**: Done
 
 ---
 
