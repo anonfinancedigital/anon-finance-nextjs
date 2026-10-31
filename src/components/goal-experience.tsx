@@ -114,7 +114,8 @@ export function GoalExperience({
         )}
       </div>
 
-      <SheetContent onInteractOutside={(event) => event.preventDefault()}>
+      {/* No bottom padding: the sticky footer of GoalForm must sit flush with the panel's edge. */}
+      <SheetContent className="pb-0" onInteractOutside={(event) => event.preventDefault()}>
         <div className="space-y-2 pr-8">
           <SheetTitle>{ADJUST_LABEL}</SheetTitle>
           <SheetDescription>{DRAWER_INTRO}</SheetDescription>
