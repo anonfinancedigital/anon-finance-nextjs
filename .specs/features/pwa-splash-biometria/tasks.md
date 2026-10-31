@@ -462,10 +462,10 @@ T24 → T25
 
 **Done when**:
 
-- [ ] Inspeção: uma única chamada automática ao montar (Strict Mode) e nenhuma nova até "Tentar de novo" (LOCK-13)
-- [ ] Inspeção: sucesso chama `onUnlocked`; "Usar a senha" liberta via `UnlockScreen.onUnlocked`; "Sair" usa `SignOutButton`; textos vêm de `LOCK_TEXT`
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
-- [ ] Nenhum teste existente removido, pulado ou enfraquecido
+- [x] Inspeção: uma única chamada automática ao montar (Strict Mode) e nenhuma nova até "Tentar de novo" (LOCK-13) — `src/components/lock-screen.tsx:43-45` (guarda `autoStarted` useRef; `verify()` só roda de novo em :65 pelo botão "Tentar de novo")
+- [x] Inspeção: sucesso chama `onUnlocked`; "Usar a senha" liberta via `UnlockScreen.onUnlocked`; "Sair" usa `SignOutButton`; textos vêm de `LOCK_TEXT` — sucesso chama `onUnlocked` em :36; "Usar a senha" -> `UnlockScreen onUnlocked` em :49 (botão :69); "Sair" = `SignOutButton` :72; textos de `LOCK_TEXT` (:56, :59, :66, :70)
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Nenhum teste existente removido, pulado ou enfraquecido
 
 **Tests**: none
 **Gate**: build
