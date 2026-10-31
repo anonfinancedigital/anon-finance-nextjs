@@ -356,7 +356,7 @@ O ANON roda só no navegador: sem ícone na tela inicial, sem janela própria, s
 | PUSH-11 | P1: ativar — exclusão da conta | - | Implementing |
 | PUSH-12 | P1: ativar — iOS sem instalar | - | Implementing |
 | PUSH-13 | P1: ativar — navegador sem suporte | - | Implementing |
-| PUSH-14 | P1: ativar — aviso de terceiro | - | Pending |
+| PUSH-14 | P1: ativar — aviso de terceiro | - | Implementing |
 | PUSH-15 | P1: preferências — controles | - | Implementing |
 | PUSH-16 | P1: preferências — salvar | - | Implementing |
 | PUSH-17 | P1: preferências — validação | - | Implementing |

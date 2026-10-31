@@ -744,9 +744,9 @@ T38 → T39 → T40 → T41 → T42 → T43
 
 **Done when**:
 
-- [ ] Typecheck e lint passam
-- [ ] Inspeção `file:line`: `subscribe` com `userVisibleOnly: true`; falha da ação chama `sub.unsubscribe()`; desativar chama o navegador e depois `unsubscribePushAction`; textos exatos das ACs 4, 12, 13, 14
-- [ ] Gate check passes: `npm run test:unit`
+- [x] Typecheck e lint passam
+- [x] Inspeção `file:line`: `subscribe` com `userVisibleOnly: true`; falha da ação chama `sub.unsubscribe()`; desativar chama o navegador e depois `unsubscribePushAction`; textos exatos das ACs 4, 12, 13, 14
+- [x] Gate check passes: `npm run test:unit`
 
 **Tests**: none (UI sem teste (AD-005))
 **Gate**: quick
