@@ -214,11 +214,11 @@ T38 → T39 → T40 → T41 → T42 → T43
 
 **Done when**:
 
-- [ ] `src/lib/pwa/sw.test.ts` carrega `public/sw.js` em `vm` com `self`, `caches`, `fetch` e `clients` simulados
-- [ ] Um teste por AC: precache exato, limpeza de caches, cache-first e 200-only de `_next/static`, fallback offline, navegação 404/500 devolvida sem `put`, não intercepta POST, cross-origin, `/api/*`, `/monitoring` e outros GET fora da regra
-- [ ] Edge: `/offline.html` ausente no cache devolve `Response.error()`
-- [ ] Gate check passes: `npm run test:unit`
-- [ ] Nenhum teste existente removido, pulado ou enfraquecido
+- [x] `src/lib/pwa/sw.test.ts` carrega `public/sw.js` em `vm` com `self`, `caches`, `fetch` e `clients` simulados
+- [x] Um teste por AC: precache exato, limpeza de caches, cache-first e 200-only de `_next/static`, fallback offline, navegação 404/500 devolvida sem `put`, não intercepta POST, cross-origin, `/api/*`, `/monitoring` e outros GET fora da regra
+- [x] Edge: `/offline.html` ausente no cache devolve `Response.error()`
+- [x] Gate check passes: `npm run test:unit`
+- [x] Nenhum teste existente removido, pulado ou enfraquecido
 
 **Tests**: unit
 **Gate**: quick

@@ -324,14 +324,14 @@ O ANON roda só no navegador: sem ícone na tela inicial, sem janela própria, s
 | PWA-04 | P1: instalável — theme color | - | Implementing |
 | PWA-05 | P1: instalável — rotas públicas | - | Pending |
 | PWA-06 | P1: instalável — demais rotas protegidas | - | Pending |
-| PWA-07 | P1: SW — precache | - | Pending |
-| PWA-08 | P1: SW — limpeza na ativação | - | Pending |
-| PWA-09 | P1: SW — `_next/static` cache-first | - | Pending |
-| PWA-10 | P1: SW — fallback offline | - | Pending |
-| PWA-11 | P1: SW — navegação não é guardada | - | Pending |
-| PWA-12 | P1: SW — não intercepta o resto | - | Pending |
+| PWA-07 | P1: SW — precache | - | Implementing |
+| PWA-08 | P1: SW — limpeza na ativação | - | Implementing |
+| PWA-09 | P1: SW — `_next/static` cache-first | - | Implementing |
+| PWA-10 | P1: SW — fallback offline | - | Implementing |
+| PWA-11 | P1: SW — navegação não é guardada | - | Implementing |
+| PWA-12 | P1: SW — não intercepta o resto | - | Implementing |
 | PWA-13 | P1: SW — cabeçalhos de `/sw.js` | - | Pending |
-| PWA-14 | P1: SW — skipWaiting e claim | - | Pending |
+| PWA-14 | P1: SW — skipWaiting e claim | - | Implementing |
 | PWA-15 | P1: offline — textos | - | Implementing |
 | PWA-16 | P1: offline — sem script nem recurso externo | - | Implementing |
 | PWA-17 | P1: offline — link de nova tentativa | - | Implementing |
