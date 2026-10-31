@@ -344,7 +344,7 @@ O ANON roda só no navegador: sem ícone na tela inicial, sem janela própria, s
 | PWA-24 | P2: instalar — já instalado | - | Implementing |
 | PWA-25 | P2: instalar — sem suporte | - | Implementing |
 | PUSH-01 | P1: ativar — seção visível com VAPID | - | Implementing |
-| PUSH-02 | P1: ativar — inscrever | - | Pending |
+| PUSH-02 | P1: ativar — inscrever | - | Implementing |
 | PUSH-03 | P1: ativar — armazenar e criar preferências | - | Implementing |
 | PUSH-04 | P1: ativar — permissão negada | - | Pending |
 | PUSH-05 | P1: ativar — endpoint fora da lista | - | Implementing |
@@ -352,7 +352,7 @@ O ANON roda só no navegador: sem ícone na tela inicial, sem janela própria, s
 | PUSH-07 | P1: ativar — limite de 5 | - | Implementing |
 | PUSH-08 | P1: ativar — endpoint repetido | - | Implementing |
 | PUSH-09 | P1: ativar — desativar | - | Implementing |
-| PUSH-10 | P1: ativar — ação exige sessão | - | Pending |
+| PUSH-10 | P1: ativar — ação exige sessão | - | Implementing |
 | PUSH-11 | P1: ativar — exclusão da conta | - | Implementing |
 | PUSH-12 | P1: ativar — iOS sem instalar | - | Pending |
 | PUSH-13 | P1: ativar — navegador sem suporte | - | Pending |

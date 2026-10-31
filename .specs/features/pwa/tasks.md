@@ -663,12 +663,12 @@ T38 → T39 → T40 → T41 → T42 → T43
 
 **Done when**:
 
-- [ ] `src/actions/push.int.test.ts`: sem sessão devolve `UNAUTHORIZED` sem tocar o banco; usuário `revoked` também
-- [ ] Mensagens exatas: "Este navegador não é compatível com notificações", "Inscrição inválida", "Limite de 5 dispositivos atingido", "Preferências inválidas", "Ative as notificações primeiro"
-- [ ] Nenhuma ação aceita `userId` do cliente; falha do banco devolve `SAVE_FAILED`
-- [ ] Sem variáveis VAPID, `subscribePushAction` recusa
-- [ ] Gate check passes: `npm run test:unit && npm run test:int`
-- [ ] Nenhum teste existente removido, pulado ou enfraquecido
+- [x] `src/actions/push.int.test.ts`: sem sessão devolve `UNAUTHORIZED` sem tocar o banco; usuário `revoked` também
+- [x] Mensagens exatas: "Este navegador não é compatível com notificações", "Inscrição inválida", "Limite de 5 dispositivos atingido", "Preferências inválidas", "Ative as notificações primeiro"
+- [x] Nenhuma ação aceita `userId` do cliente; falha do banco devolve `SAVE_FAILED`
+- [x] Sem variáveis VAPID, `subscribePushAction` recusa
+- [x] Gate check passes: `npm run test:unit && npm run test:int`
+- [x] Nenhum teste existente removido, pulado ou enfraquecido
 
 **Tests**: integration
 **Gate**: full
