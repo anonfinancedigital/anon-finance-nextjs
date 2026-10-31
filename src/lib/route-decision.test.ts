@@ -93,4 +93,14 @@ describe("decideRoute", () => {
   it("keeps protected routes redirecting anonymous visitors to /login (HOSTING-09)", () => {
     expect(decideRoute("/transacoes", false)).toEqual({ action: "redirect", to: "/login", noStore: true });
   });
+
+  it("lets anonymous callers reach /api/push/dispatch without a redirect (PUSH-22)", () => {
+    expect(decideRoute("/api/push/dispatch", false)).toEqual({ action: "next", noStore: false });
+  });
+
+  it("only matches /api/push/dispatch exactly or as a prefix segment, keeping the rest redirecting (PUSH-32)", () => {
+    for (const path of ["/api/push/dispatch-x", "/api/push", "/api/healthz"]) {
+      expect(decideRoute(path, false)).toEqual({ action: "redirect", to: "/login", noStore: true });
+    }
+  });
 });

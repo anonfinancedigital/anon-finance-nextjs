@@ -5,6 +5,8 @@ import "./globals.css";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { THEME_COLOR } from "@/lib/theme-color";
 import { BRAND_DESCRIPTION, BRAND_NAME, BRAND_TITLE_TEMPLATE } from "@/lib/brand";
+import { PwaRegister } from "@/components/pwa-register";
+import { pwaMetadata, pwaViewport } from "@/lib/pwa/metadata";
 
 /** Applies the saved theme before first paint (dark when none is saved) to avoid a flash of the wrong one. */
 const themeScript = `var d=true;try{d=localStorage.getItem("theme")!=="light"}catch(e){}if(d)document.documentElement.classList.add("dark");var m=document.querySelector('meta[name="theme-color"]');if(!m){m=document.createElement("meta");m.name="theme-color";document.head.appendChild(m)}m.content=d?"${THEME_COLOR.dark}":"${THEME_COLOR.light}"`;
@@ -32,9 +34,11 @@ export const viewport: Viewport = {
   viewportFit: "cover",
   interactiveWidget: "resizes-content",
   colorScheme: "dark light",
+  ...pwaViewport,
 };
 
 export const metadata: Metadata = {
+  ...pwaMetadata,
   title: { default: BRAND_NAME, template: BRAND_TITLE_TEMPLATE },
   description: BRAND_DESCRIPTION,
   // Dark favicon is the default (and the fallback when `media` is unsupported); the light one wins on a light system theme.
@@ -43,6 +47,7 @@ export const metadata: Metadata = {
       { url: "/favicon.svg", type: "image/svg+xml" },
       { url: "/favicon-light.svg", type: "image/svg+xml", media: "(prefers-color-scheme: light)" },
     ],
+    ...pwaMetadata.icons,
   },
 };
 
@@ -60,6 +65,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
       </head>
       <body className="min-h-full flex flex-col">
         <TooltipProvider>{children}</TooltipProvider>
+        <PwaRegister />
       {/* impeccable-live-start */}
 <script nonce={nonce} src="http://localhost:8400/live.js?token=20abb03b-5b60-4403-8b32-582c835926f8"></script>
 {/* impeccable-live-end */}

@@ -55,6 +55,8 @@ const PROCESSED = [
   "Se você entra com Google: o Google sabe que seu e-mail usa o app; nenhum dado financeiro vai para o Google",
   "Datas e tipo de registro (receita ou despesa), para organizar os lançamentos",
   "Cores e agrupamento das categorias, para montar a interface",
+  "Se você ativa as notificações: o endereço da inscrição do seu navegador e suas preferências de notificação, sem cifra",
+  "Notificações push passam pelo serviço do fabricante do navegador (Google, Apple ou Mozilla), que recebe o endereço da inscrição; o texto é genérico e nunca leva valores ou nomes",
 ];
 
 const cardClass = "rounded-2xl border border-border bg-card p-5 shadow-xl sm:p-6";

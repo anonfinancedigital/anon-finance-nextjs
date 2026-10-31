@@ -101,7 +101,7 @@
 ### AD-013
 - **Decision**: Nenhum dado do usuário sai para serviços de terceiros. O monitoramento (Sentry) envia só tipo de exceção, stack trace, rota sem query string e tags, filtrado por `scrubEvent`; o navegador só fala com a própria origem (túnel `/monitoring`) e o CSP mantém `connect-src 'self'`. Sem Session Replay, sem breadcrumbs, sem `setUser`.
 - **Reason**: AD-011 promete que dados decifrados nunca saem do navegador; mensagens de erro podem conter esses valores.
-- **Trade-off**: Eventos têm menos contexto para depuração; o scrubber descarta o evento se falhar.
+- **Trade-off**: Eventos têm menos contexto para depuração; o scrubber descarta o evento se falhar. Exceção para push em AD-016.
 - **Scope**: `src/lib/sentry`, instrumentação, `logActionError`, CSP e proxy
 - **Date**: 2026-10-10
 - **Status**: active
@@ -120,6 +120,14 @@
 - **Trade-off**: Qualquer pessoa cria conta; o limite depende de `x-forwarded-for`, que só é confiável atrás da borda da Vercel, e não é atômico; quem tem senha não usa Google; usuários `pending` antigos ficam travados até o admin excluir.
 - **Scope**: `user-status.ts`, `usersRepo`, `admin-users`, `signup`, `google-hooks`, `auth.ts`, `login-notice`, `signup_attempt`
 - **Date**: 2026-10-13
+- **Status**: active
+
+### AD-016
+- **Decision**: Exceção à AD-013 só para notificações push. A entrega passa pelo serviço do fabricante do navegador (FCM, Apple ou Mozilla), que recebe o endpoint da inscrição e um texto genérico cifrado (Web Push); nunca valor, nome, categoria ou descrição. O push é opt-in, com aviso na tela antes de ativar. Endpoints das inscrições e preferências de notificação ficam sem cifra no banco. Fora o push, a AD-013 segue valendo.
+- **Reason**: Pedido do usuário: lembrar de lançar gastos exige push, e não há entrega push sem o serviço do navegador; o conteúdo genérico mantém a AD-011 (nenhum dado financeiro sai do navegador).
+- **Trade-off**: O fabricante do navegador vê o endpoint e o horário de cada entrega, e portanto que aquele navegador usa o app; endpoints e preferências sem cifra expõem esse vínculo a quem ler o banco.
+- **Scope**: `src/lib/push`, `push_subscription`, preferências de notificação, service worker, `/api/push/dispatch`, texto de privacidade
+- **Date**: 2026-10-31
 - **Status**: active
 
 ## Handoff

@@ -12,6 +12,7 @@ import { passwordResetsRepo } from "@/lib/db/repos/password-resets";
 import { buildPasswordResetEmail } from "@/lib/domain/password-reset-email";
 import { logActionError } from "@/lib/log";
 import { sendMail } from "@/lib/mailer";
+import { notifySecurity } from "@/lib/push/security";
 import {
   INVALID_LINK_MESSAGE,
   requestResetSchema,
@@ -81,7 +82,10 @@ export async function resetPasswordAction(
   if (!parsed.success) return invalidInput(parsed.error);
 
   let outcome: "ok" | "invalid";
+  let ownerId: string | undefined;
   try {
+    // Read before consuming: the consumed token no longer names its owner.
+    ownerId = (await passwordResetsRepo.recoveryMaterialFor(parsed.data.token))?.userId;
     outcome = await passwordResetsRepo.consume(
       parsed.data.token,
       parsed.data.password,
@@ -91,7 +95,16 @@ export async function resetPasswordAction(
     return { ok: false, error: SAVE_FAILED };
   }
   if (outcome === "invalid") return { ok: false, error: INVALID_LINK_MESSAGE };
+  // Before the redirect, which throws.
+  if (ownerId) await notifyPasswordReset(ownerId);
   redirect("/login");
+}
+
+/** The reset is already done: a failed notice is logged and never changes the result (PUSH-35). */
+async function notifyPasswordReset(userId: string): Promise<void> {
+  await notifySecurity(userId, "password_reset").catch((error) =>
+    logActionError("notifySecurity", error),
+  );
 }
 
 /**
@@ -139,12 +152,15 @@ export async function resetPasswordSealedAction(
 
   const { token, ...input } = parsed.data;
   let outcome: "ok" | "invalid";
+  let ownerId: string | undefined;
   try {
+    ownerId = (await passwordResetsRepo.recoveryMaterialFor(token))?.userId;
     outcome = await passwordResetsRepo.consumeSealed(token, input);
   } catch (error) {
     logActionError("resetPasswordSealedAction", error);
     return { ok: false, error: SAVE_FAILED };
   }
   if (outcome === "invalid") return { ok: false, error: INVALID_LINK_MESSAGE };
+  if (ownerId) await notifyPasswordReset(ownerId);
   return { ok: true };
 }

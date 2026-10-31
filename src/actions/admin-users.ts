@@ -7,6 +7,7 @@ import { requireAdminForAction } from "@/lib/auth-guard";
 import { usersRepo } from "@/lib/db/repos/users";
 import type { UserAction } from "@/lib/domain/user-status";
 import { logActionError } from "@/lib/log";
+import { notifySecurity } from "@/lib/push/security";
 
 const ADMIN_PATH = "/admin/cadastros";
 const NOT_FOUND = "Cadastro não encontrado";
@@ -37,6 +38,10 @@ async function decide(id: string, action: UserAction): Promise<ActionResult> {
     return { ok: false, error: SAVE_FAILED };
   }
 
+  // The revocation is already committed: a failed notice is logged and never changes the result (PUSH-35).
+  if (action === "revoke") {
+    await notifySecurity(id, "revoked").catch((error) => logActionError("revokeUser", error));
+  }
   revalidatePath(ADMIN_PATH);
   return { ok: true };
 }

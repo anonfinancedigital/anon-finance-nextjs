@@ -180,12 +180,51 @@ O dump criptografado fica como artifact do próprio GitHub Actions, com retenç�
    | `BETTER_AUTH_URL` | URL pública `https://...` |
    | `ADMIN_EMAIL` | E-mail do administrador |
    | `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `SMTP_FROM` | Do provedor escolhido na seção 6 |
+   | `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, `VAPID_SUBJECT` | Chaves do push, ver seção 8.1. Deixe as três vazias para manter o push desligado |
+   | `CRON_SECRET` | Segredo do disparo horário do push, ver seção 8.1. Igual ao secret do GitHub |
 
    `ADMIN_PASSWORD` **não** vai para a Vercel: só é usada pelo `db:seed`, rodado localmente.
 3. Não configure `BETTER_AUTH_API_KEY` (mantém o dashboard pago desligado).
 4. Fazer o deploy e abrir `https://<projeto>.vercel.app`.
 5. Teste de fumaça manual: login do admin, criar um lançamento, recarregar a página, pedir recuperação de senha e conferir que o e-mail chega com o link correto.
 6. Hobby não tem cartão cadastrado, então ao bater o limite o projeto é bloqueado em vez de gerar cobrança. É o comportamento desejado para custo zero.
+
+### 8.1 Push e PWA
+
+O push usa Web Push com chaves VAPID e um disparo horário feito pelo GitHub Actions (`.github/workflows/push-dispatch.yml`). O push passa pelo serviço do fabricante do navegador (AD-016); o texto enviado é genérico e nunca leva valores ou nomes.
+
+1. Gerar o par de chaves VAPID, uma vez:
+
+   ```sh
+   npx web-push generate-vapid-keys
+   ```
+
+   A saída traz a chave pública e a privada. Guarde a privada no gerenciador de senhas: trocar o par depois invalida todas as inscrições existentes.
+2. Gerar o segredo do disparo:
+
+   ```sh
+   openssl rand -base64 32
+   ```
+
+3. Na Vercel (Production), criar as variáveis:
+   - `VAPID_PUBLIC_KEY`: chave pública do passo 1.
+   - `VAPID_PRIVATE_KEY`: chave privada do passo 1.
+   - `VAPID_SUBJECT`: contato do operador, `mailto:voce@example.com` ou uma URL `https://`.
+   - `CRON_SECRET`: valor do passo 2.
+
+   Faça um novo deploy para as variáveis valerem. Sem as três `VAPID_*` o push fica desligado.
+4. No GitHub (Settings, Secrets and variables, Actions), criar dois secrets:
+   - `APP_URL`: URL pública do app, `https://...`, sem barra final.
+   - `CRON_SECRET`: o mesmo valor da Vercel.
+
+   O workflow `push-dispatch` roda a cada hora, no minuto 7 (`cron: "7 * * * *"`), e também sob demanda (`workflow_dispatch`). Ele chama `POST ${APP_URL}/api/push/dispatch` com `Authorization: Bearer` e falha o job se a resposta não for 2xx. Nada do segredo, da URL ou da resposta vai para o log. Um teste automático (`src/lib/push-dispatch-workflow.test.ts`) confere essas regras.
+5. Atenção: o GitHub desativa workflows agendados depois de 60 dias sem atividade em repositório público. Se o repositório ficar parado, o disparo para sem aviso. Confira de vez em quando na aba Actions e reative o workflow se preciso (ver rotina mensal).
+6. A primeira execução real é manual: Actions, `push-dispatch`, Run workflow.
+
+Como testar o push:
+- O service worker não registra em `next dev`. Teste com `npm run build` e `npm run start` (com as variáveis `VAPID_*` e `CRON_SECRET` no `.env`), abrindo `http://localhost:3000`.
+- Ative as notificações em Conta, aceite a permissão do navegador e envie um aviso pelo painel do administrador. Para o disparo horário, chame o endpoint à mão: `curl -X POST -H "Authorization: Bearer <CRON_SECRET>" http://localhost:3000/api/push/dispatch`.
+- No iOS o push só funciona com o app instalado na tela inicial (Compartilhar, Adicionar à Tela de Início), e a permissão é pedida depois da instalação.
 
 ## 9. Cloudflare e domínio (opcional, depois)
 
@@ -207,6 +246,7 @@ O dump criptografado fica como artifact do próprio GitHub Actions, com retenç�
 - [ ] `BETTER_AUTH_SECRET` e a chave privada do age guardados em dois lugares.
 - [ ] Texto claro (termos/aviso) dizendo que é um serviço gratuito, sem garantia de disponibilidade.
 - [ ] Avaliação mínima de LGPD: quais dados são guardados, por quê, e como o usuário pede exclusão. Mesmo sem cobrança, você responde pelos dados de terceiros.
+- [ ] Push configurado: `VAPID_*` e `CRON_SECRET` na Vercel, secrets `APP_URL` e `CRON_SECRET` no GitHub, e o workflow `push-dispatch` rodado uma vez à mão (seção 8.1).
 - [ ] `npm run typecheck`, `npm run lint`, `npm run test:unit` e `npm run test:int` passando antes do primeiro deploy.
 
 Observação: os testes e2e (Playwright) estão suspensos neste projeto (AD-005). Não os use como critério de aceite.
@@ -216,7 +256,7 @@ Observação: os testes e2e (Playwright) estão suspensos neste projeto (AD-005)
 Rotina mensal (15 minutos):
 - Conferir que o backup mais recente existe e tem tamanho coerente.
 - Olhar uso de banda/requisições (Vercel), armazenamento e horas de computação (Neon) e cota de e-mail.
-- Confirmar que o workflow agendado continua ativo.
+- Confirmar que os workflows agendados (`backup` e `push-dispatch`) continuam ativos.
 - Atualizar dependências com correção de segurança.
 
 Registro:
@@ -244,6 +284,6 @@ Antes de migrar, rode o backup manual, faça um restore em ambiente novo e só e
 3. Aplicar as mudanças de código 5.1 a 5.3 e rodar os testes.
 4. Configurar SMTP e testar o envio (seção 6).
 5. Configurar o backup e fazer o primeiro teste de restauração (seção 7).
-6. Deploy na Vercel e teste de fumaça (seção 8).
+6. Deploy na Vercel, teste de fumaça e configuração do push (seção 8 e 8.1).
 7. Monitoramento (seção 10).
 8. Checklist da seção 11 e só então convidar outras pessoas.

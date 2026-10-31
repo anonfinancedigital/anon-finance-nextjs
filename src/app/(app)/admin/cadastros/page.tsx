@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { BroadcastForm } from "@/components/broadcast-form";
 import { PageHeader } from "@/components/page-header";
 import { UserAdminList } from "@/components/user-admin-list";
 import { requireAdminForPage } from "@/lib/auth-guard";
@@ -15,6 +16,7 @@ export default async function RegistrationsPage() {
     <div className="space-y-4">
       <PageHeader title="Cadastros" />
       <UserAdminList users={users} />
+      <BroadcastForm />
     </div>
   );
 }

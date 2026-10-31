@@ -270,3 +270,66 @@ export const signupAttempt = pgTable(
   },
   (t) => [index("signup_attempt_ip_hash_attempted_at_idx").on(t.ipHash, t.attemptedAt)],
 );
+
+/** One browser/device a user receives pushes on. Stored in the clear (AD-016): endpoint and public keys. */
+export const pushSubscription = pgTable(
+  "push_subscription",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    endpoint: text("endpoint").notNull().unique(),
+    p256dh: text("p256dh").notNull(),
+    auth: text("auth").notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [index("push_subscription_user_id_idx").on(t.userId)],
+);
+
+/** Which notifications a user wants, and at what local hour the daily ones go out. */
+export const pushPreference = pgTable(
+  "push_preference",
+  {
+    userId: text("user_id")
+      .primaryKey()
+      .references(() => user.id, { onDelete: "cascade" }),
+    reminder: boolean("reminder").notNull().default(false),
+    due: boolean("due").notNull().default(false),
+    security: boolean("security").notNull().default(true),
+    admin: boolean("admin").notNull().default(true),
+    hour: smallint("hour").notNull().default(9),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [check("push_preference_hour_range", sql`${t.hour} BETWEEN 0 AND 23`)],
+);
+
+/** Idempotency key of a notification: (user, kind, local date or broadcast id) is sent at most once. */
+export const pushDispatch = pgTable(
+  "push_dispatch",
+  {
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    kind: text("kind").notNull(),
+    ref: text("ref").notNull(),
+    sentAt: timestamp("sent_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    primaryKey({ columns: [t.userId, t.kind, t.ref] }),
+    index("push_dispatch_sent_at_idx").on(t.sentAt),
+    check("push_dispatch_kind", sql`${t.kind} IN ('reminder', 'due', 'broadcast')`),
+  ],
+);
+
+/** Administrator messages waiting for (or done with) delivery by the next dispatch run. */
+export const pushBroadcast = pgTable(
+  "push_broadcast",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    text: text("text").notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    sentAt: timestamp("sent_at", { withTimezone: true }),
+  },
+  (t) => [check("push_broadcast_text_length", sql`char_length(${t.text}) BETWEEN 1 AND 140`)],
+);
