@@ -188,10 +188,10 @@ T38 → T39 → T40 → T41 → T42 → T43
 
 **Done when**:
 
-- [ ] `src/lib/pwa/offline-page.test.ts` confere `lang="pt-BR"`, título "ANON • Sem conexão", "Você está sem conexão", "Seus dados continuam protegidos. Reconecte-se para continuar." e `<a href="/">Tentar novamente</a>`
-- [ ] O teste confere ausência de `<script` e de `http://` ou `https://`
-- [ ] Gate check passes: `npm run test:unit`
-- [ ] Nenhum teste existente removido, pulado ou enfraquecido
+- [x] `src/lib/pwa/offline-page.test.ts` confere `lang="pt-BR"`, título "ANON • Sem conexão", "Você está sem conexão", "Seus dados continuam protegidos. Reconecte-se para continuar." e `<a href="/">Tentar novamente</a>`
+- [x] O teste confere ausência de `<script` e de `http://` ou `https://`
+- [x] Gate check passes: `npm run test:unit`
+- [x] Nenhum teste existente removido, pulado ou enfraquecido
 
 **Tests**: unit
 **Gate**: quick

@@ -332,9 +332,9 @@ O ANON roda só no navegador: sem ícone na tela inicial, sem janela própria, s
 | PWA-12 | P1: SW — não intercepta o resto | - | Pending |
 | PWA-13 | P1: SW — cabeçalhos de `/sw.js` | - | Pending |
 | PWA-14 | P1: SW — skipWaiting e claim | - | Pending |
-| PWA-15 | P1: offline — textos | - | Pending |
-| PWA-16 | P1: offline — sem script nem recurso externo | - | Pending |
-| PWA-17 | P1: offline — link de nova tentativa | - | Pending |
+| PWA-15 | P1: offline — textos | - | Implementing |
+| PWA-16 | P1: offline — sem script nem recurso externo | - | Implementing |
+| PWA-17 | P1: offline — link de nova tentativa | - | Implementing |
 | PWA-18 | P2: registro — em produção | - | Pending |
 | PWA-19 | P2: registro — fora de produção | - | Pending |
 | PWA-20 | P2: registro — falha engolida | - | Pending |
