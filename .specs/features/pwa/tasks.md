@@ -1066,9 +1066,9 @@ T38 → T39 → T40 → T41 → T42 → T43
 
 **Done when**:
 
-- [ ] Gate de build passa
-- [ ] Inspeção: a página continua atrás de `requireAdminForPage`
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
+- [x] Gate de build passa
+- [x] Inspeção: a página continua atrás de `requireAdminForPage`
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
 
 **Tests**: none (Wiring)
 **Gate**: build
