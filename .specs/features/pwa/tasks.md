@@ -108,12 +108,12 @@ T38 → T39 → T40 → T41 → T42 → T43
 
 **Done when**:
 
-- [ ] Os quatro PNGs existem em `public/` com as dimensões 192, 512, 512 e 180
-- [ ] `src/lib/pwa/icons.test.ts` lê o cabeçalho IHDR de cada PNG e confere largura e altura
-- [ ] `sharp` listado em `devDependencies`
-- [ ] Novo script `npm run pwa:icons` em `package.json`
-- [ ] Gate check passes: `npm run test:unit`
-- [ ] Nenhum teste existente removido, pulado ou enfraquecido
+- [x] Os quatro PNGs existem em `public/` com as dimensões 192, 512, 512 e 180
+- [x] `src/lib/pwa/icons.test.ts` lê o cabeçalho IHDR de cada PNG e confere largura e altura
+- [x] `sharp` listado em `devDependencies`
+- [x] Novo script `npm run pwa:icons` em `package.json`
+- [x] Gate check passes: `npm run test:unit`
+- [x] Nenhum teste existente removido, pulado ou enfraquecido
 
 **Tests**: unit
 **Gate**: quick
