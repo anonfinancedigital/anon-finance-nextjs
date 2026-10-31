@@ -1041,9 +1041,9 @@ T38 → T39 → T40 → T41 → T42 → T43
 
 **Done when**:
 
-- [ ] Typecheck e lint passam
-- [ ] Inspeção: limite de 140, erro da ação exibido, campo limpo após `ok`
-- [ ] Gate check passes: `npm run test:unit`
+- [x] Typecheck e lint passam
+- [x] Inspeção: limite de 140, erro da ação exibido, campo limpo após `ok`
+- [x] Gate check passes: `npm run test:unit`
 
 **Tests**: none (UI sem teste (AD-005))
 **Gate**: quick
