@@ -136,11 +136,11 @@ T38 → T39 → T40 → T41 → T42 → T43
 
 **Done when**:
 
-- [ ] `manifest()` devolve `name` e `short_name` "ANON", `start_url` "/", `scope` "/", `display` "standalone", `lang` "pt-BR", `background_color` e `theme_color` "#0D111A"
-- [ ] Lista exatamente `/icon-192.png`, `/icon-512.png` e `/icon-maskable-512.png` (purpose `maskable`), todos `image/png` com os tamanhos corretos
-- [ ] `src/app/manifest.test.ts` cobre cada valor
-- [ ] Gate check passes: `npm run test:unit`
-- [ ] Nenhum teste existente removido, pulado ou enfraquecido
+- [x] `manifest()` devolve `name` e `short_name` "ANON", `start_url` "/", `scope` "/", `display` "standalone", `lang` "pt-BR", `background_color` e `theme_color` "#0D111A"
+- [x] Lista exatamente `/icon-192.png`, `/icon-512.png` e `/icon-maskable-512.png` (purpose `maskable`), todos `image/png` com os tamanhos corretos
+- [x] `src/app/manifest.test.ts` cobre cada valor
+- [x] Gate check passes: `npm run test:unit`
+- [x] Nenhum teste existente removido, pulado ou enfraquecido
 
 **Tests**: unit
 **Gate**: quick
