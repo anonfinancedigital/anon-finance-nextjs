@@ -677,13 +677,15 @@ T24 → T25
 
 **Done when**:
 
-- [ ] `markFreshLogin` chamado antes da ação (inspeção `file:line`)
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
-- [ ] Nenhum teste existente removido, pulado ou enfraquecido
+- [x] `markFreshLogin` chamado antes da ação (inspeção `file:line`)
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Nenhum teste existente removido, pulado ou enfraquecido
 
 **Tests**: none
 **Gate**: build
 **Commit**: `feat(lock): mark a fresh Google sign-in`
+
+**Evidência**: src/app/login/google-button.tsx:43 markFreshLogin(freshLoginStorage, Date.now()) antes de return signInGoogleAction() (:44), dentro da ação do useActionState.
 
 ---
 
