@@ -877,14 +877,14 @@ T38 → T39 → T40 → T41 → T42 → T43
 
 **Done when**:
 
-- [ ] Com repo e envio simulados: segunda execução no mesmo dia não reenvia; `claim` falso não envia
-- [ ] `gone` chama `removeByEndpoint`; `failed` conta e segue
-- [ ] 1005 inscrições em fila → no máximo 1000 envios e nunca mais de 20 simultâneos; o resto fica sem `claim`
-- [ ] Prazo estourado para de reivindicar
-- [ ] Corpo enviado é exatamente o texto fixo de cada tipo; resposta `{sent, removed, failed}`
-- [ ] Broadcast marcado `sent_at` só quando não resta alvo sem `claim`
-- [ ] Gate check passes: `npm run test:unit`
-- [ ] Nenhum teste existente removido, pulado ou enfraquecido
+- [x] Com repo e envio simulados: segunda execução no mesmo dia não reenvia; `claim` falso não envia
+- [x] `gone` chama `removeByEndpoint`; `failed` conta e segue
+- [x] 1005 inscrições em fila → no máximo 1000 envios e nunca mais de 20 simultâneos; o resto fica sem `claim`
+- [x] Prazo estourado para de reivindicar
+- [x] Corpo enviado é exatamente o texto fixo de cada tipo; resposta `{sent, removed, failed}`
+- [x] Broadcast marcado `sent_at` só quando não resta alvo sem `claim`
+- [x] Gate check passes: `npm run test:unit`
+- [x] Nenhum teste existente removido, pulado ou enfraquecido
 
 **Tests**: unit
 **Gate**: quick

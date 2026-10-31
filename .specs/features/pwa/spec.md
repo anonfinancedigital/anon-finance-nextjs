@@ -372,7 +372,7 @@ O ANON roda só no navegador: sem ícone na tela inicial, sem janela própria, s
 | PUSH-27 | P1: envio — 410/404 remove | - | Implementing |
 | PUSH-28 | P1: envio — outra falha mantém | - | Implementing |
 | PUSH-29 | P1: envio — payload fixo e TTL | - | Implementing |
-| PUSH-30 | P1: envio — limite de envios | - | Pending |
+| PUSH-30 | P1: envio — limite de envios | - | Implementing |
 | PUSH-31 | P1: envio — limpeza e resposta | - | Implementing |
 | PUSH-32 | P1: envio — demais rotas protegidas | - | Implementing |
 | PUSH-33 | P2: segurança — senha redefinida | - | Implementing |
@@ -381,9 +381,9 @@ O ANON roda só no navegador: sem ícone na tela inicial, sem janela própria, s
 | PUSH-36 | P2: segurança — preferência desligada | - | Pending |
 | PUSH-37 | P2: admin — enfileirar | - | Implementing |
 | PUSH-38 | P2: admin — validar texto | - | Implementing |
-| PUSH-39 | P2: admin — somente admin | - | Pending |
+| PUSH-39 | P2: admin — somente admin | - | Implementing |
 | PUSH-40 | P2: admin — entrega única | - | Implementing |
-| PUSH-41 | P2: admin — marcar enviada | - | Pending |
+| PUSH-41 | P2: admin — marcar enviada | - | Implementing |
 | PUSH-42 | P2: SW push — mostrar | - | Implementing |
 | PUSH-43 | P2: SW push — payload inválido | - | Implementing |
 | PUSH-44 | P2: SW push — clique | - | Implementing |
