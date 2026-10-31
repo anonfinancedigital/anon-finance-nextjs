@@ -347,9 +347,9 @@ T38 → T39 → T40 → T41 → T42 → T43
 
 **Done when**:
 
-- [ ] Typecheck e lint passam
-- [ ] Inspeção: o efeito roda uma vez e não renderiza nada
-- [ ] Gate check passes: `npm run test:unit`
+- [x] Typecheck e lint passam
+- [x] Inspeção: o efeito roda uma vez e não renderiza nada
+- [x] Gate check passes: `npm run test:unit`
 
 **Tests**: none (UI sem teste (AD-005))
 **Gate**: quick
