@@ -303,12 +303,12 @@ T24 → T25
 
 **Done when**:
 
-- [ ] `save` grava `{ userId, credentialId }` e devolve `true`; devolve `false` e não deixa registro quando `setItem` lança (LOCK-05)
-- [ ] `read` devolve o `credentialId` do usuário; registro de outro usuário é apagado e devolve `null` (LOCK-08); JSON inválido e leitura que lança devolvem `null`
-- [ ] `clear` remove o registro (LOCK-06, LOCK-07)
-- [ ] O registro contém apenas `userId` e `credentialId` (LOCK-09)
-- [ ] Gate check passes: `npm run test:unit`
-- [ ] Nenhum teste existente removido, pulado ou enfraquecido
+- [x] `save` grava `{ userId, credentialId }` e devolve `true`; devolve `false` e não deixa registro quando `setItem` lança (LOCK-05)
+- [x] `read` devolve o `credentialId` do usuário; registro de outro usuário é apagado e devolve `null` (LOCK-08); JSON inválido e leitura que lança devolvem `null`
+- [x] `clear` remove o registro (LOCK-06, LOCK-07)
+- [x] O registro contém apenas `userId` e `credentialId` (LOCK-09)
+- [x] Gate check passes: `npm run test:unit`
+- [x] Nenhum teste existente removido, pulado ou enfraquecido
 
 **Tests**: unit
 **Gate**: quick
