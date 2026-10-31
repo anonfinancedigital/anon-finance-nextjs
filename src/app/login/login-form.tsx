@@ -9,6 +9,8 @@ import { PasswordInput } from "@/components/password-input";
 import { useHydrated } from "@/components/use-hydrated";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { markFreshLogin } from "@/lib/biometric/lock-policy";
+import { freshLoginStorage } from "@/lib/biometric/lock-store.client";
 import { fromBase64Url } from "@/lib/crypto/base64url";
 import { deviceKey } from "@/lib/vault/device-store";
 
@@ -63,6 +65,8 @@ export function LoginForm() {
     } finally {
       setDeriving(false);
     }
+    // The first load of the app after this sign-in skips the biometric lock (LOCK-19).
+    markFreshLogin(freshLoginStorage, Date.now());
     startTransition(() => formAction(formData));
   }
 

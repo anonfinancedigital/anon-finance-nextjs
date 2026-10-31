@@ -650,13 +650,15 @@ T24 → T25
 
 **Done when**:
 
-- [ ] `markFreshLogin(freshLoginStorage, Date.now())` chamado antes de `formAction` (inspeção `file:line`)
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
-- [ ] Nenhum teste existente removido, pulado ou enfraquecido
+- [x] `markFreshLogin(freshLoginStorage, Date.now())` chamado antes de `formAction` (inspeção `file:line`)
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Nenhum teste existente removido, pulado ou enfraquecido
 
 **Tests**: none
 **Gate**: build
 **Commit**: `feat(lock): mark a fresh password sign-in`
+
+**Evidência**: src/app/login/login-form.tsx:69 markFreshLogin(freshLoginStorage, Date.now()) imediatamente antes de startTransition(() => formAction(formData)) (:70); retornos antecipados de erro (KDF) ficam antes e não marcam.
 
 ---
 
