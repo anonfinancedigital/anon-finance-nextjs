@@ -198,11 +198,11 @@ T24 → T25
 
 **Done when**:
 
-- [ ] Um PNG por dispositivo existe em `public/splash/` com o nome de `splashFile`
-- [ ] `src/lib/pwa/splash-images.test.ts`: IHDR = `W*R` x `H*R` (SPLASH-03); os quatro cantos valem `#0D111A`; há pixel diferente do fundo no quadrado central (SPLASH-04)
-- [ ] Script `pwa:splash` em `package.json`
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
-- [ ] Nenhum teste existente removido, pulado ou enfraquecido
+- [x] Um PNG por dispositivo existe em `public/splash/` com o nome de `splashFile`
+- [x] `src/lib/pwa/splash-images.test.ts`: IHDR = `W*R` x `H*R` (SPLASH-03); os quatro cantos valem `#0D111A`; há pixel diferente do fundo no quadrado central (SPLASH-04)
+- [x] Script `pwa:splash` em `package.json`
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Nenhum teste existente removido, pulado ou enfraquecido
 
 **Tests**: unit
 **Gate**: build

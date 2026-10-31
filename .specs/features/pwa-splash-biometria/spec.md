@@ -188,8 +188,8 @@ Explicitamente excluído. Documentado para evitar crescimento de escopo.
 | -------------- | ----- | ----- | ------ |
 | SPLASH-01 | P1: Splash nativa na abertura | - | Done |
 | SPLASH-02 | P1: Splash nativa na abertura | - | Pending |
-| SPLASH-03 | P1: Splash nativa na abertura | - | Pending |
-| SPLASH-04 | P1: Splash nativa na abertura | - | Pending |
+| SPLASH-03 | P1: Splash nativa na abertura | - | Done |
+| SPLASH-04 | P1: Splash nativa na abertura | - | Done |
 | SPLASH-05 | P1: Splash nativa na abertura | - | Done |
 | APPNAME-01 | P1: Nome do app instalado | - | Done |
 | APPNAME-02 | P1: Nome do app instalado | - | Done |
