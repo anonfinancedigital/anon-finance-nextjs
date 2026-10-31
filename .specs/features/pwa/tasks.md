@@ -719,9 +719,9 @@ T38 → T39 → T40 → T41 → T42 → T43
 
 **Done when**:
 
-- [ ] Devolve `unsupported`, `ios-install`, `blocked`, `off` ou `on` com precedência definida e testada para cada combinação
-- [ ] Gate check passes: `npm run test:unit`
-- [ ] Nenhum teste existente removido, pulado ou enfraquecido
+- [x] Devolve `unsupported`, `ios-install`, `blocked`, `off` ou `on` com precedência definida e testada para cada combinação
+- [x] Gate check passes: `npm run test:unit`
+- [x] Nenhum teste existente removido, pulado ou enfraquecido
 
 **Tests**: unit
 **Gate**: quick

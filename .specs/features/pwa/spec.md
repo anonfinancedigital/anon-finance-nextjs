@@ -346,7 +346,7 @@ O ANON roda só no navegador: sem ícone na tela inicial, sem janela própria, s
 | PUSH-01 | P1: ativar — seção visível com VAPID | - | Implementing |
 | PUSH-02 | P1: ativar — inscrever | - | Implementing |
 | PUSH-03 | P1: ativar — armazenar e criar preferências | - | Implementing |
-| PUSH-04 | P1: ativar — permissão negada | - | Pending |
+| PUSH-04 | P1: ativar — permissão negada | - | Implementing |
 | PUSH-05 | P1: ativar — endpoint fora da lista | - | Implementing |
 | PUSH-06 | P1: ativar — chaves inválidas | - | Implementing |
 | PUSH-07 | P1: ativar — limite de 5 | - | Implementing |
@@ -354,8 +354,8 @@ O ANON roda só no navegador: sem ícone na tela inicial, sem janela própria, s
 | PUSH-09 | P1: ativar — desativar | - | Implementing |
 | PUSH-10 | P1: ativar — ação exige sessão | - | Implementing |
 | PUSH-11 | P1: ativar — exclusão da conta | - | Implementing |
-| PUSH-12 | P1: ativar — iOS sem instalar | - | Pending |
-| PUSH-13 | P1: ativar — navegador sem suporte | - | Pending |
+| PUSH-12 | P1: ativar — iOS sem instalar | - | Implementing |
+| PUSH-13 | P1: ativar — navegador sem suporte | - | Implementing |
 | PUSH-14 | P1: ativar — aviso de terceiro | - | Pending |
 | PUSH-15 | P1: preferências — controles | - | Implementing |
 | PUSH-16 | P1: preferências — salvar | - | Implementing |
