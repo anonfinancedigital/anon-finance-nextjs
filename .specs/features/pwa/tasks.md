@@ -1169,9 +1169,9 @@ T38 → T39 → T40 → T41 → T42 → T43
 
 **Done when**:
 
-- [ ] Typecheck e lint passam
-- [ ] Inspeção `file:line` do texto
-- [ ] Gate check passes: `npm run test:unit`
+- [x] Typecheck e lint passam
+- [x] Inspeção `file:line` do texto
+- [x] Gate check passes: `npm run test:unit`
 
 **Tests**: none (Texto de UI)
 **Gate**: quick

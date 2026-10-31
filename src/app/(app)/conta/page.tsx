@@ -38,6 +38,11 @@ export default async function AccountPage() {
         <p className="text-muted-foreground">
           Ficam sem cifra: e-mail, nome, datas e tipo das transações.
         </p>
+        <p className="text-muted-foreground">
+          Também ficam sem cifra as inscrições de notificação (o endereço que o navegador gera) e as preferências de
+          notificação. O push passa pelo serviço do fabricante do navegador, e o texto enviado é genérico, nunca com
+          valores ou nomes.
+        </p>
         <p>
           <Link href="/privacidade" className="text-link hover:underline">
             Leia a política de privacidade
