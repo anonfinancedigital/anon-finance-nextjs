@@ -236,6 +236,19 @@
   }
   html {
     @apply font-sans;
+    /* Mobile: no gray flash on tap (every tappable has its own press state), no font inflation in landscape, no pull-to-refresh / rubber band on the page. */
+    -webkit-tap-highlight-color: transparent;
+    -webkit-text-size-adjust: 100%;
+    overscroll-behavior: none;
+  }
+  /* Controls respond at once (no double-tap-zoom wait) and their labels are not selected on long-press; content text stays selectable. */
+  button,
+  [role="button"],
+  nav a {
+    touch-action: manipulation;
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
   }
   button:not(:disabled),
   [role="button"]:not([aria-disabled="true"]) {

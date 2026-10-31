@@ -65,7 +65,7 @@ export function SumStatusBar({
   const preview = selected ? adjustToTotal(selected.micro ?? 0, sumMicro) : null;
 
   return (
-    <div className="sticky bottom-20 z-20 space-y-3 rounded-2xl border border-border bg-card px-4 py-3 shadow-lg md:bottom-4">
+    <div className="sticky bottom-[calc(5rem+env(safe-area-inset-bottom))] z-20 space-y-3 rounded-2xl border border-border bg-card px-4 py-3 shadow-lg md:bottom-4">
       {hasRows && (
         <p
           className={`flex flex-wrap items-center gap-x-2 gap-y-1 text-sm font-medium ${

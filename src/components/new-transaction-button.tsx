@@ -61,7 +61,7 @@ export function NewTransactionButton({
             variant={buttonVariant}
             size="icon-lg"
             aria-label="Nova transação"
-            className="fixed bottom-3 left-1/2 z-50 size-14 -translate-x-1/2 rounded-full shadow-lg ring-4 ring-background md:hidden"
+            className="fixed bottom-[calc(0.75rem+env(safe-area-inset-bottom))] left-1/2 z-50 size-14 -translate-x-1/2 rounded-full shadow-lg ring-4 ring-background md:hidden"
           >
             <PlusIcon className="size-7" />
           </Button>

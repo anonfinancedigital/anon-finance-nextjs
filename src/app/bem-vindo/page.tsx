@@ -91,7 +91,7 @@ function HeroMockup() {
         <span className="size-2.5 rounded-full bg-white/15" />
         <span className="mx-auto rounded-md bg-white/5 px-4 py-0.5 text-[11px] text-zinc-500">anon · visão geral</span>
       </div>
-      <div className="grid gap-3 rounded-xl border border-white/[0.06] bg-zinc-950 p-3 sm:p-4 lg:grid-cols-5">
+      <div className="mt-8 grid gap-3 rounded-xl border border-white/[0.06] bg-zinc-950 p-3 sm:p-4 lg:grid-cols-5">
         <div className="space-y-3 lg:col-span-2">
           <div className="grid grid-cols-3 gap-2">
             {[
@@ -165,40 +165,39 @@ export default async function LandingPage() {
       <Navbar />
 
       <main className="relative">
-        <section className="mx-auto max-w-6xl px-6 pt-16 pb-20 text-center sm:pt-24">
-          <Link
-            href="/privacidade"
-            className="inline-flex max-w-full items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-4 py-1.5 text-xs text-zinc-300 backdrop-blur transition hover:border-white/20 sm:text-sm"
-          >
-            <ShieldCheckIcon aria-hidden className="size-4 shrink-0 text-emerald-400" />
-            <span className="truncate sm:whitespace-normal">
-              Arquitetura Zero-Knowledge: seus números chegam ao servidor já cifrados
-            </span>
-            <ArrowRightIcon aria-hidden className="size-4 shrink-0" />
-          </Link>
-
-          <h1 className="mx-auto mt-8 max-w-4xl font-display text-4xl leading-[1.05] font-extrabold tracking-tight text-balance sm:text-6xl lg:text-7xl">
-            O planejamento do seu patrimônio com{" "}
-            <span className="bg-linear-to-r from-purple-400 to-emerald-400 bg-clip-text text-transparent">
-              privacidade absoluta.
-            </span>
-          </h1>
-          <p className="mx-auto mt-6 max-w-2xl text-base text-balance text-zinc-400 sm:text-lg">
-            Gestão financeira de precisão e projeção matemática da sua independência. Uma plataforma feita para quem
-            quer prever o futuro do patrimônio sem abrir mão do sigilo absoluto.
-          </p>
-          <div className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
-            <Link href="/cadastro" className={`${heroButton} w-full sm:w-auto`}>
-              Criar meu cofre gratuito
-              <ArrowRightIcon aria-hidden className="size-4" />
-            </Link>
-            <Link href="/privacidade" className={`${ghostButton} w-full sm:w-auto`}>
-              <ShieldCheckIcon aria-hidden className="size-4 text-emerald-400" />
-              Conhecer a privacidade
+        <section className="mx-auto max-w-6xl px-6 pb-20 text-center">
+          <div className="relative z-10 pt-16 sm:pt-24">
+            <h1 className="mx-auto max-w-4xl font-display text-4xl leading-[1.05] font-extrabold tracking-tight text-balance sm:text-6xl lg:text-7xl">
+              O planejamento do seu patrimônio com{" "}
+              <span className="text-purple-300">privacidade absoluta.</span>
+            </h1>
+            <p className="mx-auto mt-6 max-w-2xl text-base text-balance text-zinc-400 sm:text-lg">
+              Gestão financeira de precisão e projeção matemática da sua independência. Uma plataforma feita para
+              quem quer prever o futuro do patrimônio sem abrir mão do sigilo absoluto.
+            </p>
+            <div className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
+              <Link href="/cadastro" className={`${heroButton} w-full sm:w-auto`}>
+                Criar meu cofre gratuito
+                <ArrowRightIcon aria-hidden className="size-4" />
+              </Link>
+              <Link href="/privacidade" className={`${ghostButton} w-full sm:w-auto`}>
+                <ShieldCheckIcon aria-hidden className="size-4 text-emerald-400" />
+                Conhecer a privacidade
+              </Link>
+            </div>
+            <Link
+              href="/privacidade"
+              className="mt-6 inline-flex max-w-full items-center gap-2 text-xs text-zinc-400 transition hover:text-zinc-200 sm:text-sm"
+            >
+              <ShieldCheckIcon aria-hidden className="size-4 shrink-0 text-emerald-400" />
+              <span className="truncate sm:whitespace-normal">
+                Arquitetura Zero-Knowledge: seus números chegam ao servidor já cifrados
+              </span>
+              <ArrowRightIcon aria-hidden className="size-4 shrink-0" />
             </Link>
           </div>
 
-          <div className="mt-16 text-left">
+          <div className="relative -mt-12 text-left [mask-image:linear-gradient(to_bottom,transparent_0,#000_7rem)]">
             <HeroMockup />
           </div>
         </section>

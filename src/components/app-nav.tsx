@@ -23,7 +23,7 @@ export function AppNav({ isAdmin = false }: { isAdmin?: boolean }) {
   return (
     <nav
       aria-label="Principal"
-      className="fixed inset-x-0 bottom-0 z-40 flex h-16 items-center justify-around border-t border-border bg-card/95 px-2 backdrop-blur-lg md:static md:h-auto md:flex-col md:items-stretch md:justify-start md:gap-1 md:border-0 md:bg-transparent md:px-0 md:backdrop-blur-none"
+      className="fixed inset-x-0 bottom-0 z-40 flex h-[calc(4rem+env(safe-area-inset-bottom))] items-center justify-around border-t border-border bg-card/95 px-2 pb-[env(safe-area-inset-bottom)] backdrop-blur-lg md:static md:h-auto md:pb-0 md:flex-col md:items-stretch md:justify-start md:gap-1 md:border-0 md:bg-transparent md:px-0 md:backdrop-blur-none"
     >
       {navItems.map(({ href, label, icon: Icon }, index) => {
         const active = href === "/" ? pathname === "/" : pathname.startsWith(href);
@@ -39,7 +39,7 @@ export function AppNav({ isAdmin = false }: { isAdmin?: boolean }) {
                 <span aria-hidden className="w-14 md:hidden" />
                 <span
                   aria-hidden
-                  className="pointer-events-none fixed bottom-3 left-1/2 flex size-14 -translate-x-1/2 items-center justify-center rounded-full bg-primary/40 ring-4 ring-background md:hidden"
+                  className="pointer-events-none fixed bottom-[calc(0.75rem+env(safe-area-inset-bottom))] left-1/2 flex size-14 -translate-x-1/2 items-center justify-center rounded-full bg-primary/40 ring-4 ring-background md:hidden"
                 >
                   <PlusIcon className="size-7 text-primary-foreground/60" />
                 </span>
@@ -49,7 +49,7 @@ export function AppNav({ isAdmin = false }: { isAdmin?: boolean }) {
               href={href}
               aria-current={active ? "page" : undefined}
               className={cn(
-                "flex flex-col items-center gap-1 rounded-xl text-[10px] font-medium transition-colors md:h-10 md:flex-row md:gap-3 md:px-3 md:text-sm",
+                "flex flex-col items-center gap-1 rounded-xl text-[10px] font-medium transition-colors active:bg-hover md:h-10 md:flex-row md:gap-3 md:px-3 md:text-sm",
                 active ? "text-link md:bg-primary/15" : "text-muted-foreground hover:text-foreground md:hover:bg-hover",
               )}
             >
