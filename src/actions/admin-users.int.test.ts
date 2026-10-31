@@ -17,8 +17,10 @@ const request = vi.hoisted(() => ({ headers: new Headers() }));
 
 vi.mock("next/headers", () => ({ headers: async () => request.headers }));
 vi.mock("next/cache", () => ({ revalidatePath: vi.fn() }));
+vi.mock("@/lib/push/security", () => ({ notifySecurity: vi.fn(async () => {}) }));
 
 const { revalidatePath } = await import("next/cache");
+const { notifySecurity } = await import("@/lib/push/security");
 
 setupTestDb();
 
@@ -52,6 +54,8 @@ let adminId: string;
 
 beforeEach(async () => {
   vi.mocked(revalidatePath).mockClear();
+  vi.mocked(notifySecurity).mockReset();
+  vi.mocked(notifySecurity).mockResolvedValue(undefined);
   const admin = await createSignedInUser(ADMIN_EMAIL);
   adminId = admin.userId;
   request.headers = new Headers({ cookie: admin.cookie });
@@ -334,5 +338,39 @@ describe("reactivate without admin rights", () => {
     expect(await reactivateUser(userId)).toEqual(UNAUTHORIZED);
 
     expect(await userRow(userId)).toMatchObject({ status: "revoked", decidedAt: DECIDED_AT });
+  });
+});
+
+describe("security notice on revoke (PUSH-34, PUSH-35)", () => {
+  it("revoking notifies the revoked user once", async () => {
+    const { userId } = await target("approved");
+
+    expect(await revokeUser(userId)).toEqual({ ok: true });
+
+    expect(vi.mocked(notifySecurity).mock.calls).toEqual([[userId, "revoked"]]);
+  });
+
+  it("reactivating, deleting and a refused revoke do not notify", async () => {
+    const revoked = await target("revoked");
+    const approved = await target("approved");
+    const pending = await target("pending");
+
+    expect(await reactivateUser(revoked.userId)).toEqual({ ok: true });
+    expect(await deleteUser(approved.userId)).toEqual({ ok: true });
+    expect(await revokeUser(pending.userId)).toEqual({ ok: false, error: "Este usuário não está aprovado" });
+
+    expect(notifySecurity).not.toHaveBeenCalled();
+  });
+
+  it("a failing notice keeps the ok and the revocation", async () => {
+    const { userId } = await target("approved");
+    vi.mocked(notifySecurity).mockRejectedValueOnce(new Error("push service down"));
+    vi.spyOn(console, "error").mockImplementation(() => {});
+
+    expect(await revokeUser(userId)).toEqual({ ok: true });
+
+    expect(await userRow(userId)).toMatchObject({ status: "revoked" });
+    expect(await sessionsOf(userId)).toBe(0);
+    expect(revalidatePath).toHaveBeenCalledWith("/admin/cadastros");
   });
 });

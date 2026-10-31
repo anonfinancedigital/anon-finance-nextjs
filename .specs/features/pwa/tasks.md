@@ -962,10 +962,10 @@ T38 → T39 → T40 → T41 → T42 → T43
 
 **Done when**:
 
-- [ ] `admin-users.int.test.ts` estendido: revogar chama `notifySecurity` uma vez; reativar e excluir não chamam
-- [ ] Falha do aviso não muda o `ok: true` nem desfaz a revogação
-- [ ] Gate check passes: `npm run test:unit && npm run test:int`
-- [ ] Nenhum teste existente removido, pulado ou enfraquecido
+- [x] `admin-users.int.test.ts` estendido: revogar chama `notifySecurity` uma vez; reativar e excluir não chamam
+- [x] Falha do aviso não muda o `ok: true` nem desfaz a revogação
+- [x] Gate check passes: `npm run test:unit && npm run test:int`
+- [x] Nenhum teste existente removido, pulado ou enfraquecido
 
 **Tests**: integration
 **Gate**: full
