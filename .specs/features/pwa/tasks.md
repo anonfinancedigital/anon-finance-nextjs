@@ -935,11 +935,11 @@ T38 → T39 → T40 → T41 → T42 → T43
 
 **Done when**:
 
-- [ ] `src/lib/push/security.int.test.ts` com envio simulado: usuário com `security` ligado recebe o texto certo em todas as inscrições
-- [ ] `security` falso, sem preferências ou sem configuração VAPID → nada enviado
-- [ ] Envio que lança não propaga; `gone` remove a inscrição
-- [ ] Gate check passes: `npm run test:unit && npm run test:int`
-- [ ] Nenhum teste existente removido, pulado ou enfraquecido
+- [x] `src/lib/push/security.int.test.ts` com envio simulado: usuário com `security` ligado recebe o texto certo em todas as inscrições
+- [x] `security` falso, sem preferências ou sem configuração VAPID → nada enviado
+- [x] Envio que lança não propaga; `gone` remove a inscrição
+- [x] Gate check passes: `npm run test:unit && npm run test:int`
+- [x] Nenhum teste existente removido, pulado ou enfraquecido
 
 **Tests**: integration
 **Gate**: full

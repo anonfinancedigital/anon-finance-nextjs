@@ -377,8 +377,8 @@ O ANON roda só no navegador: sem ícone na tela inicial, sem janela própria, s
 | PUSH-32 | P1: envio — demais rotas protegidas | - | Implementing |
 | PUSH-33 | P2: segurança — senha redefinida | - | Implementing |
 | PUSH-34 | P2: segurança — acesso revogado | - | Implementing |
-| PUSH-35 | P2: segurança — falha não bloqueia | - | Pending |
-| PUSH-36 | P2: segurança — preferência desligada | - | Pending |
+| PUSH-35 | P2: segurança — falha não bloqueia | - | Implementing |
+| PUSH-36 | P2: segurança — preferência desligada | - | Implementing |
 | PUSH-37 | P2: admin — enfileirar | - | Implementing |
 | PUSH-38 | P2: admin — validar texto | - | Implementing |
 | PUSH-39 | P2: admin — somente admin | - | Implementing |
