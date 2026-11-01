@@ -175,10 +175,10 @@ T6 → T7 → T8 → T9 → T10
 
 **Done when**:
 
-- [ ] Sucesso: chama `enrollBiometric` com as opções de LOCK-03 e salva `{ userId, credentialId }`, devolve `true` (INVITE-07)
-- [ ] Falha do enrol, cancelamento e `save` devolvendo `false` devolvem `false` sem deixar registro (INVITE-08)
-- [ ] Gate check passes: `npm run test:unit`
-- [ ] Nenhum teste existente removido, pulado ou enfraquecido
+- [x] Sucesso: chama `enrollBiometric` com as opções de LOCK-03 e salva `{ userId, credentialId }`, devolve `true` (INVITE-07)
+- [x] Falha do enrol, cancelamento e `save` devolvendo `false` devolvem `false` sem deixar registro (INVITE-08)
+- [x] Gate check passes: `npm run test:unit`
+- [x] Nenhum teste existente removido, pulado ou enfraquecido
 
 **Tests**: unit
 **Gate**: quick
