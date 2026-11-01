@@ -231,17 +231,22 @@ T6 → T7 → T8 → T9 → T10
 
 **Done when**:
 
-- [ ] Inspeção: nenhum acesso a `navigator.credentials` antes do toque em "Ativar" (INVITE-06); nada é lido durante o render do servidor
-- [ ] Inspeção: "Ativar" usa `activateBiometric`, sucesso remove o convite, falha mostra `LOCK_TEXT.enrollFailed` e mantém o convite sem gravar recusa (INVITE-07, INVITE-08)
-- [ ] Inspeção: "Agora não" chama `inviteStore.dismiss` e remove o convite mesmo quando a escrita falha (INVITE-09, INVITE-11); textos de `LOCK_TEXT`
-- [ ] Gate check passes: `npm run typecheck && npx eslint <arquivos da task> && npm run test:unit`
-- [ ] Nenhum teste existente removido, pulado ou enfraquecido
+- [x] Inspeção: nenhum acesso a `navigator.credentials` antes do toque em "Ativar" (INVITE-06); nada é lido durante o render do servidor
+- [x] Inspeção: "Ativar" usa `activateBiometric`, sucesso remove o convite, falha mostra `LOCK_TEXT.enrollFailed` e mantém o convite sem gravar recusa (INVITE-07, INVITE-08)
+- [x] Inspeção: "Agora não" chama `inviteStore.dismiss` e remove o convite mesmo quando a escrita falha (INVITE-09, INVITE-11); textos de `LOCK_TEXT`
+- [x] Gate check passes: `npm run typecheck && npx eslint <arquivos da task> && npm run test:unit`
+- [x] Nenhum teste existente removido, pulado ou enfraquecido
 
 **Tests**: none
 **Gate**: build
 **Commit**: `feat(lock): add the biometric invite banner`
 
 ---
+
+**Evidence**:
+- INVITE-06/SSR: leituras de suporte, bloqueio e recusa só no efeito (biometric-invite.tsx:26-41); navigator.credentials só em enable (:49), disparado pelo botão Ativar
+- Ativar usa activateBiometric (:48); sucesso setVisible(false) (:55); falha setFailed(true) e mantém o convite sem gravar recusa (:56); mensagem LOCK_TEXT.enrollFailed (:92)
+- Agora não: inviteStore.dismiss(userId) (:62) e setClosed(true) (:63), que esconde mesmo se a escrita falhar; textos só de LOCK_TEXT (:74,76,79,87)
 
 ### T8: Convite no layout do app
 
