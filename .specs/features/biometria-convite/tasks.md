@@ -291,15 +291,19 @@ T6 → T7 → T8 → T9 → T10
 
 **Done when**:
 
-- [ ] A exclusão bem-sucedida limpa a recusa; sair da conta não a limpa (inspeção `file:line` em `sign-out-button.tsx` mostrando que não há chamada)
-- [ ] Gate check passes: `npm run typecheck && npx eslint <arquivos da task> && npm run test:unit`
-- [ ] Nenhum teste existente removido, pulado ou enfraquecido
+- [x] A exclusão bem-sucedida limpa a recusa; sair da conta não a limpa (inspeção `file:line` em `sign-out-button.tsx` mostrando que não há chamada)
+- [x] Gate check passes: `npm run typecheck && npx eslint <arquivos da task> && npm run test:unit`
+- [x] Nenhum teste existente removido, pulado ou enfraquecido
 
 **Tests**: none
 **Gate**: build
 **Commit**: `feat(lock): clear the invite dismissal on account deletion`
 
 ---
+
+**Evidence**:
+- exclusão bem-sucedida: inviteStore.clear() em src/components/delete-account-dialog.tsx:58, junto de lockStore.clear() (:57)
+- sign-out-button.tsx:12-13 limpa só deviceKey e lockStore; não há chamada a inviteStore
 
 ### T10: Checklist do convite no runbook
 
