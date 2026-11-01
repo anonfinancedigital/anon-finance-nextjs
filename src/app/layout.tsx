@@ -7,6 +7,7 @@ import { THEME_COLOR } from "@/lib/theme-color";
 import { BRAND_DESCRIPTION, BRAND_NAME, BRAND_TITLE_TEMPLATE } from "@/lib/brand";
 import { PwaRegister } from "@/components/pwa-register";
 import { pwaMetadata, pwaViewport } from "@/lib/pwa/metadata";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 /** Applies the saved theme before first paint (dark when none is saved) to avoid a flash of the wrong one. */
 const themeScript = `var d=true;try{d=localStorage.getItem("theme")!=="light"}catch(e){}if(d)document.documentElement.classList.add("dark");var m=document.querySelector('meta[name="theme-color"]');if(!m){m=document.createElement("meta");m.name="theme-color";document.head.appendChild(m)}m.content=d?"${THEME_COLOR.dark}":"${THEME_COLOR.light}"`;
@@ -66,6 +67,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
       <body className="min-h-full flex flex-col">
         <TooltipProvider>{children}</TooltipProvider>
         <PwaRegister />
+        <SpeedInsights />
       {/* impeccable-live-start */}
 <script nonce={nonce} src="http://localhost:8400/live.js?token=20abb03b-5b60-4403-8b32-582c835926f8"></script>
 {/* impeccable-live-end */}
