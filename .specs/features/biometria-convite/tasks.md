@@ -149,10 +149,10 @@ T6 → T7 → T8 → T9 → T10
 
 **Done when**:
 
-- [ ] `true` só com suporte, sem registro de bloqueio, sem recusa e `pathname` diferente de `/conta`
-- [ ] `false` em cada um dos quatro casos isolados (suporte falso, bloqueio existente, recusa existente, `/conta`); `/conta/` e subcaminho de `/conta` também não mostram
-- [ ] Gate check passes: `npm run test:unit`
-- [ ] Nenhum teste existente removido, pulado ou enfraquecido
+- [x] `true` só com suporte, sem registro de bloqueio, sem recusa e `pathname` diferente de `/conta`
+- [x] `false` em cada um dos quatro casos isolados (suporte falso, bloqueio existente, recusa existente, `/conta`); `/conta/` e subcaminho de `/conta` também não mostram
+- [x] Gate check passes: `npm run test:unit`
+- [x] Nenhum teste existente removido, pulado ou enfraquecido
 
 **Tests**: unit
 **Gate**: quick
