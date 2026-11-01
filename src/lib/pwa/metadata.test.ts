@@ -16,6 +16,10 @@ describe("pwaMetadata (PWA-03)", () => {
     }
   });
 
+  it("flags the app with the Apple web-app-capable meta so iOS uses the startup images (SPLASH-11)", () => {
+    expect(pwaMetadata.other).toEqual({ "apple-mobile-web-app-capable": "yes" });
+  });
+
   it("declares the 180x180 Apple touch icon", () => {
     expect(pwaMetadata.icons).toEqual({
       apple: [{ url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],

@@ -6,6 +6,8 @@ import { startupImages } from "./splash-list";
 export const pwaMetadata = {
   appleWebApp: { capable: true, title: APP_NAME, startupImage: startupImages() },
   icons: { apple: [{ url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" }] },
-} satisfies Pick<Metadata, "appleWebApp" | "icons">;
+  // Next emits only `mobile-web-app-capable`; iOS applies the startup images to apps flagged with the Apple name.
+  other: { "apple-mobile-web-app-capable": "yes" },
+} satisfies Pick<Metadata, "appleWebApp" | "icons" | "other">;
 
 export const pwaViewport: Pick<Viewport, "themeColor"> = { themeColor: "#0D111A" };

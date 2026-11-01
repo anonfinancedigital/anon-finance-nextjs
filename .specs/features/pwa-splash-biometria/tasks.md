@@ -74,6 +74,12 @@ T18 → T19 → T20 → T21 → T22 → T23
 T24 → T25
 ```
 
+### Phase 6: Correção pós-uso (iOS)
+
+```
+T26
+```
+
 ---
 
 ## Task Breakdown
@@ -740,3 +746,28 @@ T24 → T25
 **Commit**: `docs(pwa): add the splash and biometric lock runbook`
 
 **Evidência**: docs/hospedagem-gratuita.md:229 (seção 8.2), :231 npm run pwa:splash, :233 nova linha em splash-list.ts, :235 casamento exato da media no iOS, :237 aviso AD-017 e WebAuthn não verificado, :240-:246 checklist manual (Success Criteria). Gate da T25: typecheck + test:unit.
+
+---
+
+### T26: Meta apple-mobile-web-app-capable
+
+**What**: Emitir `apple-mobile-web-app-capable` no head (via `other` do metadata), pois o Next só emite `mobile-web-app-capable` e o iOS pode ignorar as imagens de abertura sem a meta da Apple.
+**Where**: `src/lib/pwa/metadata.ts`
+**Depends on**: None
+**Reuses**: `src/lib/pwa/metadata.test.ts`
+**Requirement**: SPLASH-11
+
+**Tools**:
+
+- MCP: NONE
+- Skill: NONE
+
+**Done when**:
+
+- [x] `pwaMetadata.other` contém `"apple-mobile-web-app-capable": "yes"` e o HTML renderizado de `/login` traz `<meta name="apple-mobile-web-app-capable" content="yes"/>`
+- [x] Gate check passes: `npm run typecheck && npx eslint src/lib/pwa/metadata.ts src/lib/pwa/metadata.test.ts && npm run test:unit`
+- [x] Nenhum teste existente removido, pulado ou enfraquecido
+
+**Tests**: unit
+**Gate**: quick
+**Commit**: `fix(pwa): emit the Apple web-app-capable meta for the iOS splash`
