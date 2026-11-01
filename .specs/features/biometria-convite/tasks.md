@@ -10,7 +10,7 @@ Implement these tasks with the `tlc-spec-driven` skill: **activate it by name an
 
 **Spec**: `.specs/features/biometria-convite/spec.md`
 **Design**: inline (feature pequena, sem decisão arquitetural nova): módulos puros em `src/lib/biometric/`, um componente cliente `BiometricInvite` renderizado dentro do `BiometricGate`, reaproveitando `biometricSupport`, `lockStore`, `enrollBiometric` e `LOCK_TEXT` de `pwa-splash-biometria` (AD-017 segue valendo; nenhuma AD nova).
-**Status**: Draft
+**Status**: Done
 
 Antes de rodar qualquer comando npm: `export PATH=$HOME/.nvm/versions/node/v20.20.2/bin:$PATH`. Sem banco: só unit. Sem e2e (AD-005). Lint: o `npm run lint` integral falha por um erro anterior (`src/app/layout.tsx:70`, `no-sync-scripts`, commit d29a27d, bloco impeccable-live); não editar esse arquivo, e usar `npx eslint <arquivos da task>` no gate Build.
 
