@@ -3,10 +3,10 @@
 import { useEffect, useState } from "react";
 import { ContentCard } from "@/components/content-card";
 import { Button } from "@/components/ui/button";
-import { lockStore } from "@/lib/biometric/lock-store.client";
+import { activateBiometric } from "@/lib/biometric/activate";
+import { inviteStore, lockStore } from "@/lib/biometric/lock-store.client";
 import { biometricSupport } from "@/lib/biometric/support";
 import { LOCK_TEXT } from "@/lib/biometric/text";
-import { enrollBiometric } from "@/lib/biometric/webauthn";
 
 type Status = "checking" | "unsupported" | "off" | "on";
 
@@ -37,19 +37,22 @@ export function BiometricCard({ userId }: { userId: string }) {
   async function enable() {
     setPending(true);
     setFailed(false);
-    const result = await enrollBiometric({
+    const activated = await activateBiometric({
       credentials: navigator.credentials,
       userId,
       hostname: location.hostname,
       randomBytes,
+      store: lockStore,
     });
-    if (result.ok && lockStore.save(userId, result.credentialId)) setStatus("on");
+    if (activated) setStatus("on");
     else setFailed(true);
     setPending(false);
   }
 
   function disable() {
     lockStore.clear();
+    // Turning it off on purpose must not bring the invite back (INVITE-13).
+    inviteStore.dismiss(userId);
     setFailed(false);
     setStatus("off");
   }

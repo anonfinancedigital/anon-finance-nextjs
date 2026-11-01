@@ -201,16 +201,20 @@ T6 → T7 → T8 → T9 → T10
 
 **Done when**:
 
-- [ ] `enable` usa `activateBiometric`; o comportamento visível do card não muda (inspeção `file:line`)
-- [ ] `disable` chama `lockStore.clear()` e `inviteStore.dismiss(userId)` (inspeção `file:line`)
-- [ ] Gate check passes: `npm run typecheck && npx eslint <arquivos da task> && npm run test:unit`
-- [ ] Nenhum teste existente removido, pulado ou enfraquecido
+- [x] `enable` usa `activateBiometric`; o comportamento visível do card não muda (inspeção `file:line`)
+- [x] `disable` chama `lockStore.clear()` e `inviteStore.dismiss(userId)` (inspeção `file:line`)
+- [x] Gate check passes: `npm run typecheck && npx eslint <arquivos da task> && npm run test:unit`
+- [x] Nenhum teste existente removido, pulado ou enfraquecido
 
 **Tests**: none
 **Gate**: build
 **Commit**: `refactor(lock): activate through the shared helper and remember the opt-out`
 
 ---
+
+**Evidence**:
+- enable usa activateBiometric: src/components/biometric-card.tsx:40-46; sucesso põe status "on" e falha setFailed, como antes (:47-48)
+- disable: lockStore.clear() em biometric-card.tsx:53 e inviteStore.dismiss(userId) em :55
 
 ### T7: Componente do convite
 

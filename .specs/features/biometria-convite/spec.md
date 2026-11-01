@@ -97,7 +97,7 @@ O bloqueio por biometria (feature `pwa-splash-biometria`) s√≥ liga quando o usu√
 | INVITE-10 | P1: Convite | - | Done |
 | INVITE-11 | P1: Convite | - | Done |
 | INVITE-12 | P1: Convite | - | Done |
-| INVITE-13 | P1: Convite | - | Pending |
+| INVITE-13 | P1: Convite | - | Done |
 | INVITE-14 | P1: Convite | - | Done |
 | INVITE-15 | P1: Convite | - | Done |
 
