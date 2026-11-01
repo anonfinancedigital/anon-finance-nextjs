@@ -71,10 +71,10 @@ T6 → T7 → T8 → T9 → T10
 
 **Done when**:
 
-- [ ] `LOCK_TEXT.inviteTitle` = "Proteger com biometria?"; `inviteText` = "Peça a biometria do aparelho ao abrir o app. Você pode mudar isso depois em Privacidade e conta."; `dismiss` = "Agora não"
-- [ ] `text.test.ts` confere os três por igualdade (L-002); os botões "Ativar" e a mensagem de falha reaproveitam `enable` e `enrollFailed`
-- [ ] Gate check passes: `npm run test:unit`
-- [ ] Nenhum teste existente removido, pulado ou enfraquecido
+- [x] `LOCK_TEXT.inviteTitle` = "Proteger com biometria?"; `inviteText` = "Peça a biometria do aparelho ao abrir o app. Você pode mudar isso depois em Privacidade e conta."; `dismiss` = "Agora não"
+- [x] `text.test.ts` confere os três por igualdade (L-002); os botões "Ativar" e a mensagem de falha reaproveitam `enable` e `enrollFailed`
+- [x] Gate check passes: `npm run test:unit`
+- [x] Nenhum teste existente removido, pulado ou enfraquecido
 
 **Tests**: unit
 **Gate**: quick

@@ -18,6 +18,14 @@ describe("LOCK_TEXT (L-002: literal spec strings)", () => {
     expect(LOCK_TEXT.enabled).toBe("Bloqueio ativado");
   });
 
+  it("invite texts match INVITE-01 and INVITE-09", () => {
+    expect(LOCK_TEXT.inviteTitle).toBe("Proteger com biometria?");
+    expect(LOCK_TEXT.inviteText).toBe(
+      "Peça a biometria do aparelho ao abrir o app. Você pode mudar isso depois em Privacidade e conta.",
+    );
+    expect(LOCK_TEXT.dismiss).toBe("Agora não");
+  });
+
   it("lock screen texts match LOCK-10 and LOCK-13", () => {
     expect(LOCK_TEXT.lockedTitle).toBe("ANON bloqueado");
     expect(LOCK_TEXT.verifyFailed).toBe("Não foi possível confirmar sua identidade.");

@@ -85,7 +85,7 @@ O bloqueio por biometria (feature `pwa-splash-biometria`) s√≥ liga quando o usu√
 
 | Requirement ID | Story | Phase | Status |
 | -------------- | ----- | ----- | ------ |
-| INVITE-01 | P1: Convite | - | Pending |
+| INVITE-01 | P1: Convite | - | Done |
 | INVITE-02 | P1: Convite | - | Pending |
 | INVITE-03 | P1: Convite | - | Pending |
 | INVITE-04 | P1: Convite | - | Pending |
@@ -93,7 +93,7 @@ O bloqueio por biometria (feature `pwa-splash-biometria`) s√≥ liga quando o usu√
 | INVITE-06 | P1: Convite | - | Pending |
 | INVITE-07 | P1: Convite | - | Pending |
 | INVITE-08 | P1: Convite | - | Pending |
-| INVITE-09 | P1: Convite | - | Pending |
+| INVITE-09 | P1: Convite | - | Done |
 | INVITE-10 | P1: Convite | - | Pending |
 | INVITE-11 | P1: Convite | - | Pending |
 | INVITE-12 | P1: Convite | - | Pending |
