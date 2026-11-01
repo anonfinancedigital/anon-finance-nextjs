@@ -263,15 +263,18 @@ T6 → T7 → T8 → T9 → T10
 
 **Done when**:
 
-- [ ] `BiometricInvite` recebe `userId` e fica dentro do gate, então não aparece com a tela de bloqueio (inspeção `file:line`)
-- [ ] Gate check passes: `npm run typecheck && npx eslint <arquivos da task> && npm run test:unit`
-- [ ] Nenhum teste existente removido, pulado ou enfraquecido
+- [x] `BiometricInvite` recebe `userId` e fica dentro do gate, então não aparece com a tela de bloqueio (inspeção `file:line`)
+- [x] Gate check passes: `npm run typecheck && npx eslint <arquivos da task> && npm run test:unit`
+- [x] Nenhum teste existente removido, pulado ou enfraquecido
 
 **Tests**: none
 **Gate**: build
 **Commit**: `feat(lock): show the biometric invite in the app layout`
 
 ---
+
+**Evidence**:
+- BiometricInvite userId={userId} em src/app/(app)/layout.tsx:46, entre BiometricGate (:45) e o fechamento (:49), acima de children; o gate troca por LockScreen, então o convite não aparece bloqueado
 
 ### T9: Limpar a recusa ao excluir a conta
 
