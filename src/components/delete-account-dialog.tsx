@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { SAVE_FAILED } from "@/lib/action-result";
-import { lockStore } from "@/lib/biometric/lock-store.client";
+import { inviteStore, lockStore } from "@/lib/biometric/lock-store.client";
 import { deviceKey } from "@/lib/vault/device-store";
 
 /**
@@ -55,6 +55,7 @@ export function DeleteAccountDialog() {
       }
       await deviceKey.clear();
       lockStore.clear();
+      inviteStore.clear();
       // The session is already gone on the server.
       router.replace("/login");
     } catch {

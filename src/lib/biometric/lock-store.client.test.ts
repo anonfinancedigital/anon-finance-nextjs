@@ -44,6 +44,15 @@ describe("lock-store.client", () => {
     expect(lockStore.read("user-1")).toBe("cred-abc");
   });
 
+  it("inviteStore keeps the record under anon-biometric-invite-dismissed in localStorage", async () => {
+    const local = trackStorage("localStorage");
+    const { inviteStore } = await import("./lock-store.client");
+    expect(inviteStore.dismiss("user-1")).toBe(true);
+    expect(JSON.parse(local.data.get("anon-biometric-invite-dismissed") as string)).toEqual({ userId: "user-1" });
+    expect(inviteStore.isDismissed("user-1")).toBe(true);
+    expect(inviteStore.isDismissed("user-2")).toBe(false);
+  });
+
   it("freshLoginStorage reads and writes sessionStorage", async () => {
     const session = trackStorage("sessionStorage");
     const { freshLoginStorage } = await import("./lock-store.client");
