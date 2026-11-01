@@ -244,6 +244,10 @@ Como testar o push:
 - [ ] Com o bloqueio ativo (iOS e Android), abrir o app pede a biometria; confirmar abre o app; cancelar mostra "Tentar de novo", "Usar a senha" e "Sair".
 - [ ] Voltar ao app em até 60 s não pede a biometria; depois de mais de 60 s pede.
 - [ ] Na aba Network, nenhuma requisição do bloqueio contém credencial ou resultado biométrico.
+- [ ] Em aparelho com biometria e sem bloqueio, o primeiro acesso depois de entrar mostra o convite "Proteger com biometria?"; "Ativar" abre o prompt do sistema (Face ID, digital ou PIN) e, confirmado, o convite some e o bloqueio passa a valer.
+- [ ] "Agora não" some com o convite e ele não volta ao recarregar, ao sair e entrar de novo, nem depois de desativar o bloqueio em Conta.
+- [ ] Em aparelho sem biometria, o convite nunca aparece, e em Conta o card mostra a mensagem de aparelho sem suporte.
+- [ ] O convite não aparece em Conta nem sobre a tela de bloqueio, e nenhum prompt do sistema surge antes do toque em "Ativar".
 
 ## 9. Cloudflare e domínio (opcional, depois)
 

@@ -320,11 +320,13 @@ T6 → T7 → T8 → T9 → T10
 
 **Done when**:
 
-- [ ] Quatro itens novos no checklist manual (convite aparece, "Ativar" abre o prompt, "Agora não" persiste, aparelho sem biometria nunca mostra)
-- [ ] Gate check passes: `npm run typecheck && npm run test:unit`
-- [ ] Nenhum teste existente removido, pulado ou enfraquecido
+- [x] Quatro itens novos no checklist manual (convite aparece, "Ativar" abre o prompt, "Agora não" persiste, aparelho sem biometria nunca mostra)
+- [x] Gate check passes: `npm run typecheck && npm run test:unit`
+- [x] Nenhum teste existente removido, pulado ou enfraquecido
 
 **Tests**: none
 **Gate**: build
 **Commit**: `docs(lock): add the invite to the real-device checklist`
 
+**Evidence**:
+- quatro itens novos em docs/hospedagem-gratuita.md:247-250 (convite aparece e Ativar abre o prompt; Agora não persiste; aparelho sem biometria nunca mostra; não aparece em Conta nem bloqueado)
