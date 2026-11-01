@@ -97,11 +97,11 @@ T6 → T7 → T8 → T9 → T10
 
 **Done when**:
 
-- [ ] `dismiss` grava `{ userId }` em `anon-biometric-invite-dismissed` e devolve `true`; devolve `false` quando `setItem` lança (INVITE-11)
-- [ ] `isDismissed`: `true` para o mesmo usuário (INVITE-04); `false` para outro usuário (INVITE-12); `true` (sem convite) quando a leitura lança ou o JSON é inválido (INVITE-10)
-- [ ] `clear` remove o registro (INVITE-14); o registro contém só `userId` (INVITE-15)
-- [ ] Gate check passes: `npm run test:unit`
-- [ ] Nenhum teste existente removido, pulado ou enfraquecido
+- [x] `dismiss` grava `{ userId }` em `anon-biometric-invite-dismissed` e devolve `true`; devolve `false` quando `setItem` lança (INVITE-11)
+- [x] `isDismissed`: `true` para o mesmo usuário (INVITE-04); `false` para outro usuário (INVITE-12); `true` (sem convite) quando a leitura lança ou o JSON é inválido (INVITE-10)
+- [x] `clear` remove o registro (INVITE-14); o registro contém só `userId` (INVITE-15)
+- [x] Gate check passes: `npm run test:unit`
+- [x] Nenhum teste existente removido, pulado ou enfraquecido
 
 **Tests**: unit
 **Gate**: quick

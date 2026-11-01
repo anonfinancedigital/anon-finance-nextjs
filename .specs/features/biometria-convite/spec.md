@@ -88,18 +88,18 @@ O bloqueio por biometria (feature `pwa-splash-biometria`) só liga quando o usu�
 | INVITE-01 | P1: Convite | - | Done |
 | INVITE-02 | P1: Convite | - | Pending |
 | INVITE-03 | P1: Convite | - | Pending |
-| INVITE-04 | P1: Convite | - | Pending |
+| INVITE-04 | P1: Convite | - | Done |
 | INVITE-05 | P1: Convite | - | Pending |
 | INVITE-06 | P1: Convite | - | Pending |
 | INVITE-07 | P1: Convite | - | Pending |
 | INVITE-08 | P1: Convite | - | Pending |
 | INVITE-09 | P1: Convite | - | Done |
-| INVITE-10 | P1: Convite | - | Pending |
-| INVITE-11 | P1: Convite | - | Pending |
-| INVITE-12 | P1: Convite | - | Pending |
+| INVITE-10 | P1: Convite | - | Done |
+| INVITE-11 | P1: Convite | - | Done |
+| INVITE-12 | P1: Convite | - | Done |
 | INVITE-13 | P1: Convite | - | Pending |
-| INVITE-14 | P1: Convite | - | Pending |
-| INVITE-15 | P1: Convite | - | Pending |
+| INVITE-14 | P1: Convite | - | Done |
+| INVITE-15 | P1: Convite | - | Done |
 
 **ID format:** `INVITE-NN`, na ordem dos ACs da história.
 
