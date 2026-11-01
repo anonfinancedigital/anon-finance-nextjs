@@ -124,9 +124,9 @@ T6 → T7 → T8 → T9 → T10
 
 **Done when**:
 
-- [ ] `inviteStore` usa `localStorage` de forma preguiçosa; o teste de import em Node continua provando que nenhum storage é acessado no import
-- [ ] Gate check passes: `npm run test:unit`
-- [ ] Nenhum teste existente removido, pulado ou enfraquecido
+- [x] `inviteStore` usa `localStorage` de forma preguiçosa; o teste de import em Node continua provando que nenhum storage é acessado no import
+- [x] Gate check passes: `npm run test:unit`
+- [x] Nenhum teste existente removido, pulado ou enfraquecido
 
 **Tests**: unit
 **Gate**: quick
