@@ -34,7 +34,9 @@ Hoje toda ocorrência de um gasto ou ganho recorrente conta no mês e aparece na
 | Dados existentes | Ocorrências de meses anteriores ao mês corrente (America/Sao_Paulo) de séries existentes na migração nascem pagas; mês corrente e futuros nascem não pagos | Decidido pelo usuário; preserva o histórico dos totais (princípio da AD-007) | y |
 | Série criada depois da migração em mês passado | Todas as ocorrências nascem não pagas, inclusive as de meses passados | Só a migração marca o passado como pago; regra única e simples | n |
 | Rótulos | Gasto: "Pago" e "Não pago". Ganho: "Recebido" e "Não recebido" | "Pago" não descreve um ganho | n |
-| Onde marcar | Controle na linha da ocorrência recorrente na lista do mês, com ação em um toque e sem confirmação | Marcar e desmarcar é reversível | n |
+| Onde marcar | Botão com verbo na linha da ocorrência recorrente e switch no formulário de edição; na linha, ação em um toque e sem confirmação | Marcar e desmarcar é reversível; chip sem verbo parecia etiqueta (feedback do usuário) | y |
+| Gravação do switch do formulário | Junto com o Salvar, atômica com a edição; Cancelar descarta | Decidido pelo usuário | y |
+| Opacidade da linha | O botão de marcar fica com opacidade 1 para continuar visível | O esmaecimento de toda a linha apagava a ação | n |
 | Ordem na lista | Primeiro lançamentos avulsos e ocorrências pagas, depois as não pagas; dentro de cada grupo mantém-se a ordem atual (data mais recente primeiro) | Pedido: não pagas "por último" | n |
 | Cabeçalhos de dia (mobile) | Cada grupo tem seus próprios cabeçalhos; um dia com linhas nos dois grupos aparece duas vezes. O saldo do dia soma só linhas que contam nos totais; cabeçalho sem linha contada não mostra saldo | Coerência com os totais | n |
 | Efeito da edição de uma ocorrência | Editar valor, categoria, descrição ou dia não altera o estado de nenhum mês; o estado pertence à série e ao mês | A edição divide a série mas o mês continua o mesmo | n |
@@ -63,11 +65,31 @@ Hoje toda ocorrência de um gasto ou ganho recorrente conta no mês e aparece na
 2. WHEN o usuário aciona o controle de uma ocorrência recorrente paga THEN the system SHALL marcá-la como não paga somente naquele mês.
 3. WHEN uma ocorrência recorrente é criada, projetada para um mês futuro ou chega ao mês corrente sem marcação THEN the system SHALL tratá-la como não paga.
 4. The system SHALL mostrar o controle de estado apenas em ocorrências recorrentes, nunca em lançamentos avulsos.
-5. The system SHALL rotular o estado como "Pago"/"Não pago" em gastos e "Recebido"/"Não recebido" em ganhos.
+5. WHILE uma ocorrência recorrente está paga, the system SHALL exibir nela o botão "Pago" (ganho: "Recebido") com ícone de check preenchido, que ao toque a marca como não paga.
 6. IF o usuário tenta marcar uma ocorrência que não pertence a ele ou cujo mês não pertence à série THEN the system SHALL rejeitar a ação sem alterar nenhum estado.
 7. WHEN o usuário edita uma ocorrência recorrente (valor, categoria, descrição ou dia) THEN the system SHALL manter inalterado o estado pago/não pago de todos os meses da série.
+8. WHILE uma ocorrência recorrente está não paga, the system SHALL exibir nela um botão com ícone de check e o texto "Marcar como pago" (ganho: "Marcar como recebido"), que ao toque a marca como paga.
 
 **Independent Test**: Criar um gasto recorrente "Sempre", marcar o mês corrente como pago, abrir o mês seguinte e ver a ocorrência ainda não paga.
+
+---
+
+### P1: Alternar o estado ao editar a ocorrência ⭐ MVP
+
+**User Story**: As o usuário do orçamento, I want marcar a ocorrência como paga ou não paga dentro do formulário de edição so that eu resolva tudo numa só tela.
+
+**Why P1**: Pedido de uso após o primeiro teste: o controle da linha não era óbvio.
+
+**Acceptance Criteria**:
+
+1. WHERE o usuário edita uma ocorrência recorrente, the system SHALL exibir no formulário o switch "Pago" (ganho: "Recebido") refletindo o estado do mês exibido.
+2. WHEN o usuário altera o switch e aciona "Salvar" THEN the system SHALL gravar o novo estado só do mês exibido, na mesma operação que salva a edição.
+3. WHEN o usuário cancela ou fecha o formulário sem salvar THEN the system SHALL manter o estado anterior.
+4. IF o servidor rejeita a edição THEN the system SHALL manter o estado anterior.
+5. The system SHALL NOT exibir o switch ao criar uma transação, em transação não recorrente, nem enquanto "Transação recorrente" está desligado no formulário.
+6. WHEN a edição divide a série e o switch está ligado THEN the system SHALL marcar como paga somente a ocorrência do mês exibido.
+
+**Independent Test**: Abrir a edição de um gasto recorrente não pago, ligar "Pago", salvar e ver a linha paga na lista e no total.
 
 ---
 
@@ -81,7 +103,7 @@ Hoje toda ocorrência de um gasto ou ganho recorrente conta no mês e aparece na
 
 1. The system SHALL listar as ocorrências recorrentes não pagas depois de todos os lançamentos avulsos e de todas as ocorrências recorrentes pagas do mês.
 2. The system SHALL manter, dentro de cada um dos dois grupos, a ordem atual da lista (data mais recente primeiro).
-3. The system SHALL renderizar cada linha de ocorrência não paga com opacidade 0,5 e as demais com opacidade 1.
+3. The system SHALL renderizar o conteúdo de cada linha de ocorrência não paga (ícone, descrição, categoria e valor) com opacidade 0,5, manter o botão "Marcar como pago"/"Marcar como recebido" dessa linha com opacidade 1 e renderizar as demais linhas com opacidade 1.
 4. WHEN o usuário marca uma ocorrência como paga THEN the system SHALL movê-la para o grupo de cima e restaurar a opacidade 1 sem recarregar a página.
 5. WHEN o usuário marca uma ocorrência como não paga THEN the system SHALL movê-la para o fim da lista e aplicar a opacidade 0,5.
 6. WHILE o usuário usa a visão em dias (abaixo de `sm`), the system SHALL exibir cabeçalhos de dia separados por grupo e calcular o saldo do dia só sobre as linhas que contam nos totais.
@@ -169,8 +191,10 @@ Hoje toda ocorrência de um gasto ou ganho recorrente conta no mês e aparece na
 | PAGO-08 | P2: Ciclo de vida do estado (AC 1-2, 6-7) | Execute | Implemented (T3, T8, T9, T19) |
 | PAGO-09 | P2: Ciclo de vida do estado (AC 3-5) | Execute | Implemented (T5, T13-T18) |
 | PAGO-10 | Edge Cases (falha e concorrência) | Execute | Implemented (T7, T10, T12) |
+| PAGO-11 | P1: Marcar uma ocorrência recorrente como paga (AC 5, 8) | Execute | Pending |
+| PAGO-12 | P1: Alternar o estado ao editar a ocorrência | Execute | Pending |
 
-**Coverage:** 10 total, 10 mapped to tasks, 0 unmapped
+**Coverage:** 12 total, 12 mapped to tasks, 0 unmapped
 
 ---
 

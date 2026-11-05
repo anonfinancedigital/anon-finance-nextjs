@@ -82,6 +82,12 @@ T9 → T19
 T18 → T19
 ```
 
+### Phase 7: Controle mais claro e switch no formulário
+
+```
+T19 → T20 → T21 → T22 → T23 → T24
+```
+
 ---
 
 ## Task Breakdown
@@ -613,6 +619,144 @@ T18 → T19
 
 ---
 
+### T20: Rótulo de ação `paidActionLabel`
+
+**What**: Criar `paidActionLabel(kind, paid)`: "Marcar como pago"/"Pago" (gasto) e "Marcar como recebido"/"Recebido" (ganho).
+**Where**: `src/lib/domain/paid.ts`
+**Depends on**: T19
+**Reuses**: `paidLabel` (T1)
+**Requirement**: PAGO-11
+
+**Tools**:
+
+- MCP: NONE
+- Skill: NONE
+
+**Done when**:
+
+- [ ] Não pago: gasto "Marcar como pago", ganho "Marcar como recebido"
+- [ ] Pago: gasto "Pago", ganho "Recebido"
+- [ ] Testes unitários em `src/lib/domain/paid.test.ts` para os 4 casos
+- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+
+**Tests**: unit
+**Gate**: quick
+
+**Commit**: `feat(paid): add the action label for the paid button`
+
+---
+
+### T21: Tipo e esquema aceitam `paid` na edição
+
+**What**: `UpdateTransactionDto` ganha `paid?: boolean` e `sealedTransactionUpdateExtraSchema` o aceita opcional.
+**Where**: `src/lib/validation/transaction-sealed.ts`
+**Depends on**: T20
+**Reuses**: `sealedTransactionUpdateExtraSchema`
+**Requirement**: PAGO-12
+
+**Tools**:
+
+- MCP: NONE
+- Skill: NONE
+
+**Done when**:
+
+- [ ] `paid` ausente, `true` e `false` passam; valor não booleano é rejeitado
+- [ ] `UpdateTransactionDto.paid?: boolean` em `src/lib/vault/types.ts` (uma linha, junto)
+- [ ] Testes unitários em `src/lib/validation/transaction-sealed.test.ts`
+- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+
+**Tests**: unit
+**Gate**: quick
+
+**Commit**: `feat(paid): accept the paid state in the sealed edit payload`
+
+---
+
+### T22: `updateFromSealed` grava o estado na edição
+
+**What**: Quando `dto.paid` é informado e a edição resulta numa série recorrente, gravar ou apagar o estado do mês editado na mesma transação.
+**Where**: `src/lib/db/repos/transactions.ts`
+**Depends on**: T21
+**Reuses**: `prunePaidAfterEdit`, `recurringPaid`
+**Requirement**: PAGO-12
+
+**Tools**:
+
+- MCP: NONE
+- Skill: NONE
+
+**Done when**:
+
+- [ ] `paid: true` em edição simples (segmento no lugar): mês editado fica pago
+- [ ] `paid: true` em edição que divide a série (novo segmento): só o mês editado fica pago, demais meses intactos
+- [ ] `paid: false` apaga o estado do mês editado; `paid` ausente não altera o estado
+- [ ] Edição que vira "Não recorrente" ignora `paid` e não deixa estado
+- [ ] Edição inválida (id alheio, mês sem ocorrência) rejeitada mantém o estado anterior
+- [ ] Testes de integração em `src/lib/db/repos/transactions.sealed.int.test.ts`
+- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
+
+**Tests**: integration
+**Gate**: full
+
+**Commit**: `feat(paid): save the paid state together with a sealed edit`
+
+---
+
+### T23: Switch "Pago" no formulário de edição
+
+**What**: `TransactionForm` exibe o switch ("Pago"/"Recebido") só ao editar com "Transação recorrente" ligada, parte do estado atual e o envia no `updateTransactionSealed`.
+**Where**: `src/components/transaction-form.tsx`
+**Depends on**: T22
+**Reuses**: `Switch`, `paidLabel`, `TransactionFormValues`
+**Requirement**: PAGO-12
+
+**Tools**:
+
+- MCP: NONE
+- Skill: NONE
+
+**Done when**:
+
+- [ ] Switch ausente ao criar, em avulso e com recorrência desligada (evidência `file:line`)
+- [ ] Valor inicial = `values.paid` (estado do mês exibido); enviado como `paid` só quando a recorrência está ligada
+- [ ] Cancelar não grava nada (o estado só segue no Salvar)
+- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
+
+**Tests**: none
+**Gate**: build
+
+**Commit**: `feat(paid): add the paid switch to the edit form`
+
+---
+
+### T24: Botão com verbo na linha e esmaecimento sem o botão
+
+**What**: A linha mostra o botão "Marcar como pago/recebido" (check) quando não paga e "Pago/Recebido" (check preenchido) quando paga; o conteúdo da linha fica com `opacity-50` e o botão com opacidade 1; o formulário recebe `paid`.
+**Where**: `src/components/transaction-list.tsx`
+**Depends on**: T23
+**Reuses**: `paidActionLabel` (T20), `CheckIcon`
+**Requirement**: PAGO-03, PAGO-11
+
+**Tools**:
+
+- MCP: NONE
+- Skill: NONE
+
+**Done when**:
+
+- [ ] Botão com verbo e ícone de check na linha não paga; chip "Pago" com check preenchido na paga; sem `aria-pressed` (o rótulo muda)
+- [ ] `opacity-50` só no conteúdo da linha não paga; o botão fica de fora (evidência `file:line`)
+- [ ] `TransactionForm` recebe `paid: editing.paid === true` em `transaction`
+- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
+
+**Tests**: none
+**Gate**: build
+
+**Commit**: `feat(paid): show a verb button on the paid row`
+
+---
+
 ## Phase Execution Map
 
 ```
@@ -624,6 +768,7 @@ Phase 3:  T10
 Phase 4:  T11 -----→ T12
 Phase 5:  T13 -----→ T14 -----→ T15 -----→ T16 -----→ T17 -----→ T18
 Phase 6:  T19
+Phase 7:  T20 -----→ T21 -----→ T22 -----→ T23 -----→ T24
 ```
 
 Execution is strictly sequential - there is no intra-phase parallelism.
@@ -699,7 +844,9 @@ Execution is strictly sequential - there is no intra-phase parallelism.
 | PAGO-06 | T12 |
 | PAGO-07 | T4 |
 | PAGO-08 | T3, T8, T9, T19 |
+| PAGO-11 | T20, T24 |
+| PAGO-12 | T21, T22, T23 |
 | PAGO-09 | T5, T13-T18 |
 | PAGO-10 | T7, T10, T12 |
 
-**Coverage:** 10 total, 10 mapped to tasks, 0 unmapped.
+**Coverage:** 12 total, 12 mapped to tasks, 0 unmapped.
