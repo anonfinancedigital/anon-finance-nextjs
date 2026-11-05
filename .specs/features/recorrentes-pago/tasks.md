@@ -94,14 +94,14 @@ T13 → T14 → T15 → T16 → T17 → T18
 
 **Done when**:
 
-- [ ] `countsInTotals`: avulso conta; recorrente conta só com `paid === true` (`false`, `null` e ausente não contam)
-- [ ] `orderByPaid`: partição estável (contam primeiro, não pagas depois), ordem relativa mantida nos dois grupos
-- [ ] `applyPaid`: override só em recorrentes; avulso ignora override
-- [ ] `paidLabel`: "Pago"/"Não pago" para gasto e "Recebido"/"Não recebido" para ganho
-- [ ] `countedNetByDay`: saldo por dia só sobre linhas que contam
-- [ ] `startsDay(prev, row)`: verdadeiro na primeira linha e quando a data ou o grupo (conta/não conta) muda; um dia com linhas nos dois grupos gera dois cabeçalhos
-- [ ] Testes unitários em `src/lib/domain/paid.test.ts`, 1:1 com PAGO-02..05 e os edge cases (mês sem recorrentes, todas pagas, todas não pagas); sem import de servidor
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] `countsInTotals`: avulso conta; recorrente conta só com `paid === true` (`false`, `null` e ausente não contam)
+- [x] `orderByPaid`: partição estável (contam primeiro, não pagas depois), ordem relativa mantida nos dois grupos
+- [x] `applyPaid`: override só em recorrentes; avulso ignora override
+- [x] `paidLabel`: "Pago"/"Não pago" para gasto e "Recebido"/"Não recebido" para ganho
+- [x] `countedNetByDay`: saldo por dia só sobre linhas que contam
+- [x] `startsDay(prev, row)`: verdadeiro na primeira linha e quando a data ou o grupo (conta/não conta) muda; um dia com linhas nos dois grupos gera dois cabeçalhos
+- [x] Testes unitários em `src/lib/domain/paid.test.ts`, 1:1 com PAGO-02..05 e os edge cases (mês sem recorrentes, todas pagas, todas não pagas); sem import de servidor
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
 
 **Tests**: unit
 **Gate**: quick
