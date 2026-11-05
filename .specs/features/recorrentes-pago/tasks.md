@@ -152,9 +152,9 @@ T13 → T14 → T15 → T16 → T17 → T18
 
 **Done when**:
 
-- [ ] `drizzle/0018_recurring_paid.sql` criado pelo gerador, com a tabela, a PK, o CHECK e o índice
-- [ ] Teste de integração em `src/lib/db/schema.int.test.ts`: PK rejeita duplicata; CHECK rejeita `month` fora do dia 1; excluir o usuário apaga seus estados
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
+- [x] `drizzle/0018_recurring_paid.sql` criado pelo gerador, com a tabela, a PK, o CHECK e o índice
+- [x] Teste de integração em `src/lib/db/schema.int.test.ts`: PK rejeita duplicata; CHECK rejeita `month` fora do dia 1; excluir o usuário apaga seus estados
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
 
 **Tests**: integration
 **Gate**: full

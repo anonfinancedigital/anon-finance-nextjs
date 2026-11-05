@@ -5,7 +5,7 @@ import { describe, expect, it } from "vitest";
 import { insertCategory, setupTestDb } from "@/test/db";
 import { db, pool } from "./client";
 import { user } from "./auth-schema";
-import { category, categoryPercent, subcategory, transaction } from "./schema";
+import { category, categoryPercent, recurringPaid, subcategory, transaction } from "./schema";
 
 setupTestDb();
 
@@ -541,3 +541,37 @@ describe("migration 0012 user status", () => {
     }
   });
 });
+
+describe("recurring_paid constraints (PAGO-08)", () => {
+  it("accepts one row per series and month and rejects a duplicate (series_id, month)", async () => {
+    const userId = await createUser();
+    const seriesId = randomUUID();
+    await db.insert(recurringPaid).values({ userId, seriesId, month: "2026-10-01" });
+    await db.insert(recurringPaid).values({ userId, seriesId, month: "2026-11-01" });
+    expect(await pgErrorCode(db.insert(recurringPaid).values({ userId, seriesId, month: "2026-10-01" }))).toBe(
+      UNIQUE_VIOLATION,
+    );
+    const rows = await db.select().from(recurringPaid).orderBy(asc(recurringPaid.month));
+    expect(rows.map((r) => r.month)).toEqual(["2026-10-01", "2026-11-01"]);
+  });
+
+  it.each(["2026-10-02", "2026-10-31"])("rejects month %s (not the first day)", async (month) => {
+    const userId = await createUser();
+    expect(await pgErrorCode(db.insert(recurringPaid).values({ userId, seriesId: randomUUID(), month }))).toBe(
+      CHECK_VIOLATION,
+    );
+  });
+
+  it("deleting the user deletes their paid months and keeps the other user's", async () => {
+    const userId = await createUser();
+    const otherId = await createUser();
+    await db.insert(recurringPaid).values({ userId, seriesId: randomUUID(), month: "2026-10-01" });
+    await db.insert(recurringPaid).values({ userId: otherId, seriesId: randomUUID(), month: "2026-10-01" });
+
+    await db.delete(user).where(eq(user.id, userId));
+
+    const rows = await db.select().from(recurringPaid);
+    expect(rows.map((r) => r.userId)).toEqual([otherId]);
+  });
+});
+
