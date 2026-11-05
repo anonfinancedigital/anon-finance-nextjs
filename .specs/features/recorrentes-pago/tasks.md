@@ -745,10 +745,10 @@ T19 → T20 → T21 → T22 → T23 → T24
 
 **Done when**:
 
-- [ ] Botão com verbo e ícone de check na linha não paga; chip "Pago" com check preenchido na paga; sem `aria-pressed` (o rótulo muda)
-- [ ] `opacity-50` só no conteúdo da linha não paga; o botão fica de fora (evidência `file:line`)
-- [ ] `TransactionForm` recebe `paid: editing.paid === true` em `transaction`
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
+- [x] Botão com verbo e ícone de check na linha não paga; chip "Pago" com check preenchido na paga; sem `aria-pressed` (o rótulo muda)
+- [x] `opacity-50` só no conteúdo da linha não paga; o botão fica de fora (evidência `file:line`)
+- [x] `TransactionForm` recebe `paid: editing.paid === true` em `transaction`
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
 
 **Tests**: none
 **Gate**: build

@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowDownLeftIcon, ArrowUpRightIcon } from "lucide-react";
+import { ArrowDownLeftIcon, ArrowUpRightIcon, CheckIcon } from "lucide-react";
 import Link from "next/link";
 import { Fragment, useState, useTransition } from "react";
 import { deleteTransaction } from "@/actions/transactions";
@@ -22,7 +22,7 @@ import { colorVar } from "@/lib/domain/color";
 import { formatDayHeading } from "@/lib/domain/day-heading";
 import type { MonthState } from "@/lib/domain/onboarding";
 import { formatBRL } from "@/lib/domain/money";
-import { countedNetByDay, countsInTotals, paidLabel, startsDay } from "@/lib/domain/paid";
+import { countedNetByDay, countsInTotals, paidActionLabel, startsDay } from "@/lib/domain/paid";
 import { monthKey } from "@/lib/domain/recurrence";
 
 type Props = {
@@ -181,15 +181,13 @@ export function TransactionList({
               <li
                 data-testid="transaction-row"
                 data-paid={t.recurring ? String(counts) : undefined}
-                className={`flex items-center gap-x-3 px-4 py-3 text-sm transition-colors active:bg-hover sm:gap-x-4 sm:px-6 sm:py-3.5 ${
-                  counts ? "" : "opacity-50"
-                }`}
+                className="flex items-center gap-x-3 px-4 py-3 text-sm transition-colors active:bg-hover sm:gap-x-4 sm:px-6 sm:py-3.5"
               >
                 <span
                   aria-hidden
                   className={`hidden size-9 shrink-0 items-center justify-center rounded-xl sm:flex ${
                     t.kind === "income" ? "bg-income/15 text-income" : "bg-subtle text-muted-foreground"
-                  }`}
+                  } ${counts ? "" : "opacity-50"}`}
                 >
                   {t.kind === "income" ? <ArrowDownLeftIcon className="size-4" /> : <ArrowUpRightIcon className="size-4" />}
                 </span>
@@ -197,7 +195,9 @@ export function TransactionList({
                 <button
                   type="button"
                   onClick={() => setEditing(t)}
-                  className="min-w-0 flex-1 cursor-pointer rounded-md text-left outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  className={`min-w-0 flex-1 cursor-pointer rounded-md text-left outline-none focus-visible:ring-2 focus-visible:ring-ring ${
+                    counts ? "" : "opacity-50"
+                  }`}
                 >
                   <span className="flex flex-wrap items-center gap-x-2 gap-y-1 font-semibold">
                     <span className="line-clamp-2 break-words sm:line-clamp-none">
@@ -252,20 +252,24 @@ export function TransactionList({
                   </span>
                 </button>
                 <span
-                  className={`font-display font-bold tabular-nums ${t.kind === "income" ? "text-income" : "text-foreground"}`}
+                  className={`font-display font-bold tabular-nums ${t.kind === "income" ? "text-income" : "text-foreground"} ${
+                    counts ? "" : "opacity-50"
+                  }`}
                 >
                   {t.kind === "income" ? "+" : "−"} {formatBRL(t.amountCents)}
                 </span>
                 {t.recurring && onTogglePaid && (
                   <button
                     type="button"
-                    aria-pressed={counts}
                     onClick={() => onTogglePaid(t)}
-                    className={`shrink-0 cursor-pointer rounded-md border px-2 py-1 text-xs font-medium outline-none focus-visible:ring-2 focus-visible:ring-ring ${
-                      counts ? "border-transparent bg-subtle text-foreground" : "border-border text-muted-foreground"
+                    className={`inline-flex shrink-0 cursor-pointer items-center gap-1 rounded-md border px-2 py-1 text-xs font-medium outline-none focus-visible:ring-2 focus-visible:ring-ring ${
+                      counts
+                        ? "border-transparent bg-subtle text-foreground hover:bg-hover"
+                        : "border-primary/60 text-primary hover:bg-primary/10"
                     }`}
                   >
-                    {paidLabel(t.kind, counts)}
+                    <CheckIcon aria-hidden className={`size-3.5 ${counts ? "" : "opacity-60"}`} strokeWidth={counts ? 3 : 2} />
+                    {paidActionLabel(t.kind, counts)}
                   </button>
                 )}
                 <TransactionRowMenu
@@ -307,6 +311,7 @@ export function TransactionList({
                 categoryId: editing.categoryId ?? "",
                 subcategoryId: editing.subcategoryId ?? "",
                 description: editing.description ?? "",
+                paid: editing.paid === true,
                 recurrence: !editing.recurring
                   ? "none"
                   : editing.recurrenceEnd === null

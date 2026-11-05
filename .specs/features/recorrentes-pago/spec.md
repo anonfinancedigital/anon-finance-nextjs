@@ -191,8 +191,8 @@ Hoje toda ocorrência de um gasto ou ganho recorrente conta no mês e aparece na
 | PAGO-08 | P2: Ciclo de vida do estado (AC 1-2, 6-7) | Execute | Implemented (T3, T8, T9, T19) |
 | PAGO-09 | P2: Ciclo de vida do estado (AC 3-5) | Execute | Implemented (T5, T13-T18) |
 | PAGO-10 | Edge Cases (falha e concorrência) | Execute | Implemented (T7, T10, T12) |
-| PAGO-11 | P1: Marcar uma ocorrência recorrente como paga (AC 5, 8) | Execute | Pending |
-| PAGO-12 | P1: Alternar o estado ao editar a ocorrência | Execute | Pending |
+| PAGO-11 | P1: Marcar uma ocorrência recorrente como paga (AC 5, 8) | Execute | Implemented (T20, T24) |
+| PAGO-12 | P1: Alternar o estado ao editar a ocorrência | Execute | Implemented (T21, T22, T23) |
 
 **Coverage:** 12 total, 12 mapped to tasks, 0 unmapped
 
