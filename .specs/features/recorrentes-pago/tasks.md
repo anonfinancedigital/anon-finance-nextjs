@@ -805,9 +805,9 @@ T24 → T25 → T26
 
 **Done when**:
 
-- [ ] Não pago: borda `border-border`, texto `text-foreground`, sem roxo de destaque (evidência `file:line`)
-- [ ] Pago: fundo e texto `success`, check com traço forte (evidência `file:line`)
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
+- [x] Não pago: borda `border-border`, texto `text-foreground`, sem roxo de destaque (evidência `file:line`)
+- [x] Pago: fundo e texto `success`, check com traço forte (evidência `file:line`)
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
 
 **Tests**: none
 **Gate**: build

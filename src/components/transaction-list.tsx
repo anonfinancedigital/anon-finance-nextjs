@@ -264,8 +264,8 @@ export function TransactionList({
                     onClick={() => onTogglePaid(t)}
                     className={`inline-flex shrink-0 cursor-pointer items-center gap-1 rounded-md border px-2 py-1 text-xs font-medium outline-none focus-visible:ring-2 focus-visible:ring-ring ${
                       counts
-                        ? "border-transparent bg-subtle text-foreground hover:bg-hover"
-                        : "border-primary/60 text-primary hover:bg-primary/10"
+                        ? "border-transparent bg-success/15 text-success hover:bg-success/25"
+                        : "border-border text-foreground hover:bg-hover"
                     }`}
                   >
                     <CheckIcon aria-hidden className={`size-3.5 ${counts ? "" : "opacity-60"}`} strokeWidth={counts ? 3 : 2} />
