@@ -5,7 +5,7 @@ import type { ImportPayload, VaultMaterial } from "@/lib/vault/types";
 import { insertTestUser, setupTestDb } from "@/test/db";
 import { user } from "../auth-schema";
 import { db } from "../client";
-import { category, categoryPercent, financialGoal, subcategory, transaction } from "../schema";
+import { category, categoryPercent, financialGoal, recurringPaid, subcategory, transaction } from "../schema";
 import { exportRowsSealed } from "./export";
 import { goalsRepo } from "./goals";
 import { importRepo } from "./import";
@@ -71,6 +71,10 @@ function samplePayload(tag: string): ImportPayload {
     ],
     goal: goalDto(tag),
     birthDateCt: `v1:${tag}-birth`,
+    paidMonths: [
+      { seriesId: series, month: "2026-01" },
+      { seriesId: series, month: "2026-09" },
+    ],
   };
 }
 
@@ -126,6 +130,63 @@ describe("importSealed into an empty account (IMPORT-04)", () => {
     expect(out.birthDateCt).toBe("v1:a-birth");
     const [seg1, seg2] = out.transactions.filter((t) => t.recurring);
     expect(seg1.seriesId).toBe(seg2.seriesId);
+  });
+
+  it("writes the paid months with the importer's user_id and the first day of the month (PAGO-09)", async () => {
+    const userId = await insertTestUser();
+    await withVault(userId);
+    const payload = samplePayload("a");
+    const series = payload.paidMonths![0].seriesId;
+
+    await importRepo.importSealed(userId, payload);
+
+    const rows = await db.select().from(recurringPaid);
+    expect(rows.map(({ userId: u, seriesId, month }) => ({ u, seriesId, month })).sort((x, y) => x.month.localeCompare(y.month))).toEqual([
+      { u: userId, seriesId: series, month: "2026-01-01" },
+      { u: userId, seriesId: series, month: "2026-09-01" },
+    ]);
+  });
+
+  it("imports every recurring series as not paid when the payload has no paid months (PAGO-09)", async () => {
+    const userId = await insertTestUser();
+    await withVault(userId);
+    const withEmpty = samplePayload("a");
+    withEmpty.paidMonths = [];
+    const withoutField = samplePayload("b");
+    delete withoutField.paidMonths;
+    const other = await insertTestUser();
+    await withVault(other);
+
+    await importRepo.importSealed(userId, withEmpty);
+    await importRepo.importSealed(other, withoutField);
+
+    expect(await db.select().from(recurringPaid)).toEqual([]);
+    expect((await exportRowsSealed(userId)).paidMonths).toEqual([]);
+  });
+
+  it("round-trips the paid months through the export: the same series and months (PAGO-09)", async () => {
+    const userId = await insertTestUser();
+    await withVault(userId);
+    const payload = samplePayload("a");
+
+    await importRepo.importSealed(userId, payload);
+
+    expect((await exportRowsSealed(userId)).paidMonths).toEqual(payload.paidMonths);
+  });
+
+  it("writes more paid months than one batch holds", async () => {
+    const userId = await insertTestUser();
+    await withVault(userId);
+    const payload = samplePayload("a");
+    const series = payload.paidMonths![0].seriesId;
+    payload.paidMonths = Array.from({ length: 2_500 }, (_, i) => ({
+      seriesId: series,
+      month: `${2000 + Math.floor(i / 12)}-${String((i % 12) + 1).padStart(2, "0")}`,
+    }));
+
+    await importRepo.importSealed(userId, payload);
+
+    expect(await db.$count(recurringPaid)).toBe(2_500);
   });
 
   it("writes more transactions than one batch holds", async () => {
@@ -285,6 +346,23 @@ describe("rollback (IMPORT-14)", () => {
     await expect(importRepo.importSealed(userId, payload)).rejects.toThrow();
     expect(await counts(userId)).toEqual({ transactions: 0, categories: 0, subcategories: 0 });
     expect(await db.select().from(categoryPercent)).toHaveLength(0);
+    expect(await db.select().from(financialGoal)).toHaveLength(0);
+    expect(await vaultRepo.getBirthDateSealed(userId)).toBeNull();
+  });
+});
+
+describe("rollback of the paid months (PAGO-09)", () => {
+  it("undoes the whole import when the paid months cannot be written", async () => {
+    const userId = await insertTestUser();
+    await withVault(userId);
+    const payload = samplePayload("a");
+    const dup = payload.paidMonths![0];
+    payload.paidMonths = [dup, { ...dup }]; // repeated primary key: the insert fails after every other row was written
+
+    await expect(importRepo.importSealed(userId, payload)).rejects.toThrow();
+
+    expect(await counts(userId)).toEqual({ transactions: 0, categories: 0, subcategories: 0 });
+    expect(await db.select().from(recurringPaid)).toHaveLength(0);
     expect(await db.select().from(financialGoal)).toHaveLength(0);
     expect(await vaultRepo.getBirthDateSealed(userId)).toBeNull();
   });

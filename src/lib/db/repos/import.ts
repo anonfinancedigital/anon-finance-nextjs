@@ -2,7 +2,7 @@ import { and, eq, isNull, sql } from "drizzle-orm";
 import type { ImportPayload } from "@/lib/vault/types";
 import { user } from "../auth-schema";
 import { db } from "../client";
-import { category, categoryPercent, financialGoal, subcategory, transaction, userVault } from "../schema";
+import { category, categoryPercent, financialGoal, recurringPaid, subcategory, transaction, userVault } from "../schema";
 
 /** Rows per INSERT: keeps every statement far below Postgres' 65.535 bind-parameter limit. */
 const BATCH = 1_000;
@@ -28,7 +28,8 @@ async function isEmpty(userId: string, executor: Pick<typeof db, "$count"> = db)
  * locked so two imports cannot interleave (IMPORT-17) and the emptiness check happens under that lock
  * (IMPORT-15) and leftover soft-deleted categories are removed (IMPORT-34). Every row gets `userId`, plain-text columns stay NULL. The goal is written only when
  * the user has none and the birth date only when the vault has none (IMPORT-20 to IMPORT-24). Any
- * error undoes everything (IMPORT-14).
+ * error undoes everything (IMPORT-14). The paid months of recurring series are restored in the same
+ * transaction; a payload without them leaves every recurring occurrence not paid (PAGO-09).
  */
 async function importSealed(userId: string, payload: ImportPayload): Promise<ImportResult> {
   return db.transaction(async (tx) => {
@@ -53,6 +54,10 @@ async function importSealed(userId: string, payload: ImportPayload): Promise<Imp
     }
     for (const rows of chunks(payload.transactions)) {
       await tx.insert(transaction).values(rows.map((t) => ({ ...t, userId })));
+    }
+    // `month` arrives as AAAA-MM; the table keeps the first day. A failure here undoes the whole import.
+    for (const rows of chunks(payload.paidMonths ?? [])) {
+      await tx.insert(recurringPaid).values(rows.map((p) => ({ userId, seriesId: p.seriesId, month: `${p.month}-01` })));
     }
 
     if (payload.goal) {

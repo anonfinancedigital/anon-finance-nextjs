@@ -571,11 +571,11 @@ T18 → T19
 
 **Done when**:
 
-- [ ] Estados do payload aparecem em `recurring_paid` com `user_id` do importador
-- [ ] Payload sem estados importa todas as recorrentes como não pagas
-- [ ] Falha ao gravar os estados desfaz a importação inteira
-- [ ] Testes de integração em `src/lib/db/repos/import.int.test.ts`, incluindo ida e volta exportar → importar com os mesmos estados
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
+- [x] Estados do payload aparecem em `recurring_paid` com `user_id` do importador
+- [x] Payload sem estados importa todas as recorrentes como não pagas
+- [x] Falha ao gravar os estados desfaz a importação inteira
+- [x] Testes de integração em `src/lib/db/repos/import.int.test.ts`, incluindo ida e volta exportar → importar com os mesmos estados
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
 
 **Tests**: integration
 **Gate**: build
