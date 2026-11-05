@@ -4,7 +4,7 @@ import { describe, expect, it } from "vitest";
 import type { VaultMaterial } from "@/lib/vault/types";
 import { insertTestUser, setupTestDb } from "@/test/db";
 import { db } from "../client";
-import { category, categoryPercent, subcategory, transaction, userVault } from "../schema";
+import { category, categoryPercent, recurringPaid, subcategory, transaction, userVault } from "../schema";
 import { exportRowsSealed } from "./export";
 import { goalsRepo } from "./goals";
 import { transactionsRepo } from "./transactions";
@@ -140,7 +140,35 @@ describe("exportRowsSealed", () => {
       categories: [],
       goal: null,
       birthDateCt: null,
+      paidMonths: [],
     });
+  });
+
+  it("returns the user's paid months as AAAA-MM ordered by series and month, never another user's", async () => {
+    const a = await insertTestUser();
+    const b = await insertTestUser();
+    const sa = await seed(a, "a");
+    const sb = await seed(b, "b");
+    const [first, second] = [sa.series, randomUUID()].sort();
+    await db.insert(recurringPaid).values([
+      { userId: a, seriesId: second, month: "2026-02-01" },
+      { userId: a, seriesId: first, month: "2026-05-01" },
+      { userId: a, seriesId: first, month: "2026-03-01" },
+      { userId: b, seriesId: sb.series, month: "2026-03-01" },
+    ]);
+
+    expect((await exportRowsSealed(a)).paidMonths).toEqual([
+      { seriesId: first, month: "2026-03" },
+      { seriesId: first, month: "2026-05" },
+      { seriesId: second, month: "2026-02" },
+    ]);
+  });
+
+  it("returns paidMonths as an empty list for an account without paid months", async () => {
+    const a = await insertTestUser();
+    await seed(a, "a");
+
+    expect((await exportRowsSealed(a)).paidMonths).toEqual([]);
   });
 
   it("returns a null birth date when the vault has none", async () => {

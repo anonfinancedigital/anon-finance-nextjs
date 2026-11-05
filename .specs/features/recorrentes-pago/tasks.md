@@ -437,10 +437,10 @@ T18 → T19
 
 **Done when**:
 
-- [ ] Estados do usuário aparecem ordenados por série e mês; estados de outro usuário não
-- [ ] Conta sem estados devolve `paidMonths: []`
-- [ ] Testes de integração em `src/lib/db/repos/export.int.test.ts`
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
+- [x] Estados do usuário aparecem ordenados por série e mês; estados de outro usuário não
+- [x] Conta sem estados devolve `paidMonths: []`
+- [x] Testes de integração em `src/lib/db/repos/export.int.test.ts`
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
 
 **Tests**: integration
 **Gate**: full
