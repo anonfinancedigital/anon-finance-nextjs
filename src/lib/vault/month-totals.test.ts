@@ -10,16 +10,16 @@ const expense = (amountCents: number, categoryId: string | null, subcategoryId: 
 /**
  * Fixed month: salary + a recurring income; category A with two subcategories and an expense
  * without one; category B with a recurring expense (one occurrence in the month); an expense with
- * no category.
+ * no category. The recurring occurrences are paid, so every row counts (AD-018).
  */
 const MONTH = [
   income(500000),
-  { ...income(120000), recurring: true },
+  { ...income(120000), recurring: true, paid: true },
   expense(15000, "A", "A1"),
   expense(5050, "A", "A1"),
   expense(3000, "A", "A2"),
   expense(1999, "A"),
-  { ...expense(25000, "B"), recurring: true },
+  { ...expense(25000, "B"), recurring: true, paid: true },
   expense(700, null),
 ];
 
@@ -96,5 +96,53 @@ describe("computeMonthTotals", () => {
       { subcategoryId: "A2", name: "Luz", spentCents: 3000, shareBp: 1198 },
       { subcategoryId: null, name: "Sem subcategoria", spentCents: 1999, shareBp: 798 },
     ]);
+  });
+});
+
+describe("computeMonthTotals com ocorrências não pagas (PAGO-05)", () => {
+  it("gasto recorrente de R$ 100 não pago: categoria e subcategoria R$ 0; pago: R$ 100", () => {
+    const unpaid = computeMonthTotals([{ ...expense(10000, "A", "A1"), recurring: true, paid: false }]);
+    expect(unpaid.spentByCategory.get("A") ?? 0).toBe(0);
+    expect(unpaid.spentBySubcategory.get("A")?.get("A1") ?? 0).toBe(0);
+
+    const paid = computeMonthTotals([{ ...expense(10000, "A", "A1"), recurring: true, paid: true }]);
+    expect(paid.spentByCategory.get("A")).toBe(10000);
+    expect(paid.spentBySubcategory.get("A")?.get("A1")).toBe(10000);
+  });
+
+  it("ganho recorrente não recebido fica fora da receita; recebido entra", () => {
+    expect(computeMonthTotals([income(500000), { ...income(120000), recurring: true, paid: false }]).incomeCents).toBe(500000);
+    expect(computeMonthTotals([income(500000), { ...income(120000), recurring: true, paid: true }]).incomeCents).toBe(620000);
+  });
+
+  it("recorrente com paid ausente ou null não soma", () => {
+    const totals = computeMonthTotals([
+      { ...income(120000), recurring: true },
+      { ...expense(10000, "A"), recurring: true, paid: null },
+    ]);
+    expect(totals.incomeCents).toBe(0);
+    expect(totals.spentByCategory.size).toBe(0);
+    expect(totals.spentBySubcategory.size).toBe(0);
+  });
+
+  it("avulso soma com ou sem paid", () => {
+    const totals = computeMonthTotals([
+      income(1000),
+      { ...income(2000), recurring: false, paid: null },
+      expense(300, "A"),
+      { ...expense(400, "A"), recurring: false, paid: false },
+    ]);
+    expect(totals.incomeCents).toBe(3000);
+    expect(totals.spentByCategory.get("A")).toBe(700);
+  });
+
+  it("todas as linhas recorrentes não pagas: totais zerados", () => {
+    const totals = computeMonthTotals([
+      { ...income(120000), recurring: true, paid: false },
+      { ...expense(25000, "B"), recurring: true, paid: false },
+    ]);
+    expect(totals.incomeCents).toBe(0);
+    expect(totals.spentByCategory.size).toBe(0);
+    expect(totals.spentBySubcategory.size).toBe(0);
   });
 });

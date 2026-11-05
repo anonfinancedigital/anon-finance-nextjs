@@ -276,7 +276,8 @@ function summaryByName(data: OpenedExport, key: string) {
   const occurrences = data.transactions.filter((t) =>
     appliesInMonth({ id: t.id, seriesId: t.seriesId, date: t.date, recurringDay: t.recurrenceDay, endMonth: t.recurrenceEnd?.slice(0, 7) ?? null }, key),
   );
-  const totals = computeMonthTotals(occurrences);
+  // Every occurrence counts here (as paid, AD-018): the comparison is about amounts and ids, not the paid state.
+  const totals = computeMonthTotals(occurrences.map((t) => ({ ...t, paid: true })));
   const summary = buildMonthlySummary({ categories, incomeCents: totals.incomeCents, spentByCategory: totals.spentByCategory, spentBySubcategory: totals.spentBySubcategory });
   return {
     incomeCents: summary.incomeCents,

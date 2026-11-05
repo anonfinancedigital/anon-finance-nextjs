@@ -125,10 +125,10 @@ T13 → T14 → T15 → T16 → T17 → T18
 
 **Done when**:
 
-- [ ] Ganho recorrente não pago fora de `incomeCents`; gasto recorrente não pago fora de `spentByCategory` e `spentBySubcategory`
-- [ ] Recorrente pago e avulso (com ou sem `paid`) continuam somando como hoje
-- [ ] Testes unitários em `src/lib/vault/month-totals.test.ts` com valores esperados da spec (R$ 100 não pago → categoria 0; pago → 100)
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Ganho recorrente não pago fora de `incomeCents`; gasto recorrente não pago fora de `spentByCategory` e `spentBySubcategory`
+- [x] Recorrente pago e avulso (com ou sem `paid`) continuam somando como hoje
+- [x] Testes unitários em `src/lib/vault/month-totals.test.ts` com valores esperados da spec (R$ 100 não pago → categoria 0; pago → 100)
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
 
 **Tests**: unit
 **Gate**: quick
