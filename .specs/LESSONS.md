@@ -498,6 +498,12 @@ Seen once or not yet corroborated. Tracked, not trusted.
 - evidence: validation.md spec-precision 1-2; src/components/transaction-form.tsx:262 (ui)
 - last seen: 2026-11-05T12:33:29Z
 
+### L-082 - When the UI sends a field only under a condition, state in the spec whether the server rejects or ignores it outside that condition
+- signal: `spec_precision_gap` · recurrence: 1 feature(s) · scope: `actions` · harmful: 0
+- features: recorrentes-pago
+- evidence: validation.md ciclo 3 spec-precision 5 (R4, transactions.ts:333-334, transaction-form.tsx:262) (actions)
+- last seen: 2026-11-05T12:52:49Z
+
 ## Quarantined (failed when applied - ignore)
 
 A confirmed lesson that recurred alongside failure. Kept for the maintainer to review.
