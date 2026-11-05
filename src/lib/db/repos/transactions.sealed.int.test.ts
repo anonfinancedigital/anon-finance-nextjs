@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { eq } from "drizzle-orm";
+import { asc, eq } from "drizzle-orm";
 import { beforeEach, describe, expect, it } from "vitest";
 import { monthRange } from "@/lib/domain/month";
 import type { TransactionDto, UpdateTransactionDto } from "@/lib/vault/types";
@@ -850,6 +850,128 @@ describe("transactionsRepo.listByMonthSealed paid state (PAGO-02)", () => {
     expect(await paidById("2026-11")).toEqual(new Map([[tx.id, true]]));
     expect(await paidById("2026-12")).toEqual(new Map([[newRowId, false]]));
     expect(await paidById("2027-01")).toEqual(new Map([[newRowId, true]]));
+  });
+});
+
+describe("transactionsRepo.setPaid (PAGO-01, PAGO-10)", () => {
+  const rent = (date = "2026-10-15", recurrenceEndMonth?: string): TransactionDto => ({
+    ...expense(date, 10000),
+    recurrence: recurrenceEndMonth ? "until" : "indefinite",
+    recurrenceEndMonth,
+  });
+  const paidRows = async () =>
+    (await db.select().from(recurringPaid).orderBy(asc(recurringPaid.seriesId), asc(recurringPaid.month))).map((r) => ({
+      userId: r.userId,
+      seriesId: r.seriesId,
+      month: r.month,
+    }));
+
+  it("marking month M stores only M for the series and keeps the other months as they were", async () => {
+    const tx = rent();
+    await transactionsRepo.createSealed(userId, tx);
+    await db.insert(recurringPaid).values({ userId, seriesId: tx.id, month: "2026-10-01" });
+
+    expect(await transactionsRepo.setPaid(userId, tx.id, "2026-11", true)).toBe(true);
+
+    expect(await paidRows()).toEqual([
+      { userId, seriesId: tx.id, month: "2026-10-01" },
+      { userId, seriesId: tx.id, month: "2026-11-01" },
+    ]);
+  });
+
+  it("unmarking month M removes only M", async () => {
+    const tx = rent();
+    await transactionsRepo.createSealed(userId, tx);
+    for (const month of ["2026-10-01", "2026-11-01", "2026-12-01"]) {
+      await db.insert(recurringPaid).values({ userId, seriesId: tx.id, month });
+    }
+
+    expect(await transactionsRepo.setPaid(userId, tx.id, "2026-11", false)).toBe(true);
+
+    expect((await paidRows()).map((r) => r.month)).toEqual(["2026-10-01", "2026-12-01"]);
+  });
+
+  it("marks through the segment that holds the month, under the series id", async () => {
+    const tx = rent();
+    await transactionsRepo.createSealed(userId, tx);
+    const newRowId = randomUUID();
+    await transactionsRepo.updateFromSealed(userId, tx.id, "2026-12", {
+      ...tx,
+      date: "2026-12-15",
+      newRowId,
+      insertedCt: { amountCt: tx.amountCt, descriptionCt: null },
+    });
+
+    expect(await transactionsRepo.setPaid(userId, newRowId, "2027-01", true)).toBe(true);
+
+    expect(await paidRows()).toEqual([{ userId, seriesId: tx.id, month: "2027-01-01" }]);
+  });
+
+  it("marking twice keeps a single row; unmarking twice does not fail", async () => {
+    const tx = rent();
+    await transactionsRepo.createSealed(userId, tx);
+
+    expect(await transactionsRepo.setPaid(userId, tx.id, "2026-11", true)).toBe(true);
+    expect(await transactionsRepo.setPaid(userId, tx.id, "2026-11", true)).toBe(true);
+    expect(await paidRows()).toEqual([{ userId, seriesId: tx.id, month: "2026-11-01" }]);
+
+    expect(await transactionsRepo.setPaid(userId, tx.id, "2026-11", false)).toBe(true);
+    expect(await transactionsRepo.setPaid(userId, tx.id, "2026-11", false)).toBe(true);
+    expect(await paidRows()).toEqual([]);
+  });
+
+  it("two simultaneous marks of the same month leave a single row (PAGO-10)", async () => {
+    const tx = rent();
+    await transactionsRepo.createSealed(userId, tx);
+
+    expect(
+      await Promise.all([
+        transactionsRepo.setPaid(userId, tx.id, "2026-11", true),
+        transactionsRepo.setPaid(userId, tx.id, "2026-11", true),
+      ]),
+    ).toEqual([true, true]);
+    expect(await paidRows()).toEqual([{ userId, seriesId: tx.id, month: "2026-11-01" }]);
+  });
+
+  it("returns false and writes nothing for another user's id", async () => {
+    const tx = rent();
+    await transactionsRepo.createSealed(userId, tx);
+    const otherId = await insertTestUser();
+
+    expect(await transactionsRepo.setPaid(otherId, tx.id, "2026-11", true)).toBe(false);
+    expect(await paidRows()).toEqual([]);
+  });
+
+  it("returns false and removes nothing when another user unmarks the occurrence", async () => {
+    const tx = rent();
+    await transactionsRepo.createSealed(userId, tx);
+    await transactionsRepo.setPaid(userId, tx.id, "2026-11", true);
+    const otherId = await insertTestUser();
+
+    expect(await transactionsRepo.setPaid(otherId, tx.id, "2026-11", false)).toBe(false);
+    expect(await paidRows()).toEqual([{ userId, seriesId: tx.id, month: "2026-11-01" }]);
+  });
+
+  it("returns false and writes nothing for an id that does not exist", async () => {
+    expect(await transactionsRepo.setPaid(userId, randomUUID(), "2026-11", true)).toBe(false);
+    expect(await paidRows()).toEqual([]);
+  });
+
+  it("returns false and writes nothing for a non-recurring row", async () => {
+    const single = expense("2026-11-03");
+    await transactionsRepo.createSealed(userId, single);
+
+    expect(await transactionsRepo.setPaid(userId, single.id, "2026-11", true)).toBe(false);
+    expect(await paidRows()).toEqual([]);
+  });
+
+  it("returns false and writes nothing for a month without an occurrence of the row", async () => {
+    const tx = rent("2026-10-15", "2026-12");
+    await transactionsRepo.createSealed(userId, tx);
+
+    expect(await transactionsRepo.setPaid(userId, tx.id, "2026-09", true)).toBe(false);
+    expect(await transactionsRepo.setPaid(userId, tx.id, "2027-01", true)).toBe(false);
+    expect(await paidRows()).toEqual([]);
   });
 });
 

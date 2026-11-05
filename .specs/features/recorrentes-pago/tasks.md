@@ -259,11 +259,11 @@ T13 → T14 → T15 → T16 → T17 → T18
 
 **Done when**:
 
-- [ ] Marcar mês M não altera os outros meses da série; desmarcar remove só M
-- [ ] Marcar duas vezes mantém uma única linha; desmarcar duas vezes não falha
-- [ ] Devolve `false` e não grava para: id de outro usuário, id inexistente, linha não recorrente, mês sem ocorrência da linha
-- [ ] Testes de integração em `src/lib/db/repos/transactions.sealed.int.test.ts` para cada caso
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
+- [x] Marcar mês M não altera os outros meses da série; desmarcar remove só M
+- [x] Marcar duas vezes mantém uma única linha; desmarcar duas vezes não falha
+- [x] Devolve `false` e não grava para: id de outro usuário, id inexistente, linha não recorrente, mês sem ocorrência da linha
+- [x] Testes de integração em `src/lib/db/repos/transactions.sealed.int.test.ts` para cada caso
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
 
 **Tests**: integration
 **Gate**: full

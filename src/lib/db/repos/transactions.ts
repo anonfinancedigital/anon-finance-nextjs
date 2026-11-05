@@ -175,6 +175,35 @@ async function deleteFrom(userId: string, id: string, month: string): Promise<bo
   });
 }
 
+/**
+ * Marks (`paid`) or unmarks the occurrence of `month` (AAAA-MM) of row `id` as paid, for that month
+ * only (AD-018). Idempotent: marking twice keeps one row, unmarking twice is a no-op. Returns false,
+ * writing nothing, when the user has no such row, it is not recurring or it has no occurrence in
+ * `month`.
+ */
+async function setPaid(userId: string, id: string, month: string, paid: boolean): Promise<boolean> {
+  return db.transaction(async (tx) => {
+    const segments = await lockSeries(tx, userId, id, month);
+    const seriesId = segments?.find((s) => s.id === id)?.seriesId;
+    if (!seriesId) return false;
+    const row = { userId, seriesId, month: `${month}-01` };
+    if (paid) {
+      await tx.insert(recurringPaid).values(row).onConflictDoNothing();
+    } else {
+      await tx
+        .delete(recurringPaid)
+        .where(
+          and(
+            eq(recurringPaid.userId, userId),
+            eq(recurringPaid.seriesId, seriesId),
+            eq(recurringPaid.month, row.month),
+          ),
+        );
+    }
+    return true;
+  });
+}
+
 /** Segments (id, series, date, day, end) of the user's series `seriesIds`, grouped by series. */
 async function loadSeries(userId: string, seriesIds: string[]): Promise<Map<string, Segment[]>> {
   const bySeries = new Map<string, Segment[]>();
@@ -410,6 +439,7 @@ export const transactionsRepo = {
   findStored,
   delete: remove,
   deleteFrom,
+  setPaid,
   createSealed,
   updateFromSealed,
   listByMonthSealed,
