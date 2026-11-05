@@ -91,6 +91,57 @@ describe("sealedImportSchema (IMPORT-03)", () => {
   });
 });
 
+describe("paidMonths (PAGO-09)", () => {
+  const SERIES = uuid(1002);
+
+  it("accepts a payload without the field", () => {
+    expect(payload().paidMonths).toBeUndefined();
+    expect(ok(payload())).toBe(true);
+  });
+
+  it("accepts valid paid months and keeps them", () => {
+    const p = mutated((q) => (q.paidMonths = [{ seriesId: SERIES, month: "2026-08" }, { seriesId: SERIES, month: "2026-09" }]));
+    expect(sealedImportSchema.parse(p).paidMonths).toEqual(p.paidMonths);
+    expect(ok(mutated((q) => (q.paidMonths = [])))).toBe(true);
+  });
+
+  it("accepts the boundary months 2000-01 and 2100-12 and rejects 1999-12 and 2101-01", () => {
+    const withMonth = (month: string) => mutated((p) => (p.paidMonths = [{ seriesId: SERIES, month }]));
+    expect(ok(withMonth("2000-01"))).toBe(true);
+    expect(ok(withMonth("2100-12"))).toBe(true);
+    expect(ok(withMonth("1999-12"))).toBe(false);
+    expect(ok(withMonth("2101-01"))).toBe(false);
+  });
+
+  it.each(["2026-13", "2026-00", "2026-8", "2026-08-01", ""])("rejects the invalid month %j", (month) => {
+    expect(ok(mutated((p) => (p.paidMonths = [{ seriesId: SERIES, month }])))).toBe(false);
+  });
+
+  it("rejects a seriesId that is not a UUID", () => {
+    expect(ok(mutated((p) => (p.paidMonths = [{ seriesId: "t2", month: "2026-08" }])))).toBe(false);
+  });
+
+  it("rejects a series that is absent from the payload or is not a recurring series", () => {
+    expect(ok(mutated((p) => (p.paidMonths = [{ seriesId: uuid(9999), month: "2026-08" }])))).toBe(false);
+    // tx(1) is a one-off row: its id is no series.
+    expect(ok(mutated((p) => (p.paidMonths = [{ seriesId: uuid(1001), month: "2026-08" }])))).toBe(false);
+  });
+
+  it("rejects a repeated (seriesId, month) pair", () => {
+    expect(
+      ok(
+        mutated(
+          (p) =>
+            (p.paidMonths = [
+              { seriesId: SERIES, month: "2026-08" },
+              { seriesId: SERIES, month: "2026-08" },
+            ]),
+        ),
+      ),
+    ).toBe(false);
+  });
+});
+
 describe("references and rows (IMPORT-11)", () => {
   it("rejects an expense without category or with a category absent from the payload", () => {
     expect(ok(mutated((p) => (p.transactions[0].categoryId = null)))).toBe(false);

@@ -544,10 +544,10 @@ T18 → T19
 
 **Done when**:
 
-- [ ] Payload sem o campo é válido; payload com estados válidos é válido
-- [ ] Série ausente, mês inválido ou par `(seriesId, month)` repetido rejeitam o payload
-- [ ] Testes unitários em `src/lib/validation/import-sealed.test.ts` para cada caso
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Payload sem o campo é válido; payload com estados válidos é válido
+- [x] Série ausente, mês inválido ou par `(seriesId, month)` repetido rejeitam o payload
+- [x] Testes unitários em `src/lib/validation/import-sealed.test.ts` para cada caso
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
 
 **Tests**: unit
 **Gate**: quick
