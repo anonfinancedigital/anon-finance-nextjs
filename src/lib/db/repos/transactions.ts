@@ -12,7 +12,7 @@ import {
 } from "@/lib/domain/recurrence";
 import type { MonthPayload, TransactionDto, UpdateTransactionDto } from "@/lib/vault/types";
 import { db } from "../client";
-import { plain, transaction } from "../schema";
+import { plain, recurringPaid, transaction } from "../schema";
 
 export type MonthRange = { start: string; endExclusive: string };
 
@@ -55,6 +55,8 @@ export type Occurrence = Transaction & {
   installment: Installment | null;
   /** AAAA-MM of the series' first month; null when not recurring. */
   seriesStart: string | null;
+  /** Paid in this month (AD-018): `true` paid; `false` or absent not paid; `null` not recurring. */
+  paid?: boolean | null;
 };
 
 const ownedBy = (userId: string, id: string) =>
@@ -325,6 +327,22 @@ async function updateFromSealed(
   });
 }
 
+/** Series of the user, among `seriesIds`, whose occurrence in `month` (AAAA-MM) is paid (AD-018). */
+async function paidSeriesIn(userId: string, seriesIds: string[], month: string): Promise<Set<string>> {
+  if (seriesIds.length === 0) return new Set();
+  const rows = await db
+    .select({ seriesId: recurringPaid.seriesId })
+    .from(recurringPaid)
+    .where(
+      and(
+        eq(recurringPaid.userId, userId),
+        eq(recurringPaid.month, `${month}-01`),
+        inArray(recurringPaid.seriesId, seriesIds),
+      ),
+    );
+  return new Set(rows.map((r) => r.seriesId));
+}
+
 /** `listByMonth` for a sealed account: same occurrences, order and installments, values as ciphertext. */
 async function listByMonthSealed(
   userId: string,
@@ -350,14 +368,15 @@ async function listByMonthSealed(
     .where(applicableInMonth(userId, range))
     .orderBy(desc(transaction.createdAt));
   const month = monthKey(range.start);
-  const series = await loadSeries(userId, [
-    ...new Set(rows.flatMap((r) => (r.seriesId ? [r.seriesId] : []))),
-  ]);
+  const seriesIds = [...new Set(rows.flatMap((r) => (r.seriesId ? [r.seriesId] : [])))];
+  const series = await loadSeries(userId, seriesIds);
+  const paidSeries = await paidSeriesIn(userId, seriesIds, month);
   return rows
     .map(({ recurrenceDay, seriesId, amountCt, ...row }) => {
       const segments = seriesId ? series.get(seriesId) : undefined;
       return {
         ...row,
+        paid: seriesId ? paidSeries.has(seriesId) : null,
         amountCt: plain(amountCt, "transaction.amount_ct"),
         date: occurrenceDate(
           { id: row.id, seriesId: null, date: row.date, recurringDay: recurrenceDay, endMonth: null },

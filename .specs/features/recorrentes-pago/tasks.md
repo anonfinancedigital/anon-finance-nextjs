@@ -232,10 +232,10 @@ T13 → T14 → T15 → T16 → T17 → T18
 
 **Done when**:
 
-- [ ] Recorrente com linha em `recurring_paid` no mês → `paid: true`; sem linha → `false`; avulso → `null`
-- [ ] Estado de outro mês da mesma série não vaza para o mês lido; estado de outra conta não aparece
-- [ ] Testes de integração em `src/lib/db/repos/transactions.sealed.int.test.ts` para cada caso acima, incluindo série dividida em dois segmentos (estado vale para o mês, qualquer que seja o segmento)
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
+- [x] Recorrente com linha em `recurring_paid` no mês → `paid: true`; sem linha → `false`; avulso → `null`
+- [x] Estado de outro mês da mesma série não vaza para o mês lido; estado de outra conta não aparece
+- [x] Testes de integração em `src/lib/db/repos/transactions.sealed.int.test.ts` para cada caso acima, incluindo série dividida em dois segmentos (estado vale para o mês, qualquer que seja o segmento)
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
 
 **Tests**: integration
 **Gate**: full

@@ -5,7 +5,7 @@ import { monthRange } from "@/lib/domain/month";
 import type { TransactionDto, UpdateTransactionDto } from "@/lib/vault/types";
 import { insertCategory, insertTestUser, setupTestDb } from "@/test/db";
 import { db } from "../client";
-import { subcategory, transaction } from "../schema";
+import { recurringPaid, subcategory, transaction } from "../schema";
 import { transactionsRepo } from "./transactions";
 
 setupTestDb();
@@ -203,6 +203,7 @@ describe("transactionsRepo.listByMonthSealed", () => {
         amountCt: "v1:a500000",
         descriptionCt: "v1:salario",
         recurring: false,
+        paid: null,
         recurrenceEnd: null,
         installment: null,
         seriesStart: null,
@@ -789,3 +790,66 @@ describe("transactionsRepo sealed start month of an 'until' series", () => {
     });
   });
 });
+
+describe("transactionsRepo.listByMonthSealed paid state (PAGO-02)", () => {
+  const month = (key: string) =>
+    monthRange({ year: Number(key.slice(0, 4)), month: Number(key.slice(5, 7)) });
+  const listIn = (key: string) => transactionsRepo.listByMonthSealed(userId, month(key));
+  const paidById = async (key: string) => new Map((await listIn(key)).map((t) => [t.id, t.paid]));
+  const rent = (date = "2026-10-15"): TransactionDto => ({ ...expense(date, 10000), recurrence: "indefinite" });
+  const markPaid = (seriesId: string, key: string, owner = userId) =>
+    db.insert(recurringPaid).values({ userId: owner, seriesId, month: `${key}-01` });
+
+  it("recurring with a paid row in the month is true, without one is false, a single row is null", async () => {
+    const paid = rent("2026-10-15");
+    const unpaid = rent("2026-10-16");
+    const single = expense("2026-11-03");
+    for (const dto of [paid, unpaid, single]) await transactionsRepo.createSealed(userId, dto);
+    await markPaid(paid.id, "2026-11");
+
+    const byId = await paidById("2026-11");
+    expect(byId.get(paid.id)).toBe(true);
+    expect(byId.get(unpaid.id)).toBe(false);
+    expect(byId.get(single.id)).toBeNull();
+  });
+
+  it("the paid state of another month of the series does not leak into the month read", async () => {
+    const tx = rent();
+    await transactionsRepo.createSealed(userId, tx);
+    await markPaid(tx.id, "2026-10");
+    await markPaid(tx.id, "2026-12");
+
+    expect((await paidById("2026-11")).get(tx.id)).toBe(false);
+    expect((await paidById("2026-10")).get(tx.id)).toBe(true);
+    expect((await paidById("2026-12")).get(tx.id)).toBe(true);
+  });
+
+  it("a paid row of another account does not show up", async () => {
+    const tx = rent();
+    await transactionsRepo.createSealed(userId, tx);
+    const otherId = await insertTestUser();
+    await markPaid(tx.id, "2026-11", otherId);
+
+    expect((await paidById("2026-11")).get(tx.id)).toBe(false);
+  });
+
+  it("a split series reads the state by series and month, whichever segment holds the month", async () => {
+    const tx = rent();
+    await transactionsRepo.createSealed(userId, tx);
+    const newRowId = randomUUID();
+    await transactionsRepo.updateFromSealed(userId, tx.id, "2026-12", {
+      ...tx,
+      date: "2026-12-15",
+      amountCt: amountCt(12000),
+      newRowId,
+      insertedCt: { amountCt: amountCt(12000), descriptionCt: null },
+    });
+    await markPaid(tx.id, "2026-11");
+    await markPaid(tx.id, "2027-01");
+
+    expect(await paidById("2026-11")).toEqual(new Map([[tx.id, true]]));
+    expect(await paidById("2026-12")).toEqual(new Map([[newRowId, false]]));
+    expect(await paidById("2027-01")).toEqual(new Map([[newRowId, true]]));
+  });
+});
+
