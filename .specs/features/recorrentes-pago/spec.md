@@ -163,7 +163,7 @@ Hoje toda ocorrência de um gasto ou ganho recorrente conta no mês e aparece na
 | PAGO-04 | P1: Não pagas por último e com opacidade reduzida (AC 4-7) | Design | Pending |
 | PAGO-05 | P1: Não pagas fora dos totais (AC 1-3, 5) | Design | Pending |
 | PAGO-06 | P1: Não pagas fora dos totais (AC 4) | Design | Pending |
-| PAGO-07 | P1: Migração preserva o histórico | Design | Pending |
+| PAGO-07 | P1: Migração preserva o histórico | Execute | Implemented (T4) |
 | PAGO-08 | P2: Ciclo de vida do estado (AC 1-2, 6) | Design | Pending |
 | PAGO-09 | P2: Ciclo de vida do estado (AC 3-5) | Design | Pending |
 | PAGO-10 | Edge Cases (falha e concorrência) | Design | Pending |

@@ -178,10 +178,10 @@ T13 → T14 → T15 → T16 → T17 → T18
 
 **Done when**:
 
-- [ ] O `INSERT` fica após um marcador `-- backfill` no arquivo, para o teste extraí-lo e executá-lo
-- [ ] Teste de integração em `src/lib/db/schema.int.test.ts` semeia séries e executa o trecho: série iniciada há 3 meses → 3 meses pagos e o corrente não; série encerrada no passado → todos os meses até o fim pagos; série que começa no mês corrente ou depois → nenhuma linha; série com segmentos divididos → um mês por segmento, sem duplicata; avulso → nenhuma linha
-- [ ] Executar o trecho duas vezes não duplica nem falha
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
+- [x] O `INSERT` fica após um marcador `-- backfill` no arquivo, para o teste extraí-lo e executá-lo
+- [x] Teste de integração em `src/lib/db/schema.int.test.ts` semeia séries e executa o trecho: série iniciada há 3 meses → 3 meses pagos e o corrente não; série encerrada no passado → todos os meses até o fim pagos; série que começa no mês corrente ou depois → nenhuma linha; série com segmentos divididos → um mês por segmento, sem duplicata; avulso → nenhuma linha
+- [x] Executar o trecho duas vezes não duplica nem falha
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
 
 **Tests**: integration
 **Gate**: full
