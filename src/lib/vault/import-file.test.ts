@@ -82,6 +82,10 @@ function fullExport(): OpenedExport {
     ],
     goal: { monthlyIncomeCents: 1_500_000, savedCents: 25_000_000, retirementAge: 55, annualRateBp: 800, withdrawalRateBp: 400 },
     birthDate: "1990-03-15",
+    paidMonths: [
+      { seriesId: "t2", month: "2026-08" },
+      { seriesId: "t2", month: "2026-09" },
+    ],
   };
 }
 
@@ -124,7 +128,7 @@ describe("parseImportFile with a valid file", () => {
   });
 
   it("accepts an export without data: empty lists, null goal, birth date (IMPORT-29)", () => {
-    const empty: OpenedExport = { transactions: [], categories: [], goal: null, birthDate: "1990-03-15" };
+    const empty: OpenedExport = { transactions: [], categories: [], goal: null, birthDate: "1990-03-15", paidMonths: [] };
     expect(parseImportFile(buildExport(empty))).toEqual({
       ok: true,
       data: empty,
@@ -186,6 +190,45 @@ describe("structure (IMPORT-09)", () => {
   it("rejects a JSON that is not an object", () => {
     expect(parseImportFile("[]")).toEqual(INVALID);
     expect(parseImportFile("null")).toEqual(INVALID);
+  });
+});
+
+describe("paidMonths (PAGO-09)", () => {
+  it("keeps the paid months of the file", () => {
+    const result = parseImportFile(buildExport(fullExport()));
+    expect(result.ok && result.data.paidMonths).toEqual([
+      { seriesId: "t2", month: "2026-08" },
+      { seriesId: "t2", month: "2026-09" },
+    ]);
+  });
+
+  it("imports a file without the field with paidMonths: []", () => {
+    const raw = JSON.parse(buildExport(fullExport()));
+    delete raw.paidMonths;
+    const result = parseImportFile(JSON.stringify(raw));
+    expect(result.ok && result.data.paidMonths).toEqual([]);
+  });
+
+  it("accepts the boundary months 2000-01 and 2100-12 and rejects 1999-12 and 2101-01", () => {
+    const withMonth = (month: string) => parseWith((d) => (d.paidMonths = [{ seriesId: "t2", month }]));
+    expect(withMonth("2000-01").ok).toBe(true);
+    expect(withMonth("2100-12").ok).toBe(true);
+    expect(withMonth("1999-12")).toEqual(INVALID);
+    expect(withMonth("2101-01")).toEqual(INVALID);
+  });
+
+  it.each(["2026-13", "2026-00", "2026-8", "2026-08-01", "agosto", ""])("rejects the month format %j", (month) => {
+    expect(parseWith((d) => (d.paidMonths = [{ seriesId: "t2", month }]))).toEqual(INVALID);
+  });
+
+  it("rejects a paid month whose series is not in the file", () => {
+    expect(parseWith((d) => (d.paidMonths = [{ seriesId: "sem-serie", month: "2026-08" }]))).toEqual(INVALID);
+  });
+
+  it("rejects paidMonths with the wrong type", () => {
+    const raw = JSON.parse(buildExport(fullExport()));
+    raw.paidMonths = "x";
+    expect(parseImportFile(JSON.stringify(raw))).toEqual(INVALID);
   });
 });
 

@@ -72,11 +72,18 @@ const goalSchema = z
   })
   .refine((g) => g.withdrawalRateBp <= g.annualRateBp);
 
+/** AAAA-MM between 2000-01 and 2100-12. */
+const paidMonth = z.string().regex(/^\d{4}-(0[1-9]|1[0-2])$/).refine((key) => key >= "2000-01" && key <= "2100-12");
+
 const fileSchema = z.object({
   transactions: z.array(transactionSchema).max(MAX_IMPORT_TRANSACTIONS),
   categories: z.array(categorySchema).max(MAX_IMPORT_CATEGORIES),
   goal: nullable(goalSchema),
   birthDate: nullable(day),
+  // SPEC_DEVIATION: `seriesId` is a plain id (1-64 chars), not a uuid as the task text says.
+  // Reason: every id in the file schema is a free string (the server validates uuids on the sealed payload).
+  // Files from before the paid state have no such field: every recurring occurrence imports as not paid.
+  paidMonths: z.array(z.object({ seriesId: id, month: paidMonth })).default([]),
 });
 
 const hasDuplicates = (values: string[]) => new Set(values).size !== values.length;
@@ -84,6 +91,8 @@ const hasDuplicates = (values: string[]) => new Set(values).size !== values.leng
 /** Rules that span rows: unique ids and names, references between rows and the recurrence fields. */
 function crossChecks(data: OpenedExport): boolean {
   const { transactions, categories } = data;
+  const seriesIds = new Set(transactions.map((t) => t.seriesId));
+  if (data.paidMonths?.some((p) => !seriesIds.has(p.seriesId))) return false;
   const subcategoryIds = categories.flatMap((c) => c.subcategories.map((s) => s.id));
   if (hasDuplicates(transactions.map((t) => t.id))) return false;
   if (hasDuplicates(categories.map((c) => c.id)) || hasDuplicates(subcategoryIds)) return false;

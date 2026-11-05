@@ -490,10 +490,10 @@ T18 → T19
 
 **Done when**:
 
-- [ ] Arquivo sem o campo importa com `paidMonths: []`
-- [ ] Mês fora do intervalo, formato inválido ou `seriesId` sem série no arquivo rejeitam o arquivo
-- [ ] Testes unitários em `src/lib/vault/import-file.test.ts` para cada caso
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Arquivo sem o campo importa com `paidMonths: []`
+- [x] Mês fora do intervalo, formato inválido ou `seriesId` sem série no arquivo rejeitam o arquivo
+- [x] Testes unitários em `src/lib/vault/import-file.test.ts` para cada caso
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
 
 **Tests**: unit
 **Gate**: quick
