@@ -75,6 +75,13 @@ T12 → T13
 T13 → T14 → T15 → T16 → T17 → T18
 ```
 
+### Phase 6: Correção de lacuna
+
+```
+T9 → T19
+T18 → T19
+```
+
 ---
 
 ## Task Breakdown
@@ -577,6 +584,35 @@ T13 → T14 → T15 → T16 → T17 → T18
 
 ---
 
+### T19: Mover o início da série poda os estados anteriores
+
+**What**: `updateFromSealed` apaga os estados de `recurring_paid` anteriores ao novo mês inicial quando a edição do primeiro mês de uma série move `recurrenceStartMonth` para frente.
+**Where**: `src/lib/db/repos/transactions.ts`
+**Depends on**: T9, T18
+**Reuses**: poda de T9, `planEdit` (`movesStart`)
+**Requirement**: PAGO-08
+
+**Tools**:
+
+- MCP: NONE
+- Skill: NONE
+
+**Done when**:
+
+- [ ] Série "até" iniciada em janeiro com janeiro e fevereiro pagos, início movido para março: estados de janeiro e fevereiro somem
+- [ ] Estados de março em diante permanecem
+- [ ] Mover o início sem mudar de mês e editar sem mover o início não apagam nada
+- [ ] Nenhum estado órfão após o cenário
+- [ ] Testes de integração em `src/lib/db/repos/transactions.sealed.int.test.ts`
+- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int` (lint: erro prévio `src/app/layout.tsx` fora do escopo)
+
+**Tests**: integration
+**Gate**: full
+
+**Commit**: `feat(paid): prune paid months before a series start moved forward`
+
+---
+
 ## Phase Execution Map
 
 ```
@@ -587,6 +623,7 @@ Phase 2:  T3 ------→ T4 ------→ T5 ------→ T6 ------→ T7 ------→ T8 --
 Phase 3:  T10
 Phase 4:  T11 -----→ T12
 Phase 5:  T13 -----→ T14 -----→ T15 -----→ T16 -----→ T17 -----→ T18
+Phase 6:  T19
 ```
 
 Execution is strictly sequential - there is no intra-phase parallelism.
@@ -661,7 +698,7 @@ Execution is strictly sequential - there is no intra-phase parallelism.
 | PAGO-05 | T1, T2, T12 |
 | PAGO-06 | T12 |
 | PAGO-07 | T4 |
-| PAGO-08 | T3, T8, T9 |
+| PAGO-08 | T3, T8, T9, T19 |
 | PAGO-09 | T5, T13-T18 |
 | PAGO-10 | T7, T10, T12 |
 

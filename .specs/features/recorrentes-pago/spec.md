@@ -39,6 +39,7 @@ Hoje toda ocorrência de um gasto ou ganho recorrente conta no mês e aparece na
 | Cabeçalhos de dia (mobile) | Cada grupo tem seus próprios cabeçalhos; um dia com linhas nos dois grupos aparece duas vezes. O saldo do dia soma só linhas que contam nos totais; cabeçalho sem linha contada não mostra saldo | Coerência com os totais | n |
 | Efeito da edição de uma ocorrência | Editar valor, categoria, descrição ou dia não altera o estado de nenhum mês; o estado pertence à série e ao mês | A edição divide a série mas o mês continua o mesmo | n |
 | Exclusão de ocorrência "a partir deste mês" | Os estados dos meses removidos são apagados junto | Evita estado órfão | n |
+| Início da série movido para frente na edição | Os estados dos meses anteriores ao novo mês inicial são apagados | Esses meses deixam de ter ocorrência; evita estado órfão (lacuna achada na execução de T9) | n |
 | Recorrente → "Não recorrente" | O mês editado vira avulso e passa a contar; os estados dos meses removidos são apagados | Consequência da regra "a partir deste mês" | n |
 | Estado é dado do usuário | Fica em claro no servidor como a recorrência (série, mês, booleano); não contém valor, nome ou descrição | Mesmo nível de exposição de `recurring`/`series_id` (AD-011) | n |
 | Exportação e importação | Exportação inclui o estado pago por série e mês; importação o restaura; arquivo sem o estado importa tudo como não pago | Backup completo sem quebrar arquivos antigos | n |
@@ -138,6 +139,7 @@ Hoje toda ocorrência de um gasto ou ganho recorrente conta no mês e aparece na
 4. WHEN o usuário importa um arquivo com estados THEN the system SHALL restaurá-los por série e mês.
 5. WHEN o usuário importa um arquivo sem estados THEN the system SHALL importar todas as ocorrências recorrentes como não pagas.
 6. WHEN o usuário exclui a conta THEN the system SHALL apagar todos os seus estados.
+7. WHEN o usuário edita o primeiro mês de uma série e move o mês inicial para frente THEN the system SHALL apagar os estados dos meses anteriores ao novo mês inicial e manter os demais.
 
 **Independent Test**: Excluir a partir de março numa série com fevereiro pago: o estado de fevereiro permanece, os de março em diante somem.
 
@@ -164,7 +166,7 @@ Hoje toda ocorrência de um gasto ou ganho recorrente conta no mês e aparece na
 | PAGO-05 | P1: Não pagas fora dos totais (AC 1-3, 5) | Design | Pending |
 | PAGO-06 | P1: Não pagas fora dos totais (AC 4) | Design | Pending |
 | PAGO-07 | P1: Migração preserva o histórico | Execute | Implemented (T4) |
-| PAGO-08 | P2: Ciclo de vida do estado (AC 1-2, 6) | Execute | Implemented (T3, T8, T9) |
+| PAGO-08 | P2: Ciclo de vida do estado (AC 1-2, 6-7) | Execute | Implemented (T3, T8, T9) |
 | PAGO-09 | P2: Ciclo de vida do estado (AC 3-5) | Design | Pending |
 | PAGO-10 | Edge Cases (falha e concorrência) | Design | Pending |
 
