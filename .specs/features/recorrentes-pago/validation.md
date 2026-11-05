@@ -1,193 +1,187 @@
 # Recorrentes: pago e não pago Validation
 
-**Date**: 2026-11-04
-**Spec**: `.specs/features/recorrentes-pago/spec.md`
-**Diff range**: `c605e5a..HEAD` (`37e4b82`), 19 commits de feature (T1-T19) mais o commit de docs da spec/tasks
+**Date**: 2026-11-05
+**Spec**: `.specs/features/recorrentes-pago/spec.md` (versão de `7fd73de`: AC 5 e AC 8 do botão, AC 3 da opacidade e a história "Alternar o estado ao editar a ocorrência")
+**Diff range**: `1fcdb58..HEAD` (`a24ca2c`), commits de T20 a T24 (`155a7d4..a24ca2c`) mais o commit de docs `7fd73de`
 **Verifier**: sub-agente independente (author ≠ verifier), re-derivado da spec
 
-**Verdict**: PASS
-**Result**: PASS
+**Verdict**: FAIL
+**Result**: FAIL
 
-Todos os ACs têm evidência `file:line`, com o valor da asserção batendo com o resultado da spec. O sensor matou 14/14 mutações. Gate verde: unit 1845/1845 e integration 900/900. Ficam ressalvas não bloqueantes: dois spec-precision gaps parciais, um SPEC_DEVIATION aceito e três riscos residuais (seção final).
+O gate passou: typecheck, lint sem piora, build, unit 1851/1851 e integration 906/906. Todos os ACs novos têm evidência `file:line`. O FAIL vem de um defeito que achei com um teste de sonda, rodado só no worktree descartável. Na edição do primeiro mês de uma série "até", quem adianta o início e salva com o switch ligado deixa um estado pago órfão no mês antigo. O switch já abre ligado quando o mês estava pago. Isso contradiz a premissa "Início da série movido para frente", a P2 AC 7 (PAGO-08) e a P1 "Alternar" AC 2: o estado foi gravado num mês que não tem mais ocorrência. O sensor matou 6 de 9 mutações. Uma das sobreviventes é equivalente; as outras duas apontam esse defeito e uma lacuna de teste.
 
 ---
 
-## Task Completion
+## Histórico: ciclo 1 (T1-T19)
+
+- Diff `c605e5a..1fcdb58`, em 2026-11-04. Verdict **PASS**
+- 34/34 critérios com evidência; 14/14 mutações mortas (M1-M14); unit 1845/1845; integration 900/900
+- Ressalvas não bloqueantes, que continuam valendo:
+  - Concorrência "última recebida vence" coberta só com escritas iguais (`transactions.sealed.int.test.ts:923`)
+  - PAGO-07 AC 3 provado por composição
+  - SPEC_DEVIATION `seriesId` livre no arquivo (`import-file.ts:83-86`)
+  - Par `(seriesId, month)` repetido só é rejeitado no servidor
+  - Receita de referência herda PAGO-05
+  - Mensagem única `PAID_FAILED`
+- Os ACs do ciclo 1 que este ciclo não tocou mantêm a evidência daquele relatório. A seção "Regressão" abaixo cobre os que T20-T24 alteraram.
+
+---
+
+## Ciclo 2 (T20-T24)
+
+### Task Completion
 
 | Task | Status | Notes |
 | ---- | ------ | ----- |
-| T1-T19 | ✅ Done | Todos marcados `[x]` em `tasks.md`; um commit por task (`git log c605e5a..HEAD`) |
+| T20 | ✅ Done | `paidActionLabel` em `src/lib/domain/paid.ts:30` |
+| T21 | ✅ Done | `paid` opcional em `src/lib/validation/transaction-sealed.ts:71`; `UpdateTransactionDto.paid` em `src/lib/vault/types.ts:44` |
+| T22 | ⚠️ Done com defeito | `writePaidAfterEdit` (`src/lib/db/repos/transactions.ts:358`) é chamado depois da poda (`:397-398`) e grava um mês sem ocorrência quando o início é adiantado (Gap 1) |
+| T23 | ✅ Done | Switch em `src/components/transaction-form.tsx:472-484` |
+| T24 | ✅ Done | Botão e opacidade em `src/components/transaction-list.tsx:183-274` |
 
----
+### Spec-Anchored Acceptance Criteria (novos e alterados)
 
-## Spec-Anchored Acceptance Criteria
+Caminhos relativos a `src/`. "Inspeção" = evidência de UI por código (AD-005: sem e2e e sem teste de componente).
 
-Convenção: os caminhos de teste são relativos a `src/`. "Inspeção" = evidência de UI por código, já que não há e2e nem teste de componente (AD-005).
-
-### P1: Marcar uma ocorrência recorrente como paga (PAGO-01, PAGO-02)
-
-| AC | Resultado definido pela spec | `file:line` + asserção | Result |
-| -- | -------------------- | ----------------------- | ------ |
-| 1 Marcar só aquele mês | Linha só de M; os outros meses ficam como estavam | `lib/db/repos/transactions.sealed.int.test.ts:869` - `expect(await paidRows()).toEqual([...])` (M inserido, 10 e 12 intactos); `actions/transactions-paid.int.test.ts:60` - `toEqual({ ok: true })`, `paidRows()` = `[{ userId, seriesId: id, month: "2026-11-01" }]`, `revalidatePath("/")` | ✅ PASS |
-| 2 Desmarcar só aquele mês | Só M some | `transactions.sealed.int.test.ts:882` - `months).toEqual(["2026-10-01","2026-12-01"])`; `transactions-paid.int.test.ts:69` - restam só `2026-12-01` | ✅ PASS |
-| 3 Nova, futura ou do mês atual sem marcação = não paga | `paid` false/ausente = não pago | `transactions.sealed.int.test.ts:803` - `byId.get(unpaid.id)).toBe(false)`, avulso `toBeNull()`; `lib/domain/paid.test.ts:38` - `countsInTotals({recurring:true, paid:false/null/undefined})).toBe(false)`; `lib/domain/paid.test.ts:126` - rótulo "Não pago" com `null`/ausente | ✅ PASS |
-| 4 Controle só em recorrentes | Nunca em avulsos | Inspeção `components/transaction-list.tsx:259` - `{t.recurring && onTogglePaid && (<button ...>)}`; `lib/domain/paid.test.ts:96` (override ignorado em avulso) | ✅ PASS (inspeção) |
-| 5 Rótulos | "Pago"/"Não pago" e "Recebido"/"Não recebido" | `lib/domain/paid.test.ts:116-124` - `toBe("Pago")`, `toBe("Não pago")`, `toBe("Recebido")`, `toBe("Não recebido")`; ligação: `transaction-list.tsx:268` `paidLabel(t.kind, counts)`, `aria-pressed={counts}` `:262` | ✅ PASS |
-| 6 Rejeita outro dono ou mês fora da série, sem alterar estado | `false`/"Transação não encontrada" e nenhuma escrita | `transactions.sealed.int.test.ts:936,945,955,960,968` - `setPaid(...)).toBe(false)` e `paidRows()` igual ao anterior; `transactions-paid.int.test.ts:94,103` - `toEqual({ ok:false, error:"Transação não encontrada" })`, `paidRows()).toEqual([])` | ✅ PASS |
-| 7 Editar valor, categoria, descrição ou dia mantém os estados | Todos os meses intactos | `transactions.sealed.int.test.ts:1012` - `paidMonthsOf(tx.id)).toEqual(["2026-10","2026-11","2026-12","2027-01"])` e `orphans()).toBe(0)`; `:1030` (in place); `:1156` (primeiro mês sem mover início) | ✅ PASS |
-
-### P1: Não pagas por último e com opacidade reduzida (PAGO-03, PAGO-04)
+#### PAGO-11: P1 "Marcar uma ocorrência recorrente como paga", AC 5 e AC 8
 
 | AC | Resultado definido pela spec | `file:line` + asserção | Result |
-| -- | -------------------- | ----------------------- | ------ |
-| 1 Não pagas depois de avulsos e pagas | Partição contam/não pagas | `lib/domain/paid.test.ts:55` - `orderByPaid(rows).map(id)).toEqual(["a1","p1","a2","n1","n2"])`; ligação `components/overview-client.tsx:164` `shown = orderByPaid(...)` | ✅ PASS |
-| 2 Ordem atual dentro de cada grupo | Partição estável | Mesmo `paid.test.ts:55` (a1,p1,a2 e n1,n2 na ordem de entrada); `:79` não muta a entrada | ✅ PASS |
-| 3 Opacidade 0,5 nas não pagas, 1 nas demais | `opacity-50` só quando não conta | Inspeção `transaction-list.tsx:183-185` - `data-paid=...` e `counts ? "" : "opacity-50"` (`counts = countsInTotals(t)`, `:163`) | ✅ PASS (inspeção) |
-| 4 Marcar pago sobe e volta a opacidade 1, sem recarregar | Override otimista | Inspeção `overview-client.tsx:124` `effective = applyPaid(...)`, `:136` `setOverride(next)` antes de `await` (`:138`), `:164` reordena; `paid.test.ts:87` - override `[["n1",true],["p1",false]]` | ✅ PASS (inspeção + unit) |
-| 5 Desmarcar desce e aplica 0,5 | Idem | Mesmas linhas; `paid.test.ts:87` (`p1` → `false`) | ✅ PASS (inspeção + unit) |
-| 6 Dias por grupo e saldo só do que conta | Cabeçalho duplica entre grupos; sem saldo no grupo não pago | `paid.test.ts:156` - cabeçalhos `toEqual(["a1","n1"])`; `paid.test.ts:133` - `get("2026-11-10")).toBe(-1_000)`, `has("2026-11-09")).toBe(false)`; inspeção `transaction-list.tsx:89` `countedNetByDay`, `:162` `startsDay`, `:164` `net = counts ? ... : null`, `:173` `{net !== null && ...}` | ✅ PASS |
-| 7 Busca/filtro com a mesma ordem e opacidade | Ordena depois do filtro | Inspeção `overview-client.tsx:164` - `orderByPaid(searchTransactions(filterTransactions(effective, filter), search))`; a opacidade é por linha (`transaction-list.tsx:185`) | ✅ PASS (inspeção) |
+| -- | ---------------------------- | ---------------------- | ------ |
+| 5 Paga: botão "Pago"/"Recebido" com check preenchido; o toque desmarca | Rótulo exato, check preenchido, toque → não paga | `lib/domain/paid.test.ts:170-171`: `paidActionLabel("expense", true)).toBe("Pago")` e `("income", true)).toBe("Recebido")`. Ligação por inspeção em `components/transaction-list.tsx:271-272`: `<CheckIcon ... strokeWidth={counts ? 3 : 2} />` e `{paidActionLabel(t.kind, counts)}`. O toque chama `onTogglePaid(t)` (`:264`), que manda `next = t.paid !== true` (`overview-client.tsx:127`) | ✅ PASS (unit + inspeção). "Preenchido" é um traço mais grosso (`strokeWidth 3`), não um ícone sólido: ⚠️ ver spec-precision 3 |
+| 8 Não paga: botão com check e "Marcar como pago"/"Marcar como recebido"; o toque marca | Rótulo exato, ícone de check, toque → paga | `paid.test.ts:165-166`: `toBe("Marcar como pago")`, `toBe("Marcar como recebido")`. `paid.test.ts:175-176`: `null` e `undefined` dão o rótulo de não pago. Inspeção `transaction-list.tsx:271` (`CheckIcon` com `opacity-60` quando não conta) | ✅ PASS |
 
-### P1: Não pagas fora dos totais (PAGO-05, PAGO-06)
+#### PAGO-12: P1 "Alternar o estado ao editar a ocorrência"
 
 | AC | Resultado definido pela spec | `file:line` + asserção | Result |
-| -- | -------------------- | ----------------------- | ------ |
-| 1 Fora do total de ganhos | Ganho não recebido não soma | `lib/vault/month-totals.test.ts:113` - `incomeCents).toBe(500000)` (não recebido) e `toBe(620000)` (recebido) | ✅ PASS |
-| 2 Fora de categoria e subcategoria | R$ 100 não pago → 0; pago → 100 (Independent Test) | `month-totals.test.ts:103` - `spentByCategory.get("A") ?? 0).toBe(0)`, subcategoria `0`; pago `toBe(10000)` nos dois | ✅ PASS |
-| 3 Restante, excedente, metas e derivados sobre totais sem não pagas | Todos derivam de `computeMonthTotals(effective)` | Inspeção `overview-client.tsx:148-149` (`totals` → `buildMonthlySummary`, que alimenta resumo, categorias e gráficos `:195-213`) e `:154` ritmo de gasto com `effective.filter(countsInTotals)`; `components/categories-client.tsx:46` (receita de referência) | ✅ PASS (inspeção + unit) |
-| 4 Totais atualizam sem recarregar | Totais sobre `effective` | Inspeção `overview-client.tsx:124,148` | ✅ PASS (inspeção) |
-| 5 Avulsos sempre contam | Avulso soma com qualquer `paid` | `month-totals.test.ts:128` - `incomeCents).toBe(3000)`, `get("A")).toBe(700)`; `paid.test.ts:32` | ✅ PASS |
+| -- | ---------------------------- | ---------------------- | ------ |
+| 1 Switch "Pago"/"Recebido" ao editar recorrente, refletindo o mês exibido | Rótulo por tipo; valor inicial = estado do mês | Inspeção `components/transaction-form.tsx:475`: `{values.kind === "income" ? "Recebido" : "Pago"}`. `:478`: `checked={values.paid === true}`. O valor inicial vem de `transaction-list.tsx:314`, `paid: editing.paid === true`. `editing` é a linha `t` do clique (`:196`, `:286`), tirada de `shown = orderByPaid(... effective ...)` (`overview-client.tsx:164`), que já tem o override otimista (`:124`). Um toque recente na linha, portanto, aparece no switch | ✅ PASS (inspeção). Risco R2 (snapshot) |
+| 2 Salvar grava só o mês exibido, na mesma operação | Uma linha `(série, mês)` e mais nada; atômico com a edição | `lib/db/repos/transactions.sealed.int.test.ts:1207`: `paidMonthsOf(tx.id)).toEqual(["2026-10"])`. `:1218`: na divisão, `toEqual(["2026-10","2026-12","2027-01"])` e `$count(transaction)).toBe(2)`. `:1228`: `paid:false` → `toEqual(["2026-10","2026-12"])`. Atomicidade: `writePaidAfterEdit` roda dentro do `db.transaction` de `updateFromSealed` (`lib/db/repos/transactions.ts:383,398`). Ligação: a ação repassa `...extra.data` (`actions/transactions-sealed.ts:119-122`) e o form envia `paid` (`transaction-form.tsx:262-263`) | ❌ GAP: no primeiro mês com início adiantado, o mês "exibido" deixa de ter ocorrência e o estado vira órfão (Gap 1) |
+| 3 Cancelar ou fechar sem salvar mantém o estado | Nada é gravado | Inspeção: o switch só muda o estado local (`transaction-form.tsx:479`, `set("paid", on)`). A única escrita é `updateTransactionSealed` dentro de `save` (`:263`). Cancelar chama `onCancel` → `setEditing(null)` (`transaction-list.tsx:321`; botão em `transaction-form.tsx:620`) | ✅ PASS (inspeção) |
+| 4 Servidor rejeita → estado anterior | Nenhuma escrita em `recurring_paid` | `transactions.sealed.int.test.ts:1258-1261`: mês sem ocorrência e id de outro usuário → `toBe(false)` e `paidMonthsOf).toEqual(["2026-10"])`. As rejeições da ação (`DATE_OUTSIDE_MONTH`, `END_BEFORE_START`, esquema) retornam antes do repo (`actions/transactions-sealed.ts:89-117`, inspeção) | ✅ PASS |
+| 5 Sem switch ao criar, em avulso ou com recorrência desligada | Switch ausente | Inspeção `transaction-form.tsx:472`: `{wasRecurring && recurrenceMode !== "none" && editedMonth && (...)}`, com `wasRecurring = !!transaction && recurrence !== "none"` (`:164`). Ao criar, `transaction` é indefinido (`new-transaction-button.tsx:74`). O envio tem o mesmo guarda (`:262`): `paid` só vai quando a recorrência está ligada. `transactionSchema.safeParse(input)` (`:232`) não recebe `paid` (`input` em `:217-229`) | ✅ PASS (inspeção) |
+| 6 Divisão de série com switch ligado → só o mês exibido pago | Demais meses intactos | `transactions.sealed.int.test.ts:1218`: `toEqual(["2026-10","2026-12","2027-01"])`, com 10 e 01 marcados antes | ✅ PASS |
 
-### P1: Migração preserva o histórico (PAGO-07)
+Edição que vira "Não recorrente" com `paid:true` não deixa estado: `transactions.sealed.int.test.ts:1250` → `toEqual(["2026-10"])`. Edição sem `paid` não altera o estado: `:1238`. Esquema: `lib/validation/transaction-sealed.test.ts:12` (ausente → `toBeUndefined()`), `:16-17` (`true`/`false` mantidos), `:21-22` (`"true"` e `null` → `success).toBe(false)`).
 
-| AC | Resultado definido pela spec | `file:line` + asserção | Result |
-| -- | -------------------- | ----------------------- | ------ |
-| 1 Meses anteriores ao corrente (America/Sao_Paulo) pagos | Uma linha por mês passado | `lib/db/schema.int.test.ts:621` - `toEqual([{month: monthAt(-3)}, {monthAt(-2)}, {monthAt(-1)}])`; `:635` (série encerrada); `:664` (segmentos); `:683` (idempotente, `n).toBe(3)`) | ✅ PASS |
-| 2 Mês corrente e futuros não pagos | Nenhuma linha >= mês corrente | `schema.int.test.ts:621` (sem `monthAt(0)`), `:644` (`[monthAt(-2), monthAt(-1)]` com fim futuro), `:653` (`toEqual([])`) | ✅ PASS |
-| 3 Totais de meses passados iguais aos de antes | Ocorrências passadas contam como antes | Composição: backfill marca todo mês passado (`schema.int.test.ts:621-690`) + recorrente pago soma como antes (`month-totals.test.ts:316-326` fixture `paid: true` com os mesmos valores esperados pré-feature, e `:103`) | ⚠️ PASS por composição (sem teste único antes/depois) |
-
-### P2: Ciclo de vida do estado (PAGO-08, PAGO-09)
+#### PAGO-03: P1 "Não pagas por último", AC 3 (alterado)
 
 | AC | Resultado definido pela spec | `file:line` + asserção | Result |
-| -- | -------------------- | ----------------------- | ------ |
-| 1 Excluir apaga os meses removidos e mantém os anteriores | Fev fica, mar em diante some (Independent Test) | `lib/db/repos/transactions.int.test.ts:182` - `paidRows()).toEqual([[tx,"2027-01"],[tx,"2027-02"],[other,...]])`; `:202` (segmento posterior); `:214` (série inteira → `[]`); `:224,239` | ✅ PASS |
-| 2 "Não recorrente" apaga os removidos e o avulso conta | Estados >= M somem; linha vira avulsa | `transactions.sealed.int.test.ts:1041` - `paidMonthsOf).toEqual(["2026-10","2026-11"])`; `:1053` (`[]`); `:425` (linha de dez com `recurring: false`) + `paid.test.ts:32` (avulso conta) | ✅ PASS |
-| 3 Exportar inclui o estado por série e mês | `paidMonths` AAAA-MM do usuário | `lib/db/repos/export.int.test.ts:147` - `toEqual([{seriesId: first, month:"2026-03"}, ...])`, sem linha do outro usuário; `:167` (`[]`); `lib/vault/export.test.ts:138` (arquivo contém `paidMonths`) | ✅ PASS |
-| 4 Importar restaura por série e mês | Mesmos meses sob o novo id da série | `lib/vault/import-file.test.ts:197`; `lib/vault/import-payload.test.ts:128` - `seriesId: t2.id` (id novo); `lib/db/repos/import.int.test.ts:135` - `month:"2026-01-01"`, `u: userId`; `:167` ida e volta `toEqual(payload.paidMonths)` | ✅ PASS |
-| 5 Arquivo sem estados → todas não pagas | `paidMonths: []` | `import-file.test.ts:205` - `toEqual([])`; `import-payload.test.ts:137`; `import.int.test.ts:150` - `recurringPaid).toEqual([])` | ✅ PASS |
-| 6 Excluir a conta apaga os estados | Cascade por `user_id` | `schema.int.test.ts:565` - `rows.map(userId)).toEqual([otherId])` | ✅ PASS |
-| 7 Mover o início para frente apaga os anteriores | Jan/fev somem, mar em diante fica | `transactions.sealed.int.test.ts:1111` - `paidMonthsOf).toEqual(["2026-03","2026-04","2026-12"])`, `orphans()).toBe(0)`; `:1123,1134,1145` (não move → não apaga) | ✅ PASS |
+| -- | ---------------------------- | ---------------------- | ------ |
+| 3 Opacidade 0,5 só no conteúdo (ícone, descrição, categoria, valor); botão com opacidade 1; demais linhas 1 | `opacity-50` no ícone, no bloco de texto e no valor; nada no `<li>`, no botão nem no menu | Inspeção `transaction-list.tsx`: o `<li>` (`:184`) não tem mais opacidade. Ícone `:189`: `${counts ? "" : "opacity-50"}`. Bloco de texto com descrição e categoria `:198-200`. Valor `:255-257`. O botão de marcar (`:262-274`) e `TransactionRowMenu` (`:275`) ficam sem `opacity-50`. `counts = countsInTotals(t)` (`:162`), e linha que conta recebe `""` | ✅ PASS (inspeção) |
 
-### Edge Cases
+#### Regressão dos ACs antigos tocados
 
-| Edge case | Resultado definido pela spec | `file:line` + asserção | Result |
-| --------- | -------------------- | ----------------------- | ------ |
-| Mês sem recorrentes | Lista como hoje | `paid.test.ts:58` - `toEqual(["a1","a2","a3"])`; avulso conta → sem `opacity-50` (`transaction-list.tsx:185`) e sem `data-paid` (`:183`) | ✅ PASS |
-| Todas pagas | Ordem atual, nada esmaecido | `paid.test.ts:63` - `toEqual(["p1","a1","p2"])` | ✅ PASS |
-| Todas não pagas | Todas com 0,5 e totais zerados | `paid.test.ts:68` (nenhuma conta); `month-totals.test.ts:139` - `incomeCents).toBe(0)`, `size).toBe(0)` | ✅ PASS |
-| Duas marcações simultâneas | Um estado final, o da última recebida, sem duplicata | `transactions.sealed.int.test.ts:923` - `Promise.all([setPaid(true), setPaid(true)])` → `paidRows()` com uma linha. "Última recebida vence" com valores opostos não tem teste; garantido por serialização (`lockSeries` com `FOR UPDATE`, `lib/db/repos/transactions.ts:143`, dentro de `db.transaction` `:199`) | ⚠️ Spec-precision gap parcial |
-| Falha no servidor | Reverte a linha e mostra "Não foi possível atualizar o estado. Tente novamente." | `transactions-paid.int.test.ts:121` - `toEqual({ ok:false, error:"Não foi possível atualizar o estado. Tente novamente." })`, `paidRows()).toEqual([])`; constante `lib/action-result.ts:14`; inspeção `overview-client.tsx:139-142` (`setOverride(null)` + `setPaidError(PAID_FAILED)`) e `transaction-list.tsx:153-155` (`role="alert"`) | ✅ PASS |
+| AC antigo | Situação | Evidência |
+| --------- | -------- | --------- |
+| P1 Marcar AC 5 (antigo: "Pago"/"Não pago" no controle) | Substituído pelos novos AC 5/AC 8. `paidLabel` continua testado (`paid.test.ts:116-126`) mas saiu da lista; não é mais usado na UI de linha | `transaction-list.tsx:25` importa `paidActionLabel`, não `paidLabel` |
+| P1 Marcar AC 4 (controle só em recorrentes) | Mantido | `transaction-list.tsx:261`: `{t.recurring && onTogglePaid && (` |
+| Ordem e totais (PAGO-03 AC 1-2, PAGO-05) | Inalterados no diff (`overview-client.tsx` fora do diff). Os testes de `orderByPaid` e `computeMonthTotals` seguem verdes | `paid.test.ts:55`; `month-totals.test.ts:103,113` (unit 1851/1851) |
+| P2 AC 7 (início adiantado apaga os anteriores) | ❌ Regride pelo novo caminho do switch | Gap 1 |
+| PAGO-02 AC 7 (editar não muda os estados) | Mantido para edição sem `paid` (`transactions.sealed.int.test.ts:1238`). Com o form atual, toda edição de recorrente envia `paid` igual ao estado inicial. Sem tocar no switch, regrava o mesmo valor: idempotente, salvo no caso do Gap 1 | Inspeção `transaction-form.tsx:262` |
 
-**Status**: ✅ Todos os ACs cobertos; ⚠️ 2 spec-precision gaps parciais (não bloqueantes)
+**Status**: ❌ 1 gap (PAGO-12 AC 2 / PAGO-08 AC 7), ⚠️ 4 spec-precision gaps.
 
-Payload/conjunction: as asserções de escrita conferem o conteúdo da tabela (`userId`, `seriesId`, `month`), não só o retorno; as de rejeição conferem a ausência de escrita **e** o retorno (`transactions-paid.int.test.ts:94-108`, `transactions.sealed.int.test.ts:936-974`).
+Payload/conjunction: as asserções de T22 conferem o conteúdo de `recurring_paid` por série e mês, além do retorno, e na divisão conferem também a contagem de linhas de `transaction` (`:1217`). O esquema confere o valor de `paid`, não só o `success`.
 
----
+### Lentes L-076..L-078 (candidatas do ciclo anterior)
 
-## Discrimination Sensor
+- **L-076, escritas opostas concorrentes.** Switch salvo e toque na linha concorrentes se serializam pelo `lockSeries` (`transactions.ts:384`) e pelo `setPaid`, que usa o mesmo lock. Não há teste de escritas opostas, e a ressalva do ciclo 1 continua. Há um caso novo: o form sempre envia `paid` (`transaction-form.tsx:262`), mesmo sem o usuário tocar no switch. Uma edição salva, portanto, sobrescreve uma marcação feita em outro aparelho entre abrir e salvar o form ("última vence", coerente com a spec, mas invisível ao usuário). Risco R3.
+- **L-077, migração com comparação antes e depois.** Não se aplica: o ciclo não tem migração.
+- **L-078, regras do servidor vs parser do arquivo.** O servidor não valida que o mês de `paidMonths` tem ocorrência (`validation/import-sealed.ts:82-85` confere só a série). Um estado órfão do Gap 1, então, é exportado e reimportado sem erro, e o órfão se propaga pelo backup.
 
-Executado num `git worktree` descartável em `/tmp/claude-1000/.../scratchpad/wt` (node_modules por symlink), banco próprio `orcamento_pago_verifier_test` (criado e depois apagado). Baseline de `git status --porcelain` da árvore real: vazio. Depois da limpeza (`git worktree remove --force` + `git worktree prune`) continuou vazio.
+### Gate Check
 
-Observação: a primeira rodada sem mutação no worktree (banco recém-criado) teve 3 falhas transitórias. A segunda rodada sem mutação passou 191/191, e M4 foi repetida com o banco já aquecido (morta de novo). As falhas de cada mutante são os testes da regra mutada, não ruído.
+Node 20 (`~/.nvm/versions/node/v20.20.2`). Integração só no banco privado `orcamento_pago_test` (container `orcamento-pg`, porta 5433). Nenhum e2e rodado (AD-005).
 
-| # | File:line | Descrição | Testes rodados | Killed? |
-| - | --------- | ----------- | -------------- | ------- |
-| M1 | `src/lib/domain/paid.ts:11` | `paid === true` → `paid !== false` (não pago ausente/null passa a contar) | paid, month-totals | ✅ Killed (3) |
-| M2 | `src/lib/domain/paid.ts:16` | `orderByPaid` invertida (não pagas primeiro) | paid | ✅ Killed (3) |
-| M3 | `src/lib/vault/month-totals.ts:24` | `computeMonthTotals` sem o filtro `countsInTotals` | month-totals | ✅ Killed (4) |
-| M4 | `drizzle/0018_recurring_paid.sql:17-20` | Backfill incluindo o mês corrente (sem `- interval '1 month'`) | schema.int | ✅ Killed (5) |
-| M5 | `src/lib/db/repos/transactions.ts:200` | `setPaid` sem checar o mês da série (consulta só por dono/id) | transactions.sealed.int, transactions-paid.int | ✅ Killed (2) |
-| M6 | `src/lib/db/repos/transactions.ts:173` | Poda de `deleteFrom` `gte` → `gt` | transactions.int | ✅ Killed (3) |
-| M7 | `src/lib/db/repos/transactions.ts:418` | `paidSeriesIn` sem filtrar o mês | transactions.sealed.int | ✅ Killed (2) |
-| M8 | `src/lib/vault/import-payload.ts:105` | Import sem remapear `seriesId` | import-payload | ✅ Killed (1) |
-| M9 | `src/lib/db/repos/transactions.ts:340` | Poda do fim `gt` → `gte` | transactions.sealed.int | ✅ Killed (3) |
-| M10 | `src/lib/domain/paid.ts:38` | `startsDay` ignora a troca de grupo | paid | ✅ Killed (1) |
-| M11 | `src/lib/db/repos/transactions.ts:343` | Poda do início movido desligada | transactions.sealed.int | ✅ Killed (1) |
-| M12 | `src/lib/db/repos/transactions.ts:378` | `updateFromSealed` sem `prunePaidAfterEdit` | transactions.sealed.int | ✅ Killed (5) |
-| M13 | `src/lib/db/repos/import.ts:59` | `importSealed` não grava `paidMonths` | import.int | ✅ Killed (4) |
-| M14 | `src/lib/validation/import-sealed.ts:85` | Sem rejeição de par `(seriesId, month)` repetido | import-sealed | ✅ Killed (1) |
+- `npm run typecheck`: exit 0
+- `npm run lint`: 97 problemas (1 erro, 96 avisos), igual à baseline. O único erro é prévio (`src/app/layout.tsx:70`, `@next/next/no-sync-scripts`). `npx eslint` nos 9 `.ts/.tsx` do diff: exit 0
+- `npm run build`: exit 0
+- `npm run test:unit`: **1851 passed / 0 failed**, 108 arquivos (+6 desde o ciclo 1: 3 em `paid.test.ts` e 3 no novo `transaction-sealed.test.ts`)
+- `npm run test:int`: **906 passed / 0 failed**, exit 0, 151 s (+6 desde o ciclo 1, em `transactions.sealed.int.test.ts:1181-1263`)
+- Flaky: nenhum nesta rodada. Skipped: nenhum. Nenhum teste removido nem enfraquecido
 
-**Sensor depth**: expandido (totais e migração são caminhos críticos de integridade, ≥5 mutações)
-**Result**: 14/14 killed - PASS ✅
+### Discrimination Sensor
 
----
+Rodei o sensor num `git worktree` descartável no scratchpad (node_modules por symlink), com o banco próprio `orcamento_pago_verifier_test`, criado e apagado ao final. A árvore real começou com `git status --porcelain` vazio e continuou vazia depois de `git worktree remove --force` + `git worktree prune`. Base sem mutação: `transactions.sealed.int.test.ts` 73/73.
 
-## Code Quality
+| # | File:line | Descrição | Testes | Killed? |
+| - | --------- | --------- | ------ | ------- |
+| M15 | `src/lib/domain/paid.ts:31` | `paidActionLabel` invertido (`paid === true` → `!== true`) | paid.test | ✅ Killed (3) |
+| M16 | `src/lib/db/repos/transactions.ts:368` | `paid:false` apaga todos os meses da série (sem filtro de mês) | sealed.int | ✅ Killed (1: `:1228`) |
+| M17 | `src/lib/db/repos/transactions.ts:359` | `writePaidAfterEdit` ignora `paid:false` | sealed.int | ✅ Killed (1: `:1228`) |
+| M18 | `src/lib/db/repos/transactions.ts:361` | Remover o guarda `recurringDay === null` (fallback para o id da linha) | sealed.int | ⚪ Survived, **equivalente**: `planEdit` põe `seriesId: null` em toda edição não recorrente (`domain/recurrence.ts:160`), então `!edited.seriesId` já cobre |
+| M18b | `src/lib/db/repos/transactions.ts:361` | Gravar mesmo quando a edição vira "Não recorrente" (`seriesId ?? truncate.id ?? updateInPlace.id`) | sealed.int | ✅ Killed (1: `:1250`) |
+| M19 | `src/lib/db/repos/transactions.ts:362` | Usar o id do segmento editado no lugar do `seriesId` (`plan.updateInPlace?.id ?? seriesId`) | sealed.int | ❌ **Survived**. Os testes só editam no lugar o primeiro segmento, cujo id é o `seriesId`. Uma sonda (edição no lugar de um segundo segmento com `paid:true`) passa no código real e mata o mutante |
+| M20 | `src/lib/validation/transaction-sealed.ts:71` | Esquema aceita `paid` string | transaction-sealed.test | ✅ Killed (1) |
+| M21 | `src/lib/db/repos/transactions.ts:397-398` | `writePaidAfterEdit` antes de `prunePaidAfterEdit` | sealed.int | ❌ **Survived**. Nenhum teste combina `paid` com poda. Com a ordem trocada, a sonda do Gap 1 **passa**: a ordem atual é que produz o órfão |
+| M22 | `src/lib/db/repos/transactions.ts:398` | Chamada de `writePaidAfterEdit` removida | sealed.int | ✅ Killed (3) |
+
+**Sensor depth**: expandido (integridade de dados, ≥5 mutações)
+**Result**: 6/9 mortas (M15, M16, M17, M18b, M20, M22), 1 equivalente (M18), 2 sobreviventes reais (M19, M21) - FAIL ❌
+
+Sonda (só no worktree; arquivo descartado). Série "até" de 2026-01 a 2026-12 com janeiro pago. `updateFromSealed(userId, id, "2026-01", { ...tx, recurrenceStartMonth: "2026-03", paid: true })` → linha movida para `2026-03-10`, mas `recurring_paid` = `['2026-01']` (esperado `[]`). Esse é o payload que o form manda: o switch abre ligado porque janeiro estava pago.
+
+### Spec-precision gaps
+
+1. **Switch depois de um toque na linha antes do refresh.** A spec não diz o que o switch mostra se o usuário marca na linha e abre o form antes da revalidação, nem o que acontece se esse toque falhar com o form aberto. O código mostra o valor otimista: `editing` é um snapshot de `t` tirado de `effective`. Se o toque falhar depois de aberto, o snapshot fica velho e "Salvar" reenvia o valor otimista (R2).
+2. **Switch com o início adiantado no primeiro mês.** A spec não define se o estado vai para o mês antigo (que deixa de existir), para o novo mês inicial ou para nenhum. O código grava no mês antigo e deixa um órfão (Gap 1).
+3. **"Check preenchido".** O botão pago usa `CheckIcon` com `strokeWidth={3}` (`transaction-list.tsx:271`), um traço mais grosso, não um ícone sólido. A spec não diz o que é "preenchido".
+4. **`aria-pressed` removido por design** (T24: "o rótulo muda"). A spec não fala de acessibilidade. Um leitor de tela lê "Marcar como pago" e depois "Pago", mas o botão "Pago" não anuncia que o toque desmarca. Isso não está nos ACs e fica como observação de UAT.
+
+### Riscos residuais
+
+- **R1 (= Gap 1).** Estado órfão no início adiantado. Se o usuário depois recua o início de volta (permitido, `transactions.sealed.int.test.ts` "keeps every paid month when the start moves back"), janeiro reaparece **pago** sem que ninguém o tenha marcado. O órfão também segue no export e no import (L-078).
+- **R2.** Snapshot de `editing` (`transaction-list.tsx:196,286`): o switch não acompanha um rollback do toque otimista que aconteça com o diálogo aberto.
+- **R3.** O form envia `paid` em toda edição de recorrente, mesmo sem mudança (`transaction-form.tsx:262`). Uma marcação feita em outro aparelho entre abrir e salvar é sobrescrita. Uma alternativa é mandar `paid` só quando difere do valor inicial.
+- O design não pedia o rótulo do switch via `paidLabel` (T23 cita "Reuses `paidLabel`"); o form usa um ternário próprio (`transaction-form.tsx:475`). Os textos batem com a spec. Cosmetic.
+
+### Fix Plans
+
+#### Fix 1 (Major): estado órfão ao adiantar o início com o switch ligado
+
+- **Root cause**: `updateFromSealed` chama `prunePaidAfterEdit` antes de `writePaidAfterEdit` (`transactions.ts:397-398`). A poda apaga os meses anteriores ao novo início e a escrita reinsere o mês editado, que já não tem ocorrência.
+- **Fix task**: não gravar o estado quando o mês editado deixa de ter ocorrência. A forma mínima é trocar a ordem (gravar e depois podar; M21 mostra que isso resolve). A alternativa é pular quando `monthKey(edited.date) > month` no primeiro mês. Se o usuário quiser que o estado acompanhe o novo início, registrar isso na spec antes (spec-precision 2).
+- **Verify**: teste de integração em `transactions.sealed.int.test.ts` (bloco PAGO-12): série "até" com o primeiro mês pago, edição desse mês adiantando o início com `paid: true` → `paidMonthsOf).toEqual([...sem o mês antigo])` e `orphans()).toBe(0)`.
+- **Priority**: Major (PAGO-08 AC 7 / PAGO-12 AC 2)
+
+#### Fix 2 (Minor): teste de edição no lugar de segmento posterior com `paid`
+
+- **Root cause**: M19 sobrevive. Falta cenário em que o segmento editado no lugar não é o primeiro da série (id ≠ `seriesId`).
+- **Fix task**: dividir a série em 2026-12 e editar o segundo segmento em 2026-12 com `paid: true` → `paidMonthsOf(tx.id)).toEqual(["2026-12"])`.
+- **Priority**: Minor (o código está correto, segundo a sonda)
+
+### Code Quality
 
 | Principle | Status |
 | --------- | ------ |
-| Minimum code | ✅ (`paid.ts` com 39 linhas; poda concentrada em `prunePaidAfterEdit`, `transactions.ts:325-350`) |
-| Surgical changes | ✅ (32 arquivos, todos no escopo do design) |
+| Minimum code | ✅ (`writePaidAfterEdit` com 13 linhas; `paidActionLabel` com 3) |
+| Surgical changes | ✅ (9 arquivos de código, todos nomeados nas tasks) |
 | No scope creep | ✅ |
-| Matches patterns | ✅ (ação segue `transactions-sealed.ts`; tabela segue `push_dispatch`) |
-| Spec-anchored outcome check | ✅ (2 gaps parciais sinalizados) |
-| Per-layer Coverage Expectation | ✅ domínio 1:1 (`paid.test.ts`); repos e ação com sucesso, erro e escopo por usuário; UI sem teste (AD-005), coberta por inspeção |
-| Every test maps to a requirement | ✅ (títulos citam PAGO-xx; teste de lote `import.int.test.ts:177` mapeia o Done-when de T18 "em lotes") |
-| Documented guidelines | `AGENTS.md` (AD-005: e2e não exigido nem rodado) ✅ |
+| Matches patterns | ✅ (esquema e escrita seguem `setPaid` e `prunePaidAfterEdit`) |
+| Spec-anchored outcome check | ❌ (Gap 1) |
+| Per-layer Coverage Expectation | ⚠️ domínio 1:1 (`paid.test.ts:163-177`); repo sem o cenário combinado com poda (M21) nem o de segmento posterior (M19); UI por inspeção (AD-005) |
+| Every test maps to a requirement | ✅ (títulos citam PAGO-11/PAGO-12) |
+| Documented guidelines | `AGENTS.md` (AD-005) ✅ |
 
----
-
-## Gate Check
-
-Node 20 (`~/.nvm/versions/node/v20.20.2`). Integração só no banco privado `orcamento_pago_test` (container `orcamento-pg`, porta 5433).
-
-- `npm run typecheck`: exit 0
-- `npm run test:unit`: **1845 passed / 0 failed**, 107 arquivos
-- `npm run test:int` (`DATABASE_URL=.../orcamento_pago_test`): **900 passed / 0 failed**, 43 arquivos
-- `npm run lint`: 97 problemas (1 erro, 96 avisos), igual à baseline. O único erro é prévio e alheio (`src/app/layout.tsx:70`, `@next/next/no-sync-scripts`). `npx eslint` nos 28 `.ts/.tsx` do diff: exit 0, limpo
-- Flaky conhecidos re-rodados: `client.test.ts` 2/2 e `auth.int.test.ts` (2 arquivos) 64/64 passaram
-- Skipped: nenhum. E2e não rodado (AD-005)
-- `npm run build` não foi rodado nesta verificação. O typecheck cobre os tipos, e o build gate foi registrado pelas tasks T11, T12 e T18
-
----
-
-## Spec-precision gaps
-
-1. **Concorrência "a última recebida vence"** (Edge Case 4). O teste `transactions.sealed.int.test.ts:923` só cobre duas marcações iguais (sem duplicata). Marcar e desmarcar em paralelo não tem teste; o resultado é garantido por serialização (`FOR UPDATE` em `transactions.ts:143`). "Última recebida" não é observável de forma determinística.
-2. **PAGO-07 AC 3 "mesmos totais de antes"**: provado por composição (backfill + `countsInTotals` de pago), sem um teste que compare totais antes e depois da migração.
-
-## SPEC_DEVIATION e riscos residuais
-
-1. **SPEC_DEVIATION `seriesId` no arquivo** (`src/lib/vault/import-file.ts:83-86`): o arquivo aceita `seriesId` como id livre (1-64 caracteres), não uuid como dizia T15. É coerente com os outros ids do arquivo (os ids do arquivo são remapeados). O uuid é exigido no payload selado (`src/lib/validation/import-sealed.ts:70`, testado em `import-sealed.test.ts` "rejects a seriesId that is not a UUID"). Aceito.
-2. **Duplicata no arquivo de importação não é rejeitada na leitura** (`src/lib/vault/import-file.ts:94-95` confere só a série). Um par `(seriesId, month)` repetido passa em `parseImportFile`, chega remapeado ao servidor e lá é rejeitado (`import-sealed.ts:85`, mutante M14 morto). O usuário vê o erro genérico do servidor em vez de "arquivo inválido" já na leitura. Nada é gravado (validação antes do repo; rollback em `import.int.test.ts:355`). Severidade: Minor.
-3. **Receita de referência em categorias herda PAGO-05** (`src/components/categories-client.tsx:46`): `computeMonthTotals(opened.occurrences)` passou a ignorar ganho recorrente não recebido, então a receita de referência das metas cai até o salário ser marcado como recebido. É consequência direta e documentada da decisão (design, Risks). Fica registrada para a UAT, pois o usuário pode estranhar.
-4. **Mensagem única para qualquer `ok: false`** (`overview-client.tsx:139-142`): "Transação não encontrada" e erros de validação também aparecem como `PAID_FAILED`. Isso cumpre o Edge Case da spec; o design (Error Handling) previa "Transação não encontrada" para ocorrência de outro usuário. Cosmetic.
-
----
-
-## Requirement Traceability Update
+### Requirement Traceability Update
 
 | Requirement | Previous Status | New Status |
 | ----------- | --------------- | ---------- |
-| PAGO-01 | Implemented | ✅ Verified |
-| PAGO-02 | Implemented | ✅ Verified |
-| PAGO-03 | Implemented | ✅ Verified (UI por inspeção) |
-| PAGO-04 | Implemented | ✅ Verified (UI por inspeção) |
-| PAGO-05 | Implemented | ✅ Verified |
-| PAGO-06 | Implemented | ✅ Verified (inspeção) |
-| PAGO-07 | Implemented | ✅ Verified (AC 3 por composição) |
-| PAGO-08 | Implemented | ✅ Verified |
-| PAGO-09 | Implemented | ✅ Verified |
-| PAGO-10 | Implemented | ✅ Verified (concorrência "última vence" por inspeção) |
+| PAGO-03 | Verified (ciclo 1) | ✅ Verified (AC 3 alterado, por inspeção) |
+| PAGO-08 | Verified (ciclo 1) | ❌ Needs Fix (AC 7 regride pelo switch, Gap 1) |
+| PAGO-11 | Implemented | ✅ Verified (unit + inspeção) |
+| PAGO-12 | Implemented | ❌ Needs Fix (AC 2, Gap 1; M19/M21) |
 
 ---
 
 ## Summary
 
-**Overall**: ✅ Ready (com ressalvas não bloqueantes)
+**Overall**: ❌ Not Ready
 
-**Spec-anchored check**: 34/34 critérios (29 ACs + 5 edge cases) com evidência; 2 spec-precision gaps parciais
-**Sensor**: 14/14 mutações mortas
-**Gate**: typecheck ok; unit 1845 passed; integration 900 passed; lint sem piora (1 erro prévio alheio)
+**Spec-anchored check**: 10/11 critérios novos ou alterados com evidência que bate com a spec (PAGO-11 AC 5/8, PAGO-12 AC 1-6, PAGO-03 AC 3); 1 gap (PAGO-12 AC 2, com regressão de PAGO-08 AC 7); 4 spec-precision gaps
+**Sensor**: 9 mutações, 6 mortas, 1 equivalente, 2 sobreviventes (M19, M21)
+**Gate**: typecheck ok; lint sem piora; build ok; unit 1851 passed; integration 906 passed
 
-**Next steps**: UAT manual da lista (ordem, opacidade, toque no controle, reversão em erro), porque a UI não tem teste automatizado (AD-005). Opcional: rejeitar duplicata de `paidMonths` já em `import-file.ts`.
+**What works**: rótulos de ação, botão com check, opacidade só no conteúdo, switch condicionado e enviado só com a recorrência ligada, gravação atômica em edição simples e na divisão, "Não recorrente" ignora `paid`, rejeição sem escrita.
+
+**Next steps**: Fix 1 (ordem escrita→poda, com teste) e Fix 2 (teste de segmento posterior); depois, nova verificação. UAT manual do botão e do switch (AD-005).

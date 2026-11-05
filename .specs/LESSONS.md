@@ -480,6 +480,24 @@ Seen once or not yet corroborated. Tracked, not trusted.
 - evidence: src/lib/vault/import-file.ts:83 (import)
 - last seen: 2026-11-05T01:24:08Z
 
+### L-079 - When an edit both prunes derived rows and writes a new one, test the write combined with every prune rule, not each rule alone
+- signal: `ac_gap` · recurrence: 1 feature(s) · scope: `repo-layer` · harmful: 0
+- features: recorrentes-pago
+- evidence: validation.md Gap 1; src/lib/db/repos/transactions.ts:397-398 (repo-layer)
+- last seen: 2026-11-05T12:33:29Z
+
+### L-080 - Test series edits on a segment whose id differs from the series id, not only on the first segment
+- signal: `surviving_mutant` · recurrence: 1 feature(s) · scope: `repo-layer` · harmful: 0
+- features: recorrentes-pago
+- evidence: validation.md M19; src/lib/db/repos/transactions.ts:362 (repo-layer)
+- last seen: 2026-11-05T12:33:29Z
+
+### L-081 - When a form field mirrors state that another control can change, specify its value after a pending optimistic change and after edits that move the record
+- signal: `spec_precision_gap` · recurrence: 1 feature(s) · scope: `ui` · harmful: 0
+- features: recorrentes-pago
+- evidence: validation.md spec-precision 1-2; src/components/transaction-form.tsx:262 (ui)
+- last seen: 2026-11-05T12:33:29Z
+
 ## Quarantined (failed when applied - ignore)
 
 A confirmed lesson that recurred alongside failure. Kept for the maintainer to review.

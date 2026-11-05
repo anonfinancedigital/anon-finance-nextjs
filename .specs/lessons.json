@@ -3,7 +3,7 @@
   "promote_threshold": 2,
   "window_days": 45,
   "quarantine_threshold": 2,
-  "next_id": 79,
+  "next_id": 82,
   "lessons": [
     {
       "id": "L-001",
@@ -1412,6 +1412,60 @@
       ],
       "created": "2026-11-05T01:24:08Z",
       "last_seen": "2026-11-05T01:24:08Z"
+    },
+    {
+      "id": "L-079",
+      "key": "ac_gap::when an edit both prunes derived rows and writes a new one test the write combined with every prune rule not each rule alone",
+      "text": "When an edit both prunes derived rows and writes a new one, test the write combined with every prune rule, not each rule alone",
+      "signal": "ac_gap",
+      "scope": "repo-layer",
+      "status": "candidate",
+      "features": [
+        "recorrentes-pago"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "validation.md Gap 1; src/lib/db/repos/transactions.ts:397-398 (repo-layer)"
+      ],
+      "created": "2026-11-05T12:33:29Z",
+      "last_seen": "2026-11-05T12:33:29Z"
+    },
+    {
+      "id": "L-080",
+      "key": "surviving_mutant::test series edits on a segment whose id differs from the series id not only on the first segment",
+      "text": "Test series edits on a segment whose id differs from the series id, not only on the first segment",
+      "signal": "surviving_mutant",
+      "scope": "repo-layer",
+      "status": "candidate",
+      "features": [
+        "recorrentes-pago"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "validation.md M19; src/lib/db/repos/transactions.ts:362 (repo-layer)"
+      ],
+      "created": "2026-11-05T12:33:29Z",
+      "last_seen": "2026-11-05T12:33:29Z"
+    },
+    {
+      "id": "L-081",
+      "key": "spec_precision_gap::when a form field mirrors state that another control can change specify its value after a pending optimistic change and after edits that move the record",
+      "text": "When a form field mirrors state that another control can change, specify its value after a pending optimistic change and after edits that move the record",
+      "signal": "spec_precision_gap",
+      "scope": "ui",
+      "status": "candidate",
+      "features": [
+        "recorrentes-pago"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "validation.md spec-precision 1-2; src/components/transaction-form.tsx:262 (ui)"
+      ],
+      "created": "2026-11-05T12:33:29Z",
+      "last_seen": "2026-11-05T12:33:29Z"
     }
   ]
 }
