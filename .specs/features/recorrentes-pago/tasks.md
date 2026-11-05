@@ -464,9 +464,9 @@ T18 → T19
 
 **Done when**:
 
-- [ ] `OpenedExport.paidMonths` preenchido a partir do payload; payload sem o campo gera `[]`
-- [ ] Testes unitários em `src/lib/vault/export.test.ts`
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] `OpenedExport.paidMonths` preenchido a partir do payload; payload sem o campo gera `[]`
+- [x] Testes unitários em `src/lib/vault/export.test.ts`
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
 
 **Tests**: unit
 **Gate**: quick

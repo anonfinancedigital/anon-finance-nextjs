@@ -32,6 +32,8 @@ export type OpenedExport = {
   }[];
   goal: GoalValues | null;
   birthDate: string | null;
+  /** Paid months of recurring series, `month` as AAAA-MM; always filled by `openExport`. */
+  paidMonths?: { seriesId: string; month: string }[];
 };
 
 const goalValues = ({ monthlyIncomeCents, savedCents, retirementAge, annualRateBp, withdrawalRateBp }: Goal) => ({
@@ -98,7 +100,7 @@ export async function openExport(dek: CryptoKey, userId: string, payload: Export
     payload.goal ? openGoal(dek, userId, payload.goal, "").then(goalValues) : null,
     openBirthDate(dek, userId, payload.birthDateCt),
   ]);
-  return { transactions, categories, goal, birthDate };
+  return { transactions, categories, goal, birthDate, paidMonths: payload.paidMonths ?? [] };
 }
 
 /** Text of the export file: the opened sections as indented JSON. */

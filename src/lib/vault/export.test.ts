@@ -69,6 +69,10 @@ async function sealedExport(dek: CryptoKey): Promise<ExportPayload> {
     ],
     goal: await sealGoal(dek, USER, goal),
     birthDateCt: await sealBirthDate(dek, USER, "1990-05-17"),
+    paidMonths: [
+      { seriesId: "t2", month: "2026-08" },
+      { seriesId: "t2", month: "2026-09" },
+    ],
   };
 }
 
@@ -131,10 +135,14 @@ describe("openExport + buildExport", () => {
       ],
       goal: { monthlyIncomeCents: 1500000, savedCents: 25000000, retirementAge: 55, annualRateBp: 800, withdrawalRateBp: 400 },
       birthDate: "1990-05-17",
+      paidMonths: [
+        { seriesId: "t2", month: "2026-08" },
+        { seriesId: "t2", month: "2026-09" },
+      ],
     });
   });
 
-  it("usuário sem dados gera listas vazias e a data de nascimento", async () => {
+  it("usuário sem dados, e payload sem paidMonths, geram listas vazias e a data de nascimento", async () => {
     const dek = await newKey();
     const payload: ExportPayload = {
       transactions: [],
@@ -147,6 +155,7 @@ describe("openExport + buildExport", () => {
       categories: [],
       goal: null,
       birthDate: "1985-12-31",
+      paidMonths: [],
     });
   });
 });
