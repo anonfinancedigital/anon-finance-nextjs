@@ -351,6 +351,25 @@ async function prunePaidAfterEdit(
 }
 
 /**
+ * The paid switch of an edit (AD-018): sets or clears the edited month of the series the edit leaves
+ * recurring. `undefined` leaves the state as it was; an edit that makes the row a single one has no
+ * series left, so there is nothing to write.
+ */
+async function writePaidAfterEdit(tx: Tx, userId: string, month: string, plan: EditPlan, paid: boolean | undefined) {
+  if (paid === undefined) return;
+  const edited = plan.updateInPlace ?? plan.insert!;
+  if (edited.recurringDay === null || !edited.seriesId) return;
+  const row = { userId, seriesId: edited.seriesId, month: `${month}-01` };
+  if (paid) {
+    await tx.insert(recurringPaid).values(row).onConflictDoNothing();
+  } else {
+    await tx
+      .delete(recurringPaid)
+      .where(and(eq(recurringPaid.userId, userId), eq(recurringPaid.seriesId, row.seriesId), eq(recurringPaid.month, row.month)));
+  }
+}
+
+/**
  * Same as `updateFrom` for a sealed account: the edited row takes `dto.amountCt`/`descriptionCt`;
  * the new segment of a split series is inserted with the client's `newRowId` and `insertedCt`.
  * A `newRowId` that already exists fails and rolls the whole edit back.
@@ -376,6 +395,7 @@ async function updateFromSealed(
       },
     });
     await prunePaidAfterEdit(tx, userId, segments, id, month, plan);
+    await writePaidAfterEdit(tx, userId, month, plan, dto.paid);
     const now = sql`clock_timestamp()`;
     if (plan.deleteIds.length > 0) {
       await tx

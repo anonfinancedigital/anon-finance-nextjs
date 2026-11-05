@@ -688,13 +688,13 @@ T19 → T20 → T21 → T22 → T23 → T24
 
 **Done when**:
 
-- [ ] `paid: true` em edição simples (segmento no lugar): mês editado fica pago
-- [ ] `paid: true` em edição que divide a série (novo segmento): só o mês editado fica pago, demais meses intactos
-- [ ] `paid: false` apaga o estado do mês editado; `paid` ausente não altera o estado
-- [ ] Edição que vira "Não recorrente" ignora `paid` e não deixa estado
-- [ ] Edição inválida (id alheio, mês sem ocorrência) rejeitada mantém o estado anterior
-- [ ] Testes de integração em `src/lib/db/repos/transactions.sealed.int.test.ts`
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
+- [x] `paid: true` em edição simples (segmento no lugar): mês editado fica pago
+- [x] `paid: true` em edição que divide a série (novo segmento): só o mês editado fica pago, demais meses intactos
+- [x] `paid: false` apaga o estado do mês editado; `paid` ausente não altera o estado
+- [x] Edição que vira "Não recorrente" ignora `paid` e não deixa estado
+- [x] Edição inválida (id alheio, mês sem ocorrência) rejeitada mantém o estado anterior
+- [x] Testes de integração em `src/lib/db/repos/transactions.sealed.int.test.ts`
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
 
 **Tests**: integration
 **Gate**: full
