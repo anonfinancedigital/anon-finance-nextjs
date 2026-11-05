@@ -10,6 +10,9 @@ export const UNAUTHORIZED = "UNAUTHORIZED";
 /** Shown when the database fails or something unexpected happens while saving. */
 export const SAVE_FAILED = "Não foi possível salvar. Tente novamente";
 
+/** Shown when marking an occurrence paid or not paid fails (PAGO-10). */
+export const PAID_FAILED = "Não foi possível atualizar o estado. Tente novamente.";
+
 /** Maps Zod issues to `fieldErrors` keyed by path ("0.percent", "amount"); set-level issues become `error`. */
 export function invalidInput(error: z.ZodError): ActionResult {
   const fieldErrors: Record<string, string> = {};

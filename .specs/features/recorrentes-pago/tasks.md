@@ -409,11 +409,11 @@ T18 → T19
 
 **Done when**:
 
-- [ ] Resumo, metas e restante usam `computeMonthTotals(effective)`; ritmo de gasto recebe só ocorrências que contam (evidência `file:line`)
-- [ ] Busca e filtro aplicados antes de `orderByPaid`
-- [ ] Marcar atualiza lista e totais antes da resposta do servidor; override descartado quando `transactions` muda
-- [ ] Em `ok: false` o override some e a mensagem "Não foi possível atualizar o estado. Tente novamente." aparece
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
+- [x] Resumo, metas e restante usam `computeMonthTotals(effective)`; ritmo de gasto recebe só ocorrências que contam (evidência `file:line`)
+- [x] Busca e filtro aplicados antes de `orderByPaid`
+- [x] Marcar atualiza lista e totais antes da resposta do servidor; override descartado quando `transactions` muda
+- [x] Em `ok: false` o override some e a mensagem "Não foi possível atualizar o estado. Tente novamente." aparece
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
 
 **Tests**: none
 **Gate**: build

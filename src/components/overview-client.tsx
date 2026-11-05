@@ -1,5 +1,7 @@
 "use client";
 
+import { useState, useTransition } from "react";
+import { setOccurrencePaid } from "@/actions/transactions-paid";
 import { BudgetCharts } from "@/components/budget-charts";
 import { CategoryOverview } from "@/components/category-overview";
 import { ContentCard } from "@/components/content-card";
@@ -12,10 +14,12 @@ import { TransactionFilter } from "@/components/transaction-filter";
 import { TransactionList } from "@/components/transaction-list";
 import { LOAD_ERROR_MESSAGE, useOpened } from "@/components/use-opened";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { PAID_FAILED } from "@/lib/action-result";
 import { buildMonthlySummary } from "@/lib/domain/budget";
 import { todayInSaoPaulo } from "@/lib/domain/day";
 import { currentMonth, monthHref, type YearMonth } from "@/lib/domain/month";
 import { deriveMonthState, deriveSetup, monthLongName, previousMonth } from "@/lib/domain/onboarding";
+import { applyPaid, countsInTotals, orderByPaid } from "@/lib/domain/paid";
 import { buildSpendingPaceViews } from "@/lib/domain/spending-pace";
 import {
   filterTransactions,
@@ -112,15 +116,42 @@ function OverviewBody({
   totalTransactions,
   hasGoal,
 }: BodyProps) {
+  // Optimistic paid overrides (PAGO-06). They belong to the `transactions` they were made over: a new
+  // opening of the month (after the action revalidates) replaces the list and drops them.
+  const [overrides, setOverrides] = useState({ base: transactions, map: new Map<string, boolean>() });
+  const [paidError, setPaidError] = useState<string | null>(null);
+  const [, startTransition] = useTransition();
+  const effective = applyPaid(transactions, overrides.base === transactions ? overrides.map : new Map());
+
+  function handleTogglePaid(t: (typeof transactions)[number]) {
+    const next = t.paid !== true;
+    const setOverride = (value: boolean | null) =>
+      setOverrides((prev) => {
+        const map = new Map(prev.base === transactions ? prev.map : []);
+        if (value === null) map.delete(t.id);
+        else map.set(t.id, value);
+        return { base: transactions, map };
+      });
+    setPaidError(null);
+    setOverride(next);
+    startTransition(async () => {
+      const res = await setOccurrencePaid(t.id, t.month, next);
+      if (!res.ok) {
+        setOverride(null);
+        setPaidError(PAID_FAILED);
+      }
+    });
+  }
+
   // Forms only accept active categories: one deleted after `month` still shows in the summary.
   const activeCategories = currentCategories.filter((c) => !c.deleted);
-  const totals = computeMonthTotals(transactions);
+  const totals = computeMonthTotals(effective);
   const summary = buildMonthlySummary({ categories, ...totals });
   const paces = buildSpendingPaceViews({
     month,
     today: todayInSaoPaulo(),
     categories: summary.rows,
-    occurrences: transactions,
+    occurrences: effective.filter(countsInTotals),
   });
   // The filter only narrows the list; summary and charts keep the whole month.
   const filter = parseTransactionFilter(
@@ -129,7 +160,8 @@ function OverviewBody({
   );
 
   const search = parseSearch(params.busca);
-  const shown = searchTransactions(filterTransactions(transactions, filter), search);
+  // Search and filter first, then the unpaid recurring occurrences go last (PAGO-03).
+  const shown = orderByPaid(searchTransactions(filterTransactions(effective, filter), search));
 
   const monthIsEmpty = transactions.length === 0;
   const setup = deriveSetup({
@@ -217,6 +249,8 @@ function OverviewBody({
             previousMonthName={monthLongName(previous)}
             defaultDate={today}
             emphasis="secondary"
+            onTogglePaid={handleTogglePaid}
+            paidError={paidError}
           />
         </ContentCard>
       </div>

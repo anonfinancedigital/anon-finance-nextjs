@@ -2,13 +2,12 @@
 
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
-import { type ActionResult, invalidInput } from "@/lib/action-result";
+import { type ActionResult, invalidInput, PAID_FAILED } from "@/lib/action-result";
 import { requireSessionForAction } from "@/lib/auth-guard";
 import { transactionsRepo } from "@/lib/db/repos/transactions";
 import { logActionError } from "@/lib/log";
 
 const TRANSACTION_NOT_FOUND = "Transação não encontrada";
-export const PAID_FAILED = "Não foi possível atualizar o estado. Tente novamente.";
 
 const paidSchema = z.object({
   id: z.uuid({ error: "Identificador inválido" }),
