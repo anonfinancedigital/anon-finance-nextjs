@@ -47,6 +47,8 @@ export type TransactionFormValues = {
   /** "" = Sem subcategoria. */
   subcategoryId: string;
   description: string;
+  /** Paid state of the edited month (AD-018); shown and sent only when editing a recurring occurrence. */
+  paid?: boolean;
   /** Omitted = "none". */
   recurrence?: Recurrence;
   /** AAAA-MM; read only when `recurrence` is "until". */
@@ -256,7 +258,9 @@ export function TransactionForm({
         // An edit may split a series: the new segment gets its own id, so its ciphertext has its own AAD.
         const newRowId = crypto.randomUUID();
         const insertedCt = await sealTransaction(dek, userId, newRowId, plain);
-        res = await updateTransactionSealed({ ...dto, newRowId, insertedCt }, month);
+        // The paid switch only exists for a recurring occurrence that stays recurring.
+        const paid = wasRecurring && recurrenceMode !== "none" ? { paid: values.paid === true } : {};
+        res = await updateTransactionSealed({ ...dto, newRowId, insertedCt, ...paid }, month);
       } else {
         res = await createTransactionSealed(dto);
       }
@@ -464,6 +468,19 @@ export function TransactionForm({
           <p className="text-xs text-muted-foreground">
             As alterações valem a partir de {formatMonthLabel(editedMonth)}, incluindo os meses seguintes.
           </p>
+        )}
+        {wasRecurring && recurrenceMode !== "none" && editedMonth && (
+          <div className="space-y-1">
+            <div className="flex items-center justify-between gap-3">
+              <Label htmlFor={field("paid")}>{values.kind === "income" ? "Recebido" : "Pago"}</Label>
+              <Switch
+                id={field("paid")}
+                checked={values.paid === true}
+                onCheckedChange={(on) => set("paid", on)}
+              />
+            </div>
+            <p className="text-xs text-muted-foreground">Vale só para {formatMonthLabel(editedMonth)}.</p>
+          </div>
         )}
 
         {recurrenceMode !== "none" && (

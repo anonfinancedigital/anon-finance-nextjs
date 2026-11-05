@@ -1,21 +1,28 @@
 import type { MonthTotals } from "@/lib/db/repos/transactions";
+import { countsInTotals } from "@/lib/domain/paid";
 
 type Opened = {
   kind: "income" | "expense";
   amountCents: number;
   categoryId: string | null;
   subcategoryId: string | null;
+  recurring?: boolean;
+  /** `true` paid; `false` or absent not paid; `null` not recurring (AD-018). */
+  paid?: boolean | null;
 };
 
 /**
  * Month income and spending per category and subcategory over the month's opened occurrences
  * (one per row, a recurring series counted once), in the shape of the former SQL `monthTotals`:
  * incomes ignore categories, an expense without category is not counted, and the `null`
- * subcategory key holds expenses without one.
+ * subcategory key holds expenses without one. An unpaid recurring occurrence counts in no total
+ * (PAGO-05).
  */
 export function computeMonthTotals(occurrences: Opened[]): MonthTotals {
   const totals: MonthTotals = { incomeCents: 0, spentByCategory: new Map(), spentBySubcategory: new Map() };
-  for (const { kind, amountCents, categoryId, subcategoryId } of occurrences) {
+  for (const occurrence of occurrences) {
+    if (!countsInTotals(occurrence)) continue;
+    const { kind, amountCents, categoryId, subcategoryId } = occurrence;
     if (kind === "income") {
       totals.incomeCents += amountCents;
     } else if (categoryId) {

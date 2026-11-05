@@ -1,5 +1,6 @@
-import { and, desc, eq, gte, inArray, isNull, lt, not, or, sql } from "drizzle-orm";
+import { and, desc, eq, gt, gte, inArray, isNull, lt, not, or, type SQL, sql } from "drizzle-orm";
 import {
+  type EditPlan,
   type Installment,
   type Segment,
   appliesInMonth,
@@ -12,7 +13,7 @@ import {
 } from "@/lib/domain/recurrence";
 import type { MonthPayload, TransactionDto, UpdateTransactionDto } from "@/lib/vault/types";
 import { db } from "../client";
-import { plain, transaction } from "../schema";
+import { plain, recurringPaid, transaction } from "../schema";
 
 export type MonthRange = { start: string; endExclusive: string };
 
@@ -55,6 +56,8 @@ export type Occurrence = Transaction & {
   installment: Installment | null;
   /** AAAA-MM of the series' first month; null when not recurring. */
   seriesStart: string | null;
+  /** Paid in this month (AD-018): `true` paid; `false` or absent not paid; `null` not recurring. */
+  paid?: boolean | null;
 };
 
 const ownedBy = (userId: string, id: string) =>
@@ -149,8 +152,8 @@ async function lockSeries(tx: Tx, userId: string, id: string, month: string) {
 }
 
 /**
- * Deletes the occurrence of `month` (AAAA-MM) of row `id` and every later one; earlier months
- * stay (see `planDelete`). Returns false when the user has no such row or it has no occurrence
+ * Deletes the occurrence of `month` (AAAA-MM) of row `id` and every later one, with their paid
+ * months; earlier months stay (see `planDelete`). Returns false when the user has no such row or it has no occurrence
  * in `month`.
  */
 async function deleteFrom(userId: string, id: string, month: string): Promise<boolean> {
@@ -158,6 +161,19 @@ async function deleteFrom(userId: string, id: string, month: string): Promise<bo
     const segments = await lockSeries(tx, userId, id, month);
     if (!segments) return false;
     const plan = planDelete({ segments, id, month });
+    const seriesId = segments.find((s) => s.id === id)!.seriesId;
+    if (seriesId) {
+      // The series is gone from `month` on: its paid months there go with it (AD-018).
+      await tx
+        .delete(recurringPaid)
+        .where(
+          and(
+            eq(recurringPaid.userId, userId),
+            eq(recurringPaid.seriesId, seriesId),
+            gte(recurringPaid.month, `${month}-01`),
+          ),
+        );
+    }
     if (plan.deleteIds.length > 0) {
       await tx
         .delete(transaction)
@@ -168,6 +184,35 @@ async function deleteFrom(userId: string, id: string, month: string): Promise<bo
         .update(transaction)
         .set({ recurrenceEnd: `${plan.truncate.endMonth}-01`, updatedAt: sql`clock_timestamp()` })
         .where(ownedBy(userId, plan.truncate.id));
+    }
+    return true;
+  });
+}
+
+/**
+ * Marks (`paid`) or unmarks the occurrence of `month` (AAAA-MM) of row `id` as paid, for that month
+ * only (AD-018). Idempotent: marking twice keeps one row, unmarking twice is a no-op. Returns false,
+ * writing nothing, when the user has no such row, it is not recurring or it has no occurrence in
+ * `month`.
+ */
+async function setPaid(userId: string, id: string, month: string, paid: boolean): Promise<boolean> {
+  return db.transaction(async (tx) => {
+    const segments = await lockSeries(tx, userId, id, month);
+    const seriesId = segments?.find((s) => s.id === id)?.seriesId;
+    if (!seriesId) return false;
+    const row = { userId, seriesId, month: `${month}-01` };
+    if (paid) {
+      await tx.insert(recurringPaid).values(row).onConflictDoNothing();
+    } else {
+      await tx
+        .delete(recurringPaid)
+        .where(
+          and(
+            eq(recurringPaid.userId, userId),
+            eq(recurringPaid.seriesId, seriesId),
+            eq(recurringPaid.month, row.month),
+          ),
+        );
     }
     return true;
   });
@@ -271,6 +316,60 @@ async function createSealed(userId: string, dto: TransactionDto): Promise<void> 
 }
 
 /**
+ * Paid months an edit removes (AD-018). After the edit the series ends where the edited segment
+ * ends: turning month `month` into a single row drops its paid months from `month` on; an end month
+ * drops those after it. Editing the series' first month and moving its start forward also drops the
+ * months before the new start, which no longer have an occurrence. An edit that keeps the series
+ * open and in place leaves every paid month.
+ */
+async function prunePaidAfterEdit(
+  tx: Tx,
+  userId: string,
+  segments: Segment[],
+  id: string,
+  month: string,
+  plan: EditPlan,
+) {
+  const seriesId = segments.find((s) => s.id === id)!.seriesId;
+  if (!seriesId) return;
+  const edited = plan.updateInPlace ?? plan.insert!;
+  const removed: SQL[] = [];
+  if (edited.recurringDay === null) {
+    removed.push(gte(recurringPaid.month, `${month}-01`));
+  } else {
+    if (edited.endMonth !== null) removed.push(gt(recurringPaid.month, `${edited.endMonth}-01`));
+    // The start only moves when the first month is edited in place; the new start is the edited date's month.
+    const newStart = monthKey(edited.date);
+    if (plan.updateInPlace && startOfSeries(segments) === month && newStart > month) {
+      removed.push(lt(recurringPaid.month, `${newStart}-01`));
+    }
+  }
+  if (removed.length === 0) return;
+  await tx
+    .delete(recurringPaid)
+    .where(and(eq(recurringPaid.userId, userId), eq(recurringPaid.seriesId, seriesId), or(...removed)));
+}
+
+/**
+ * The paid switch of an edit (AD-018): sets or clears the edited month of the series the edit leaves
+ * recurring. `undefined` leaves the state as it was; an edit that makes the row a single one has no
+ * series left, so there is nothing to write.
+ */
+async function writePaidAfterEdit(tx: Tx, userId: string, month: string, plan: EditPlan, paid: boolean | undefined) {
+  if (paid === undefined) return;
+  const edited = plan.updateInPlace ?? plan.insert!;
+  if (edited.recurringDay === null || !edited.seriesId) return;
+  const row = { userId, seriesId: edited.seriesId, month: `${month}-01` };
+  if (paid) {
+    await tx.insert(recurringPaid).values(row).onConflictDoNothing();
+  } else {
+    await tx
+      .delete(recurringPaid)
+      .where(and(eq(recurringPaid.userId, userId), eq(recurringPaid.seriesId, row.seriesId), eq(recurringPaid.month, row.month)));
+  }
+}
+
+/**
  * Same as `updateFrom` for a sealed account: the edited row takes `dto.amountCt`/`descriptionCt`;
  * the new segment of a split series is inserted with the client's `newRowId` and `insertedCt`.
  * A `newRowId` that already exists fails and rolls the whole edit back.
@@ -295,6 +394,9 @@ async function updateFromSealed(
         startMonth: dto.recurrence === "until" ? (dto.recurrenceStartMonth ?? null) : null,
       },
     });
+    // Write first, prune after: a month the edit leaves without an occurrence (start moved forward) must end unpaid.
+    await writePaidAfterEdit(tx, userId, month, plan, dto.paid);
+    await prunePaidAfterEdit(tx, userId, segments, id, month, plan);
     const now = sql`clock_timestamp()`;
     if (plan.deleteIds.length > 0) {
       await tx
@@ -325,6 +427,22 @@ async function updateFromSealed(
   });
 }
 
+/** Series of the user, among `seriesIds`, whose occurrence in `month` (AAAA-MM) is paid (AD-018). */
+async function paidSeriesIn(userId: string, seriesIds: string[], month: string): Promise<Set<string>> {
+  if (seriesIds.length === 0) return new Set();
+  const rows = await db
+    .select({ seriesId: recurringPaid.seriesId })
+    .from(recurringPaid)
+    .where(
+      and(
+        eq(recurringPaid.userId, userId),
+        eq(recurringPaid.month, `${month}-01`),
+        inArray(recurringPaid.seriesId, seriesIds),
+      ),
+    );
+  return new Set(rows.map((r) => r.seriesId));
+}
+
 /** `listByMonth` for a sealed account: same occurrences, order and installments, values as ciphertext. */
 async function listByMonthSealed(
   userId: string,
@@ -350,14 +468,15 @@ async function listByMonthSealed(
     .where(applicableInMonth(userId, range))
     .orderBy(desc(transaction.createdAt));
   const month = monthKey(range.start);
-  const series = await loadSeries(userId, [
-    ...new Set(rows.flatMap((r) => (r.seriesId ? [r.seriesId] : []))),
-  ]);
+  const seriesIds = [...new Set(rows.flatMap((r) => (r.seriesId ? [r.seriesId] : [])))];
+  const series = await loadSeries(userId, seriesIds);
+  const paidSeries = await paidSeriesIn(userId, seriesIds, month);
   return rows
     .map(({ recurrenceDay, seriesId, amountCt, ...row }) => {
       const segments = seriesId ? series.get(seriesId) : undefined;
       return {
         ...row,
+        paid: seriesId ? paidSeries.has(seriesId) : null,
         amountCt: plain(amountCt, "transaction.amount_ct"),
         date: occurrenceDate(
           { id: row.id, seriesId: null, date: row.date, recurringDay: recurrenceDay, endMonth: null },
@@ -391,6 +510,7 @@ export const transactionsRepo = {
   findStored,
   delete: remove,
   deleteFrom,
+  setPaid,
   createSealed,
   updateFromSealed,
   listByMonthSealed,

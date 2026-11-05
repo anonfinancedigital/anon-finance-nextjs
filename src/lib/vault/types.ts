@@ -40,6 +40,8 @@ export interface UpdateTransactionDto extends TransactionDto {
   /** Id chosen by the client for the new series segment, so the AAD closes before the insert. */
   newRowId: string;
   insertedCt: { amountCt: Ct; descriptionCt: Ct | null };
+  /** Paid state of the edited month (AD-018); omitted = unchanged; ignored when the edit is not recurring. */
+  paid?: boolean;
 }
 
 export interface CategorySetDto {
@@ -83,6 +85,11 @@ export interface MonthPayload {
     amountCt: Ct;
     descriptionCt: Ct | null;
     recurring: boolean;
+    /**
+     * Paid state of the occurrence in this month (AD-018): `true` paid; `false` or absent not paid;
+     * `null` not recurring.
+     */
+    paid?: boolean | null;
     // SPEC_DEVIATION: `recurrenceEnd`, `createdAt` and `updatedAt` are not in the design's MonthPayload.
     // Reason: `openMonth` must return the `Occurrence` type the UI already uses (the edit form reads `recurrenceEnd`).
     /** First day of the final month; null = no end (or not recurring). */
@@ -121,6 +128,8 @@ export interface ExportPayload {
   }[];
   goal: GoalDto | null;
   birthDateCt: Ct | null;
+  /** Paid months of recurring series (AD-018), `month` as AAAA-MM; absent = none paid. */
+  paidMonths?: { seriesId: string; month: string }[];
 }
 
 /**
@@ -154,6 +163,8 @@ export interface ImportPayload {
   }[];
   goal: GoalDto | null;
   birthDateCt: Ct | null;
+  /** Paid months of recurring series under their new series ids, `month` as AAAA-MM; absent = none paid. */
+  paidMonths?: { seriesId: string; month: string }[];
 }
 
 /** Plain-text rows of a legacy account, read once for the migration. */

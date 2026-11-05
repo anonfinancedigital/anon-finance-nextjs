@@ -3,7 +3,7 @@
   "promote_threshold": 2,
   "window_days": 45,
   "quarantine_threshold": 2,
-  "next_id": 76,
+  "next_id": 83,
   "lessons": [
     {
       "id": "L-001",
@@ -1358,6 +1358,132 @@
       ],
       "created": "2026-10-31T23:30:25Z",
       "last_seen": "2026-10-31T23:30:25Z"
+    },
+    {
+      "id": "L-076",
+      "key": "spec_precision_gap::when a spec says the last concurrent write wins test opposing concurrent writes not only identical ones",
+      "text": "When a spec says the last concurrent write wins, test opposing concurrent writes, not only identical ones",
+      "signal": "spec_precision_gap",
+      "scope": "repo-layer",
+      "status": "candidate",
+      "features": [
+        "recorrentes-pago"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "Edge Case 4; src/lib/db/repos/transactions.sealed.int.test.ts:923 (repo-layer)"
+      ],
+      "created": "2026-11-05T01:24:08Z",
+      "last_seen": "2026-11-05T01:24:08Z"
+    },
+    {
+      "id": "L-077",
+      "key": "spec_precision_gap::when a migration must preserve derived totals assert the totals before and after the migration in one test",
+      "text": "When a migration must preserve derived totals, assert the totals before and after the migration in one test",
+      "signal": "spec_precision_gap",
+      "scope": "migrations",
+      "status": "candidate",
+      "features": [
+        "recorrentes-pago"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "PAGO-07 AC3; src/lib/db/schema.int.test.ts:621 (migrations)"
+      ],
+      "created": "2026-11-05T01:24:08Z",
+      "last_seen": "2026-11-05T01:24:08Z"
+    },
+    {
+      "id": "L-078",
+      "key": "spec_deviation::apply every uniqueness and reference rule of the server import schema in the client file parser too",
+      "text": "Apply every uniqueness and reference rule of the server import schema in the client file parser too",
+      "signal": "spec_deviation",
+      "scope": "import",
+      "status": "candidate",
+      "features": [
+        "recorrentes-pago"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "src/lib/vault/import-file.ts:83 (import)"
+      ],
+      "created": "2026-11-05T01:24:08Z",
+      "last_seen": "2026-11-05T01:24:08Z"
+    },
+    {
+      "id": "L-079",
+      "key": "ac_gap::when an edit both prunes derived rows and writes a new one test the write combined with every prune rule not each rule alone",
+      "text": "When an edit both prunes derived rows and writes a new one, test the write combined with every prune rule, not each rule alone",
+      "signal": "ac_gap",
+      "scope": "repo-layer",
+      "status": "candidate",
+      "features": [
+        "recorrentes-pago"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "validation.md Gap 1; src/lib/db/repos/transactions.ts:397-398 (repo-layer)"
+      ],
+      "created": "2026-11-05T12:33:29Z",
+      "last_seen": "2026-11-05T12:33:29Z"
+    },
+    {
+      "id": "L-080",
+      "key": "surviving_mutant::test series edits on a segment whose id differs from the series id not only on the first segment",
+      "text": "Test series edits on a segment whose id differs from the series id, not only on the first segment",
+      "signal": "surviving_mutant",
+      "scope": "repo-layer",
+      "status": "candidate",
+      "features": [
+        "recorrentes-pago"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "validation.md M19; src/lib/db/repos/transactions.ts:362 (repo-layer)"
+      ],
+      "created": "2026-11-05T12:33:29Z",
+      "last_seen": "2026-11-05T12:33:29Z"
+    },
+    {
+      "id": "L-081",
+      "key": "spec_precision_gap::when a form field mirrors state that another control can change specify its value after a pending optimistic change and after edits that move the record",
+      "text": "When a form field mirrors state that another control can change, specify its value after a pending optimistic change and after edits that move the record",
+      "signal": "spec_precision_gap",
+      "scope": "ui",
+      "status": "candidate",
+      "features": [
+        "recorrentes-pago"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "validation.md spec-precision 1-2; src/components/transaction-form.tsx:262 (ui)"
+      ],
+      "created": "2026-11-05T12:33:29Z",
+      "last_seen": "2026-11-05T12:33:29Z"
+    },
+    {
+      "id": "L-082",
+      "key": "spec_precision_gap::when the ui sends a field only under a condition state in the spec whether the server rejects or ignores it outside that condition",
+      "text": "When the UI sends a field only under a condition, state in the spec whether the server rejects or ignores it outside that condition",
+      "signal": "spec_precision_gap",
+      "scope": "actions",
+      "status": "candidate",
+      "features": [
+        "recorrentes-pago"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "validation.md ciclo 3 spec-precision 5 (R4, transactions.ts:333-334, transaction-form.tsx:262) (actions)"
+      ],
+      "created": "2026-11-05T12:52:49Z",
+      "last_seen": "2026-11-05T12:52:49Z"
     }
   ]
 }

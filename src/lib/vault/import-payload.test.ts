@@ -36,6 +36,10 @@ function fullExport(): OpenedExport {
     ],
     goal,
     birthDate: "1990-03-15",
+    paidMonths: [
+      { seriesId: "t2", month: "2026-08" },
+      { seriesId: "t2", month: "2026-10" },
+    ],
   };
 }
 
@@ -121,6 +125,23 @@ describe("new ids and references (IMPORT-06)", () => {
     expect(t3.seriesId).toBe(t2.seriesId);
   });
 
+  it("points every paid month to the new id of its series, keeping the month (PAGO-09)", async () => {
+    const { payload } = await build(fullExport());
+    const [, t2] = payload.transactions;
+    expect(payload.paidMonths).toEqual([
+      { seriesId: t2.id, month: "2026-08" },
+      { seriesId: t2.id, month: "2026-10" },
+    ]);
+  });
+
+  it("builds paidMonths: [] for a file without paid months (PAGO-09)", async () => {
+    const withField = { ...fullExport(), paidMonths: [] };
+    const withoutField: OpenedExport = fullExport();
+    delete withoutField.paidMonths;
+    expect((await build(withField)).payload.paidMonths).toEqual([]);
+    expect((await build(withoutField)).payload.paidMonths).toEqual([]);
+  });
+
   it("uses the injected id generator", async () => {
     let n = 0;
     const { payload } = await build(fullExport(), { newId: () => `id-${++n}` });
@@ -171,7 +192,7 @@ describe("sealing (IMPORT-03, IMPORT-05, IMPORT-27)", () => {
 
   it("builds an empty payload for an export without rows (IMPORT-29)", async () => {
     const { payload, goalSkipped } = await build({ transactions: [], categories: [], goal: null, birthDate: null });
-    expect(payload).toEqual({ transactions: [], categories: [], goal: null, birthDateCt: null });
+    expect(payload).toEqual({ transactions: [], categories: [], goal: null, birthDateCt: null, paidMonths: [] });
     expect(goalSkipped).toBe(false);
   });
 });
@@ -276,7 +297,8 @@ function summaryByName(data: OpenedExport, key: string) {
   const occurrences = data.transactions.filter((t) =>
     appliesInMonth({ id: t.id, seriesId: t.seriesId, date: t.date, recurringDay: t.recurrenceDay, endMonth: t.recurrenceEnd?.slice(0, 7) ?? null }, key),
   );
-  const totals = computeMonthTotals(occurrences);
+  // Every occurrence counts here (as paid, AD-018): the comparison is about amounts and ids, not the paid state.
+  const totals = computeMonthTotals(occurrences.map((t) => ({ ...t, paid: true })));
   const summary = buildMonthlySummary({ categories, incomeCents: totals.incomeCents, spentByCategory: totals.spentByCategory, spentBySubcategory: totals.spentBySubcategory });
   return {
     incomeCents: summary.incomeCents,

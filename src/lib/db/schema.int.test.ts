@@ -5,7 +5,7 @@ import { describe, expect, it } from "vitest";
 import { insertCategory, setupTestDb } from "@/test/db";
 import { db, pool } from "./client";
 import { user } from "./auth-schema";
-import { category, categoryPercent, subcategory, transaction } from "./schema";
+import { category, categoryPercent, recurringPaid, subcategory, transaction } from "./schema";
 
 setupTestDb();
 
@@ -539,5 +539,155 @@ describe("migration 0012 user status", () => {
       await client.query("SET search_path TO DEFAULT");
       client.release();
     }
+  });
+});
+
+describe("recurring_paid constraints (PAGO-08)", () => {
+  it("accepts one row per series and month and rejects a duplicate (series_id, month)", async () => {
+    const userId = await createUser();
+    const seriesId = randomUUID();
+    await db.insert(recurringPaid).values({ userId, seriesId, month: "2026-10-01" });
+    await db.insert(recurringPaid).values({ userId, seriesId, month: "2026-11-01" });
+    expect(await pgErrorCode(db.insert(recurringPaid).values({ userId, seriesId, month: "2026-10-01" }))).toBe(
+      UNIQUE_VIOLATION,
+    );
+    const rows = await db.select().from(recurringPaid).orderBy(asc(recurringPaid.month));
+    expect(rows.map((r) => r.month)).toEqual(["2026-10-01", "2026-11-01"]);
+  });
+
+  it.each(["2026-10-02", "2026-10-31"])("rejects month %s (not the first day)", async (month) => {
+    const userId = await createUser();
+    expect(await pgErrorCode(db.insert(recurringPaid).values({ userId, seriesId: randomUUID(), month }))).toBe(
+      CHECK_VIOLATION,
+    );
+  });
+
+  it("deleting the user deletes their paid months and keeps the other user's", async () => {
+    const userId = await createUser();
+    const otherId = await createUser();
+    await db.insert(recurringPaid).values({ userId, seriesId: randomUUID(), month: "2026-10-01" });
+    await db.insert(recurringPaid).values({ userId: otherId, seriesId: randomUUID(), month: "2026-10-01" });
+
+    await db.delete(user).where(eq(user.id, userId));
+
+    const rows = await db.select().from(recurringPaid);
+    expect(rows.map((r) => r.userId)).toEqual([otherId]);
+  });
+});
+
+
+describe("migration 0018 backfill of past paid months (PAGO-07)", () => {
+  const backfill = readFileSync("drizzle/0018_recurring_paid.sql", "utf8").split("-- backfill")[1].trim();
+
+  /** AAAA-MM of the current month in America/Sao_Paulo, shifted by `delta` months. */
+  const monthAt = (delta: number) => {
+    const [y, m] = new Intl.DateTimeFormat("en-CA", { timeZone: "America/Sao_Paulo", year: "numeric", month: "2-digit" })
+      .format(new Date())
+      .split("-")
+      .map(Number);
+    const d = new Date(Date.UTC(y, m - 1 + delta, 1));
+    return `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, "0")}`;
+  };
+
+  /** A recurring income segment starting on day 10 of `start` (AAAA-MM), ending in `end` (AAAA-MM) or open. */
+  async function segment(userId: string, start: string, end: string | null = null, seriesId?: string) {
+    const id = randomUUID();
+    await db.insert(transaction).values({
+      id,
+      userId,
+      kind: "income",
+      amountCt: "v1:x",
+      date: `${start}-10`,
+      recurring: true,
+      recurrenceDay: 10,
+      recurrenceEnd: end === null ? null : `${end}-01`,
+      seriesId: seriesId ?? id,
+    });
+    return id;
+  }
+
+  async function paidMonths(seriesId: string) {
+    const { rows } = await pool.query<{ month: string; user_id: string }>(
+      `SELECT to_char(month, 'YYYY-MM') AS month, user_id FROM recurring_paid WHERE series_id = $1 ORDER BY month`,
+      [seriesId],
+    );
+    return rows;
+  }
+
+  async function runBackfill() {
+    await pool.query(backfill);
+  }
+
+  it("marks the past months of an open series started 3 months ago and leaves the current month unpaid", async () => {
+    const userId = await createUser();
+    const series = await segment(userId, monthAt(-3));
+    await pool.query("DELETE FROM recurring_paid");
+
+    await runBackfill();
+
+    expect(await paidMonths(series)).toEqual([
+      { month: monthAt(-3), user_id: userId },
+      { month: monthAt(-2), user_id: userId },
+      { month: monthAt(-1), user_id: userId },
+    ]);
+  });
+
+  it("marks every month of a series that ended in the past, up to its end", async () => {
+    const userId = await createUser();
+    const series = await segment(userId, monthAt(-6), monthAt(-4));
+
+    await runBackfill();
+
+    expect((await paidMonths(series)).map((r) => r.month)).toEqual([monthAt(-6), monthAt(-5), monthAt(-4)]);
+  });
+
+  it("stops at the month before the current one when the series ends in the future", async () => {
+    const userId = await createUser();
+    const series = await segment(userId, monthAt(-2), monthAt(2));
+
+    await runBackfill();
+
+    expect((await paidMonths(series)).map((r) => r.month)).toEqual([monthAt(-2), monthAt(-1)]);
+  });
+
+  it("adds no row for a series starting in the current month or later", async () => {
+    const userId = await createUser();
+    const current = await segment(userId, monthAt(0));
+    const future = await segment(userId, monthAt(1));
+
+    await runBackfill();
+
+    expect(await paidMonths(current)).toEqual([]);
+    expect(await paidMonths(future)).toEqual([]);
+  });
+
+  it("adds one row per month of a split series, from both segments, without duplicates", async () => {
+    const userId = await createUser();
+    const series = await segment(userId, monthAt(-4), monthAt(-3));
+    await segment(userId, monthAt(-2), null, series);
+
+    await runBackfill();
+
+    expect((await paidMonths(series)).map((r) => r.month)).toEqual([monthAt(-4), monthAt(-3), monthAt(-2), monthAt(-1)]);
+  });
+
+  it("adds no row for a non-recurring row", async () => {
+    const userId = await createUser();
+    await db.insert(transaction).values({ ...expense(userId, (await createCategory(userId)).id), amountCents: null, amountCt: "v1:x", date: `${monthAt(-2)}-05` });
+
+    await runBackfill();
+
+    expect((await pool.query("SELECT count(*)::int AS n FROM recurring_paid")).rows[0].n).toBe(0);
+  });
+
+  it("running it twice neither fails nor duplicates", async () => {
+    const userId = await createUser();
+    const series = await segment(userId, monthAt(-3));
+
+    await runBackfill();
+    await runBackfill();
+
+    expect((await paidMonths(series)).map((r) => r.month)).toEqual([monthAt(-3), monthAt(-2), monthAt(-1)]);
+    expect((await pool.query("SELECT count(*)::int AS n FROM recurring_paid")).rows[0].n).toBe(3);
   });
 });

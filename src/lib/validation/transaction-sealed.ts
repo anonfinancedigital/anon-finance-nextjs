@@ -63,8 +63,12 @@ export const sealedTransactionSchema = z
       : { ...dto, recurrenceStartMonth: undefined, recurrenceEndMonth: undefined },
   );
 
-/** The extra fields of an edit (`UpdateTransactionDto`): the new series segment's id and ciphertext. */
+/**
+ * The extra fields of an edit (`UpdateTransactionDto`): the new series segment's id and ciphertext, and
+ * the paid state of the edited month (omitted = unchanged).
+ */
 export const sealedTransactionUpdateExtraSchema = z.object({
+  paid: z.boolean({ error: "Estado inválido" }).optional(),
   newRowId: z.uuid({ error: "Identificador inválido" }),
   insertedCt: z.object({
     amountCt: ciphertextSchema,

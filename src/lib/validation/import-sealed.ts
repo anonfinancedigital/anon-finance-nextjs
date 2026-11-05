@@ -47,6 +47,12 @@ const goal = z.object({
   withdrawalRateCt: ciphertextSchema,
 });
 
+/** AAAA-MM between 2000-01 and 2100-12. */
+const paidMonth = z
+  .string()
+  .regex(/^\d{4}-(0[1-9]|1[0-2])$/, "Mês inválido")
+  .refine((key) => key >= "2000-01" && key <= "2100-12", "Mês inválido");
+
 const hasDuplicates = (values: string[]) => new Set(values).size !== values.length;
 
 /**
@@ -60,8 +66,10 @@ export const sealedImportSchema = z
     transactions: z.array(transaction).max(MAX_IMPORT_TRANSACTIONS),
     goal: goal.nullable(),
     birthDateCt: nullableCiphertextSchema,
+    // Absent = no paid month: every recurring occurrence imports as not paid (PAGO-09).
+    paidMonths: z.array(z.object({ seriesId: uuid, month: paidMonth })).optional(),
   })
-  .superRefine(({ categories, transactions }, ctx) => {
+  .superRefine(({ categories, transactions, paidMonths }, ctx) => {
     const fail = (message: string) => ctx.addIssue({ code: "custom", message });
     const subcategoryIds = categories.flatMap((c) => c.subcategories.map((s) => s.id));
     if (hasDuplicates(transactions.map((t) => t.id))) return fail("Identificadores repetidos");
@@ -69,6 +77,12 @@ export const sealedImportSchema = z
       return fail("Identificadores repetidos");
     }
     if (categories.some((c) => hasDuplicates(c.versions.map((v) => v.fromMonth)))) return fail("Vigências repetidas");
+
+    const recurringSeries = new Set(transactions.flatMap((t) => (t.recurring && t.seriesId ? [t.seriesId] : [])));
+    for (const p of paidMonths ?? []) {
+      if (!recurringSeries.has(p.seriesId)) return fail("Série dos meses pagos inválida");
+    }
+    if (hasDuplicates((paidMonths ?? []).map((p) => `${p.seriesId}|${p.month}`))) return fail("Meses pagos repetidos");
 
     const categoryIds = new Set(categories.map((c) => c.id));
     const subcategoryOwner = new Map(categories.flatMap((c) => c.subcategories.map((s) => [s.id, c.id] as const)));

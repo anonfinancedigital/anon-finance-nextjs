@@ -178,6 +178,28 @@ export const transaction = pgTable(
   ],
 );
 
+/**
+ * Paid months of recurring series (AD-018): a row = the occurrence of `series_id` in `month` is paid;
+ * no row = not paid. Stored in the clear, like `recurring` and `series_id`. `series_id` has no FK
+ * (it is not unique in `transaction`); edits and deletes prune the removed months.
+ */
+export const recurringPaid = pgTable(
+  "recurring_paid",
+  {
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    seriesId: uuid("series_id").notNull(),
+    /** First day of the month (AAAA-MM-01). */
+    month: date("month", { mode: "string" }).notNull(),
+  },
+  (t) => [
+    primaryKey({ columns: [t.seriesId, t.month] }),
+    check("recurring_paid_month_start", sql`EXTRACT(DAY FROM ${t.month}) = 1`),
+    index("recurring_paid_user_month_idx").on(t.userId, t.month),
+  ],
+);
+
 export const financialGoal = pgTable(
   "financial_goal",
   {

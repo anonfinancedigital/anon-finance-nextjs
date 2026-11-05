@@ -462,6 +462,48 @@ Seen once or not yet corroborated. Tracked, not trusted.
 - evidence: SPLASH-04 src/lib/pwa/splash-images.test.ts:52 (pwa)
 - last seen: 2026-10-31T23:30:25Z
 
+### L-076 - When a spec says the last concurrent write wins, test opposing concurrent writes, not only identical ones
+- signal: `spec_precision_gap` · recurrence: 1 feature(s) · scope: `repo-layer` · harmful: 0
+- features: recorrentes-pago
+- evidence: Edge Case 4; src/lib/db/repos/transactions.sealed.int.test.ts:923 (repo-layer)
+- last seen: 2026-11-05T01:24:08Z
+
+### L-077 - When a migration must preserve derived totals, assert the totals before and after the migration in one test
+- signal: `spec_precision_gap` · recurrence: 1 feature(s) · scope: `migrations` · harmful: 0
+- features: recorrentes-pago
+- evidence: PAGO-07 AC3; src/lib/db/schema.int.test.ts:621 (migrations)
+- last seen: 2026-11-05T01:24:08Z
+
+### L-078 - Apply every uniqueness and reference rule of the server import schema in the client file parser too
+- signal: `spec_deviation` · recurrence: 1 feature(s) · scope: `import` · harmful: 0
+- features: recorrentes-pago
+- evidence: src/lib/vault/import-file.ts:83 (import)
+- last seen: 2026-11-05T01:24:08Z
+
+### L-079 - When an edit both prunes derived rows and writes a new one, test the write combined with every prune rule, not each rule alone
+- signal: `ac_gap` · recurrence: 1 feature(s) · scope: `repo-layer` · harmful: 0
+- features: recorrentes-pago
+- evidence: validation.md Gap 1; src/lib/db/repos/transactions.ts:397-398 (repo-layer)
+- last seen: 2026-11-05T12:33:29Z
+
+### L-080 - Test series edits on a segment whose id differs from the series id, not only on the first segment
+- signal: `surviving_mutant` · recurrence: 1 feature(s) · scope: `repo-layer` · harmful: 0
+- features: recorrentes-pago
+- evidence: validation.md M19; src/lib/db/repos/transactions.ts:362 (repo-layer)
+- last seen: 2026-11-05T12:33:29Z
+
+### L-081 - When a form field mirrors state that another control can change, specify its value after a pending optimistic change and after edits that move the record
+- signal: `spec_precision_gap` · recurrence: 1 feature(s) · scope: `ui` · harmful: 0
+- features: recorrentes-pago
+- evidence: validation.md spec-precision 1-2; src/components/transaction-form.tsx:262 (ui)
+- last seen: 2026-11-05T12:33:29Z
+
+### L-082 - When the UI sends a field only under a condition, state in the spec whether the server rejects or ignores it outside that condition
+- signal: `spec_precision_gap` · recurrence: 1 feature(s) · scope: `actions` · harmful: 0
+- features: recorrentes-pago
+- evidence: validation.md ciclo 3 spec-precision 5 (R4, transactions.ts:333-334, transaction-form.tsx:262) (actions)
+- last seen: 2026-11-05T12:52:49Z
+
 ## Quarantined (failed when applied - ignore)
 
 A confirmed lesson that recurred alongside failure. Kept for the maintainer to review.

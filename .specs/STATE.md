@@ -138,4 +138,12 @@
 - **Date**: 2026-10-31
 - **Status**: active
 
+### AD-018
+- **Decision**: O estado pago de uma ocorrência recorrente vive na tabela `recurring_paid` (`user_id`, `series_id`, `month` date dia 1; PK `series_id`+`month`): a linha existe = paga, ausente = não paga. Fica em claro, como `recurring` e `series_id`. Totais, gasto por categoria e ritmo de gasto contam só `!recurring || paid`, decidido no cliente (`countsInTotals`); o servidor apenas entrega `paid` por ocorrência.
+- **Reason**: Pedido do usuário: estado por mês, não pago por padrão e fora dos totais; a série é projetada (AD-004), então o estado não cabe numa linha de `transaction`.
+- **Trade-off**: Toda leitura de mês junta `recurring_paid`; editar, excluir ou encurtar uma série precisa limpar os meses removidos; o export/import ganha um campo.
+- **Scope**: Schema, `transactionsRepo`, `MonthPayload`, `computeMonthTotals`, lista de transações, export e import
+- **Date**: 2026-11-03
+- **Status**: active
+
 ## Handoff

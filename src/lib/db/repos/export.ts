@@ -1,14 +1,15 @@
 import { asc, eq } from "drizzle-orm";
 import type { ExportPayload } from "@/lib/vault/types";
 import { db } from "../client";
-import { category, categoryPercent, subcategory, transaction } from "../schema";
+import { category, categoryPercent, recurringPaid, subcategory, transaction } from "../schema";
 import { goalsRepo } from "./goals";
 import { vaultRepo } from "./vault";
 
 /**
  * Every sealed row of the user for the export (SIGILO-37): raw transactions (series segments with
  * their recurrence fields, not projected occurrences), all categories (deleted ones too) with every
- * percent version and subcategory, the goal and the sealed birth date. Rows of other users are
+ * percent version and subcategory, the goal, the sealed birth date and the paid months of recurring
+ * series (`month` as AAAA-MM, ordered by series and month). Rows of other users are
  * never selected; plain-text legacy rows (NULL ciphertext) are skipped.
  */
 async function exportRowsSealed(userId: string): Promise<ExportPayload> {
@@ -59,6 +60,12 @@ async function exportRowsSealed(userId: string): Promise<ExportPayload> {
     .where(eq(subcategory.userId, userId))
     .orderBy(asc(subcategory.createdAt), asc(subcategory.id));
 
+  const paidRows = await db
+    .select({ seriesId: recurringPaid.seriesId, month: recurringPaid.month })
+    .from(recurringPaid)
+    .where(eq(recurringPaid.userId, userId))
+    .orderBy(asc(recurringPaid.seriesId), asc(recurringPaid.month));
+
   const versionsOf = new Map<string, { fromMonth: string; percentCt: string }[]>();
   for (const { categoryId, fromMonth, percentCt } of versionRows) {
     if (percentCt === null) continue;
@@ -79,6 +86,7 @@ async function exportRowsSealed(userId: string): Promise<ExportPayload> {
     ),
     goal: await goalsRepo.getSealed(userId),
     birthDateCt: await vaultRepo.getBirthDateSealed(userId),
+    paidMonths: paidRows.map(({ seriesId, month }) => ({ seriesId, month: month.slice(0, 7) })),
   };
 }
 
