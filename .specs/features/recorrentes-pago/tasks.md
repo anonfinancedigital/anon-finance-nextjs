@@ -718,10 +718,10 @@ T19 → T20 → T21 → T22 → T23 → T24
 
 **Done when**:
 
-- [ ] Switch ausente ao criar, em avulso e com recorrência desligada (evidência `file:line`)
-- [ ] Valor inicial = `values.paid` (estado do mês exibido); enviado como `paid` só quando a recorrência está ligada
-- [ ] Cancelar não grava nada (o estado só segue no Salvar)
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
+- [x] Switch ausente ao criar, em avulso e com recorrência desligada (evidência `file:line`)
+- [x] Valor inicial = `values.paid` (estado do mês exibido); enviado como `paid` só quando a recorrência está ligada
+- [x] Cancelar não grava nada (o estado só segue no Salvar)
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
 
 **Tests**: none
 **Gate**: build
