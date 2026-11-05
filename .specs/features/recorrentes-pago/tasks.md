@@ -205,10 +205,10 @@ T13 → T14 → T15 → T16 → T17 → T18
 
 **Done when**:
 
-- [ ] `paid` documentado: `true` pago, `false` ou ausente não pago, `null` não recorrente
-- [ ] `paidMonths` documentado: `month` AAAA-MM; ausente = nenhum pago
-- [ ] Nenhum erro de TypeScript no projeto
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] `paid` documentado: `true` pago, `false` ou ausente não pago, `null` não recorrente
+- [x] `paidMonths` documentado: `month` AAAA-MM; ausente = nenhum pago
+- [x] Nenhum erro de TypeScript no projeto
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
 
 **Tests**: none
 **Gate**: quick
