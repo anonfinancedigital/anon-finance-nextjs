@@ -351,13 +351,13 @@ T18 → T19
 
 **Done when**:
 
-- [ ] Sucesso devolve `{ ok: true }`, grava o estado e chama `revalidatePath("/")`
-- [ ] `id` não uuid, `month` fora de AAAA-MM ou `paid` não booleano → rejeita sem gravar
-- [ ] Ocorrência de outro usuário ou fora da série → `{ ok: false, error: "Transação não encontrada" }` sem gravar
-- [ ] Sem sessão aprovada → resultado de `requireSessionForAction`
-- [ ] Falha inesperada do repo → `{ ok: false, error: "Não foi possível atualizar o estado. Tente novamente." }`
-- [ ] Testes de integração em `src/actions/transactions-paid.int.test.ts` para cada caso
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
+- [x] Sucesso devolve `{ ok: true }`, grava o estado e chama `revalidatePath("/")`
+- [x] `id` não uuid, `month` fora de AAAA-MM ou `paid` não booleano → rejeita sem gravar
+- [x] Ocorrência de outro usuário ou fora da série → `{ ok: false, error: "Transação não encontrada" }` sem gravar
+- [x] Sem sessão aprovada → resultado de `requireSessionForAction`
+- [x] Falha inesperada do repo → `{ ok: false, error: "Não foi possível atualizar o estado. Tente novamente." }`
+- [x] Testes de integração em `src/actions/transactions-paid.int.test.ts` para cada caso
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
 
 **Tests**: integration
 **Gate**: full
