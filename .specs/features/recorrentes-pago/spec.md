@@ -166,11 +166,11 @@ Hoje toda ocorrência de um gasto ou ganho recorrente conta no mês e aparece na
 | PAGO-05 | P1: Não pagas fora dos totais (AC 1-3, 5) | Execute | Implemented (T1, T2, T12) |
 | PAGO-06 | P1: Não pagas fora dos totais (AC 4) | Execute | Implemented (T12) |
 | PAGO-07 | P1: Migração preserva o histórico | Execute | Implemented (T4) |
-| PAGO-08 | P2: Ciclo de vida do estado (AC 1-2, 6-7) | Execute | Implemented (T3, T8, T9) |
+| PAGO-08 | P2: Ciclo de vida do estado (AC 1-2, 6-7) | Execute | Implemented (T3, T8, T9, T19) |
 | PAGO-09 | P2: Ciclo de vida do estado (AC 3-5) | Execute | Implemented (T5, T13-T18) |
 | PAGO-10 | Edge Cases (falha e concorrência) | Execute | Implemented (T7, T10, T12) |
 
-**Coverage:** 10 total, 0 mapped to tasks, 10 unmapped ⚠️
+**Coverage:** 10 total, 10 mapped to tasks, 0 unmapped
 
 ---
 

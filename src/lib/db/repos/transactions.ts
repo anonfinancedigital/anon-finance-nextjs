@@ -1,4 +1,4 @@
-import { and, desc, eq, gt, gte, inArray, isNull, lt, not, or, sql } from "drizzle-orm";
+import { and, desc, eq, gt, gte, inArray, isNull, lt, not, or, type SQL, sql } from "drizzle-orm";
 import {
   type EditPlan,
   type Installment,
@@ -318,27 +318,36 @@ async function createSealed(userId: string, dto: TransactionDto): Promise<void> 
 /**
  * Paid months an edit removes (AD-018). After the edit the series ends where the edited segment
  * ends: turning month `month` into a single row drops its paid months from `month` on; an end month
- * drops those after it. An edit that keeps the series open leaves every paid month.
+ * drops those after it. Editing the series' first month and moving its start forward also drops the
+ * months before the new start, which no longer have an occurrence. An edit that keeps the series
+ * open and in place leaves every paid month.
  */
 async function prunePaidAfterEdit(
   tx: Tx,
   userId: string,
-  seriesId: string | null,
+  segments: Segment[],
+  id: string,
   month: string,
   plan: EditPlan,
 ) {
+  const seriesId = segments.find((s) => s.id === id)!.seriesId;
   if (!seriesId) return;
   const edited = plan.updateInPlace ?? plan.insert!;
-  const from =
-    edited.recurringDay === null
-      ? gte(recurringPaid.month, `${month}-01`)
-      : edited.endMonth !== null
-        ? gt(recurringPaid.month, `${edited.endMonth}-01`)
-        : null;
-  if (!from) return;
+  const removed: SQL[] = [];
+  if (edited.recurringDay === null) {
+    removed.push(gte(recurringPaid.month, `${month}-01`));
+  } else {
+    if (edited.endMonth !== null) removed.push(gt(recurringPaid.month, `${edited.endMonth}-01`));
+    // The start only moves when the first month is edited in place; the new start is the edited date's month.
+    const newStart = monthKey(edited.date);
+    if (plan.updateInPlace && startOfSeries(segments) === month && newStart > month) {
+      removed.push(lt(recurringPaid.month, `${newStart}-01`));
+    }
+  }
+  if (removed.length === 0) return;
   await tx
     .delete(recurringPaid)
-    .where(and(eq(recurringPaid.userId, userId), eq(recurringPaid.seriesId, seriesId), from));
+    .where(and(eq(recurringPaid.userId, userId), eq(recurringPaid.seriesId, seriesId), or(...removed)));
 }
 
 /**
@@ -366,7 +375,7 @@ async function updateFromSealed(
         startMonth: dto.recurrence === "until" ? (dto.recurrenceStartMonth ?? null) : null,
       },
     });
-    await prunePaidAfterEdit(tx, userId, segments.find((s) => s.id === id)!.seriesId, month, plan);
+    await prunePaidAfterEdit(tx, userId, segments, id, month, plan);
     const now = sql`clock_timestamp()`;
     if (plan.deleteIds.length > 0) {
       await tx

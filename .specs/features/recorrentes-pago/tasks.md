@@ -599,12 +599,12 @@ T18 → T19
 
 **Done when**:
 
-- [ ] Série "até" iniciada em janeiro com janeiro e fevereiro pagos, início movido para março: estados de janeiro e fevereiro somem
-- [ ] Estados de março em diante permanecem
-- [ ] Mover o início sem mudar de mês e editar sem mover o início não apagam nada
-- [ ] Nenhum estado órfão após o cenário
-- [ ] Testes de integração em `src/lib/db/repos/transactions.sealed.int.test.ts`
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int` (lint: erro prévio `src/app/layout.tsx` fora do escopo)
+- [x] Série "até" iniciada em janeiro com janeiro e fevereiro pagos, início movido para março: estados de janeiro e fevereiro somem
+- [x] Estados de março em diante permanecem
+- [x] Mover o início sem mudar de mês e editar sem mover o início não apagam nada
+- [x] Nenhum estado órfão após o cenário
+- [x] Testes de integração em `src/lib/db/repos/transactions.sealed.int.test.ts`
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int` (lint: erro prévio `src/app/layout.tsx` fora do escopo)
 
 **Tests**: integration
 **Gate**: full

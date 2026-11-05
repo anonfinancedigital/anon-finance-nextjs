@@ -1097,5 +1097,83 @@ describe("transactionsRepo.updateFromSealed paid months (PAGO-02 AC 7, PAGO-08)"
     expect(await db.$count(recurringPaid)).toBe(2);
     expect(await orphans()).toBe(0);
   });
+
+  describe("moving the start of an 'until' series forward (PAGO-08 AC 7)", () => {
+    const untilSeries = (): TransactionDto => ({
+      ...expense("2026-01-10", 10000),
+      recurrence: "until",
+      recurrenceStartMonth: "2026-01",
+      recurrenceEndMonth: "2026-12",
+    });
+    const moveStart = (tx: TransactionDto, key: string, start: string) =>
+      editIn(tx, key, { recurrence: "until", recurrenceStartMonth: start, recurrenceEndMonth: "2026-12" });
+
+    it("drops the paid months before the new start and keeps the others", async () => {
+      const tx = untilSeries();
+      await transactionsRepo.createSealed(userId, tx);
+      await markPaid(tx.id, "2026-01", "2026-02", "2026-03", "2026-04", "2026-12");
+
+      expect(await transactionsRepo.updateFromSealed(userId, tx.id, "2026-01", moveStart(tx, "2026-01", "2026-03"))).toBe(true);
+
+      expect(await stored(tx.id)).toMatchObject({ date: "2026-03-10" });
+      expect(await paidMonthsOf(tx.id)).toEqual(["2026-03", "2026-04", "2026-12"]);
+      expect(await orphans()).toBe(0);
+    });
+
+    it("keeps every paid month when the start does not change month", async () => {
+      const tx = untilSeries();
+      await transactionsRepo.createSealed(userId, tx);
+      await markPaid(tx.id, "2026-01", "2026-02");
+
+      expect(await transactionsRepo.updateFromSealed(userId, tx.id, "2026-01", moveStart(tx, "2026-01", "2026-01"))).toBe(true);
+
+      expect(await paidMonthsOf(tx.id)).toEqual(["2026-01", "2026-02"]);
+      expect(await orphans()).toBe(0);
+    });
+
+    it("keeps every paid month when the start moves back", async () => {
+      const tx: TransactionDto = { ...untilSeries(), date: "2026-03-10", recurrenceStartMonth: "2026-03" };
+      await transactionsRepo.createSealed(userId, tx);
+      await markPaid(tx.id, "2026-03", "2026-04");
+
+      expect(await transactionsRepo.updateFromSealed(userId, tx.id, "2026-03", moveStart(tx, "2026-03", "2026-01"))).toBe(true);
+
+      expect(await paidMonthsOf(tx.id)).toEqual(["2026-03", "2026-04"]);
+      expect(await orphans()).toBe(0);
+    });
+
+    it("keeps every paid month when editing a later month, whose start month is ignored", async () => {
+      const tx = untilSeries();
+      await transactionsRepo.createSealed(userId, tx);
+      await markPaid(tx.id, "2026-01", "2026-02", "2026-03");
+
+      expect(await transactionsRepo.updateFromSealed(userId, tx.id, "2026-03", moveStart(tx, "2026-03", "2026-06"))).toBe(true);
+
+      expect(await paidMonthsOf(tx.id)).toEqual(["2026-01", "2026-02", "2026-03"]);
+      expect(await orphans()).toBe(0);
+    });
+
+    it("keeps every paid month when editing the first month without moving the start", async () => {
+      const tx = untilSeries();
+      await transactionsRepo.createSealed(userId, tx);
+      await markPaid(tx.id, "2026-01", "2026-02");
+
+      expect(await transactionsRepo.updateFromSealed(userId, tx.id, "2026-01", editIn(tx, "2026-01", { amountCt: amountCt(9000) }))).toBe(true);
+
+      expect(await paidMonthsOf(tx.id)).toEqual(["2026-01", "2026-02"]);
+    });
+
+    it("does not touch the paid months of another series", async () => {
+      const tx = untilSeries();
+      const other = untilSeries();
+      await transactionsRepo.createSealed(userId, tx);
+      await transactionsRepo.createSealed(userId, other);
+      await markPaid(other.id, "2026-01", "2026-02");
+
+      await transactionsRepo.updateFromSealed(userId, tx.id, "2026-01", moveStart(tx, "2026-01", "2026-03"));
+
+      expect(await paidMonthsOf(other.id)).toEqual(["2026-01", "2026-02"]);
+    });
+  });
 });
 
