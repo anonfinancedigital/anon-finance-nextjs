@@ -20,9 +20,9 @@ import {
 import type { Occurrence } from "@/lib/db/repos/transactions";
 import { colorVar } from "@/lib/domain/color";
 import { formatDayHeading } from "@/lib/domain/day-heading";
-import { netByDay } from "@/lib/domain/day-total";
 import type { MonthState } from "@/lib/domain/onboarding";
 import { formatBRL } from "@/lib/domain/money";
+import { countedNetByDay, countsInTotals, paidLabel, startsDay } from "@/lib/domain/paid";
 import { monthKey } from "@/lib/domain/recurrence";
 
 type Props = {
@@ -49,6 +49,10 @@ type Props = {
   defaultDate?: string;
   /** Emphasis of the empty-month "Nova transação" button. */
   emphasis?: "primary" | "secondary";
+  /** Toggles the paid state of a recurring occurrence; without it the control is not shown. */
+  onTogglePaid?: (t: Occurrence) => void;
+  /** Message of the last failed paid toggle. */
+  paidError?: string | null;
 };
 
 /** Rows shown at first, and added by each "Ver mais". */
@@ -63,6 +67,8 @@ const amountText = (cents: number) => formatBRL(cents).replace(/^R\$\s*/, "");
  * The selected month's transactions, in the order received (latest date first). Below sm each day gets a
  * heading (sticky, with the day's net) instead of a date on every row; a long month shows `PAGE_SIZE` rows
  * and grows on "Ver mais".
+ * Recurring occurrences not yet paid arrive last (the parent orders them) and are dimmed; day headings
+ * are per group and show the net only over the rows that count in the totals (PAGO-03, PAGO-04).
  * The parent keys it by month and filters, so the count starts over when they change.
  */
 export function TransactionList({
@@ -76,9 +82,11 @@ export function TransactionList({
   previousMonthName,
   defaultDate,
   emphasis = "primary",
+  onTogglePaid,
+  paidError,
 }: Props) {
   const categoryById = new Map(categories.map((c) => [c.id, c]));
-  const dayNet = netByDay(transactions);
+  const dayNet = countedNetByDay(transactions);
   const [editing, setEditing] = useState<Occurrence | null>(null);
   const [deleting, setDeleting] = useState<Occurrence | null>(null);
   const [deleteError, setDeleteError] = useState<string | null>(null);
@@ -142,11 +150,18 @@ export function TransactionList({
 
   return (
     <>
+      {paidError && (
+        <p role="alert" className="px-4 pb-3 text-sm text-destructive sm:px-6">
+          {paidError}
+        </p>
+      )}
       <ul data-testid="transaction-list" className="divide-y divide-border border-t border-border">
         {transactions.slice(0, limit).map((t, index, shown) => {
           const category = t.categoryId ? categoryById.get(t.categoryId) : undefined;
           const subcategory = category?.subcategories.find((s) => s.id === t.subcategoryId);
-          const newDay = index === 0 || shown[index - 1].date !== t.date;
+          const newDay = startsDay(shown[index - 1], t);
+          const counts = countsInTotals(t);
+          const net = counts ? (dayNet.get(t.date) ?? 0) : null;
           return (
             <Fragment key={t.id}>
               {newDay && (
@@ -155,15 +170,20 @@ export function TransactionList({
                   className="sticky top-[65px] z-10 flex items-baseline justify-between gap-3 bg-muted px-4 py-1.5 text-xs font-medium text-muted-foreground sm:hidden"
                 >
                   <span>{formatDayHeading(t.date)}</span>
-                  <span className={`tabular-nums ${(dayNet.get(t.date) ?? 0) > 0 ? "text-income" : ""}`}>
-                    {(dayNet.get(t.date) ?? 0) > 0 ? "+ " : (dayNet.get(t.date) ?? 0) < 0 ? "− " : ""}
-                    {formatBRL(Math.abs(dayNet.get(t.date) ?? 0))}
-                  </span>
+                  {net !== null && (
+                    <span className={`tabular-nums ${net > 0 ? "text-income" : ""}`}>
+                      {net > 0 ? "+ " : net < 0 ? "− " : ""}
+                      {formatBRL(Math.abs(net))}
+                    </span>
+                  )}
                 </li>
               )}
               <li
                 data-testid="transaction-row"
-                className="flex items-center gap-x-3 px-4 py-3 text-sm transition-colors active:bg-hover sm:gap-x-4 sm:px-6 sm:py-3.5"
+                data-paid={t.recurring ? String(counts) : undefined}
+                className={`flex items-center gap-x-3 px-4 py-3 text-sm transition-colors active:bg-hover sm:gap-x-4 sm:px-6 sm:py-3.5 ${
+                  counts ? "" : "opacity-50"
+                }`}
               >
                 <span
                   aria-hidden
@@ -236,6 +256,18 @@ export function TransactionList({
                 >
                   {t.kind === "income" ? "+" : "−"} {formatBRL(t.amountCents)}
                 </span>
+                {t.recurring && onTogglePaid && (
+                  <button
+                    type="button"
+                    aria-pressed={counts}
+                    onClick={() => onTogglePaid(t)}
+                    className={`shrink-0 cursor-pointer rounded-md border px-2 py-1 text-xs font-medium outline-none focus-visible:ring-2 focus-visible:ring-ring ${
+                      counts ? "border-transparent bg-subtle text-foreground" : "border-border text-muted-foreground"
+                    }`}
+                  >
+                    {paidLabel(t.kind, counts)}
+                  </button>
+                )}
                 <TransactionRowMenu
                   onEdit={() => setEditing(t)}
                   onDelete={() => {

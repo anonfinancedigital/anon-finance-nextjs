@@ -381,11 +381,11 @@ T18 → T19
 
 **Done when**:
 
-- [ ] Linha recorrente não paga com `opacity-50`; demais com opacidade 1 (evidência `file:line`)
-- [ ] Controle com rótulo "Pago"/"Não pago" (gasto) e "Recebido"/"Não recebido" (ganho); ausente em avulso
-- [ ] Cabeçalho de dia no mobile sem saldo no grupo não pago; um dia com linhas nos dois grupos aparece duas vezes
-- [ ] `paidError` exibido com `role="alert"`
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
+- [x] Linha recorrente não paga com `opacity-50`; demais com opacidade 1 (evidência `file:line`)
+- [x] Controle com rótulo "Pago"/"Não pago" (gasto) e "Recebido"/"Não recebido" (ganho); ausente em avulso
+- [x] Cabeçalho de dia no mobile sem saldo no grupo não pago; um dia com linhas nos dois grupos aparece duas vezes
+- [x] `paidError` exibido com `role="alert"`
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
 
 **Tests**: none
 **Gate**: build

@@ -159,10 +159,10 @@ Hoje toda ocorrência de um gasto ou ganho recorrente conta no mês e aparece na
 
 | Requirement ID | Story | Phase | Status |
 | -------------- | ----- | ----- | ------ |
-| PAGO-01 | P1: Marcar uma ocorrência recorrente como paga (AC 1-2, 6) | Execute | In progress (T7, T10) |
+| PAGO-01 | P1: Marcar uma ocorrência recorrente como paga (AC 1-2, 6) | Execute | Implemented (T7, T10, T11) |
 | PAGO-02 | P1: Marcar uma ocorrência recorrente como paga (AC 3-5, 7) | Execute | Implemented (T1, T5, T6, T9) |
-| PAGO-03 | P1: Não pagas por último e com opacidade reduzida (AC 1-3) | Design | Pending |
-| PAGO-04 | P1: Não pagas por último e com opacidade reduzida (AC 4-7) | Design | Pending |
+| PAGO-03 | P1: Não pagas por último e com opacidade reduzida (AC 1-3) | Execute | Implemented (T1, T11) |
+| PAGO-04 | P1: Não pagas por último e com opacidade reduzida (AC 4-7) | Execute | In progress (T1, T11) |
 | PAGO-05 | P1: Não pagas fora dos totais (AC 1-3, 5) | Design | Pending |
 | PAGO-06 | P1: Não pagas fora dos totais (AC 4) | Design | Pending |
 | PAGO-07 | P1: Migração preserva o histórico | Execute | Implemented (T4) |
