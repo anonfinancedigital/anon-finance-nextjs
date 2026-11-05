@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { applyPaid, countedNetByDay, countsInTotals, orderByPaid, paidLabel, startsDay } from "./paid";
+import { applyPaid, countedNetByDay, countsInTotals, orderByPaid, paidActionLabel, paidLabel, startsDay } from "./paid";
 
 type Row = { id: string; date: string; kind: "income" | "expense"; amountCents: number; recurring: boolean; paid?: boolean | null };
 
@@ -157,5 +157,22 @@ describe("startsDay (PAGO-04 AC 6)", () => {
     const shown = orderByPaid([avulso("a1", "2026-11-10"), naoPago("n1", "2026-11-10"), pago("p1", "2026-11-10")]);
     const headings = shown.filter((row, i) => startsDay(shown[i - 1], row)).map((r) => r.id);
     expect(headings).toEqual(["a1", "n1"]);
+  });
+});
+
+describe("paidActionLabel (PAGO-11)", () => {
+  it("não pago: gasto \"Marcar como pago\", ganho \"Marcar como recebido\"", () => {
+    expect(paidActionLabel("expense", false)).toBe("Marcar como pago");
+    expect(paidActionLabel("income", false)).toBe("Marcar como recebido");
+  });
+
+  it("pago: gasto \"Pago\", ganho \"Recebido\"", () => {
+    expect(paidActionLabel("expense", true)).toBe("Pago");
+    expect(paidActionLabel("income", true)).toBe("Recebido");
+  });
+
+  it("paid ausente ou null é não pago", () => {
+    expect(paidActionLabel("expense", null)).toBe("Marcar como pago");
+    expect(paidActionLabel("income", undefined)).toBe("Marcar como recebido");
   });
 });

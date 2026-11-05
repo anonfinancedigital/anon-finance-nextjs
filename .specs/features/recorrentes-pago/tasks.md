@@ -634,10 +634,10 @@ T19 → T20 → T21 → T22 → T23 → T24
 
 **Done when**:
 
-- [ ] Não pago: gasto "Marcar como pago", ganho "Marcar como recebido"
-- [ ] Pago: gasto "Pago", ganho "Recebido"
-- [ ] Testes unitários em `src/lib/domain/paid.test.ts` para os 4 casos
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Não pago: gasto "Marcar como pago", ganho "Marcar como recebido"
+- [x] Pago: gasto "Pago", ganho "Recebido"
+- [x] Testes unitários em `src/lib/domain/paid.test.ts` para os 4 casos
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
 
 **Tests**: unit
 **Gate**: quick

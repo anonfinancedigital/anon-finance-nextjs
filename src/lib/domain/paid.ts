@@ -26,6 +26,12 @@ export function paidLabel(kind: "income" | "expense", paid: boolean | null | und
   return paid === true ? "Pago" : "Não pago";
 }
 
+/** Text of the row button: the action while unpaid, the state once paid. */
+export function paidActionLabel(kind: "income" | "expense", paid: boolean | null | undefined): string {
+  if (paid === true) return kind === "income" ? "Recebido" : "Pago";
+  return kind === "income" ? "Marcar como recebido" : "Marcar como pago";
+}
+
 /** Net of each day over the rows that count in the totals. */
 export function countedNetByDay<T extends PaidState & { date: string; kind: "income" | "expense"; amountCents: number }>(
   rows: T[],
