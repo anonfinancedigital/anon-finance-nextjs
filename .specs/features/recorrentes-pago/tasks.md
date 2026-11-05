@@ -517,10 +517,10 @@ T18 → T19
 
 **Done when**:
 
-- [ ] Cada estado aponta para o novo id da sua série; `month` preservado
-- [ ] Arquivo sem estados gera `paidMonths: []`
-- [ ] Testes unitários em `src/lib/vault/import-payload.test.ts`
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] Cada estado aponta para o novo id da sua série; `month` preservado
+- [x] Arquivo sem estados gera `paidMonths: []`
+- [x] Testes unitários em `src/lib/vault/import-payload.test.ts`
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
 
 **Tests**: unit
 **Gate**: quick

@@ -101,7 +101,9 @@ export async function buildImportPayload(
     sealNullable(data.birthDate, (iso) => sealBirthDate(dek, userId, iso)),
   ]);
 
-  const payload: ImportPayload = { categories, transactions, goal, birthDateCt };
+  // The file's series ids are replaced like those of the rows; the months stay as they are.
+  const paidMonths = (data.paidMonths ?? []).map((p) => ({ seriesId: seriesIds.get(p.seriesId)!, month: p.month }));
+  const payload: ImportPayload = { categories, transactions, goal, birthDateCt, paidMonths };
   if (JSON.stringify(payload).length > maxBodyChars) throw new ImportTooLargeError();
   return { payload, goalSkipped: data.goal !== null && goalConflicts };
 }
