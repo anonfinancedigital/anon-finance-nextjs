@@ -88,6 +88,12 @@ T18 → T19
 T19 → T20 → T21 → T22 → T23 → T24
 ```
 
+### Phase 8: Correções da validação (ciclo 2)
+
+```
+T24 → T25 → T26
+```
+
 ---
 
 ## Task Breakdown
@@ -757,6 +763,59 @@ T19 → T20 → T21 → T22 → T23 → T24
 
 ---
 
+### T25: Gravar o estado antes de podar na edição
+
+**What**: Em `updateFromSealed`, chamar `writePaidAfterEdit` antes de `prunePaidAfterEdit`, para o mês que a edição deixa sem ocorrência não voltar como pago; cobrir também a edição no lugar de um segmento posterior.
+**Where**: `src/lib/db/repos/transactions.ts`
+**Depends on**: T24
+**Reuses**: `writePaidAfterEdit` (T22), `prunePaidAfterEdit` (T9)
+**Requirement**: PAGO-12, PAGO-08
+
+**Tools**:
+
+- MCP: NONE
+- Skill: NONE
+
+**Done when**:
+
+- [x] Série "até" iniciada em janeiro, início adiantado para março, `paid: true`: janeiro não fica pago e `orphans() = 0`
+- [x] Edição no lugar de um segmento posterior (id diferente do `seriesId`) com `paid: true` marca o mês da série
+- [x] Testes de integração em `src/lib/db/repos/transactions.sealed.int.test.ts`
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
+
+**Tests**: integration
+**Gate**: full
+
+**Commit**: `fix(paid): write the paid state before pruning on edit`
+
+---
+
+### T26: Cor do botão da linha
+
+**What**: O botão "Marcar como pago/recebido" fica neutro (borda e texto padrão do app) e o chip "Pago"/"Recebido" fica verde (`success`), como confirmação do estado.
+**Where**: `src/components/transaction-list.tsx`
+**Depends on**: T25
+**Reuses**: tokens `success`, `border`, `hover`
+**Requirement**: PAGO-11
+
+**Tools**:
+
+- MCP: NONE
+- Skill: NONE
+
+**Done when**:
+
+- [ ] Não pago: borda `border-border`, texto `text-foreground`, sem roxo de destaque (evidência `file:line`)
+- [ ] Pago: fundo e texto `success`, check com traço forte (evidência `file:line`)
+- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run build && npm run test:unit && npm run test:int`
+
+**Tests**: none
+**Gate**: build
+
+**Commit**: `feat(paid): color the paid chip green and keep the action neutral`
+
+---
+
 ## Phase Execution Map
 
 ```
@@ -769,6 +828,7 @@ Phase 4:  T11 -----→ T12
 Phase 5:  T13 -----→ T14 -----→ T15 -----→ T16 -----→ T17 -----→ T18
 Phase 6:  T19
 Phase 7:  T20 -----→ T21 -----→ T22 -----→ T23 -----→ T24
+Phase 8:  T25 -----→ T26
 ```
 
 Execution is strictly sequential - there is no intra-phase parallelism.
@@ -844,8 +904,8 @@ Execution is strictly sequential - there is no intra-phase parallelism.
 | PAGO-06 | T12 |
 | PAGO-07 | T4 |
 | PAGO-08 | T3, T8, T9, T19 |
-| PAGO-11 | T20, T24 |
-| PAGO-12 | T21, T22, T23 |
+| PAGO-11 | T20, T24, T26 |
+| PAGO-12 | T21, T22, T23, T25 |
 | PAGO-09 | T5, T13-T18 |
 | PAGO-10 | T7, T10, T12 |
 

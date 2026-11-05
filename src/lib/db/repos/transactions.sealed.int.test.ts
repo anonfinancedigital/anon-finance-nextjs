@@ -1131,6 +1131,20 @@ describe("transactionsRepo.updateFromSealed paid months (PAGO-02 AC 7, PAGO-08)"
       expect(await orphans()).toBe(0);
     });
 
+    it("paid: true while moving the start forward does not bring the old first month back (PAGO-12 AC 2)", async () => {
+      const tx = untilSeries();
+      await transactionsRepo.createSealed(userId, tx);
+      await markPaid(tx.id, "2026-01", "2026-04");
+
+      expect(
+        await transactionsRepo.updateFromSealed(userId, tx.id, "2026-01", { ...moveStart(tx, "2026-01", "2026-03"), paid: true }),
+      ).toBe(true);
+
+      expect(await stored(tx.id)).toMatchObject({ date: "2026-03-10" });
+      expect(await paidMonthsOf(tx.id)).toEqual(["2026-04"]);
+      expect(await orphans()).toBe(0);
+    });
+
     it("keeps every paid month when the start moves back", async () => {
       const tx: TransactionDto = { ...untilSeries(), date: "2026-03-10", recurrenceStartMonth: "2026-03" };
       await transactionsRepo.createSealed(userId, tx);
@@ -1248,6 +1262,18 @@ describe("transactionsRepo.updateFromSealed paid switch (PAGO-12)", () => {
     ).toBe(true);
 
     expect(await paidMonthsOf(tx.id)).toEqual(["2026-10"]);
+  });
+
+  it("paid: true on an in-place edit of a later segment (its id differs from the series id) marks that month of the series", async () => {
+    const tx = rent();
+    await transactionsRepo.createSealed(userId, tx);
+    // Splits the series: the segment from December on gets its own id.
+    await transactionsRepo.updateFromSealed(userId, tx.id, "2026-12", editIn(tx, "2026-12"));
+    const [later] = (await db.select().from(transaction)).filter((t) => t.id !== tx.id);
+
+    expect(await transactionsRepo.updateFromSealed(userId, later.id, "2026-12", editIn(tx, "2026-12", { id: later.id, paid: true }))).toBe(true);
+
+    expect(await paidMonthsOf(tx.id)).toEqual(["2026-12"]);
   });
 
   it("an edit that finds no occurrence returns false and leaves the paid months untouched", async () => {

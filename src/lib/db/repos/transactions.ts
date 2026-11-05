@@ -394,8 +394,9 @@ async function updateFromSealed(
         startMonth: dto.recurrence === "until" ? (dto.recurrenceStartMonth ?? null) : null,
       },
     });
-    await prunePaidAfterEdit(tx, userId, segments, id, month, plan);
+    // Write first, prune after: a month the edit leaves without an occurrence (start moved forward) must end unpaid.
     await writePaidAfterEdit(tx, userId, month, plan, dto.paid);
+    await prunePaidAfterEdit(tx, userId, segments, id, month, plan);
     const now = sql`clock_timestamp()`;
     if (plan.deleteIds.length > 0) {
       await tx
