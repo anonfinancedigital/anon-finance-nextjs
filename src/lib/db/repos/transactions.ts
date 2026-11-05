@@ -1,5 +1,6 @@
-import { and, desc, eq, gte, inArray, isNull, lt, not, or, sql } from "drizzle-orm";
+import { and, desc, eq, gt, gte, inArray, isNull, lt, not, or, sql } from "drizzle-orm";
 import {
+  type EditPlan,
   type Installment,
   type Segment,
   appliesInMonth,
@@ -315,6 +316,32 @@ async function createSealed(userId: string, dto: TransactionDto): Promise<void> 
 }
 
 /**
+ * Paid months an edit removes (AD-018). After the edit the series ends where the edited segment
+ * ends: turning month `month` into a single row drops its paid months from `month` on; an end month
+ * drops those after it. An edit that keeps the series open leaves every paid month.
+ */
+async function prunePaidAfterEdit(
+  tx: Tx,
+  userId: string,
+  seriesId: string | null,
+  month: string,
+  plan: EditPlan,
+) {
+  if (!seriesId) return;
+  const edited = plan.updateInPlace ?? plan.insert!;
+  const from =
+    edited.recurringDay === null
+      ? gte(recurringPaid.month, `${month}-01`)
+      : edited.endMonth !== null
+        ? gt(recurringPaid.month, `${edited.endMonth}-01`)
+        : null;
+  if (!from) return;
+  await tx
+    .delete(recurringPaid)
+    .where(and(eq(recurringPaid.userId, userId), eq(recurringPaid.seriesId, seriesId), from));
+}
+
+/**
  * Same as `updateFrom` for a sealed account: the edited row takes `dto.amountCt`/`descriptionCt`;
  * the new segment of a split series is inserted with the client's `newRowId` and `insertedCt`.
  * A `newRowId` that already exists fails and rolls the whole edit back.
@@ -339,6 +366,7 @@ async function updateFromSealed(
         startMonth: dto.recurrence === "until" ? (dto.recurrenceStartMonth ?? null) : null,
       },
     });
+    await prunePaidAfterEdit(tx, userId, segments.find((s) => s.id === id)!.seriesId, month, plan);
     const now = sql`clock_timestamp()`;
     if (plan.deleteIds.length > 0) {
       await tx

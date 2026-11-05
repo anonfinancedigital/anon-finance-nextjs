@@ -315,12 +315,12 @@ T13 → T14 → T15 → T16 → T17 → T18
 
 **Done when**:
 
-- [ ] Editar valor, categoria, descrição ou dia (série dividida em novo segmento) mantém o estado de todos os meses
-- [ ] Mudar para "Não recorrente" no mês M apaga estados `>= M` e mantém os anteriores
-- [ ] Definir ou encurtar o fim em AAAA-MM apaga estados de meses posteriores ao fim; estender o fim não cria nem apaga estado
-- [ ] Nenhum estado órfão após cada cenário (consulta confere que todo `(series_id, month)` tem ocorrência)
-- [ ] Testes de integração em `src/lib/db/repos/transactions.sealed.int.test.ts` para cada cenário
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
+- [x] Editar valor, categoria, descrição ou dia (série dividida em novo segmento) mantém o estado de todos os meses
+- [x] Mudar para "Não recorrente" no mês M apaga estados `>= M` e mantém os anteriores
+- [x] Definir ou encurtar o fim em AAAA-MM apaga estados de meses posteriores ao fim; estender o fim não cria nem apaga estado
+- [x] Nenhum estado órfão após cada cenário (consulta confere que todo `(series_id, month)` tem ocorrência)
+- [x] Testes de integração em `src/lib/db/repos/transactions.sealed.int.test.ts` para cada cenário
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
 
 **Tests**: integration
 **Gate**: full

@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { asc, eq } from "drizzle-orm";
+import { asc, eq, sql } from "drizzle-orm";
 import { beforeEach, describe, expect, it } from "vitest";
 import { monthRange } from "@/lib/domain/month";
 import type { TransactionDto, UpdateTransactionDto } from "@/lib/vault/types";
@@ -972,6 +972,130 @@ describe("transactionsRepo.setPaid (PAGO-01, PAGO-10)", () => {
     expect(await transactionsRepo.setPaid(userId, tx.id, "2026-09", true)).toBe(false);
     expect(await transactionsRepo.setPaid(userId, tx.id, "2027-01", true)).toBe(false);
     expect(await paidRows()).toEqual([]);
+  });
+});
+
+describe("transactionsRepo.updateFromSealed paid months (PAGO-02 AC 7, PAGO-08)", () => {
+  const rent = (recurrenceEndMonth?: string): TransactionDto => ({
+    ...expense("2026-10-15", 10000),
+    descriptionCt: "v1:aluguel",
+    recurrence: recurrenceEndMonth ? "until" : "indefinite",
+    recurrenceEndMonth,
+  });
+  /** Edit of the occurrence of `key` (AAAA-MM) of row `id`, with the overrides applied. */
+  const editIn = (base: TransactionDto, key: string, over: Partial<UpdateTransactionDto> = {}): UpdateTransactionDto => ({
+    ...base,
+    date: `${key}-${base.date.slice(8)}`,
+    newRowId: randomUUID(),
+    insertedCt: { amountCt: over.amountCt ?? base.amountCt, descriptionCt: over.descriptionCt ?? base.descriptionCt },
+    ...over,
+  });
+  const markPaid = (seriesId: string, ...keys: string[]) =>
+    db.insert(recurringPaid).values(keys.map((k) => ({ userId, seriesId, month: `${k}-01` })));
+  const paidMonthsOf = async (seriesId: string) =>
+    (await db.select().from(recurringPaid).where(eq(recurringPaid.seriesId, seriesId)).orderBy(asc(recurringPaid.month))).map(
+      (r) => r.month.slice(0, 7),
+    );
+  /** Paid rows whose (series_id, month) has no occurrence in any segment of the series. */
+  const orphans = async () =>
+    (
+      await db.execute<{ n: number }>(sql`
+        SELECT count(*)::int AS n FROM recurring_paid rp
+        WHERE NOT EXISTS (
+          SELECT 1 FROM "transaction" t
+          WHERE t.series_id = rp.series_id AND t.user_id = rp.user_id AND t.recurring
+            AND date_trunc('month', t.date)::date <= rp.month
+            AND (t.recurrence_end IS NULL OR t.recurrence_end >= rp.month)
+        )`)
+    ).rows[0].n;
+
+  it("editing amount, category, description and day mid-series keeps every paid month", async () => {
+    const tx = rent();
+    await transactionsRepo.createSealed(userId, tx);
+    await markPaid(tx.id, "2026-10", "2026-11", "2026-12", "2027-01");
+
+    const changed = editIn(tx, "2026-12", {
+      date: "2026-12-20",
+      amountCt: amountCt(12000),
+      categoryId: lazer,
+      descriptionCt: "v1:novo",
+    });
+    expect(await transactionsRepo.updateFromSealed(userId, tx.id, "2026-12", changed)).toBe(true);
+
+    expect(await db.$count(transaction)).toBe(2);
+    expect(await paidMonthsOf(tx.id)).toEqual(["2026-10", "2026-11", "2026-12", "2027-01"]);
+    expect(await orphans()).toBe(0);
+  });
+
+  it("editing the amount in the first month (in place) keeps every paid month", async () => {
+    const tx = rent();
+    await transactionsRepo.createSealed(userId, tx);
+    await markPaid(tx.id, "2026-10", "2026-12");
+
+    expect(await transactionsRepo.updateFromSealed(userId, tx.id, "2026-10", editIn(tx, "2026-10", { amountCt: amountCt(9000) }))).toBe(true);
+
+    expect(await paidMonthsOf(tx.id)).toEqual(["2026-10", "2026-12"]);
+    expect(await orphans()).toBe(0);
+  });
+
+  it("'Não recorrente' in month M drops the paid months from M on and keeps the earlier ones", async () => {
+    const tx = rent();
+    await transactionsRepo.createSealed(userId, tx);
+    await markPaid(tx.id, "2026-10", "2026-11", "2026-12", "2027-01");
+
+    const single = editIn(tx, "2026-12", { recurrence: "none" });
+    expect(await transactionsRepo.updateFromSealed(userId, tx.id, "2026-12", single)).toBe(true);
+
+    expect(await paidMonthsOf(tx.id)).toEqual(["2026-10", "2026-11"]);
+    expect(await orphans()).toBe(0);
+  });
+
+  it("'Não recorrente' in the first month drops every paid month of the series", async () => {
+    const tx = rent();
+    await transactionsRepo.createSealed(userId, tx);
+    await markPaid(tx.id, "2026-10", "2026-11");
+
+    expect(await transactionsRepo.updateFromSealed(userId, tx.id, "2026-10", editIn(tx, "2026-10", { recurrence: "none" }))).toBe(true);
+
+    expect(await paidMonthsOf(tx.id)).toEqual([]);
+    expect(await orphans()).toBe(0);
+  });
+
+  it("setting an end in 2027-01 drops the paid months after it", async () => {
+    const tx = rent();
+    await transactionsRepo.createSealed(userId, tx);
+    await markPaid(tx.id, "2026-10", "2026-12", "2027-01", "2027-02", "2027-05");
+
+    const until = editIn(tx, "2026-12", { recurrence: "until", recurrenceEndMonth: "2027-01" });
+    expect(await transactionsRepo.updateFromSealed(userId, tx.id, "2026-12", until)).toBe(true);
+
+    expect(await paidMonthsOf(tx.id)).toEqual(["2026-10", "2026-12", "2027-01"]);
+    expect(await orphans()).toBe(0);
+  });
+
+  it("shortening the end from 2027-06 to 2027-02 drops the paid months after 2027-02", async () => {
+    const tx = rent("2027-06");
+    await transactionsRepo.createSealed(userId, tx);
+    await markPaid(tx.id, "2026-11", "2027-02", "2027-03", "2027-06");
+
+    const shorter = editIn(tx, "2026-12", { recurrenceEndMonth: "2027-02" });
+    expect(await transactionsRepo.updateFromSealed(userId, tx.id, "2026-12", shorter)).toBe(true);
+
+    expect(await paidMonthsOf(tx.id)).toEqual(["2026-11", "2027-02"]);
+    expect(await orphans()).toBe(0);
+  });
+
+  it("extending the end neither creates nor drops paid months", async () => {
+    const tx = rent("2027-02");
+    await transactionsRepo.createSealed(userId, tx);
+    await markPaid(tx.id, "2026-10", "2027-02");
+
+    const longer = editIn(tx, "2026-12", { recurrenceEndMonth: "2027-06" });
+    expect(await transactionsRepo.updateFromSealed(userId, tx.id, "2026-12", longer)).toBe(true);
+
+    expect(await paidMonthsOf(tx.id)).toEqual(["2026-10", "2027-02"]);
+    expect(await db.$count(recurringPaid)).toBe(2);
+    expect(await orphans()).toBe(0);
   });
 });
 
