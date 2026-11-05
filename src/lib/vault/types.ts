@@ -40,6 +40,8 @@ export interface UpdateTransactionDto extends TransactionDto {
   /** Id chosen by the client for the new series segment, so the AAD closes before the insert. */
   newRowId: string;
   insertedCt: { amountCt: Ct; descriptionCt: Ct | null };
+  /** Paid state of the edited month (AD-018); omitted = unchanged; ignored when the edit is not recurring. */
+  paid?: boolean;
 }
 
 export interface CategorySetDto {

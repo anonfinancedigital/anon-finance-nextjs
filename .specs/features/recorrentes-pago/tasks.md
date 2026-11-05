@@ -661,10 +661,10 @@ T19 → T20 → T21 → T22 → T23 → T24
 
 **Done when**:
 
-- [ ] `paid` ausente, `true` e `false` passam; valor não booleano é rejeitado
-- [ ] `UpdateTransactionDto.paid?: boolean` em `src/lib/vault/types.ts` (uma linha, junto)
-- [ ] Testes unitários em `src/lib/validation/transaction-sealed.test.ts`
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
+- [x] `paid` ausente, `true` e `false` passam; valor não booleano é rejeitado
+- [x] `UpdateTransactionDto.paid?: boolean` em `src/lib/vault/types.ts` (uma linha, junto)
+- [x] Testes unitários em `src/lib/validation/transaction-sealed.test.ts`
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit`
 
 **Tests**: unit
 **Gate**: quick
