@@ -287,11 +287,11 @@ T13 → T14 → T15 → T16 → T17 → T18
 
 **Done when**:
 
-- [ ] Série com fevereiro pago, excluída a partir de março: fevereiro permanece, março em diante some
-- [ ] Excluir a primeira ocorrência (série inteira) apaga todos os estados da série
-- [ ] Avulso excluído não toca em `recurring_paid`; estados de outras séries não mudam
-- [ ] Testes de integração em `src/lib/db/repos/transactions.sealed.int.test.ts` ou `transactions.int.test.ts` (onde `deleteFrom` já é testado)
-- [ ] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
+- [x] Série com fevereiro pago, excluída a partir de março: fevereiro permanece, março em diante some
+- [x] Excluir a primeira ocorrência (série inteira) apaga todos os estados da série
+- [x] Avulso excluído não toca em `recurring_paid`; estados de outras séries não mudam
+- [x] Testes de integração em `src/lib/db/repos/transactions.sealed.int.test.ts` ou `transactions.int.test.ts` (onde `deleteFrom` já é testado)
+- [x] Gate check passes: `npm run typecheck && npm run lint && npm run test:unit && npm run test:int`
 
 **Tests**: integration
 **Gate**: full

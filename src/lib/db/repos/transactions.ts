@@ -151,8 +151,8 @@ async function lockSeries(tx: Tx, userId: string, id: string, month: string) {
 }
 
 /**
- * Deletes the occurrence of `month` (AAAA-MM) of row `id` and every later one; earlier months
- * stay (see `planDelete`). Returns false when the user has no such row or it has no occurrence
+ * Deletes the occurrence of `month` (AAAA-MM) of row `id` and every later one, with their paid
+ * months; earlier months stay (see `planDelete`). Returns false when the user has no such row or it has no occurrence
  * in `month`.
  */
 async function deleteFrom(userId: string, id: string, month: string): Promise<boolean> {
@@ -160,6 +160,19 @@ async function deleteFrom(userId: string, id: string, month: string): Promise<bo
     const segments = await lockSeries(tx, userId, id, month);
     if (!segments) return false;
     const plan = planDelete({ segments, id, month });
+    const seriesId = segments.find((s) => s.id === id)!.seriesId;
+    if (seriesId) {
+      // The series is gone from `month` on: its paid months there go with it (AD-018).
+      await tx
+        .delete(recurringPaid)
+        .where(
+          and(
+            eq(recurringPaid.userId, userId),
+            eq(recurringPaid.seriesId, seriesId),
+            gte(recurringPaid.month, `${month}-01`),
+          ),
+        );
+    }
     if (plan.deleteIds.length > 0) {
       await tx
         .delete(transaction)

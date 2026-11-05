@@ -1,10 +1,11 @@
 import { randomUUID } from "node:crypto";
+import { asc } from "drizzle-orm";
 import { beforeEach, describe, expect, it } from "vitest";
 import { monthRange } from "@/lib/domain/month";
 import type { CategorySetDto, TransactionDto, UpdateTransactionDto } from "@/lib/vault/types";
 import { insertCategory, insertTestUser, setupTestDb } from "@/test/db";
 import { db } from "../client";
-import { transaction } from "../schema";
+import { recurringPaid, transaction } from "../schema";
 import { categoriesRepo } from "./categories";
 import { applicableInMonth, transactionsRepo } from "./transactions";
 
@@ -166,6 +167,86 @@ describe("transactionsRepo.deleteFrom", () => {
       error: "Esta categoria tem 1 gasto e não pode ser excluída",
     });
     expect(await categoriesRepo.listForMonthSealed(owner, { year: 2026, month: 10 }, now)).toEqual(before);
+  });
+});
+
+describe("transactionsRepo.deleteFrom paid months (PAGO-08)", () => {
+  const rent = (date = "2027-01-15"): TransactionDto => ({ ...expense(date, 10000), recurrence: "indefinite" });
+  const markPaid = (seriesId: string, ...keys: string[]) =>
+    db.insert(recurringPaid).values(keys.map((k) => ({ userId, seriesId, month: `${k}-01` })));
+  const paidRows = async () =>
+    (await db.select().from(recurringPaid).orderBy(asc(recurringPaid.seriesId), asc(recurringPaid.month))).map(
+      (r) => [r.seriesId, r.month.slice(0, 7)],
+    );
+
+  it("deleting from March a series with February paid keeps February and drops March on", async () => {
+    const tx = rent();
+    const other = rent("2027-01-20");
+    await transactionsRepo.createSealed(userId, tx);
+    await transactionsRepo.createSealed(userId, other);
+    await markPaid(tx.id, "2027-01", "2027-02", "2027-03", "2027-05");
+    await markPaid(other.id, "2027-03", "2027-04");
+
+    expect(await transactionsRepo.deleteFrom(userId, tx.id, "2027-03")).toBe(true);
+
+    expect(await paidRows()).toEqual(
+      [
+        [tx.id, "2027-01"],
+        [tx.id, "2027-02"],
+        [other.id, "2027-03"],
+        [other.id, "2027-04"],
+      ].sort((a, b) => a[0].localeCompare(b[0]) || a[1].localeCompare(b[1])),
+    );
+  });
+
+  it("deleting from the month a later segment of a split series holds drops that month on, under the series id", async () => {
+    const tx = rent();
+    await transactionsRepo.createSealed(userId, tx);
+    const marRowId = randomUUID();
+    await transactionsRepo.updateFromSealed(userId, tx.id, "2027-03", { ...edit(tx, { date: "2027-03-15" }), newRowId: marRowId });
+    await markPaid(tx.id, "2027-02", "2027-04");
+
+    expect(await transactionsRepo.deleteFrom(userId, marRowId, "2027-04")).toBe(true);
+
+    expect(await paidRows()).toEqual([[tx.id, "2027-02"]]);
+  });
+
+  it("deleting the first occurrence (the whole series) drops every paid month of the series", async () => {
+    const tx = rent();
+    await transactionsRepo.createSealed(userId, tx);
+    await markPaid(tx.id, "2027-01", "2027-02", "2027-06");
+
+    expect(await transactionsRepo.deleteFrom(userId, tx.id, "2027-01")).toBe(true);
+
+    expect(await paidRows()).toEqual([]);
+  });
+
+  it("deleting a single row leaves the paid months of the series untouched", async () => {
+    const tx = rent();
+    const single = expense("2027-02-03");
+    await transactionsRepo.createSealed(userId, tx);
+    await transactionsRepo.createSealed(userId, single);
+    await markPaid(tx.id, "2027-01", "2027-02");
+
+    expect(await transactionsRepo.deleteFrom(userId, single.id, "2027-02")).toBe(true);
+
+    expect(await paidRows()).toEqual([
+      [tx.id, "2027-01"],
+      [tx.id, "2027-02"],
+    ]);
+  });
+
+  it("a rejected delete (another user's id) leaves every paid month", async () => {
+    const tx = rent();
+    await transactionsRepo.createSealed(userId, tx);
+    await markPaid(tx.id, "2027-01", "2027-02");
+
+    expect(await transactionsRepo.deleteFrom(await insertTestUser(), tx.id, "2027-01")).toBe(false);
+
+    expect(await paidRows()).toEqual([
+      [tx.id, "2027-01"],
+      [tx.id, "2027-02"],
+    ]);
   });
 });
 
