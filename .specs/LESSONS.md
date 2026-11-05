@@ -462,6 +462,24 @@ Seen once or not yet corroborated. Tracked, not trusted.
 - evidence: SPLASH-04 src/lib/pwa/splash-images.test.ts:52 (pwa)
 - last seen: 2026-10-31T23:30:25Z
 
+### L-076 - When a spec says the last concurrent write wins, test opposing concurrent writes, not only identical ones
+- signal: `spec_precision_gap` · recurrence: 1 feature(s) · scope: `repo-layer` · harmful: 0
+- features: recorrentes-pago
+- evidence: Edge Case 4; src/lib/db/repos/transactions.sealed.int.test.ts:923 (repo-layer)
+- last seen: 2026-11-05T01:24:08Z
+
+### L-077 - When a migration must preserve derived totals, assert the totals before and after the migration in one test
+- signal: `spec_precision_gap` · recurrence: 1 feature(s) · scope: `migrations` · harmful: 0
+- features: recorrentes-pago
+- evidence: PAGO-07 AC3; src/lib/db/schema.int.test.ts:621 (migrations)
+- last seen: 2026-11-05T01:24:08Z
+
+### L-078 - Apply every uniqueness and reference rule of the server import schema in the client file parser too
+- signal: `spec_deviation` · recurrence: 1 feature(s) · scope: `import` · harmful: 0
+- features: recorrentes-pago
+- evidence: src/lib/vault/import-file.ts:83 (import)
+- last seen: 2026-11-05T01:24:08Z
+
 ## Quarantined (failed when applied - ignore)
 
 A confirmed lesson that recurred alongside failure. Kept for the maintainer to review.

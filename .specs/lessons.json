@@ -3,7 +3,7 @@
   "promote_threshold": 2,
   "window_days": 45,
   "quarantine_threshold": 2,
-  "next_id": 76,
+  "next_id": 79,
   "lessons": [
     {
       "id": "L-001",
@@ -1358,6 +1358,60 @@
       ],
       "created": "2026-10-31T23:30:25Z",
       "last_seen": "2026-10-31T23:30:25Z"
+    },
+    {
+      "id": "L-076",
+      "key": "spec_precision_gap::when a spec says the last concurrent write wins test opposing concurrent writes not only identical ones",
+      "text": "When a spec says the last concurrent write wins, test opposing concurrent writes, not only identical ones",
+      "signal": "spec_precision_gap",
+      "scope": "repo-layer",
+      "status": "candidate",
+      "features": [
+        "recorrentes-pago"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "Edge Case 4; src/lib/db/repos/transactions.sealed.int.test.ts:923 (repo-layer)"
+      ],
+      "created": "2026-11-05T01:24:08Z",
+      "last_seen": "2026-11-05T01:24:08Z"
+    },
+    {
+      "id": "L-077",
+      "key": "spec_precision_gap::when a migration must preserve derived totals assert the totals before and after the migration in one test",
+      "text": "When a migration must preserve derived totals, assert the totals before and after the migration in one test",
+      "signal": "spec_precision_gap",
+      "scope": "migrations",
+      "status": "candidate",
+      "features": [
+        "recorrentes-pago"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "PAGO-07 AC3; src/lib/db/schema.int.test.ts:621 (migrations)"
+      ],
+      "created": "2026-11-05T01:24:08Z",
+      "last_seen": "2026-11-05T01:24:08Z"
+    },
+    {
+      "id": "L-078",
+      "key": "spec_deviation::apply every uniqueness and reference rule of the server import schema in the client file parser too",
+      "text": "Apply every uniqueness and reference rule of the server import schema in the client file parser too",
+      "signal": "spec_deviation",
+      "scope": "import",
+      "status": "candidate",
+      "features": [
+        "recorrentes-pago"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "src/lib/vault/import-file.ts:83 (import)"
+      ],
+      "created": "2026-11-05T01:24:08Z",
+      "last_seen": "2026-11-05T01:24:08Z"
     }
   ]
 }
